@@ -1,0 +1,14 @@
+TODO
+====
+- NMR for metals: orbital shift
+- NMR for metals: Knight shift
+- Ultrasoft
+- port converse-NMR and converse-EPR
+- speedup CG solver
+- linear-response with LDA+U
+- molecular method (no q-points)
+
+
+DONE
+====
+
