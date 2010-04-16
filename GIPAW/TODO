@@ -7,8 +7,14 @@ TODO
 - speedup CG solver
 - linear-response with LDA+U
 - molecular method (no q-points)
+- hyperfine: merge core-relaxation into CVS, test ZORA
+- merge routines from my old 3.2 version
 
 
 DONE
 ====
+- f-sum rule works with ultrasoft PP's
+- EFG cleaned
+- hyperfine cleaned
+
 
