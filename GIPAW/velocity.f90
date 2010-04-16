@@ -126,6 +126,7 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
       if (what == 'V' .or. what == 'v') then
           ! apply |\beta(k \pm dk+q)>D<\beta(k \pm dk)| to |psi>
           call add_vuspsi(npwx, npw, nbnd_occ(ik), aux)
+          !! Hubbard? any other term here?
           vel_psi = vel_psi + dble(isign) * ryd_to_hartree * aux/(2.d0*dk*tpiba)
 
       elseif (what == 'S' .or. what == 's') then

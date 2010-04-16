@@ -102,7 +102,7 @@ SUBROUTINE efg
   endif
 
   ! symmetrise efg_tensor
-  CALL symtensor(nat, efg_tot)
+  call symtensor(nat, efg_tot)
   write(stdout,'(5X,''----- total EFG (symmetrized) -----'')')
   do na = 1, nat
     do beta = 1, 3
@@ -110,7 +110,7 @@ SUBROUTINE efg
     enddo
     write(stdout,*)
   enddo
-1000 FORMAT(5x,a,i3,2x,3(f14.6,2x))
+1000 FORMAT(5X,A,I3,2X,3(F14.6,2X))
 
 
   
@@ -136,7 +136,7 @@ SUBROUTINE efg
 
   call start_clock('efg')
 
-1001 FORMAT(5X,A,I3,4X,A,F10.6,4x,A,3F10.6,A)
+1001 FORMAT(5X,A,I3,4X,A,F10.4,4X,A,3F10.6,A)
 1002 FORMAT(5x,a,i3,4x,'Q=',F5.2,' 1e-30 m^2',4x'Cq=',F9.4,' MHz',4x,'eta=',F8.5)
 
 END SUBROUTINE efg
@@ -156,6 +156,7 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
   USE gvect,        ONLY : nr1, nr2, nr3, nrx1, nrx2, nrx3, nrxx, &
                            g, gg, nl, gstart, ngm
   USE ions_base,    ONLY : nat, tau
+  USE gipaw_module, ONLY : job
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
@@ -204,6 +205,9 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
   enddo
   call mp_sum( efg_bare, intra_pool_comm )
 
+  ! opposite sign for hyperfine
+  if (job == 'hyperfine') efg_bare(:,:,:) = -efg_bare(:,:,:)
+
   deallocate( efg_g )
   return
 END SUBROUTINE efg_bare_el
@@ -240,47 +244,31 @@ SUBROUTINE efg_correction(efg_corr_tens)
                                     radial_integral_diamagnetic
   USE mp_global,             ONLY : intra_pool_comm
   USE mp,                    ONLY : mp_sum
-
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
   real(dp), intent(out) :: efg_corr_tens(3,3,nat)
-  
   !-- local variables ----------------------------------------------------
   integer :: j, nt, ibnd, il1, il2, ik, nbs1, nbs2, kkpsi
   integer :: lm, m1, m2, lm1, lm2, l1, l2, nrc
   integer :: ijkb0, ih, jh, na, ikb, jkb, r_first
   integer :: s_min, s_maj, s_weight
-  real(dp) :: rho_diff
   complex(dp) :: bec_product 
   real(dp), allocatable :: at_efg(:,:,:), work(:)
   complex(dp), allocatable :: efg_corr(:,:)
   
-  !----------------------------------------------------------------------------
-  allocate ( efg_corr(lmaxx**2,nat) )
+  allocate( efg_corr(lmaxx**2,nat) )
   efg_corr = 0.0_dp
 
   allocate ( at_efg(paw_nkb,paw_nkb,ntypx) ) 
   at_efg = 0.0_dp
   
   ! Select majority and minority spin components
-  rho_diff = sum(rho%of_r(:,1) - rho%of_r(:,nspin))
-  call mp_sum(rho_diff, intra_pool_comm)
-  if ( nspin > 1 .and. abs(rho_diff) < 1.0d-3 ) then
-     write(stdout,*) "WARNING: rho_diff zero!"
-  endif
-  if ( rho_diff >=  0.0d0 ) then
-     s_maj = 1
-     s_min = nspin
-  else if ( rho_diff < 0.0d0 ) then
-     s_maj = nspin
-     s_min = 1
-  endif
-  
+  call select_spin(s_min, s_maj)
   
   ! calculate radial integrals: <aephi|1/r^3|aephi> - <psphi|1/r^3|psphi>
   do nt = 1, ntyp
      kkpsi = paw_recon(nt)%aephi(1)%kkpsi
-     allocate ( work(kkpsi) )
+     allocate( work(kkpsi) )
      
      r_first = 1
      if ( abs ( rgrid(nt)%r(1) ) < 1d-8 ) r_first = 2
@@ -312,12 +300,12 @@ SUBROUTINE efg_correction(efg_corr_tens)
      deallocate ( work )
   enddo
   
-  !  calculation of the reconstruction part
+  !  calculate the reconstruction part
   do ik = 1, nks
      current_k = ik
      current_spin = isk(ik)
      
-     ! Different sign for spins only in "hyperfine", not "efg"
+     ! different sign for spins only in "hyperfine", not "efg"
      if ( current_spin == s_min .and. job == "hyperfine" ) then
         s_weight = -1
      else
@@ -371,7 +359,7 @@ SUBROUTINE efg_correction(efg_corr_tens)
   
   ! For hyperfine interaction the function used is:
   !   (3r_ir_j/r^2 - delta_i,j) / r^3, for EFG the other way around
-  if ( job == "hyperfine" ) efg_corr = -efg_corr
+  if (job == "hyperfine") efg_corr = -efg_corr
   
   !  transform in cartesian coordinates
   efg_corr_tens(1,1,:) =  sqrt(3.0_dp) * efg_corr(8,:) - efg_corr(5,:)

@@ -6,6 +6,7 @@
 ! or http://www.gnu.org/copyleft/gpl.txt .
 !
 
+! Diagonalize and return principal axis of a 3x3 tensor
 SUBROUTINE principal_axis(tens, eigs, eigv)
   USE kinds, only: dp
   IMPLICIT NONE
@@ -34,4 +35,33 @@ SUBROUTINE principal_axis(tens, eigs, eigv)
 
   return
 END SUBROUTINE principal_axis
+
+
+
+! Selent majority and minority spin
+SUBROUTINE select_spin(s_min, s_maj)
+  USE kinds,        ONLY : dp
+  USE scf,          ONLY : rho
+  USE lsda_mod,     ONLY : nspin
+  USE mp_global,    ONLY : intra_pool_comm
+  USE mp,           ONLY : mp_sum
+  IMPLICIT NONE
+  integer, intent(out) :: s_min, s_maj
+  real(dp) :: rho_diff
+
+  rho_diff = sum(rho%of_r(:,1) - rho%of_r(:,nspin))
+  call mp_sum(rho_diff, intra_pool_comm)
+
+  if ( nspin > 1 .and. abs(rho_diff) < 1.0d-3 ) &
+     call errore("select_spin", "warning, rho_diff is small", -1)
+
+  if ( rho_diff >=  0.0d0 ) then
+     s_maj = 1
+     s_min = nspin
+  else if ( rho_diff < 0.0d0 ) then
+     s_maj = nspin
+     s_min = 1
+  endif
+
+END SUBROUTINE select_spin
 
