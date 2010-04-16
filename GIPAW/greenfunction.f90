@@ -68,21 +68,20 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   call mp_sum ( ps( :, 1:nbnd_occ (ik) ), intra_pool_comm )
 #endif
 
-  !! this is the case with overlap (ultrasoft)
-  !! g_psi is used as work space to store S|evc>
-  !!
-  !!CALL ccalbec (nkb, npwx, npw, nbnd_occ(ik), becp, vkb, evc)
-  !!CALL s_psi (npwx, npw, nbnd_occ(ik), evc, g_psi)
-  !! |psi> = -(|psi> - S|evc><evc|psi>)
-  !!
-  !!CALL zgemm( 'N', 'N', npw, nbnd_occ(ik), nbnd_occ(ik), &
-  !!     (1.d0,0.d0), g_psi(1,1), npwx, ps(1,1), nbnd, (-1.d0,0.d0), &
-  !!     psi(1,1), npwx )
+  ! this is the case with overlap (ultrasoft)
+  ! g_psi is used as work space to store S|evc>
+  CALL calbec (npw, vkb, evc, becp)
+  CALL s_psi (npwx, npw, nbnd_occ(ik), evc, g_psi)
+  ! |psi> = -(|psi> - S|evc><evc|psi>)
+  CALL zgemm( 'N', 'N', npw, nbnd_occ(ik), nbnd_occ(ik), &
+       (1.d0,0.d0), g_psi(1,1), npwx, ps(1,1), nbnd, (-1.d0,0.d0), &
+       psi(1,1), npwx )
 
-  ! |psi> = -(1 - |evq><evq|) |psi>
-  CALL zgemm('N', 'N', npw, nbnd_occ(ik), nbnd_occ(ik), &
-             (1.d0,0.d0), evq(1,1), npwx, ps(1,1), nbnd, (-1.d0,0.d0), &
-             psi(1,1), npwx)
+  !! this is the old code for norm-conserving
+  !! |psi> = -(1 - |evq><evq|) |psi>
+  !!CALL zgemm('N', 'N', npw, nbnd_occ(ik), nbnd_occ(ik), &
+  !!           (1.d0,0.d0), evq(1,1), npwx, ps(1,1), nbnd, (-1.d0,0.d0), &
+  !!           psi(1,1), npwx)
 
 
   !====================================================================
@@ -131,7 +130,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   conv_root = .true.
   call cgsolve_all (ch_psi_all, cg_psi, et(1,ik), psi, g_psi, &
        h_diag, npwx, npw, thresh, ik, lter, conv_root, anorm, &
-       nbnd_occ(ik) )
+       nbnd_occ(ik), npol )
 
   !! debug  
   !!write(stdout, '(5X,''cgsolve_all converged in '',I3,'' iterations'')') &
