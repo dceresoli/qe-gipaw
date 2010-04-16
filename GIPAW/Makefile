@@ -11,12 +11,10 @@ gipaw_module.o \
 gipaw_main.o \
 paw_gipaw.o \
 stop_code.o \
-apply_p.o \
-apply_vel.o \
 greenfunction.o \
+cgsolve_all.o \
 h_psiq.o \
 cg_psi.o \
-cgsolve_all.o \
 symmetrize_field.o \
 ch_psi_all.o \
 test_sum_rule.o \
@@ -30,7 +28,11 @@ init_gipaw_2.o \
 init_us_2_no_phase.o \
 g_tensor_crystal.o \
 write_tensor_field.o \
-efg.o
+efg.o \
+util.o \
+hyperfine.o \
+velocity.o
+
 
 QEMODS = ../Modules/libqemod.a
 EEOBJS=../EE/libee.a
