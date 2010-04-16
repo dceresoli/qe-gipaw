@@ -286,25 +286,30 @@ CONTAINS
 
     WRITE( stdout, * )
     call print_clock ('GIPAW') 
-    WRITE( stdout,  * ) '    INITIALIZATION: '
+    WRITE( stdout,  * ) '    INITIALIZATION:'
     call print_clock ('gipaw_setup')
     WRITE( stdout, * )
+    WRITE( stdout,  * ) '    Linear response'
     call print_clock ('greenf')
     call print_clock ('cgsolve')
     call print_clock ('ch_psi')
     call print_clock ('h_psiq')
-    WRITE( stdout, * )
     call print_clock ('u_kq')
-    call print_clock ('h_psi')
     WRITE( stdout, * )
-    call print_clock ('apply_p')
+    WRITE( stdout,  * ) '    Apply operators'
+    call print_clock ('h_psi')
     call print_clock ('apply_vel')
     WRITE( stdout, * )
+    WRITE( stdout,  * ) '    Induced current'
     call print_clock ('j_para')
     call print_clock ('biot_savart')
     call print_clock ('c_sigma')
     WRITE( stdout, * )
-    WRITE( stdout, * ) '     General routines'
+    WRITE( stdout, * ) '    Other routines'
+    call print_clock ('efg')
+    call print_clock ('hyperfine')
+    WRITE( stdout, * )
+    WRITE( stdout, * ) '    General routines'
     call print_clock ('calbec')
     call print_clock ('cft3')
     call print_clock ('cft3s')
@@ -313,7 +318,7 @@ CONTAINS
     call print_clock ('write_rec')
     WRITE( stdout, * )
 #ifdef __PARA
-    WRITE( stdout,  * ) '     Parallel routines'
+    WRITE( stdout, * ) '    Parallel routines'
     call print_clock ('reduce')
 #endif
   END SUBROUTINE print_clock_gipaw
