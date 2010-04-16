@@ -306,6 +306,7 @@ CONTAINS
     call print_clock ('c_sigma')
     WRITE( stdout, * )
     WRITE( stdout, * ) '    Other routines'
+    call print_clock ('f-sum')
     call print_clock ('efg')
     call print_clock ('hyperfine')
     WRITE( stdout, * )
