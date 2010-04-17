@@ -80,6 +80,7 @@ SUBROUTINE hyperfine
   allocate( hfi_fc_core(nat), hfi_fc_tot(nat) )
 
   ! calculate the bare Fermi-contact contribution
+  spin_den(:) = rho%of_r(:,s_maj) - rho%of_r(:,s_min)
   call hfi_fc_bare_el(spin_den, hfi_fc_bare, hfi_fc_bare_zora)
 
   ! calculate the GIPAW Fermi-contact contribution
@@ -231,7 +232,6 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   complex(dp), intent(in) :: rho_s(nrxx)
   real(dp), intent(out) :: hfi_bare(nat), hfi_bare_zora(nat)  
   !-- local variables ----------------------------------------------------
-  complex(dp) :: rhog(nrxx)
 #ifdef ZORA
   real(dp) ::  delta_Th(ngm, ntypx)
 #endif
@@ -239,10 +239,8 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   real(dp) :: arg
   complex(dp) :: phase
 
-  rhog(1:nrxx) = rho_s(1:nrxx)
-
   ! transform to reciprocal space
-  call cft3(rhog, nr1, nr2, nr3, nrx1, nrx2, nrx3, -1)
+  call cft3(rho_s, nr1, nr2, nr3, nrx1, nrx2, nrx3, -1)
 
 #ifdef ZORA
   ! Fourier transform of Thomson's delta function
@@ -256,10 +254,10 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
       do ig = gstart, ngm
           arg = sum(tau(1:3,na) * g(1:3,ig)) * tpi
           phase = cmplx(cos(arg),sin(arg), kind=dp)
-          hfi_bare(na) = hfi_bare(na) + real(rhog(nl(ig)) * phase, kind=dp)
+          hfi_bare(na) = hfi_bare(na) + real(rho_s(nl(ig)) * phase, kind=dp)
 #ifdef ZORA
           hfi_bare_zora(na) = hfi_bare_zora(na) + &
-              real(delta_Th(ig,ityp(na)) * rhog(nl(ig)) * phase, kind=dp)
+              real(delta_Th(ig,ityp(na)) * rho_s(nl(ig)) * phase, kind=dp)
 #endif
       enddo
   enddo
