@@ -94,7 +94,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
           ! solve atomic
           call ascheq(nn, 0, eigenvalue(nn,nt), rgrid(nt)%mesh, rgrid(nt), &
                       vpot, 2.d0*zz, 1d-12, ae_orb(1,nn,nt), nstop)
-          if (nstop /= 0) then
+          if (nstop /= 0 .and. nstop /= 50) then
               eigenvalue(nn,nt) = 0.d0
               exit
           endif 
