@@ -17,7 +17,6 @@ SUBROUTINE hyperfine
   !  
   USE kinds,        ONLY : dp 
   USE io_global,    ONLY : stdout
-  USE io_global,    ONLY : stdout
   USE parameters,   ONLY : ntypx
   USE constants,    ONLY : pi, tpi, fpi, angstrom_au, rytoev, electronvolt_si, c_si
   USE gvect,        ONLY : nrxx
@@ -54,7 +53,7 @@ SUBROUTINE hyperfine
   real(dp):: v(3), axis(3,3)
 
   call start_clock('hyperfine')
-  
+
   ! select majority and minority spin components
   call select_spin(s_min, s_maj)
 
@@ -82,16 +81,13 @@ SUBROUTINE hyperfine
   ! calculate the bare Fermi-contact contribution
   spin_den(:) = rho%of_r(:,s_maj) - rho%of_r(:,s_min)
   call hfi_fc_bare_el(spin_den, hfi_fc_bare, hfi_fc_bare_zora)
+  deallocate( spin_den )
 
   ! calculate the GIPAW Fermi-contact contribution
   call hfi_fc_gipaw_correction(hfi_fc_gipaw, hfi_fc_gipaw_zora)
 
   ! calculate the core-relaxation Fermi-contact contribution
-  hfi_fc_core = 0.d0 
-  !!call hfi_fc_core_relax(hfi_fc_core)
-
-  ! free memory
-  deallocate( spin_den )
+  call hfi_fc_core_relax(hfi_fc_core)
 
 
   !--------------------------------------------------------------------
@@ -180,6 +176,18 @@ SUBROUTINE hyperfine
   enddo
 1001 FORMAT(5X,A,I3,4X,A,F10.4,4X,A,3F10.6,A)
 
+
+  if (iverbosity > 1) then
+    write(stdout,*)
+    write(stdout,'(5X,''SPIN DENSITIES IN bohrradius^-3 WITHOUT ZORA:'')')
+    write(stdout,'(5X,''Warning: core-relaxation is an experimental feature'')')
+    write(stdout,'(5X,8X,''  bare            GIPAW           core-relax      total'')')
+    do na = 1, nat
+        hfi_fc_tot(na) = hfi_fc_bare(na) + hfi_fc_gipaw(na) + hfi_fc_core(na)
+        write(stdout,1002) atm(ityp(na)), na, hfi_fc_bare(na), &
+            hfi_fc_gipaw(na), hfi_fc_core(na), hfi_fc_tot(na)
+    enddo
+  endif
 
   write(stdout,*)
   write(stdout,'(5X,''ISOTROPIC (FERMI-CONTACT) COUPLINGS WITHOUT ZORA:'')')

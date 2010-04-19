@@ -309,6 +309,7 @@ CONTAINS
     call print_clock ('f-sum')
     call print_clock ('efg')
     call print_clock ('hyperfine')
+    call print_clock ('core_relax')
     WRITE( stdout, * )
     WRITE( stdout, * ) '    General routines'
     call print_clock ('calbec')

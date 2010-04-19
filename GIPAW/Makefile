@@ -28,10 +28,9 @@ init_gipaw_2.o \
 init_us_2_no_phase.o \
 g_tensor_crystal.o \
 write_tensor_field.o \
-efg.o \
-util.o \
-hyperfine.o \
-velocity.o
+velocity.o \
+efg.o hyperfine.o core_relax.o \
+util.o ascheq.o
 
 
 QEMODS = ../Modules/libqemod.a
