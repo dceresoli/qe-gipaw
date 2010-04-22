@@ -147,8 +147,12 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
     do il1 = 1, paw_recon(nt)%paw_nbeta
       nrc = paw_recon(nt)%psphi(il1)%label%nrc
       l1 = paw_recon(nt)%psphi(il1)%label%l
+      if (l1 /= 0) cycle
+
       do il2 = 1, paw_recon(nt)%paw_nbeta
         l2 = paw_recon(nt)%psphi(il2)%label%l
+        if (l2 /= 0) cycle
+
         do j = 1, nrc
           rho_recon(j,il1,il2,nt) = &
                    ( paw_recon(nt)%aephi(il1)%psi(j) &
@@ -156,7 +160,8 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
                    - paw_recon(nt)%psphi(il1)%psi(j) &
                    * paw_recon(nt)%psphi(il2)%psi(j) ) &
                    / rgrid(nt)%r(j) ** 2 / fpi
-        end do
+        enddo
+
       enddo ! il2
     enddo ! il1
    enddo ! nt
@@ -170,15 +175,14 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
      current_k = ik
      current_spin = isk(ik)
      
-     call gk_sort ( xk(1,ik), ngm, g, ecutwfc / tpiba2, npw, igk, g2kin )
-     call get_buffer ( evc, nwordwfc, iunwfc, ik)
-     call init_gipaw_2 ( npw, igk, xk(1,ik), paw_vkb )
+     call gk_sort (xk(1,ik), ngm, g, ecutwfc / tpiba2, npw, igk, g2kin)
+     call get_buffer (evc, nwordwfc, iunwfc, ik)
+     call init_gipaw_2 (npw, igk, xk(1,ik), paw_vkb)
      call calbec (npw, paw_vkb, evc, paw_becp)
      
      do ibnd = 1, nbnd
         ijkb0 = 0
         do nt = 1, ntyp
-           if (paw_recon(nt)%gipaw_ncore_orbital == 0) cycle
            do na = 1, nat
               if ( ityp(na) == nt ) then
                  do ih = 1, paw_recon(nt)%paw_nh
@@ -187,6 +191,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
                     l1 = paw_recon(nt)%paw_nhtol(ih)
                     m1 = paw_recon(nt)%paw_nhtom(ih)
                     lm1 = m1 + l1**2
+                    nrc = paw_recon(nt)%psphi(nbs1)%label%nrc
  
                     do jh = 1, paw_recon(nt)%paw_nh
                        jkb = ijkb0 + jh
@@ -194,10 +199,10 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
                        l2 = paw_recon(nt)%paw_nhtol(jh)
                        m2 = paw_recon(nt)%paw_nhtom(jh)
                        lm2 = m2 + l2**2 
-         
+
                        bec_product = paw_becp(jkb,ibnd) &
                             * conjg( paw_becp(ikb,ibnd) )
-                       
+
                        sph_rho_gipaw(1:nrc,na,current_spin) = &
                             sph_rho_gipaw(1:nrc,na,current_spin) + &
                             rho_recon(1:nrc,nbs1,nbs2,nt) * &
@@ -272,6 +277,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
       do n2 = n1+1, n_max
         if (eigenvalue(n2, nt) == 0.d0) cycle  ! unbound
 
+        work = 0.d0
         do j = 1, rgrid(nt)%mesh
           work(j) = ae_orb(j,n1,nt) * delta_v(j,na) * ae_orb(j,n2,nt)
         end do
