@@ -143,7 +143,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
   allocate( rho_recon(ndmx,paw_nkb,paw_nkb,ntyp) )
   rho_recon = 0.d0
   do nt = 1, ntyp
-    if (paw_recon(nt)%gipaw_ncore_orbital == 0) cycle
+    !!if (paw_recon(nt)%gipaw_ncore_orbital == 0) cycle
     do il1 = 1, paw_recon(nt)%paw_nbeta
       nrc = paw_recon(nt)%psphi(il1)%label%nrc
       l1 = paw_recon(nt)%psphi(il1)%label%l
@@ -151,7 +151,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
 
       do il2 = 1, paw_recon(nt)%paw_nbeta
         l2 = paw_recon(nt)%psphi(il2)%label%l
-        if (l2 /= 0) cycle
+        if (l2 /= 0 .or. l2 /= l1) cycle
 
         do j = 1, nrc
           rho_recon(j,il1,il2,nt) = &
@@ -192,6 +192,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
                     m1 = paw_recon(nt)%paw_nhtom(ih)
                     lm1 = m1 + l1**2
                     nrc = paw_recon(nt)%psphi(nbs1)%label%nrc
+                    if (l1 /= 0) cycle
  
                     do jh = 1, paw_recon(nt)%paw_nh
                        jkb = ijkb0 + jh
@@ -199,6 +200,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
                        l2 = paw_recon(nt)%paw_nhtol(jh)
                        m2 = paw_recon(nt)%paw_nhtom(jh)
                        lm2 = m2 + l2**2 
+                       if (l2 /= 0 .or. l1 /= l2) cycle
 
                        bec_product = paw_becp(jkb,ibnd) &
                             * conjg( paw_becp(ikb,ibnd) )
