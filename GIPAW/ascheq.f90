@@ -36,7 +36,7 @@ subroutine ascheq(nn,lam,e,mesh,grid,vpot,ze2,thresh0,y,nstop)
   allocate(el(mesh),stat=ierr)
 
   thresh=thresh0
-  if (e<-5.e+2) thresh=thresh0*10.0_DP
+  !!if (e<-5.e+2) thresh=thresh0*10.0_DP
   iter=0
   ddx12=grid%dx*grid%dx/12.0_dp
   l1=lam+1
@@ -52,8 +52,9 @@ subroutine ascheq(nn,lam,e,mesh,grid,vpot,ze2,thresh0,y,nstop)
   enddo
   nstop=200
   if(eup.eq.elw) go to 900
-  if(e.gt.eup) e=0.9_DP*eup+0.1_DP*elw
-  if(e.lt.elw) e=0.9_DP*elw+0.1_DP*eup
+  e = (eup + elw)/2.d0
+  !!if(e.gt.eup) e=0.9_DP*eup+0.1_DP*elw
+  !!if(e.lt.elw) e=0.9_DP*elw+0.1_DP*eup
   !
   !  series developement of the potential near the origin
   !
@@ -104,6 +105,7 @@ subroutine ascheq(nn,lam,e,mesh,grid,vpot,ze2,thresh0,y,nstop)
   !  matching radius has been reached going out. if ncross is not
   !  equal to ndcr, modify the trial eigenvalue.
   !
+  !!WRITE(6,'(''iter='',I3,2X,''ncross='',I2,4X,''e,eup,elw='',3(F12.6,2X))') iter, ncross, e, eup, elw
   if(ndcr < ncross) then
      !
      !  too many crossings. e is an upper bound to the true eigen-
@@ -193,7 +195,7 @@ subroutine ascheq(nn,lam,e,mesh,grid,vpot,ze2,thresh0,y,nstop)
   dfe=-y(ik)*f(ik)/grid%dx/sum
   de=-fe*dfe
   eps=abs(de/e)
-  !!!WRITE(*,'(''iter='',I2,2X,''n,l='',2(I1,1X),4X,''e,de='',F12.6,2X,E12.4)') iter, nn, lam, e, de
+  !!WRITE(6,'(''iter='',I2,2X,''n,l='',2(I1,1X),4X,''e,de='',F12.6,2X,E12.4)') iter, nn, lam, e, de
   if(abs(de).lt.thresh) go to 600
   if(eps.gt.0.25_dp) de=0.25_dp*de/eps
   if(de.gt.0.0_dp) elw=e
