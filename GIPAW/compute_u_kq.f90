@@ -17,6 +17,8 @@ SUBROUTINE compute_u_kq(ik, q)
   USE io_global,            ONLY : stdout
   USE io_files,             ONLY : iunigk, nwordatwfc, iunsat, iunwfc, &
                                    nwordwfc
+  USE mp,                   ONLY : mp_sum
+  USE mp_global,            ONLY : inter_pool_comm, intra_pool_comm
   USE klist,                ONLY : nkstot, nks, xk, ngk
   USE uspp,                 ONLY : vkb, nkb
   USE wvfct,                ONLY : et, nbnd, npwx, igk, npw, g2kin, &
@@ -31,7 +33,6 @@ SUBROUTINE compute_u_kq(ik, q)
                                    nr1, nr2, nr3, nrx1, nrx2, nrx3
   USE cell_base,            ONLY : at, bg, omega, tpiba, tpiba2
   USE bp,                   ONLY : lelfield
-  USE control_flags,        ONLY : iverbosity
   USE becmod,               ONLY : becp
   USE random_numbers,       ONLY : randy
   USE buffers
@@ -58,7 +59,7 @@ SUBROUTINE compute_u_kq(ik, q)
   endif
   cntrl_isolve = isolve
   max_cg_iter = 200
-  iter = 1
+  iter = 2
   istep = 0
   ethr = conv_threshold
   lscf = .false.
@@ -70,9 +71,9 @@ SUBROUTINE compute_u_kq(ik, q)
   allocate( et_old(nbnd,nkstot) )
   et_old = et
 
-  !! debug 
-  !!WRITE(stdout, '(5X,"compute_u_kq: q = (",F10.4,",",F10.4,",",F10.4,")")') q
-  !!WRITE(stdout, '(5X,"  isolve = ", I2)') isolve
+  !! debug
+  if (iverbosity > 10) &
+    WRITE(stdout, '(5X,"compute_u_kq: q = (",F10.4,",",F10.4,",",F10.4,")")') q
 
   avg_iter = 0.D0
 
@@ -111,18 +112,20 @@ SUBROUTINE compute_u_kq(ik, q)
   ! diagonalization of bands for k-point ik
   call diag_bands ( iter, ik, avg_iter )
 
-!#ifdef __PARA
-!  call mp_sum( avg_iter, inter_pool_comm )
-!#endif
+  call mp_sum( avg_iter, inter_pool_comm )
   avg_iter = avg_iter / nkstot
 
   !! debug
-  !!write(stdout,'(5X,"ethr = ",1PE9.2,",  avg # of iterations =",0PF5.1)') &
-  !!     ethr, avg_iter
+  if (iverbosity > 10) &
+    write(stdout,'(5X,"ethr = ",1PE9.2,",  avg # of iterations =",0PF5.1)') &
+         ethr, avg_iter
 
   ! check if diagonalization was ok
-  !!write(stdout,'(8F9.4)') et_old(1:nbnd,ik)*RytoeV
-  !!write(stdout,'(8F9.4)') et(1:nbnd,ik)*RytoeV
+  if (iverbosity > 10) then
+    write(stdout,'(8F9.4)') et_old(1:nbnd,ik)*RytoeV
+    write(stdout,'(8F9.4)') et(1:nbnd,ik)*RytoeV
+  endif
+
   do i = 1, nbnd
     if (abs(et(i,ik) - et_old(i,ik))*RytoeV > 0.2d0) then
       write(stdout,'(5X,''ATTENTION: ik='',I4,''  ibnd='',I3,$)') ik, i
