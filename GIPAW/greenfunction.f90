@@ -54,6 +54,8 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   ! check if |q| is zero
   q_is_zero = .false.
   if (sqrt(q(1)*q(1)+q(2)*q(2)+q(3)*q(3)) < 1d-8) q_is_zero = .true.  
+
+  ! evq is already calculated in compute_u_kq.f90
   if (q_is_zero) evq(:,:) = evc(:,:)
 
   !====================================================================
@@ -99,6 +101,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   enddo
 
   ! preconditioning of the linear system
+  work = (0.d0,0.d0)
   do ibnd = 1, nbnd_occ (ik)
      do ig = 1, npw
         work (ig) = g2kin (ig) * evq (ig, ibnd)
@@ -108,6 +111,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
 #ifdef __PARA
   call mp_sum ( eprec( 1:nbnd_occ(ik) ), intra_pool_comm )
 #endif
+  h_diag = 0.d0
   do ibnd = 1, nbnd_occ (ik)
      do ig = 1, npw
         h_diag (ig, ibnd) = 1.d0 / max (1.0d0, g2kin (ig) / eprec (ibnd) )
