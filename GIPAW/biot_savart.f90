@@ -13,12 +13,14 @@ SUBROUTINE biot_savart(jpol)
   ! ... which in reciprocal space reads:
   ! ... B_ind(G) = (4\pi/c) (i G \times j(G))/G^2
   ! ... the G=0 is not computed here and is given by chi_bare
+  ! ...
+  ! ... In the USPP case, the induced field is compute on the soft grid
   USE kinds,                ONLY : DP
   USE constants,            ONLY : fpi
   USE klist,                ONLY : xk
   USE wvfct,                ONLY : nbnd, npwx, npw, igk  
-  USE gvect,                ONLY : ngm, gstart, nr1, nr2, nr3, nrx1, nrx2, &
-                                   nrx3, nrxx, nl, nlm, g, gg, ecutwfc, gcutm
+  USE gvect,                ONLY : ngm, gstart, g, gg, ecutwfc, gcutm
+  USE gsmooth,              ONLY : nrxxs, nrx1s, nrx2s, nrx3s, ngms, nls
   USE pwcom
   USE gipaw_module,         ONLY : b_ind, b_ind_r, j_bare, alpha
 
@@ -35,7 +37,7 @@ SUBROUTINE biot_savart(jpol)
   call start_clock('biot_savart')
 
   ! allocate memory
-  allocate(aux(nrxxs), j_of_g(1:ngm,3))  
+  allocate(aux(nrxxs), j_of_g(1:ngms,3))  
 
   ! transform current to reciprocal space
   j_of_g(:,:) = 0.0_dp
@@ -43,12 +45,12 @@ SUBROUTINE biot_savart(jpol)
     do ipol = 1, 3
       aux(1:nrxxs) = j_bare(1:nrxxs,ipol,jpol,ispin)
       call cft3s(aux, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, -1)
-      j_of_g(1:ngm,ipol) = j_of_g(1:ngm,ipol) + aux(nl(1:ngm))
+      j_of_g(1:ngms,ipol) = j_of_g(1:ngms,ipol) + aux(nls(1:ngms))
     enddo
   enddo
 
   ! compute induced field in reciprocal space
-  do ig = gstart, ngm
+  do ig = gstart, ngms
     fact = (0.0_dp,1.0_dp) * (alpha*fpi) / (gg(ig) * tpiba)
     b_ind(ig,1,jpol) = fact * (g(2,ig)*j_of_g(ig,3) - g(3,ig)*j_of_g(ig,2))
     b_ind(ig,2,jpol) = fact * (g(3,ig)*j_of_g(ig,1) - g(1,ig)*j_of_g(ig,3))
@@ -58,11 +60,11 @@ SUBROUTINE biot_savart(jpol)
   ! transform induced field in real space
   do ipol = 1, 3
     aux = (0.0_dp,0.0_dp)
-    aux(nl(1:ngm)) = b_ind(1:ngm,ipol,jpol)
+    aux(nls(1:ngms)) = b_ind(1:ngms,ipol,jpol)
     call cft3s(aux, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, 1)
     b_ind_r(1:nrxxs,ipol,jpol) = real(aux(1:nrxxs))
   enddo
-  
+
   deallocate(aux, j_of_g)
   call stop_clock('biot_savart')
 
@@ -72,8 +74,8 @@ END SUBROUTINE biot_savart
 
 SUBROUTINE field_to_reciprocal_space
   USE kinds,                ONLY : DP
-  USE gvect,                ONLY : ngm, gstart, nr1, nr2, nr3, nrx1, nrx2, &
-                                   nrx3, nrxx, nl, nlm, g, gg, ecutwfc, gcutm
+  USE gvect,                ONLY : ngm, gstart, g, gg, ecutwfc, gcutm
+  USE gsmooth,              ONLY : nls, ngms, nrxxs
   USE pwcom
   USE gipaw_module
  
@@ -87,7 +89,7 @@ SUBROUTINE field_to_reciprocal_space
     do jpol = 1, 3
       aux(1:nrxxs) = b_ind_r(1:nrxxs,ipol,jpol)
       call cft3s(aux, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, -1)
-      b_ind(1:ngm,ipol,jpol) = aux(nl(1:ngm))
+      b_ind(1:ngms,ipol,jpol) = aux(nls(1:ngms))
     enddo
   enddo
   deallocate(aux)

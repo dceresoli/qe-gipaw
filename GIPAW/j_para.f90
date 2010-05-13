@@ -11,6 +11,8 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   ! ... Compute the paramgnetic current between two states:
   ! ... j_para(r') = (1/2) fact <psi_n| { p_k|r'><r'| + |r'><r'|p_{k+q} } |psi_m>
   ! ... the result is added to j and is returned in real space
+  ! ...
+  ! ... In the USPP case, current is computed on the smooth grid.
   !  
   USE kinds,                ONLY : DP
   USE klist,                ONLY : xk
