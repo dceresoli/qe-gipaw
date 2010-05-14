@@ -80,7 +80,7 @@ PROGRAM gipaw_main
      call g_tensor_crystal
      
   case ( 'f-sum' )
-     call test_f_sum_rule 
+     call suscept_crystal
      
   case ( 'efg' )
      call efg
