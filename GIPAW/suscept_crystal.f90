@@ -9,80 +9,110 @@
 SUBROUTINE suscept_crystal
   !-----------------------------------------------------------------------
   !
-  ! ... Compute the "bare" susceptibility as in Eq.(64-65) of
-  ! ... PRB 63, 245101 (2001)
-  ! ... add more comments
+  ! This routine calculates the f-sum rule, the magnetic susceptibility and
+  ! the induced current, using the "crystal method".
+  ! 
+  ! References:
+  !   [1] Phys. Rev. B 63, 245101 (2001)   (norm-conserving GIPAW)
+  !   [2] Phys. Rev. B 76, 024401 (2007)   (ultrasoft)
+  !   [3] Phys. Rev. B 76, 165122 (2007)   (metallic systems)
   !
-  USE kinds,                       ONLY : dp
-  USE io_global,                   ONLY : stdout
-  USE io_files,                    ONLY : nwordwfc, iunwfc
-  USE cell_base,                   ONLY : at, bg, omega, tpiba, tpiba2
-  USE wavefunctions_module,        ONLY : evc
-  USE klist,                       ONLY : nks, nkstot, wk, xk, nelec
-  USE wvfct,                       ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
-                                          current_k
-  USE lsda_mod,                    ONLY : current_spin, lsda, isk
-  USE becmod,                      ONLY : becp, calbec  
-  USE symme,                       ONLY : symmatrix
-  USE parameters,                  ONLY : lmaxx
-  USE constants,                   ONLY : pi
-  USE gvect,                       ONLY : ngm, g, ecutwfc
-  USE gsmooth,                     ONLY : nrxxs
-  USE uspp,                        ONLY : vkb, ap
-  USE lsda_mod,                    ONLY : nspin
-  USE gipaw_module,                ONLY : j_bare, b_ind, b_ind_r, tens_fmt, &
-                                         q_gipaw, iverbosity, alpha, evq, &
-                                         avogadro, filcurr, filfield, &
-                                         nbnd_occ, a0_to_cm, isolve, &
-                                         conv_threshold
-  USE paw_gipaw,                   ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
-  USE ions_base,                   ONLY : nat
-  USE buffers,                     ONLY : get_buffer
-  USE mp_global,                   ONLY : my_pool_id, me_pool, root_pool, &
-                                         inter_pool_comm, intra_pool_comm
-  USE mp,                          ONLY : mp_sum
+  ! Contributors:
+  !   D. Ceresoli                        bare susceptibility and current
+  !   A. P. Seitsonen and U. Gerstmann   GIPAW contributions
+  !   E. Kucukbenli                      Ultrasoft and PAW
+  !
+  USE kinds,                  ONLY : dp
+  USE io_global,              ONLY : stdout
+  USE io_files,               ONLY : nwordwfc, iunwfc
+  USE cell_base,              ONLY : at, bg, omega, tpiba, tpiba2
+  USE wavefunctions_module,   ONLY : evc
+  USE klist,                  ONLY : nks, nkstot, wk, xk, nelec
+  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, current_k
+  USE lsda_mod,               ONLY : current_spin, lsda, isk
+  USE becmod,                 ONLY : becp, calbec  
+  USE symme,                  ONLY : symmatrix
+  USE parameters,             ONLY : lmaxx
+  USE constants,              ONLY : pi
+  USE gvect,                  ONLY : ngm, g, ecutwfc
+  USE gsmooth,                ONLY : nrxxs
+  USE uspp,                   ONLY : vkb, okvan
+  USE lsda_mod,               ONLY : nspin
+  USE gipaw_module,           ONLY : j_bare, b_ind, b_ind_r, tens_fmt, &
+                                     q_gipaw, iverbosity, alpha, evq, &
+                                     avogadro, filcurr, filfield, &
+                                     nbnd_occ, a0_to_cm, isolve, &
+                                     conv_threshold, job
+  USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
+  USE ions_base,              ONLY : nat
+  USE buffers,                ONLY : get_buffer
+  USE mp_global,              ONLY : my_pool_id, me_pool, root_pool, &
+                                     inter_pool_comm, intra_pool_comm
+  USE mp,                     ONLY : mp_sum
   
   !-- local variables ----------------------------------------------------
   IMPLICIT NONE
-  complex(dp), allocatable, dimension(:,:,:) :: p_evc, vel_evc, g_vel_evc
+
+  ! the following three quantities are for norm-conserving PPs
+  complex(dp), allocatable, dimension(:,:,:) :: p_evc         ! p_k|evc>
+  complex(dp), allocatable, dimension(:,:,:) :: vel_evc       ! v_{k+q,k}|evc>
+  complex(dp), allocatable, dimension(:,:,:) :: G_vel_evc     ! G_{k+q} v_{k+q,k}|evc>
+  ! in addition, the following two quantities are for ultrasoft PPs
+  complex(dp), allocatable, dimension(:,:,:) :: svel_evc      ! s_{k+q,k}|evc>
+  complex(dp), allocatable, dimension(:,:,:) :: u_svel_evc    ! sum|evq><evq|s_{k+q,k}|evc>
+  ! temporary working array, same size as evc/evq
   complex(dp), allocatable :: aux(:,:)
 
-  ! Q tensor of eq. (65) (pGv => HH in Paratec, vGv => VV in Paratec)
-  real(dp) :: q_pGv(3,3,-1:1), q_vGv(3,3,-1:1)
+  ! f-sum rule: Eq.(A7) of [1]
+  real(dp) :: f_sum(3,3)                             ! Eq.(C7) of [2]
 
-  ! F tensor of eq. (64)
-  real(dp) :: f_pGv(3,3,-1:1), f_vGv(3,3,-1:1)
+  ! Susceptibility (pGv => HH in Paratec, vGv => VV in Paratec)
+  real(dp) :: q_pGv(3,3,-1:1), q_vGv(3,3,-1:1)       ! Eq.(65) of [1]
+  real(dp) :: f_pGv(3,3,-1:1), f_vGv(3,3,-1:1)       ! Eq.(64) of [1]
+  real(dp) :: chi_bare_pGv(3,3), chi_bare_vGv(3,3)   ! Eq.(64) of [1]
 
-  ! chi_bare tensor of eq. (64)
-  real(dp) :: chi_bare_pGv(3,3), chi_bare_vGv(3,3)
+  ! GIPAW terms
+  real(dp) :: diamagnetic_corr_tensor(3,3,nat)       ! Eq.(58) of [1]/Eq.(43) of [2]
+  real(dp) :: paramagnetic_corr_tensor(3,3,nat)      ! Eq.(44) of [1]
+  real(dp) :: paramagnetic_corr_tensor_us(3,3,nat)   ! Eq.(41) of [2] ("occ-occ" term)
+  real(dp) :: paramagnetic_corr_tensor_aug(3,3,nat)  ! Eq.(30) of [2] (L_R Q_R term)
 
-  ! f-sum rule
-  real(dp) :: f_sum(3,3)
-
-  integer :: ia, ib, ik, ipol, jpol, i, ibnd, isign, ispin
-  real(dp) :: tmp(3,3), q(3), braket, sigma_bare(3,3,nat)
-  real(dp) :: diamagnetic_corr_tensor(3,3,nat)
-  real(dp) :: paramagnetic_corr_tensor(3,3,nat)
+  ! Contributions to chemical shift
+  real(dp) :: sigma_bare(3,3,nat)
   real(dp) :: sigma_diamagnetic(3,3,nat)
   real(dp) :: sigma_paramagnetic(3,3,nat)
+  real(dp) :: sigma_paramagnetic_us(3,3,nat)
+  real(dp) :: sigma_paramagnetic_aug(3,3,nat)
+
+  integer :: ik, ipol, jpol, i, ibnd, jbnd, isign, ispin
+  real(dp) :: tmp(3,3), q(3), k_plus_q(3), braket, cc
   complex(dp), external :: zdotc
+
   !-----------------------------------------------------------------------
-  
   ! allocate memory
-  allocate ( p_evc(npwx,nbnd,3), vel_evc(npwx,nbnd,3), &
-             aux(npwx,nbnd), g_vel_evc(npwx,nbnd,3) )
+  !-----------------------------------------------------------------------
+  allocate ( p_evc(npwx,nbnd,3), vel_evc(npwx,nbnd,3) )
+  allocate ( aux(npwx,nbnd), G_vel_evc(npwx,nbnd,3) )
+  if (okvan) allocate ( svel_evc(npwx,nbnd,3), u_svel_evc(npwx,nbnd,3) )
+
+  ! zero the f-sum rule
+  f_sum(:,:) = 0.d0
   
   ! zero the Q tensors
-  q_pGv(:,:,:) = 0.0_dp
-  q_vGv(:,:,:) = 0.0_dp
+  q_pGv(:,:,:) = 0.d0
+  q_vGv(:,:,:) = 0.d0
 
   ! zero the current and the field
-  j_bare(:,:,:,:) = (0.0_dp,0.0_dp)
-  b_ind(:,:,:) = (0.0_dp,0.0_dp)
+  j_bare(:,:,:,:) = (0.d0,0.d0)
+  b_ind(:,:,:) = (0.d0,0.d0)
   
-  sigma_diamagnetic = 0.0_dp
-  sigma_paramagnetic = 0.0_dp
-  
+  ! zero the chemical shift
+  sigma_bare = 0.d0
+  sigma_diamagnetic = 0.d0
+  sigma_paramagnetic = 0.d0
+  sigma_paramagnetic_us = 0.d0
+  sigma_paramagnetic_aug = 0.d0 
+
   write(stdout, '(5X,''Computing the magnetic susceptibility'',$)')
   write(stdout, '(5X,''isolve='',I1,4X,''ethr='',E10.4)') isolve, conv_threshold
   !====================================================================
@@ -102,82 +132,105 @@ SUBROUTINE suscept_crystal
     ! initialize at k-point k 
     call gk_sort(xk(1,ik), ngm, g, ecutwfc/tpiba2, npw, igk, g2kin)
     g2kin(:) = g2kin(:) * tpiba2
-    call init_us_2(npw,igk,xk(1,ik),vkb)
+    call init_us_2(npw, igk, xk(1,ik), vkb)
     
     ! read wfcs from file and compute becp
     call get_buffer (evc, nwordwfc, iunwfc, ik)
 
-    ! this is the case q = 0 (like the case of the f-sum rule)
-    q(:) = 0.0_dp
-    !!!write(*,'(''q='',3(F12.4))') q
-    call compute_u_kq(ik, q)
-    
-    !<apsi>
+    ! this is the case q = 0
+    q(:) = 0.d0
+
+    if (job /= 'f-sum') call compute_u_kq(ik, q)
     call init_gipaw_2_no_phase (npw, igk, xk (1, ik), paw_vkb)
-    !call ccalbec (paw_nkb, npwx, npw, nbnd, paw_becp, paw_vkb, evc)
     call calbec (npw, paw_vkb, evc, paw_becp)
+
+    ! compute the terms that do not depend on 'q':
+    ! 1. the diamagnetic contribution to the field: Eq.(58) of [1]
     diamagnetic_corr_tensor = 0.0d0
-    call diamagnetic_correction ( diamagnetic_corr_tensor )
+    call diamagnetic_correction (diamagnetic_corr_tensor)
     sigma_diamagnetic = sigma_diamagnetic + diamagnetic_corr_tensor
-    !</apsi>
-    
-    ! compute p_k|evc>, v_k|evc> and G_k v_{k,k}|evc>
+
+    ! 2. the paramagnetic US augmentation: Eq.(30) of [2]
+    if (okvan) then
+      paramagnetic_corr_tensor_aug = 0.d0
+      !!call paramagnetic_correction_aug (paramagnetic_corr_tensor_aug)
+      sigma_paramagnetic_aug = sigma_paramagnetic_aug + paramagnetic_corr_tensor_aug
+    endif
+
+    ! compute p_k|evc>, v_{k,k}|evc>, G_k v_{k,k}|evc> and s_{k,k}|evc>
     call apply_operators
-    
+
     !------------------------------------------------------------------
-    ! f-sum rule (pGv term only) 
+    ! f-sum rule
     !------------------------------------------------------------------
-    do ia = 1, 3 
-      do ib = 1, 3
+    do ipol = 1, 3 
+      do jpol = 1, 3
         do ibnd = 1, nbnd_occ(ik)
-          braket = 2.0_dp*real(zdotc(npw, p_evc(1,ibnd,ia), 1, &
-                                        g_vel_evc(1,ibnd,ib), 1), DP)
-          f_sum(ia,ib) = f_sum(ia,ib) + wg(ibnd,ik) * braket
+          ! this is the "p-G-v" term
+          braket = 2.d0*real(zdotc(npw, p_evc(1,ibnd,ipol), 1, G_vel_evc(1,ibnd,jpol), 1), dp)
+          f_sum(ipol,jpol) = f_sum(ipol,jpol) + wg(ibnd,ik) * braket
+
+          ! this is the "occ-occ" term
+          if (okvan) then
+              do jbnd = 1, nbnd_occ (ik)
+                 braket = - zdotc(npw, evc(1,ibnd), 1, p_evc(1,jbnd,ipol), 1) * &
+                            zdotc(npw, evc(1,jbnd), 1, svel_evc(1,ibnd,jpol), 1)
+                 f_sum(ipol,jpol) = f_sum(ipol,jpol) + wg(ibnd,ik) * braket
+              enddo
+         endif
         enddo
       enddo
     enddo
-    
+
     !------------------------------------------------------------------
     ! pGv and vGv contribution to chi_{bare}
     !------------------------------------------------------------------
-    do i = 1, 3
-      call add_to_tensor(q_pGv(:,:,0), p_evc, g_vel_evc)
-      call add_to_tensor(q_vGv(:,:,0), vel_evc, g_vel_evc)
-    enddo
+    if (job /= 'f-sum') then
+      do i = 1, 3
+        call add_to_tensor(q_pGv(:,:,0), p_evc, G_vel_evc)
+        call add_to_tensor(q_vGv(:,:,0), vel_evc, G_vel_evc)
+      enddo
+    endif
     
     !------------------------------------------------------------------
     ! loop over -q and +q
     !------------------------------------------------------------------
     do isign = -1, 1, 2
+      if (job == 'f-sum') continue
       
       ! loop over cartesian directions
       do i = 1, 3
         ! set the q vector
-        q(:) = 0.0_dp
+        q(:) = 0.d0
         q(i) = dble(isign) * q_gipaw
-        !!!write(*,'(''q='',3(F12.4))') q
         
         ! compute the wfcs at k+q
         call compute_u_kq(ik, q)
         
         ! compute p_k|evc>, v_k|evc> and G_{k+q} v_{k+q,k}|evc>
         call apply_operators
-        
-        !<apsi>
-        call init_gipaw_2_no_phase (npw, igk, xk(:,ik)+q(:), paw_vkb)
-        call paramagnetic_correction ( paramagnetic_corr_tensor )
-        call add_to_sigma_para ( paramagnetic_corr_tensor, sigma_paramagnetic )
-        !</apsi>
+      
+        k_plus_q(1:3) = xk(1:3,ik) + q(1:3)
+        call init_gipaw_2_no_phase(npw, igk, k_plus_q, paw_vkb)
+        call paramagnetic_correction(paramagnetic_corr_tensor, paramagnetic_corr_tensor_us, &
+             G_vel_evc, u_svel_evc, i)
+        call add_to_sigma_para(paramagnetic_corr_tensor, sigma_paramagnetic)
+        if (okvan) call add_to_sigma_para(paramagnetic_corr_tensor_us, sigma_paramagnetic_us)
         
         ! pGv and vGv contribution to chi_bare
-        call add_to_tensor(q_pGv(:,:,isign), p_evc, g_vel_evc)
-        call add_to_tensor(q_vGv(:,:,isign), vel_evc, g_vel_evc)
+        call add_to_tensor(q_pGv(:,:,isign), p_evc, G_vel_evc)
+        call add_to_tensor(q_vGv(:,:,isign), vel_evc, G_vel_evc)
         
-        ! now the j_bare term  
-        call add_to_current(j_bare(:,:,:,current_spin), evc, g_vel_evc)
-      enddo  ! i
-      
+        ! now the j_bare term 
+        call add_to_current(j_bare(:,:,:,current_spin), evc, G_vel_evc)
+        if (okvan) then
+          call apply_occ_occ_us
+          call add_to_current(j_bare(:,:,:,current_spin), evc, u_svel_evc)
+        endif
+
+      enddo  ! i=x,y,z
     enddo  ! isign
+
   enddo  ! ik
   
 #ifdef __PARA
@@ -189,12 +242,14 @@ SUBROUTINE suscept_crystal
   
 #ifdef __PARA
   ! reduce over k-points
-  call mp_sum( f_sum, inter_pool_comm)
-  call mp_sum( q_pGv, inter_pool_comm)
-  call mp_sum( q_vGv, inter_pool_comm)
-  call mp_sum( j_bare, inter_pool_comm)
-  call mp_sum( sigma_diamagnetic, inter_pool_comm)
-  call mp_sum( sigma_paramagnetic, inter_pool_comm)
+  call mp_sum( f_sum, inter_pool_comm )
+  call mp_sum( q_pGv, inter_pool_comm )
+  call mp_sum( q_vGv, inter_pool_comm )
+  call mp_sum( j_bare, inter_pool_comm )
+  call mp_sum( sigma_diamagnetic, inter_pool_comm )
+  call mp_sum( sigma_paramagnetic, inter_pool_comm )
+  call mp_sum( sigma_paramagnetic_us, inter_pool_comm )
+  call mp_sum( sigma_paramagnetic_aug, inter_pool_comm )
 #endif
   
   !====================================================================
@@ -211,7 +266,8 @@ SUBROUTINE suscept_crystal
   call symmatrix (f_sum)
   write(stdout, '(5X,''f-sum rule (symmetrized):'')')
   write(stdout, tens_fmt) f_sum
-  
+  if (job == 'f-sum') return
+
   ! F_{ij} = (2 - \delta_{ij}) Q_{ij}
   do ipol = 1, 3
     do jpol = 1, 3
@@ -263,14 +319,13 @@ SUBROUTINE suscept_crystal
   chi_bare_pGv(:,:) = chi_bare_pGv(:,:) / omega
   j_bare(:,:,:,:) = j_bare(:,:,:,:) * alpha &
        / ( 2.0_dp * q_gipaw * tpiba * omega )
-  
-  !nsym = 1
+
   ! either you symmetrize the current ...
   do ispin = 1, nspin
 #ifdef __PARA
-    call psymmetrize_field(j_bare(:,:,:,ispin),1)
+    call psymmetrize_field(j_bare(:,:,:,ispin), 1)
 #else
-    call symmetrize_field(j_bare(:,:,:,ispin),1)
+    call symmetrize_field(j_bare(:,:,:,ispin), 1)
 #endif
   enddo
 
@@ -279,6 +334,7 @@ SUBROUTINE suscept_crystal
     call biot_savart(ipol)
   enddo
 
+  ! write fields to disk
   do i = 1, nspin
     if (trim(filcurr) /= '') &
       call write_tensor_field(filcurr, i, j_bare(1,1,1,i))
@@ -289,36 +345,67 @@ SUBROUTINE suscept_crystal
   ! ... or you symmetrize the induced field
   !call symmetrize_field(b_ind_r,0)
   !call field_to_reciprocal_space
-  
-  ! compute chemical shifts
-  call compute_sigma_bare( chi_bare_pGv, sigma_bare )
-  
-  call compute_sigma_diamagnetic( sigma_diamagnetic )
-  
-  call compute_sigma_paramagnetic( sigma_paramagnetic )
 
-  call print_sigma_total(sigma_bare, sigma_paramagnetic, sigma_diamagnetic )
+  if (job == 'nmr') then
+    ! compute bare chemical shift and print all results
+    call compute_sigma_bare( chi_bare_pGv, sigma_bare )
+    call print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnetic, &
+                               sigma_paramagnetic_us, sigma_paramagnetic_aug)
+  endif
   
-  deallocate( p_evc, vel_evc, aux, g_vel_evc, j_bare, b_ind )
+  deallocate( p_evc, vel_evc, aux, G_vel_evc )
+  if (okvan) deallocate( svel_evc, u_svel_evc )
   
 CONTAINS
 
 
+
   !====================================================================
-  ! compute p_k|evc>, v_k|evc> and G_k v_{k+q,k}|evc>
+  ! compute p_k|evc>, v_{k+q,k}|evc>, G_{k+q} v_{k+q,k}|evc> and s_{k+q,k}|evc>
   !====================================================================
   SUBROUTINE apply_operators
-    implicit none
+    IMPLICIT NONE
     integer ipol
+
+    p_evc(:,:,:) = (0.d0,0.d0)
+    vel_evc(:,:,:) = (0.d0,0.d0)
+    svel_evc(:,:,:) = (0.d0,0.d0)
 
     do ipol = 1, 3
       call apply_p(evc, p_evc(1,1,ipol), ik, ipol, q)
       call apply_vel(evc, vel_evc(1,1,ipol), ik, ipol, q)
+      if (okvan) call apply_vel_NL('S', evc, svel_evc(1,1,ipol), ik, ipol, q)
       ! necessary because aux is overwritten by subroutine greenfunction
       aux(:,:) = vel_evc(:,:,ipol)
-      call greenfunction(ik, aux, g_vel_evc(1,1,ipol), q)
+      call greenfunction(ik, aux, G_vel_evc(1,1,ipol), q)
     enddo
   END SUBROUTINE apply_operators
+
+
+
+  !====================================================================
+  ! compute |evq><evq|s_{k+q,k}|evc>
+  !====================================================================
+  SUBROUTINE apply_occ_occ_us
+    IMPLICIT NONE
+    integer ipol
+    complex(dp), allocatable :: ps(:,:)
+
+    allocate( ps(nbnd,nbnd) )
+    do ipol = 1, 3
+      ps = (0.d0,0.d0)
+      aux(:,:) = svel_evc(:,:,ipol)
+      CALL ZGEMM('C', 'N', nbnd_occ(ik), nbnd_occ(ik), npw, &
+                (1.d0,0.d0), evq(1,1), npwx, aux(1,1), npwx, (0.d0,0.d0), &
+                ps(1,1), nbnd)
+      aux = (0.d0,0.d0)
+      CALL ZGEMM('N', 'N', npw, nbnd_occ(ik), nbnd_occ(ik), &
+                (-1.d0,0.d0), evq(1,1), npwx, ps(1,1), nbnd, (0.d0,0.d0), &
+                aux(1,1), npwx)
+      u_svel_evc(:,:,ipol) = aux(:,:)
+    enddo
+    deallocate(ps)
+  END SUBROUTINE apply_occ_occ_us
 
 
 
@@ -327,7 +414,7 @@ CONTAINS
   ! Q_{\alpha,\beta} += <(e_i \times ul)_\alpha | (e_i \times ur)_\beta>
   !====================================================================
   SUBROUTINE add_to_tensor(qt, ul, ur)
-    implicit none
+    IMPLICIT NONE
     real(dp), intent(inout) :: qt(3,3)
     complex(dp), intent(in) :: ul(npwx,nbnd,3), ur(npwx,nbnd,3)
     real(dp) :: braket
@@ -348,16 +435,13 @@ CONTAINS
 
         do ibnd = 1, nbnd_occ(ik)
           braket = real(zdotc(npw, ul(1,ibnd,comp_ia), 1, &
-                                   ur(1,ibnd,comp_ib), 1), DP)
+                                   ur(1,ibnd,comp_ib), 1), dp)
           qt(ia,ib) = qt(ia,ib) + wg(ibnd,ik) * &
                       braket * mult(ia,i) * mult(ib,i)
         enddo  ! ibnd
 
       enddo  ! ib
     enddo  ! ia
-!#ifdef __PARA
-!    call mp_sum( qt, intra_pool_comm )
-!#endif
   END SUBROUTINE add_to_tensor
 
 
@@ -367,7 +451,7 @@ CONTAINS
   ! j(r)_{\alpha,\beta} += <ul|J(r)|(B\times e_i \cdot ur)>
   !====================================================================
   SUBROUTINE add_to_current(j, ul, ur)
-    implicit none
+    IMPLICIT NONE
     real(dp), intent(inout) :: j(nrxxs,3,3)
     complex(dp), intent(in) :: ul(npwx,nbnd), ur(npwx,nbnd,3)
     real(dp) :: braket, fact
@@ -388,237 +472,12 @@ CONTAINS
   END SUBROUTINE add_to_current
   
 
-  !====================================================================
-  ! ...
-  !====================================================================
-  SUBROUTINE diamagnetic_correction ( diamagnetic_tensor )
-    
-    USE ions_base,      ONLY : nat, ityp, ntyp => nsp
-    USE gipaw_module,   ONLY : radial_integral_diamagnetic
-    
-    implicit none
-    
-    ! Arguments
-    real(dp), intent(inout):: diamagnetic_tensor(3,3,nat)
-
-    integer :: l1, m1, lm1, l2, m2, lm2, ih, ikb, nbs1, jh, jkb, nbs2
-    integer :: nt, ibnd, na, lm, nrc, ijkb0
-    complex(dp) , allocatable :: dia_corr(:,:)
-    complex(dp) :: bec_product
-    
-    allocate ( dia_corr(lmaxx**2,nat) )
-    dia_corr = 0.0_dp
-    
-    !
-    !  calculation of the reconstruction part
-    !
-    
-    do ibnd = 1, nbnd
-       ijkb0 = 0
-       do nt = 1, ntyp
-          do na = 1, nat
-             
-             if ( ityp(na) == nt ) then
-                do ih = 1, paw_recon(nt)%paw_nh
-                   ikb = ijkb0 + ih
-                   nbs1 = paw_recon(nt)%paw_indv(ih)
-                   l1 = paw_recon(nt)%paw_nhtol(ih)
-                   m1 = paw_recon(nt)%paw_nhtom(ih)
-                   lm1 = m1 + l1**2
-                   do jh = 1, paw_recon(nt)%paw_nh
-                      jkb = ijkb0 + jh
-                      nbs2 = paw_recon(nt)%paw_indv(jh)
-                      l2 = paw_recon(nt)%paw_nhtol(jh)
-                      m2 = paw_recon(nt)%paw_nhtom(jh)
-                      lm2=m2+l2**2 
-                      
-                      bec_product = paw_becp(jkb,ibnd) &
-                           * CONJG( paw_becp(ikb,ibnd) )
-                      
-                      !<apsi> s/non-trace-zero component
-                      ! 2/3 to separate the non-trace vanishing component
-                      ! 1/(2c^2) from the equation (59) in PM-PRB
-                      IF ( l1 == l2 .AND. m1 == m2 ) THEN
-                         diamagnetic_tensor(1,1,na) &
-                              = diamagnetic_tensor(1,1,na) &
-                              + 2.0_dp / 3.0_dp * bec_product &
-                              * radial_integral_diamagnetic(nbs1,nbs2,nt) &
-                              * wg(ibnd,ik) * alpha ** 2 / 2.0_dp
-                         diamagnetic_tensor(2,2,na) &
-                              = diamagnetic_tensor(2,2,na) &
-                              + 2.0_dp / 3.0_dp * bec_product &
-                              * radial_integral_diamagnetic(nbs1,nbs2,nt) &
-                              * wg(ibnd,ik) * alpha ** 2 / 2.0_dp
-                         diamagnetic_tensor(3,3,na) &
-                              = diamagnetic_tensor(3,3,na) &
-                              + 2.0_dp / 3.0_dp * bec_product &
-                              * radial_integral_diamagnetic(nbs1,nbs2,nt) &
-                              * wg(ibnd,ik) * alpha ** 2 / 2.0_dp
-                      END IF
-                      
-                      ! 2/3 to separate the non-trace vanishing component
-                      do lm = 5, 9
-                         dia_corr(lm,na) =  dia_corr(lm,na) &
-                              + bec_product / 3.0_dp &
-                              * radial_integral_diamagnetic(nbs1,nbs2,nt) &
-                              * ap(lm,lm1,lm2) * wg(ibnd,ik) * alpha ** 2 &
-                              / 2.0_dp
-                      enddo
-                   enddo
-                enddo
-                ijkb0 = ijkb0 + paw_recon(nt)%paw_nh
-             endif
-             
-          enddo
-       enddo
-    enddo
-    
-    if ( iverbosity > 20 ) then
-       write(6,'("DDD1",5F14.8)') dia_corr(5:9,1)
-       write(6,'("DDD2",5F14.8)') dia_corr(5:9,MAX(1,nat))
-    end if
-    
-    !
-    !  transform in cartesian coordinates
-    !
-    
-    dia_corr(5:9,:nat) = - sqrt(4.0_dp * pi/5.0_dp) * dia_corr(5:9,:nat)
-    
-    diamagnetic_tensor(1,1,:) = diamagnetic_tensor(1,1,:) &
-         + sqrt(3.0_dp) * dia_corr(8,:) - dia_corr(5,:)
-    diamagnetic_tensor(2,2,:) = diamagnetic_tensor(2,2,:) &
-         - sqrt(3.0_dp) * dia_corr(8,:) - dia_corr(5,:)
-    diamagnetic_tensor(3,3,:) = diamagnetic_tensor(3,3,:) &
-         + dia_corr(5,:) * 2.0_dp
-    diamagnetic_tensor(1,2,:) = diamagnetic_tensor(1,2,:) &
-         +  dia_corr(9,:) * sqrt(3.0_dp)
-    diamagnetic_tensor(2,1,:) = diamagnetic_tensor(1,2,:)
-    diamagnetic_tensor(1,3,:) = diamagnetic_tensor(1,3,:) &
-         - dia_corr(6,:) * sqrt(3.0_dp)
-    diamagnetic_tensor(3,1,:) = diamagnetic_tensor(1,3,:)
-    diamagnetic_tensor(2,3,:) = diamagnetic_tensor(2,3,:) &
-         - dia_corr(7,:) * sqrt(3.0_dp)
-    diamagnetic_tensor(3,2,:) = diamagnetic_tensor(2,3,:)
-    
-    ! dia_corr(5,:) = 3z^2-1
-    ! dia_corr(6,:) = -xz
-    ! dia_corr(7,:) = -yz
-    ! dia_corr(8,:) = x^2-y^2
-    ! dia_corr(9,:) = xy
-    
-    deallocate ( dia_corr )
-    
-  END SUBROUTINE diamagnetic_correction
-  
 
   !====================================================================
-  ! ...
+  ! Add contribution to current: Eq.(46) of [1]
   !====================================================================
-  SUBROUTINE paramagnetic_correction ( paramagnetic_tensor )
-    
-    USE ions_base,      ONLY : nat, ityp, ntyp => nsp
-    USE gipaw_module,   ONLY : lx, ly, lz, radial_integral_paramagnetic, &
-                              paw_becp2
-    
-    implicit none
-    
-    ! Arguments
-    real(dp), intent(inout):: paramagnetic_tensor(3,3,nat)
-    
-    integer :: l1, m1, lm1, l2, m2, lm2, ih, ikb, nbs1, jh, jkb, nbs2
-    integer :: nt, ibnd, na, lm, j, ijkb0, ipol
-    complex(dp) :: bec_product
-    complex(dp) , allocatable :: para_corr(:,:)
-    
-    integer, parameter :: ng_ = 27, lmax2_ = 16
-    integer :: mg, i1, i2, i3
-    real(DP) :: g_ (3, ng_), gg_ (ng_)
-    real(DP) :: ylm_ (ng_,lmax2_)
-    
-    !--------------------------------------------------------------------------
-    
-    allocate (para_corr(3,nat))
-    
-    !
-    !  calculation of the reconstruction part
-    !
-    
-    do ipol = 1, 3 
-       
-       if ( ipol == i ) cycle !TESTTESTTEST
-       
-       !call ccalbec (paw_nkb, npwx, npw, nbnd, paw_becp2, paw_vkb, &
-       !     g_vel_evc(1,1,ipol))
-       call calbec (npw, paw_vkb, g_vel_evc(:,:,ipol), paw_becp2)
-       
-       para_corr = 0.0_dp
-       
-       do ibnd = 1, nbnd
-          ijkb0 = 0
-          do nt = 1, ntyp
-             do na = 1, nat
-                
-                if (ityp (na) .eq.nt) then
-                   do ih = 1, paw_recon(nt)%paw_nh
-                      ikb = ijkb0 + ih
-                      nbs1 = paw_recon(nt)%paw_indv(ih)
-                      l1 = paw_recon(nt)%paw_nhtol(ih)
-                      m1 = paw_recon(nt)%paw_nhtom(ih)
-                      lm1 = m1 + l1**2
-                      
-                      do jh = 1, paw_recon(nt)%paw_nh
-                         jkb = ijkb0 + jh
-                         nbs2 = paw_recon(nt)%paw_indv(jh)
-                         l2 = paw_recon(nt)%paw_nhtol(jh)
-                         m2 = paw_recon(nt)%paw_nhtom(jh)
-                         lm2=m2+l2**2
-                         
-                         if ( l1 /= l2 ) cycle
-                         
-                         bec_product = CONJG(paw_becp(ikb,ibnd)) &
-                              * paw_becp2(jkb,ibnd)
-                         
-                         para_corr(1,na) = para_corr(1,na) &
-                              + bec_product &
-                              * radial_integral_paramagnetic(nbs1,nbs2,nt) &
-                              * lx ( lm1, lm2 ) * wg(ibnd,ik) * alpha ** 2
-                         para_corr(2,na) = para_corr(2,na) &
-                              + bec_product &
-                              * radial_integral_paramagnetic(nbs1,nbs2,nt) &
-                              * ly ( lm1, lm2 ) * wg(ibnd,ik) * alpha ** 2
-                         para_corr(3,na) = para_corr(3,na) &
-                              + bec_product &
-                              * radial_integral_paramagnetic(nbs1,nbs2,nt) &
-                              * lz ( lm1, lm2 ) * wg(ibnd,ik) * alpha ** 2
-                         
-                      enddo
-                   enddo
-                   ijkb0 = ijkb0 + paw_recon(nt)%paw_nh
-                endif
-             enddo
-          enddo
-       enddo
-       
-       paramagnetic_tensor ( :, ipol, : ) = REAL ( para_corr, dp )
-       
-       if ( iverbosity > 20 ) then
-          write(6,'("DDD1",2I3,3(F16.7,2X))') &
-               ipol, i*isign, REAL ( para_corr(1:3,1) ) * 1e6
-          write(6,'("DDD2",2I3,3(F16.7,2X))') &
-               ipol, i*isign, REAL ( para_corr(1:3,MAX(1,nat)) ) * 1e6
-       end if
-       
-    end do
-    
-    deallocate( para_corr )
-    
-  END SUBROUTINE paramagnetic_correction
-  
-  !====================================================================
-  ! ...
-  !====================================================================
-  SUBROUTINE add_to_sigma_para( paramagnetic_correction, sigma_paramagnetic )
-    implicit none
+  SUBROUTINE add_to_sigma_para(paramagnetic_correction, sigma_paramagnetic)
+    IMPLICIT NONE
     real(dp), intent(in) :: paramagnetic_correction(3,3,nat)
     real(dp), intent(inout) :: sigma_paramagnetic(3,3,nat)
     real(dp) :: fact
@@ -632,7 +491,7 @@ CONTAINS
     ! loop over B direction
     do ibdir = 1, 3
       if (i == ibdir) cycle
-      icomp = ind(ibdir, i)
+      icomp = ind(ibdir,i)
       fact = real(mult(ibdir,i)*isign)
       
       do ipol = 1, 3
@@ -640,21 +499,9 @@ CONTAINS
               = sigma_paramagnetic ( ipol, icomp, : ) &
               + fact * paramagnetic_correction ( ipol, ibdir, : ) &
               / ( 2 * q_gipaw * tpiba )
-         
-!   Do iq=1, 3    ! loop over all q-points
-!      ...
-!      Do iperm0 =1,-1,-2
-!         b0 = Mod(iq+iperm0+2,3) +1 ! gives different b0 for iperm0
-!         p0 = Mod(iq-iperm0+2,3) +1 ! gives p0 = abs(q x b0)
-!         ...
-!         Call take_nonloc_deriv_kq_k(p0,k_gspace, rk(1),u_k(1,i),&
-!         ...
-!         para_corr_shift_tot(b0,:,:,:) = para_corr_shift_tot(b0,:,:,:)-&
-!              Real(iperm0,dp)*Real(iqsign,dp)*para_corr_shift*&
-!              kpoints%w(irk)/qmag/dtwo/Real(crys%nspin,dp)
-         
       end do
     enddo
   END SUBROUTINE add_to_sigma_para
-  
+
+
 END SUBROUTINE suscept_crystal
