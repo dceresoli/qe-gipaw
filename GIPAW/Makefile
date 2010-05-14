@@ -17,21 +17,19 @@ h_psiq.o \
 cg_psi.o \
 symmetrize_field.o \
 ch_psi_all.o \
-test_sum_rule.o \
 compute_u_kq.o \
 suscept_crystal.o \
 j_para.o \
 biot_savart.o \
-compute_sigma.o \
 init_gipaw_1.o \
 init_gipaw_2.o \
 init_us_2_no_phase.o \
 g_tensor_crystal.o \
 write_tensor_field.o \
 velocity.o \
+nmr_routines.o \
 efg.o hyperfine.o core_relax.o \
 util.o ascheq.o
-
 
 QEMODS = ../Modules/libqemod.a
 EEOBJS=../EE/libee.a
