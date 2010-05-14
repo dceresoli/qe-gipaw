@@ -19,7 +19,7 @@ SUBROUTINE symmetrize_field(field, iflag)
   USE kinds,                           ONLY : DP
   USE cell_base,                       ONLY : at, bg
   USE symm_base,                       ONLY : s, nsym
-  USE symme,                           ONLY : crys_to_cart,cart_to_crys
+  USE symme,                           ONLY : crys_to_cart, cart_to_crys
   USE pwcom
   USE gipaw_module
 
@@ -34,7 +34,7 @@ SUBROUTINE symmetrize_field(field, iflag)
   integer :: i, ipol, jpol
 
   ! if no symmetries, return
-  if (nsym.eq.1) return
+  if (nsym <= 1) return
 
   ! cartesian to crystal
   do i = 1, nrx1s*nrx2s*nrx3s
@@ -101,19 +101,17 @@ SUBROUTINE psymmetrize_field(field, iflag)
 
   deallocate(aux)
 END SUBROUTINE psymmetrize_field
-!
+
 !---------------------------------------------------------------------
 subroutine syme2 (dvsym, iflag)
   !-------------------------------------------------------------------
-  !
-  !
-  use kinds, only : DP
-  USE symm_base, ONLY : s, nsym, ftau
-  USE symme, ONLY : crys_to_cart
+  use kinds,          ONLY : dp
+  USE symm_base,      ONLY : s, nsym, ftau
+  USE symme,          ONLY : crys_to_cart
   use pwcom
   implicit none
 
-  real(DP) :: dvsym (nrx1, nrx2, nrx3, 3, 3)
+  real(DP) :: dvsym (nrx1s,nrx2s,nrx3s, 3, 3)
   real(DP), allocatable :: aux (:,:,:,:,:)
   ! the function to symmetrize
   ! auxiliary space
@@ -126,16 +124,16 @@ subroutine syme2 (dvsym, iflag)
   real(dp) :: det(48), sc(3,3), d
 
   if (nsym.eq.1) return
-  allocate (aux(nrx1 , nrx2 , nrx3 , 3, 3))
+  allocate (aux(nrx1s,nrx2s,nrx3s,3,3))
 
-  call dcopy (nrx1 * nrx2 * nrx3 * 9, dvsym, 1, aux, 1)
+  call dcopy (nrx1s*nrx2s*nrx3s* 9, dvsym, 1, aux, 1)
   
   ! compute determinants of transformation matrixes
   do irot = 1, nsym
     if (iflag == 1) then  ! pseudo-tensor
       sc(:,:) = dble(s(:,:,irot))
       ! crystal to cartesian
-      call crys_to_cart ( sc )
+      call crys_to_cart (sc)
       d = sc(1,1)*sc(2,2)*sc(3,3) + &
           sc(1,2)*sc(2,3)*sc(3,1) + &
           sc(1,3)*sc(2,1)*sc(3,2) - &
@@ -152,12 +150,12 @@ subroutine syme2 (dvsym, iflag)
   !
   !  symmmetrize 
   !
-  do kx = 1, nr3
-  do jx = 1, nr2
-  do ix = 1, nr1
+  do kx = 1, nr3s
+  do jx = 1, nr2s
+  do ix = 1, nr1s
      do irot = 1, nsym
         call ruotaijk(s (1, 1, irot), ftau (1, irot), ix, jx, kx, &
-                      nr1, nr2, nr3, ri, rj, rk)
+                      nr1s, nr2s, nr3s, ri, rj, rk)
         !
         ! ruotaijk finds the rotated of ix,jx,kx with the inverse of S
         !
@@ -179,7 +177,7 @@ subroutine syme2 (dvsym, iflag)
   enddo
   enddo
 
-  call dscal (nrx1 * nrx2 * nrx3 * 9, 1.d0 / DBLE (nsym), dvsym , 1)
+  call dscal (nrx1s*nrx2s*nrx3s*9, 1.d0 / DBLE (nsym), dvsym , 1)
 
   deallocate (aux)
   return
