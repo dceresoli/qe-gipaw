@@ -71,6 +71,9 @@ MODULE gipaw_module
   ! macroscopic shape for the NMR
   LOGICAL :: use_nmr_macroscopic_shape
   REAL(DP) :: nmr_macroscopic_shape ( 3, 3 )
+
+  ! contribution to NMR chemical shift due to core contribution
+  REAL(dp) :: nmr_shift_core(ntypx)
   
   ! parametres for hyper-fine interaction
   CHARACTER ( LEN = 10 ) :: hfi_input_unit
@@ -85,7 +88,7 @@ MODULE gipaw_module
   CHARACTER(256) :: file_reconstruction ( ntypx )
   LOGICAL :: read_recon_in_paratec_fmt
   REAL(dp) :: rc(ntypx,0:lmaxx)
-  COMPLEX(dp), ALLOCATABLE :: paw_becp2 ( :, : )
+  COMPLEX(dp), ALLOCATABLE :: paw_becp2(:,:), paw_becp3(:,:)
   REAL(dp), ALLOCATABLE, DIMENSION ( :, : ) :: lx, ly, lz
   REAL(dp), ALLOCATABLE :: radial_integral_paramagnetic(:,:,:)
   REAL(dp), ALLOCATABLE :: radial_integral_diamagnetic(:,:,:)
@@ -94,8 +97,6 @@ MODULE gipaw_module
   REAL(dp), ALLOCATABLE :: radial_integral_rmc(:,:,:)
   !<apsi>
   
-  ! contribution to NMR chemical shift due to core contribution
-  REAL ( dp ) :: nmr_shift_core(ntypx)
   
 CONTAINS
   
@@ -461,6 +462,7 @@ CONTAINS
     allocate ( paw_vkb(npwx,paw_nkb) )
     allocate ( paw_becp(paw_nkb,nbnd) )
     allocate ( paw_becp2(paw_nkb,nbnd) )
+    allocate ( paw_becp3(paw_nkb,nbnd) )
     
     allocate ( radial_integral_diamagnetic(paw_nkb,paw_nkb,ntypx) )
     allocate ( radial_integral_paramagnetic(paw_nkb,paw_nkb,ntypx) )
@@ -499,9 +501,9 @@ CONTAINS
              CALL simpson( nrc, work, rgrid(nt)%rab(:nrc), &
                   radial_integral_diamagnetic(il1,il2,nt) )
              if (iverbosity > 10) then
-                write(stdout,*) "DIA (NMR) :", nt, l1, l2, &
-                     radial_integral_diamagnetic(il1,il2,nt) &
-                     * alpha ** 2 * 1e6 * 4
+               if (il1 >= il2) &
+                 write(stdout,'(''DIA (NMR) :'',I3,4X,2I3,2X,F14.4)') nt, l1, l2, &
+                       radial_integral_diamagnetic(il1,il2,nt)
              end if
              
              !
@@ -520,9 +522,9 @@ CONTAINS
              call simpson( nrc, work, rgrid(nt)%rab(:nrc), &
                   radial_integral_paramagnetic(il1,il2,nt) )
              if (iverbosity > 10) then
-                write(stdout,*) "PARA (NMR):", nt, l1, l2, &
-                     radial_integral_paramagnetic(il1,il2,nt) &
-                     * alpha ** 2 * 1e6 * 4
+               if (il1 >= il2) &
+                 write(stdout,'(''PARA (NMR):'',I3,4X,2I3,2X,F14.4)') nt, l1, l2, &
+                       radial_integral_paramagnetic(il1,il2,nt)
              end if
              
              ! Calculate the radial integral only if the radial potential
@@ -547,7 +549,8 @@ CONTAINS
              CALL simpson ( nrc, work, rgrid(nt)%rab(:nrc), &
                   radial_integral_rmc(il1,il2,nt) )
              if (iverbosity > 10) then
-                write(stdout,*) "RMC (SO)  :", nt, l1, l2, &
+               if (il1 >= il2) &
+                 write(stdout,'(''RMC (SO)  :'',I3,4X,2I3,2X,F14.4)') nt, l1, l2, &
                      radial_integral_rmc(il1,il2,nt)
              end if
              
@@ -573,8 +576,9 @@ CONTAINS
              call simpson( nrc, work, rgrid(nt)%rab(:nrc), &
                   radial_integral_diamagnetic_so(il1,il2,nt) )
              if (iverbosity > 10) then
-                write(stdout,*) "DIA (SO)  :", nt, l1, l2, &
-                     radial_integral_diamagnetic_so(il1,il2,nt) * alpha
+               if (il1 >= il2) &
+                 write(stdout,'(''DIA (SO)  :'',I3,4X,2I3,2X,F14.4)') nt, l1, l2, &
+                       radial_integral_diamagnetic_so(il1,il2,nt)
              end if
              
              !
@@ -598,9 +602,10 @@ CONTAINS
              
              call simpson( nrc,work,rgrid(nt)%rab(:nrc), &
                   radial_integral_paramagnetic_so(il1,il2,nt) )
-             if ( iverbosity > 10 ) then
-                write(stdout,*) "PARA (SO) :", nt, l1, l2, &
-                     radial_integral_paramagnetic_so(il1,il2,nt) * alpha
+             if (iverbosity > 10) then
+               if (il1 >= il2) &
+                 write(stdout,'(''PARA (SO) :'',I3,4X,2I3,2X,F14.4)') nt, l1, l2, &
+                       radial_integral_paramagnetic_so(il1,il2,nt)
              end if
              
              DEALLOCATE ( aephi_dvloc_dr, psphi_dvloc_dr )
@@ -750,7 +755,8 @@ CONTAINS
        nmr_shift_core(nt) = nmr_shift_core(nt) * 17.75045395 * 1e-6
        
     END DO
-    
+
+#if 0    
     WRITE ( stdout, '()' )
     DO nt = 1, ntyp
        IF ( paw_recon(nt)%gipaw_ncore_orbital == 0 ) THEN
@@ -765,6 +771,7 @@ CONTAINS
        END IF
     END DO
     WRITE ( stdout, '()' )
+#endif
     
     ! computes the total local potential (external+scf) on the smooth grid
     call setlocal

@@ -54,7 +54,7 @@ subroutine init_gipaw_1
   integer :: n_overlap_warnings
   
   real(DP), allocatable :: xdata(:)
-  real(DP) :: d1, scaling_factor
+  real(DP) :: d1
   
   call start_clock ('init_gipaw_1')
   !
@@ -127,7 +127,7 @@ subroutine init_gipaw_1
         nrc = COUNT ( rgrid(nt)%r(1:msh(nt)) <= rc )
         nrs = COUNT ( rgrid(nt)%r(1:msh(nt)) <= rs )
         !<debug>
-!        write(stdout,*) "ZZZ: ", rc, rs, nrc, nrs
+        write(stdout,'(5X,''init_paw_1: ntyp='',I2,''  rc='',F10.4,''  rs='',F10.4)') nt, rc, rs
         !</debug>
         IF ( nrc < 1 .OR. nrc > msh(nt) ) &
              CALL errore ( "init_gipaw_1", "impossible value for nrc", 1 )
@@ -137,14 +137,6 @@ subroutine init_gipaw_1
         paw_recon(nt)%aephi(j)%label%nrc = nrc
         paw_recon(nt)%psphi(j)%label%nrs = nrs
         paw_recon(nt)%aephi(j)%label%nrs = nrs
-        
-        !<apsi> Scaling removed
-        !scaling_factor = paw_recon(nt)%aephi(j)%psi(nrc) &
-        !     / paw_recon(nt)%psphi(j)%psi(nrc)
-        !paw_recon(nt)%psphi(j)%psi(:) = paw_recon(nt)%psphi(j)%psi(:) &
-        !     * scaling_factor
-        !</apsi>
-        
         call step_f ( aux, paw_recon(nt)%psphi(j)%psi**2, rgrid(nt)%r(:), &
              nrs, nrc, pow, msh(nt) )
         call simpson ( msh(nt), aux, rgrid(nt)%rab, norm )
