@@ -65,3 +65,20 @@ SUBROUTINE select_spin(s_min, s_maj)
 
 END SUBROUTINE select_spin
 
+
+
+! Trace
+SUBROUTINE trace(n, a, tr)
+  USE kinds,        ONLY : dp
+  IMPLICIT NONE
+  integer, intent(in) :: n
+  real(dp), intent(in) :: a(n,n)
+  real(dp), intent(out) :: tr
+  integer :: i
+
+  tr = 0.d0
+  do i = 1, n
+    tr = tr + a(i,i)
+  enddo
+END SUBROUTINE trace
+  
