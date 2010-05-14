@@ -71,15 +71,15 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
 #endif
 
   ! this is the case with overlap (ultrasoft)
-  ! g_psi is used as work space to store S|evc>
-  CALL calbec (npw, vkb, evc, becp)
-  CALL s_psi (npwx, npw, nbnd_occ(ik), evc, g_psi)
-  ! |psi> = -(|psi> - S|evc><evc|psi>)
+  ! g_psi is used as work space to store S|evq>
+  ! |psi> = -(|psi> - S|evq><evq|psi>)
+  CALL calbec (npw, vkb, evq, becp)
+  CALL s_psi (npwx, npw, nbnd_occ(ik), evq, g_psi)
   CALL zgemm( 'N', 'N', npw, nbnd_occ(ik), nbnd_occ(ik), &
        (1.d0,0.d0), g_psi(1,1), npwx, ps(1,1), nbnd, (-1.d0,0.d0), &
        psi(1,1), npwx )
 
-  !! this is the old code for norm-conserving
+  !! this is the old code for norm-conserving:
   !! |psi> = -(1 - |evq><evq|) |psi>
   !!CALL zgemm('N', 'N', npw, nbnd_occ(ik), nbnd_occ(ik), &
   !!           (1.d0,0.d0), evq(1,1), npwx, ps(1,1), nbnd, (-1.d0,0.d0), &
