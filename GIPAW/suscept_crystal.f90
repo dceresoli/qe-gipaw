@@ -212,11 +212,7 @@ SUBROUTINE suscept_crystal
       
         k_plus_q(1:3) = xk(1:3,ik) + q(1:3)
         call init_gipaw_2_no_phase(npw, igk, k_plus_q, paw_vkb)
-        call paramagnetic_correction(paramagnetic_corr_tensor, paramagnetic_corr_tensor_us, &
-             G_vel_evc, u_svel_evc, i)
-        call add_to_sigma_para(paramagnetic_corr_tensor, sigma_paramagnetic)
-        if (okvan) call add_to_sigma_para(paramagnetic_corr_tensor_us, sigma_paramagnetic_us)
-        
+
         ! pGv and vGv contribution to chi_bare
         call add_to_tensor(q_pGv(:,:,isign), p_evc, G_vel_evc)
         call add_to_tensor(q_vGv(:,:,isign), vel_evc, G_vel_evc)
@@ -227,6 +223,12 @@ SUBROUTINE suscept_crystal
           call apply_occ_occ_us
           call add_to_current(j_bare(:,:,:,current_spin), evc, u_svel_evc)
         endif
+
+        ! paramagnetic terms
+        call paramagnetic_correction(paramagnetic_corr_tensor, paramagnetic_corr_tensor_us, &
+             G_vel_evc, u_svel_evc, i)
+        call add_to_sigma_para(paramagnetic_corr_tensor, sigma_paramagnetic)
+        if (okvan) call add_to_sigma_para(paramagnetic_corr_tensor_us, sigma_paramagnetic_us)
 
       enddo  ! i=x,y,z
     enddo  ! isign
@@ -257,6 +259,10 @@ SUBROUTINE suscept_crystal
   !====================================================================
   write(stdout,'(5X,''End of magnetic susceptibility calculation'')')
   write(stdout,*)
+
+  ! free memory as soon as possible
+  deallocate( p_evc, vel_evc, aux, G_vel_evc )
+  if (okvan) deallocate( svel_evc, u_svel_evc )
   
   ! f-sum rule
   if (iverbosity > 0) then
@@ -353,8 +359,6 @@ SUBROUTINE suscept_crystal
                                sigma_paramagnetic_us, sigma_paramagnetic_aug)
   endif
   
-  deallocate( p_evc, vel_evc, aux, G_vel_evc )
-  if (okvan) deallocate( svel_evc, u_svel_evc )
   
 CONTAINS
 
