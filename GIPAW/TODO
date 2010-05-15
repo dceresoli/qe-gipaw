@@ -3,12 +3,10 @@ TODO
 - NMR for metals: orbital shift
 - NMR for metals: Knight shift
 - Ultrasoft
-- port converse-NMR and converse-EPR
-- speedup CG solver
 - linear-response with LDA+U
+- hyperfine: ZORA
 - molecular method (no q-points)
-- hyperfine: merge core-relaxation into CVS, test ZORA
-- merge routines from my old 3.2 version
+- port converse-NMR and converse-EPR
 
 
 DONE
@@ -16,5 +14,5 @@ DONE
 - f-sum rule works with ultrasoft PP's
 - EFG cleaned
 - hyperfine cleaned
-
+- hyperfine core-relaxation
 

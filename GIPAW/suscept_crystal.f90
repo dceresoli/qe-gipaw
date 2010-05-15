@@ -153,7 +153,7 @@ SUBROUTINE suscept_crystal
     ! 2. the paramagnetic US augmentation: Eq.(30) of [2]
     if (okvan) then
       paramagnetic_corr_tensor_aug = 0.d0
-      !!call paramagnetic_correction_aug (paramagnetic_corr_tensor_aug)
+      call paramagnetic_correction_aug (paramagnetic_corr_tensor_aug)
       sigma_paramagnetic_aug = sigma_paramagnetic_aug + paramagnetic_corr_tensor_aug
     endif
 
@@ -402,11 +402,12 @@ CONTAINS
       CALL ZGEMM('C', 'N', nbnd_occ(ik), nbnd_occ(ik), npw, &
                 (1.d0,0.d0), evq(1,1), npwx, aux(1,1), npwx, (0.d0,0.d0), &
                 ps(1,1), nbnd)
+      ! mp_sum(ps) ??
       aux = (0.d0,0.d0)
       CALL ZGEMM('N', 'N', npw, nbnd_occ(ik), nbnd_occ(ik), &
-                (-1.d0,0.d0), evq(1,1), npwx, ps(1,1), nbnd, (0.d0,0.d0), &
+                (1.d0,0.d0), evq(1,1), npwx, ps(1,1), nbnd, (0.d0,0.d0), &
                 aux(1,1), npwx)
-      u_svel_evc(:,:,ipol) = aux(:,:)
+      u_svel_evc(:,:,ipol) = -aux(:,:)
     enddo
     deallocate(ps)
   END SUBROUTINE apply_occ_occ_us

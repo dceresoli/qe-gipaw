@@ -213,173 +213,182 @@ SUBROUTINE diamagnetic_correction (diamagnetic_tensor)
 END SUBROUTINE diamagnetic_correction
 
 
-#if 0
 !====================================================================
-! Ultrasoft contribution to the current: Eq.(??) of [2]
+! Ultrasoft augmentation (L_R Q_R) contribution to the bare and
+! paramagnetic current
 !====================================================================
-  SUBROUTINE para_aug_correction (paug_corr_tensor)
-    USE ions_base,      ONLY : nat, ityp, ntyp => nsp
-    USE gipaw_module,   ONLY : lx, ly, lz, radial_integral_paramagnetic, &
-                               j_bare,q_gipaw,alpha,nbnd_occ
-    USE becmod,          ONLY : allocate_bec_type, deallocate_bec_type  
-    USE uspp,           ONLY : qq,vkb,nkb 
-    USE uspp_param,     ONLY : nh
-    USE wvfct,          ONLY : g2kin
-    USE cell_base,      ONLY : tpiba,omega
-    USE klist,          ONLY : xk
-    USE gvect,          ONLY : g
-    IMPLICIT NONE
-    ! Arguments
-    real(dp), intent(inout) :: paug_corr_tensor(3,3,nat)
-    complex(dp), allocatable::pcorr_jpaug(:,:) 
-    integer ::ibnd,ijkb0,nt,na,ih,ikb,jh,jkb,ig,ipol,jpol,kpol,kfac 
-    integer :: nbs1,nbs2,l1,l2,m1,m2,lm1,lm2
-    complex(dp) , allocatable :: ps(:,:) !1st part
-    complex(dp) , allocatable ::dvkbj(:,:),dvkby(:,:),Lp(:,:,:)!2nd part
-    real(DP), allocatable  :: gk (:,:), gg(:,:)
-    complex(dp) , allocatable :: LQ(:,:,:) !3rd part
-    complex(dp) , allocatable :: aux1(:,:),aux2(:,:),paw_becp_gLQ(:,:)
-    complex(dp) , allocatable :: g_LQ_evc(:,:,:),becp2(:,:)
-    complex(dp) :: cc,bec_product
-    real(dp) :: epsi(3,3), xyz(3,3),emine_q(3),dvkb_dir(3),ffact
-    DATA epsi/0.d0,-3.d0,2.d0,3.d0,0.d0,-1.d0,-2.d0,1.d0,0.d0/, &
-         xyz/1.d0,0.d0,0.d0,0.d0,1.d0,0.d0,0.d0,0.d0,1.d0/
-    !calculating ps = q_{ji}<p_i|u>
-    
-    emine_q(1)=0.d0; emine_q(2)=0.d0;emine_q(3)=0.d0
+SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor)
+  USE kinds,                  ONLY : dp
+  USE ions_base,              ONLY : nat, ityp, ntyp => nsp
+  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, current_k
+  USE lsda_mod,               ONLY : current_spin
+  USE wavefunctions_module,   ONLY : evc
+  USE becmod,                 ONLY : calbec, allocate_bec_type, deallocate_bec_type
+  USE constants,              ONLY : pi
+  USE parameters,             ONLY : lmaxx
+  USE uspp,                   ONLY : ap
+  USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
+  USE gipaw_module,           ONLY : lx, ly, lz, radial_integral_paramagnetic, &
+                                     j_bare, q_gipaw, alpha, nbnd_occ, iverbosity
+  USE uspp,                   ONLY : qq, vkb, nkb 
+  USE uspp_param,             ONLY : nh
+  USE cell_base,              ONLY : tpiba, omega
+  USE klist,                  ONLY : xk
+  USE gvect,                  ONLY : g
 
-    allocate( ps( nkb, nbnd ), becp2(nkb,nbnd) )
-    
-    call init_us_2 (npw, igk, xk(:,ik), vkb)
-    call calbec (npwx, vkb, evc, becp2, nbnd)
-    ps(:,:) = (0.d0, 0.d0)
+  !-- parameters --------------------------------------------------------
+  IMPLICIT NONE
+  real(dp), intent(inout) :: paug_corr_tensor(3,3,nat)
 
-    ijkb0 = 0 
-    do nt = 1, ntyp
-       do na = 1, nat
-          if (ityp (na) .eq.nt) then
-             do ibnd = 1, nbnd
-                do ih = 1, nh(nt) 
-                   ikb = ijkb0 + ih
-                   do jh = 1, nh(nt)
-                      jkb = ijkb0 + jh  
-                      ps(jkb, ibnd) = ps(jkb, ibnd) + qq(jh,ih,nt) * becp2(ikb,ibnd)
-                   enddo ! jh
-                enddo ! ih
-             enddo ! nbnd
-             ijkb0 = ijkb0 + nh(nt)
-          endif ! ityp(na)==nt
-       enddo ! nat
-    enddo ! ntyp
+  !-- local variables ----------------------------------------------------
+  complex(dp), allocatable::pcorr_jpaug(:,:) 
+  integer ::ibnd,ijkb0,nt,na,ih,ikb,jh,jkb,ig,ipol,jpol,kpol,kfac 
+  integer :: nbs1,nbs2,l1,l2,m1,m2,lm1,lm2, ik
+  complex(dp) , allocatable :: ps(:,:) !1st part
+  complex(dp) , allocatable ::dvkbj(:,:),dvkby(:,:),Lp(:,:,:)!2nd part
+  real(DP), allocatable  :: gk (:,:), gg(:,:)
+  complex(dp) , allocatable :: LQ(:,:,:) !3rd part
+  complex(dp) , allocatable :: aux1(:,:),aux2(:,:),paw_becp_gLQ(:,:)
+  complex(dp) , allocatable :: g_LQ_evc(:,:,:),becp2(:,:)
+  complex(dp) :: cc,bec_product
+  real(dp) :: epsi(3,3), xyz(3,3),emine_q(3),dvkb_dir(3),ffact
+  DATA epsi/0.d0,-3.d0,2.d0,3.d0,0.d0,-1.d0,-2.d0,1.d0,0.d0/, &
+       xyz/1.d0,0.d0,0.d0,0.d0,1.d0,0.d0,0.d0,0.d0,1.d0/
+  !calculating ps = q_{ji}<p_i|u>
+  
+  emine_q(1)=0.d0; emine_q(2)=0.d0;emine_q(3)=0.d0
 
-    ! now we have ps (nkb x nbnd)
-    !calculating L|p> = eps(abc)r_b p_c |p> dir_a = eps(abc)p_c r_b|p>
-    !                 = eps(abc)p_c (d|p>/dk_b) (derivative wrt k_b)
-    !                 = eps(abc)(k+G)_c(d|p>/dk_b) (check the p part again later)
-    allocate(dvkbj(npwx,nkb), dvkby(npwx,nkb), Lp(npwx,nkb,3))
-    allocate(gk(3,npwx),gg (3,npwx))
-    dvkbj(:,:) = (0.d0,0.d0); dvkby(:,:) = (0.d0,0.d0);Lp(:,:,:) = (0.d0,0.d0)
-    gk(:,:) = 0.d0; gg(:,:) = 0.d0
-    do ig = 1,npw
-       gk(1:3,ig)=(xk(1:3,ik)+g(1:3,igk(ig)))*tpiba
-       g2kin(ig) = SUM (gk(1:3,ig)**2)
-       if(g2kin (ig) < 1.0d-10) then
-         gg (:, ig) = 0.d0
-       else
-         gg (1:3,ig) = gk (1:3,ig) / sqrt(g2kin(ig))
-       endif
-    enddo
-    !write(*,*)"ok 2.2"
-    call gen_us_dj(ik,dvkbj)
-    do ipol = 1,3
-       dvkb_dir(:)= xyz(:,ipol)
-       call gen_us_dy(ik,dvkb_dir, dvkby)
-       do jpol = 1,3
-          kpol = int(abs(epsi(ipol,jpol)))
-          if(kpol.eq.0)cycle
-          kfac = int(epsi(ipol,jpol)/kpol)
-          ijkb0 =0
-          do nt = 1,ntyp
-             do na = 1,nat
-                if (nt==ityp(na)) then
-                   do ikb = 1, nh(nt)
-                      ijkb0 = ijkb0+1
-                      do ig = 1,npw
-                         Lp(ig,ijkb0,kpol)=Lp(ig,ijkb0,kpol)+ &
-                                  (dvkby(ig,ijkb0) + dvkbj(ig,ijkb0) &
-                                   *gg(ipol,ig))*gk(jpol,ig)*kfac
-                      enddo!npw
-                   enddo !ikb
-                endif !ityp(na)=nt
-             enddo !na
-          enddo !nt
-       enddo !jpol
-    enddo !ipol 
-    ! now we have both ps and Lp (npwx x nkb,3)
-    ! we can construct LQ = LQ|u> = L|p>q<p|u>
-    
-    allocate (LQ(npwx,nbnd,3))
-    LQ(:,:,:) = (0.d0,0.d0)
-    do kpol = 1,3
-          call zgemm ('N', 'N', npwx, nbnd, nkb, &
-              (1.d0,0.d0),Lp(:,:,kpol), npwx, ps, nkb, (1.d0,0.d0), &
-              LQ(1,1,kpol), npwx )
-    enddo  
-    ! now we have LQ (npw,nbnd)  
-    !apply Greens function
-    allocate(aux1(npwx,nbnd),aux2 (npwx,nbnd),pcorr_jpaug(3,nat))
-    allocate(g_LQ_evc(npwx,nbnd,3),paw_becp_gLQ(paw_nkb,nbnd))
-    do kpol = 1,3
-       pcorr_jpaug(:,:) = (0.0d0,0.d0)
-       aux1(:,:) = (0.d0,0.d0);aux2(:,:) = (0.d0,0.d0)
-       aux1(:,:) = LQ(:,:,kpol)!coz it changes in gf
-       call greenfunction(ik,aux1, aux2 ,0.d0)
-       g_LQ_evc(:,:,kpol) = aux2(:,:)
-       call calbec (npwx, paw_vkb , aux2 ,paw_becp_gLQ)
-       do ibnd = 1, nbnd
-          ijkb0 = 0
-          do nt = 1 , ntyp
-                do na = 1, nat
-                   if(ityp(na).eq.nt) then
-                     do ih = 1, paw_recon(nt)%paw_nh
-                        ikb = ijkb0 + ih
-                        nbs1 = paw_recon(nt)%paw_indv(ih);l1 = paw_recon(nt)%paw_nhtol(ih)
-                        m1 = paw_recon(nt)%paw_nhtom(ih); lm1 = m1 + l1**2
-                        do jh = 1, paw_recon(nt)%paw_nh
-                           jkb = ijkb0 + jh
-                           nbs2 = paw_recon(nt)%paw_indv(jh);l2 = paw_recon(nt)%paw_nhtol(jh)
-                           m2 = paw_recon(nt)%paw_nhtom(jh);lm2=m2+l2**2
-                           if(l1 /= l2) cycle !not sure of this..
-                           bec_product = conjg(paw_becp(ikb,ibnd))*paw_becp_gLQ(jkb,ibnd)
-                           cc = bec_product*radial_integral_paramagnetic(nbs1,nbs2,nt) &
-                                * wg(ibnd,ik)* alpha ** 2
-                           pcorr_jpaug(1,na) = pcorr_jpaug(1,na) + cc * lx ( lm1, lm2 )
-                           pcorr_jpaug(2,na) = pcorr_jpaug(2,na) + cc * ly ( lm1, lm2 )
-                           pcorr_jpaug(3,na) = pcorr_jpaug(3,na) + cc * lz ( lm1, lm2 )
-                        enddo !jh
-                     enddo !ih
-                     ijkb0 = ijkb0 + paw_recon(nt)%paw_nh
-                   endif !ityp(na)==nt
-               enddo ! nat
-          enddo !ntyp 
-       enddo !bands        
-       paug_corr_tensor(:,kpol,:) = REAL (pcorr_jpaug(:,:), dp)
-       if ( iverbosity > 20 ) then
-          write(6,'("PARA_AUG",1I3,3(F16.7,2X))') &
-               kpol,  REAL ( pcorr_jpaug(1:3,1) ) * 1e6
-       endif
-    enddo !kpol   
+  allocate( ps( nkb, nbnd ), becp2(nkb,nbnd) )
+  ik = current_k
+  
+  call init_us_2 (npw, igk, xk(:,ik), vkb)
+  call calbec (npwx, vkb, evc, becp2, nbnd)
+  ps(:,:) = (0.d0, 0.d0)
+
+  ijkb0 = 0 
+  do nt = 1, ntyp
+     do na = 1, nat
+        if (ityp (na) .eq.nt) then
+           do ibnd = 1, nbnd
+              do ih = 1, nh(nt) 
+                 ikb = ijkb0 + ih
+                 do jh = 1, nh(nt)
+                    jkb = ijkb0 + jh  
+                    ps(jkb, ibnd) = ps(jkb, ibnd) + qq(jh,ih,nt) * becp2(ikb,ibnd)
+                 enddo ! jh
+              enddo ! ih
+           enddo ! nbnd
+           ijkb0 = ijkb0 + nh(nt)
+        endif ! ityp(na)==nt
+     enddo ! nat
+  enddo ! ntyp
+
+  ! now we have ps (nkb x nbnd)
+  !calculating L|p> = eps(abc)r_b p_c |p> dir_a = eps(abc)p_c r_b|p>
+  !                 = eps(abc)p_c (d|p>/dk_b) (derivative wrt k_b)
+  !                 = eps(abc)(k+G)_c(d|p>/dk_b) (check the p part again later)
+  allocate(dvkbj(npwx,nkb), dvkby(npwx,nkb), Lp(npwx,nkb,3))
+  allocate(gk(3,npwx),gg (3,npwx))
+  dvkbj(:,:) = (0.d0,0.d0); dvkby(:,:) = (0.d0,0.d0);Lp(:,:,:) = (0.d0,0.d0)
+  gk(:,:) = 0.d0; gg(:,:) = 0.d0
+  do ig = 1,npw
+     gk(1:3,ig)=(xk(1:3,ik)+g(1:3,igk(ig)))*tpiba
+     g2kin(ig) = SUM (gk(1:3,ig)**2)
+     if(g2kin (ig) < 1.0d-10) then
+       gg (:, ig) = 0.d0
+     else
+       gg (1:3,ig) = gk (1:3,ig) / sqrt(g2kin(ig))
+     endif
+  enddo
+  !write(*,*)"ok 2.2"
+  call gen_us_dj(ik,dvkbj)
+  do ipol = 1,3
+     dvkb_dir(:)= xyz(:,ipol)
+     call gen_us_dy(ik,dvkb_dir, dvkby)
+     do jpol = 1,3
+        kpol = int(abs(epsi(ipol,jpol)))
+        if(kpol.eq.0)cycle
+        kfac = int(epsi(ipol,jpol)/kpol)
+        ijkb0 =0
+        do nt = 1,ntyp
+           do na = 1,nat
+              if (nt==ityp(na)) then
+                 do ikb = 1, nh(nt)
+                    ijkb0 = ijkb0+1
+                    do ig = 1,npw
+                       Lp(ig,ijkb0,kpol)=Lp(ig,ijkb0,kpol)+ &
+                                (dvkby(ig,ijkb0) + dvkbj(ig,ijkb0) &
+                                 *gg(ipol,ig))*gk(jpol,ig)*kfac
+                    enddo!npw
+                 enddo !ikb
+              endif !ityp(na)=nt
+           enddo !na
+        enddo !nt
+     enddo !jpol
+  enddo !ipol 
+  ! now we have both ps and Lp (npwx x nkb,3)
+  ! we can construct LQ = LQ|u> = L|p>q<p|u>
+  
+  allocate (LQ(npwx,nbnd,3))
+  LQ(:,:,:) = (0.d0,0.d0)
+  do kpol = 1,3
+        call zgemm ('N', 'N', npwx, nbnd, nkb, &
+            (1.d0,0.d0),Lp(:,:,kpol), npwx, ps, nkb, (1.d0,0.d0), &
+            LQ(1,1,kpol), npwx )
+  enddo  
+  ! now we have LQ (npw,nbnd)  
+  !apply Greens function
+  allocate(aux1(npwx,nbnd),aux2 (npwx,nbnd),pcorr_jpaug(3,nat))
+  allocate(g_LQ_evc(npwx,nbnd,3),paw_becp_gLQ(paw_nkb,nbnd))
+  do kpol = 1,3
+     pcorr_jpaug(:,:) = (0.0d0,0.d0)
+     aux1(:,:) = (0.d0,0.d0);aux2(:,:) = (0.d0,0.d0)
+     aux1(:,:) = LQ(:,:,kpol)!coz it changes in gf
+     call greenfunction(ik,aux1, aux2 ,0.d0)
+     g_LQ_evc(:,:,kpol) = aux2(:,:)
+     call calbec (npwx, paw_vkb , aux2 ,paw_becp_gLQ)
+     do ibnd = 1, nbnd
+        ijkb0 = 0
+        do nt = 1 , ntyp
+              do na = 1, nat
+                 if(ityp(na).eq.nt) then
+                   do ih = 1, paw_recon(nt)%paw_nh
+                      ikb = ijkb0 + ih
+                      nbs1 = paw_recon(nt)%paw_indv(ih);l1 = paw_recon(nt)%paw_nhtol(ih)
+                      m1 = paw_recon(nt)%paw_nhtom(ih); lm1 = m1 + l1**2
+                      do jh = 1, paw_recon(nt)%paw_nh
+                         jkb = ijkb0 + jh
+                         nbs2 = paw_recon(nt)%paw_indv(jh);l2 = paw_recon(nt)%paw_nhtol(jh)
+                         m2 = paw_recon(nt)%paw_nhtom(jh);lm2=m2+l2**2
+                         if(l1 /= l2) cycle !not sure of this..
+                         bec_product = conjg(paw_becp(ikb,ibnd))*paw_becp_gLQ(jkb,ibnd)
+                         cc = bec_product*radial_integral_paramagnetic(nbs1,nbs2,nt) &
+                              * wg(ibnd,ik)* alpha ** 2
+                         pcorr_jpaug(1,na) = pcorr_jpaug(1,na) + cc * lx ( lm1, lm2 )
+                         pcorr_jpaug(2,na) = pcorr_jpaug(2,na) + cc * ly ( lm1, lm2 )
+                         pcorr_jpaug(3,na) = pcorr_jpaug(3,na) + cc * lz ( lm1, lm2 )
+                      enddo !jh
+                   enddo !ih
+                   ijkb0 = ijkb0 + paw_recon(nt)%paw_nh
+                 endif !ityp(na)==nt
+             enddo ! nat
+        enddo !ntyp 
+     enddo !bands        
+     paug_corr_tensor(:,kpol,:) = REAL (pcorr_jpaug(:,:), dp)
+     if ( iverbosity > 20 ) then
+        write(6,'("PARA_AUG",1I3,3(F16.7,2X))') &
+             kpol,  REAL ( pcorr_jpaug(1:3,1) ) * 1e6
+     endif
+  enddo !kpol   
     
 
-    ffact =  ( 2.0_dp * q_gipaw * tpiba )
-    do ih = 1,3
-          call j_para(ffact,evc,g_LQ_evc(:,:,ih),ik,emine_q,j_bare(:,:,ih,current_spin))
-    enddo
-    ! adding this to sigma is easy coz there is no cross product..
-    deallocate(pcorr_jpaug)
-  END SUBROUTINE para_aug_correction
-  !====================================================================    
-#endif
+  ffact =  ( 2.0_dp * q_gipaw * tpiba )
+  do ih = 1,3
+        call j_para(ffact,evc,g_LQ_evc(:,:,ih),ik,emine_q,j_bare(:,:,ih,current_spin))
+  enddo
+  ! adding this to sigma is easy coz there is no cross product..
+  deallocate(pcorr_jpaug)
+END SUBROUTINE paramagnetic_correction_aug
 
   
 
