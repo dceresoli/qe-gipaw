@@ -196,7 +196,7 @@ SUBROUTINE suscept_crystal
     ! loop over -q and +q
     !------------------------------------------------------------------
     do isign = -1, 1, 2
-      if (job == 'f-sum') continue
+      if (job == 'f-sum') cycle
       
       ! loop over cartesian directions
       do i = 1, 3
