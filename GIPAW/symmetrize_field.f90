@@ -66,7 +66,7 @@ SUBROUTINE psymmetrize_field(field, iflag)
   !     iflag = 1  => pseudo-tensor  (e.g. induced current)
   !
   USE kinds,                           ONLY : DP
-  USE fft_base,                        ONLY : dfftp, grid_gather, grid_scatter
+  USE fft_base,                        ONLY : gather_smooth, scatter_smooth
   USE mp_global,                       ONLY : me_pool
   USE symm_base,                       ONLY : s, nsym
   USE pwcom
@@ -74,7 +74,7 @@ SUBROUTINE psymmetrize_field(field, iflag)
 
   !-- parameters ------------------------------------------------------
   IMPLICIT NONE
-  REAL(DP), INTENT(INOUT) :: field(dfftp%nnr,3,3)
+  REAL(DP), INTENT(INOUT) :: field(nrxxs,3,3)
   INTEGER :: iflag
 
   !-- local variables ----------------------------------------------------
@@ -87,7 +87,7 @@ SUBROUTINE psymmetrize_field(field, iflag)
   allocate( aux(nrx1s*nrx2s*nrx3s,3,3) )
   do i = 1, 3
     do j = 1, 3
-      call grid_gather(field(:,i,j), aux(:,i,j))
+      call gather_smooth(field(:,i,j), aux(:,i,j))
     enddo
   enddo
 
@@ -95,7 +95,7 @@ SUBROUTINE psymmetrize_field(field, iflag)
 
   do i = 1, 3
     do j = 1, 3
-      call grid_scatter(aux(:,i,j), field(:,i,j))
+      call scatter_smooth(aux(:,i,j), field(:,i,j))
     enddo
   enddo
 
