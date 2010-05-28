@@ -213,6 +213,7 @@ SUBROUTINE diamagnetic_correction (diamagnetic_tensor)
 END SUBROUTINE diamagnetic_correction
 
 
+
 !====================================================================
 ! Ultrasoft augmentation (L_R Q_R) contribution to the bare and
 ! paramagnetic current
@@ -254,8 +255,8 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor)
   real(dp) :: epsi(3,3), xyz(3,3),emine_q(3),dvkb_dir(3),ffact
   DATA epsi/0.d0,-3.d0,2.d0,3.d0,0.d0,-1.d0,-2.d0,1.d0,0.d0/, &
        xyz/1.d0,0.d0,0.d0,0.d0,1.d0,0.d0,0.d0,0.d0,1.d0/
+
   !calculating ps = q_{ji}<p_i|u>
-  
   emine_q(1)=0.d0; emine_q(2)=0.d0;emine_q(3)=0.d0
 
   allocate( ps( nkb, nbnd ), becp2(nkb,nbnd) )
@@ -382,7 +383,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor)
   enddo !kpol   
     
 
-  ffact =  ( 2.0_dp * q_gipaw * tpiba )
+  ffact =  -( 2.0_dp * q_gipaw * tpiba )
   do ih = 1,3
         call j_para(ffact,evc,g_LQ_evc(:,:,ih),ik,emine_q,j_bare(:,:,ih,current_spin))
   enddo
@@ -459,7 +460,7 @@ SUBROUTINE print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnet
   real(dp), intent(inout) :: sigma_paramagnetic_us(3,3,nat)
   real(dp), intent(inout) :: sigma_paramagnetic_aug(3,3,nat)
   !-- local variables ---------------------------------------------------
-  real(dp) :: tr_sigma, sigma_tot(3,3,nat), axis(3,3), v(3)
+  real(dp) :: tr_sigma, sigma_tot(3,3,nat), axis(3,3), v(3), aniso, eta
   integer :: na
   
   write(stdout,'(5X,''Contributions to the NMR chemical shifts: -------------------------------'')')
@@ -545,12 +546,20 @@ SUBROUTINE print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnet
         na, atm(ityp(na)), tau(:,na), tr_sigma*1.0d6
 
     call principal_axis(sigma_tot(:,:,na), v, axis)
+    aniso = v(3) - tr_sigma
+    if (abs(aniso) > 1d-6) then
+      eta = (v(2) - v(1))/aniso
+    else
+      eta = 0.d0
+    endif
+    write(stdout,1000) atm(ityp(na)), na, 'anisotropy:', aniso*1.0d6, 'eta:', eta
     write(stdout,1001) atm(ityp(na)), na, 'sigma_xx=', v(1)*1.0d6, 'axis=(', axis(1:3,1), ')'
     write(stdout,1001) atm(ityp(na)), na, 'sigma_yy=', v(2)*1.0d6, 'axis=(', axis(1:3,2), ')'
     write(stdout,1001) atm(ityp(na)), na, 'sigma_zz=', v(3)*1.0d6, 'axis=(', axis(1:3,3), ')'
     write(stdout,*)
   enddo
 
+1000 FORMAT(5X,A,I3,4X,A,F10.2,4X,A,F10.4)
 1001 FORMAT(5X,A,I3,4X,A,F10.4,4X,A,3F10.6,A)
 
 END SUBROUTINE print_chemical_shifts

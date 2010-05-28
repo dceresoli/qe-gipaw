@@ -67,7 +67,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
              (1.d0,0.d0), evq(1,1), npwx, psi(1,1), npwx, (0.d0,0.d0), &
              ps(1,1), nbnd)
 #ifdef __PARA
-  call mp_sum ( ps( :, 1:nbnd_occ (ik) ), intra_pool_comm )
+  call mp_sum(ps, intra_pool_comm)
 #endif
 
   ! this is the case with overlap (ultrasoft)
