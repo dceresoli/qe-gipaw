@@ -159,6 +159,10 @@ SUBROUTINE suscept_crystal
 
     ! compute p_k|evc>, v_{k,k}|evc>, G_k v_{k,k}|evc> and s_{k,k}|evc>
     call apply_operators
+    if (okvan) then 
+        evq(:,:) = evc(:,:)
+        call apply_occ_occ_us
+    endif
 
     !------------------------------------------------------------------
     ! f-sum rule
@@ -172,11 +176,12 @@ SUBROUTINE suscept_crystal
 
           ! this is the "occ-occ" term
           if (okvan) then
-              do jbnd = 1, nbnd_occ (ik)
-                 braket = - zdotc(npw, evc(1,ibnd), 1, p_evc(1,jbnd,ipol), 1) * &
-                            zdotc(npw, evc(1,jbnd), 1, svel_evc(1,ibnd,jpol), 1)
-                 f_sum(ipol,jpol) = f_sum(ipol,jpol) + wg(ibnd,ik) * braket
-              enddo
+              braket = zdotc(npw, p_evc(1,ibnd,ipol), 1, u_svel_evc(1,ibnd,jpol), 1)
+              f_sum(ipol,jpol) = f_sum(ipol,jpol) + wg(ibnd,ik) * braket
+              !!do jbnd = 1, nbnd_occ (ik)
+              !!   braket = - zdotc(npw, evc(1,ibnd), 1, p_evc(1,jbnd,ipol), 1) * &
+              !!              zdotc(npw, evc(1,jbnd), 1, svel_evc(1,ibnd,jpol), 1)
+              !!enddo
          endif
         enddo
       enddo
@@ -402,7 +407,9 @@ CONTAINS
       CALL ZGEMM('C', 'N', nbnd_occ(ik), nbnd_occ(ik), npw, &
                 (1.d0,0.d0), evq(1,1), npwx, aux(1,1), npwx, (0.d0,0.d0), &
                 ps(1,1), nbnd)
-      ! mp_sum(ps) ??
+#ifdef __PARA
+      call mp_sum(ps, intra_pool_comm)
+#endif
       aux = (0.d0,0.d0)
       CALL ZGEMM('N', 'N', npw, nbnd_occ(ik), nbnd_occ(ik), &
                 (1.d0,0.d0), evq(1,1), npwx, ps(1,1), nbnd, (0.d0,0.d0), &
