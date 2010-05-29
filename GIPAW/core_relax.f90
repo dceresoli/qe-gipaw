@@ -352,61 +352,6 @@ END SUBROUTINE hfi_fc_core_relax
 
 
 #if 0
-    ! loop over core orbitals
-    ncore = paw_recon(nt)%gipaw_ncore_orbital
-    do icore = 1, paw_recon(nt)%gipaw_ncore_orbital
-      if (paw_recon(nt)%gipaw_core_orbital_l(icore) /= 0) cycle
-      
-      ! loop over core orbitals
-      do icore2 = icore+1, paw_recon(nt)%gipaw_ncore_orbital
-        if (paw_recon(nt)%gipaw_core_orbital_l(icore2) /= 0) cycle
-
-        do j = 1, msh(nt)
-          work(j) = paw_recon(nt)%gipaw_core_orbital(j,icore2) * &
-                    delta_v(j,na) * &
-                    paw_recon(nt)%gipaw_core_orbital(j,icore)
-        end do
-        call simpson(msh(nt), work, rab(:,nt), coeff)
-        fc_core(na) = fc_core(na) + 4.d0 * &
-          paw_recon(nt)%gipaw_core_orbital(r_first,icore) * &
-          paw_recon(nt)%gipaw_core_orbital(r_first,icore2) * &
-          coeff / (eigenvalues(icore,nt) - eigenvalues(icore2,nt)) / &
-          r(r_first,nt)**2 / fpi
-        write(stdout,'(5X,''CORE-CORE:'',2I3,10x,''fc_core up to now='',F12.6)')&
-           icore, icore2, fc_core(na)
-      enddo  ! ivale
-    enddo  ! icore
-
-    ! loop over core orbitals
-    do icore = 1, paw_recon(nt)%gipaw_ncore_orbital
-      if (paw_recon(nt)%gipaw_core_orbital_l(icore) /= 0) cycle
-      
-      ! loop over valence orbitals
-      do ivale = 1, paw_recon(nt)%paw_nbeta
-        nrc = paw_recon(nt)%psphi(ivale)%label%nrc
-        l1 = paw_recon(nt)%psphi(ivale)%label%l
-        if (l1 /= 0) cycle
-
-        do j = 1, msh(nt)
-          work(j) = paw_recon(nt)%aephi(ivale)%psi(j) * &
-                    delta_v(j,na) * &
-                    paw_recon(nt)%gipaw_core_orbital(j,icore)
-        end do
-        !call simpson(nrc, work, rab(:,nt), coeff)
-        call simpson(msh(nt), work, rab(:,nt), coeff)
-        !!!print*, eigenvalues(icore,nt), eigenvalues(ncore+ivale,nt)
-        fc_core(na) = fc_core(na) + 4.d0 * &
-          paw_recon(nt)%gipaw_core_orbital(r_first,icore) * &
-          paw_recon(nt)%aephi(ivale)%psi(r_first) * &
-          coeff / (eigenvalues(icore,nt) - eigenvalues(ncore+ivale,nt)) / &
-          r(r_first,nt)**2 / fpi
-        write(stdout,'(5X,''CORE-VALE:'',2I3,10x,''fc_core up to now='',F12.6)')&
-           icore, ivale, fc_core(na)
-      enddo  ! ivale
-    enddo  ! icore
-#endif
-
-#if 0
     !--------------------------------------------------------------------
     ! this part recalculates the core orbitals
     !--------------------------------------------------------------------
