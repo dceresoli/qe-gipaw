@@ -178,10 +178,6 @@ SUBROUTINE suscept_crystal
           if (okvan) then
               braket = zdotc(npw, p_evc(1,ibnd,ipol), 1, u_svel_evc(1,ibnd,jpol), 1)
               f_sum(ipol,jpol) = f_sum(ipol,jpol) + wg(ibnd,ik) * braket
-              !!do jbnd = 1, nbnd_occ (ik)
-              !!   braket = - zdotc(npw, evc(1,ibnd), 1, p_evc(1,jbnd,ipol), 1) * &
-              !!              zdotc(npw, evc(1,jbnd), 1, svel_evc(1,ibnd,jpol), 1)
-              !!enddo
          endif
         enddo
       enddo
