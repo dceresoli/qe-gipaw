@@ -1,17 +1,37 @@
-TODO
-====
-- NMR for metals: orbital shift
-- NMR for metals: Knight shift
-- Ultrasoft
-- linear-response with LDA+U
-- hyperfine: ZORA
-- molecular method (no q-points)
-- port converse-NMR and converse-EPR
+Things TODO in GIPAW
+====================
+1. Short term, small changes
+  - clean hfi_extrapolation-related variables
+  - fix ZORA in hyperfine
+  - documentation and description of input variables
+  - extract routines from gipaw_module
+  - modify suscept_crystal to compute also EPR with ultrasoft
+  - LDA+U in h_psiq
+  - allocate j_ind and b_ind (induced current and field) only when needed
+
+2. Medium-term
+  - write_fields: in raw format or NetCDF, for visualization
+  - use bec_type everywhere
+  - molecular method (no q-points): possible 6x speed increase
+  - NMR for metals: orbital shift
+  - NMR for metals: Knight shift
+  - better core-relaxation (?)
+  - hyperfine: orbital contribution
+
+3. Long-term, requiring some effort
+  - ZORA for NMR
+  - converse-NMR and converse-EPR
+  - linear response with hybrids
+  - "on-the-fly" pseudopotentials (?)
+  - J-couplings
+  - relaxation time in solids (?)
 
 
 DONE
 ====
-- f-sum rule works with ultrasoft PP's
+- EFG (tested on quartz) and hyperfine (untested) with ultrasoft
+- NMR with ultrasoft
+- f-sum rule works with ultrasoft
 - EFG cleaned
 - hyperfine cleaned
 - hyperfine core-relaxation
