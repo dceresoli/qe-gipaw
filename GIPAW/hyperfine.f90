@@ -250,7 +250,7 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   complex(dp) :: phase
 
   ! transform to reciprocal space
-  call cft3(rho_s, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, -1)
+  call cft3s(rho_s, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, -1)
 
 #ifdef ZORA
   ! Fourier transform of Thomson's delta function

@@ -194,7 +194,6 @@ SUBROUTINE get_smooth_density(rho)
       enddo
   enddo
 #ifdef __PARA
-  call mp_sum( rho, intra_pool_comm )
   call mp_sum( rho, inter_pool_comm )
 #endif
 
@@ -234,7 +233,7 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
   efg_g(:,:,:) = (0.d0,0.d0)
 
   ! transform to reciprocal space
-  call cft3(rho, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, -1)
+  call cft3s(rho, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, -1)
   
   ! electric field gradient in the G-space
   do ig = gstart, ngms
