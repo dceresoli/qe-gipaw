@@ -45,13 +45,14 @@ SUBROUTINE paramagnetic_correction (paramagnetic_tensor, paramagnetic_tensor_us,
   integer :: nt, ibnd, na, lm, j, ijkb0, jpol
   integer :: mg, i1, i2, i3
   
-  para_corr = (0.d0, 0.d0)
-  para_corr_us = (0.d0, 0.d0)
 
   do jpol = 1, 3 
      if ( jpol == ipol ) cycle
      call calbec (npw, paw_vkb, g_vel_evc(:,:,jpol), paw_becp2)
      if (okvan) call calbec (npw, paw_vkb, u_svel_evc(:,:,jpol), paw_becp3)
+
+     para_corr = (0.d0, 0.d0)
+     para_corr_us = (0.d0, 0.d0)
 
      do ibnd = 1, nbnd
         ijkb0 = 0
@@ -98,9 +99,8 @@ SUBROUTINE paramagnetic_correction (paramagnetic_tensor, paramagnetic_tensor_us,
         enddo
      enddo
      paramagnetic_tensor(1:3,jpol,1:nat) = real(para_corr(1:3,1:nat),dp)
-     paramagnetic_tensor_us(1:3,jpol,1:nat) = real(para_corr_us(1:3,1:nat),dp)
+     if (okvan) paramagnetic_tensor_us(1:3,jpol,1:nat) = real(para_corr_us(1:3,1:nat),dp)
   end do
-
 END SUBROUTINE paramagnetic_correction
 
 
@@ -233,9 +233,10 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor)
                                      j_bare, q_gipaw, alpha, nbnd_occ, iverbosity
   USE uspp,                   ONLY : qq, vkb, nkb 
   USE uspp_param,             ONLY : nh
-  USE cell_base,              ONLY : tpiba, omega
+  USE cell_base,              ONLY : tpiba, omega, tpiba2
   USE klist,                  ONLY : xk
-  USE gvect,                  ONLY : g
+  USE gvect,                  ONLY : g, ecutwfc, ngm
+  USE io_global,              ONLY : stdout, ionode
 
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
@@ -261,7 +262,9 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor)
 
   allocate( ps( nkb, nbnd ), becp2(nkb,nbnd) )
   ik = current_k
-  
+
+  call gk_sort(xk(1,ik), ngm, g, ecutwfc/tpiba2, npw, igk, g2kin)
+  vkb = (0.d0,0.d0)
   call init_us_2 (npw, igk, xk(:,ik), vkb)
   call calbec (npwx, vkb, evc, becp2, nbnd)
   ps(:,:) = (0.d0, 0.d0)
@@ -336,7 +339,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor)
         call zgemm ('N', 'N', npwx, nbnd, nkb, &
             (1.d0,0.d0),Lp(:,:,kpol), npwx, ps, nkb, (1.d0,0.d0), &
             LQ(1,1,kpol), npwx )
-  enddo  
+  enddo
   ! now we have LQ (npw,nbnd)  
   !apply Greens function
   allocate(aux1(npwx,nbnd),aux2 (npwx,nbnd),pcorr_jpaug(3,nat))

@@ -49,6 +49,7 @@ subroutine init_us_2_no_phase (npw_, igk_, q_, vkb_)
 
   !
   !
+  vkb_ = (0.d0,0.d0)
   if (lmaxkb.lt.0) return
   call start_clock ('init_us_2')
   allocate (vkb1( npw_,nhm))    
@@ -139,7 +140,7 @@ subroutine init_us_2_no_phase (npw_, igk_, q_, vkb_)
               jkb = jkb + 1
               pref = (0.d0, -1.d0) **nhtol (ih, nt)! * phase
               do ig = 1, npw_
-                 vkb_(ig, jkb) = vkb1 (ig,ih) * sk (ig) * pref
+                  vkb_(ig, jkb) = vkb1 (ig,ih) * sk (ig) * pref
               enddo
            enddo
         endif
@@ -151,6 +152,7 @@ subroutine init_us_2_no_phase (npw_, igk_, q_, vkb_)
   deallocate (qg)
   deallocate (sk)
   deallocate (vkb1)
+
 
   call stop_clock ('init_us_2')
   return
