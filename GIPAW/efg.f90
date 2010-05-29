@@ -16,7 +16,7 @@ SUBROUTINE efg
   USE io_global,    ONLY : stdout
   USE constants,    ONLY : pi, tpi, fpi, angstrom_au, rytoev, electronvolt_si
   USE scf,          ONLY : rho
-  USE gvect,        ONLY : nrxx
+  USE gsmooth,      ONLY : nrxxs
   USE ions_base,    ONLY : nat, atm, ityp, zv
   USE symme,        ONLY : symtensor
   USE lsda_mod,     ONLY : nspin
@@ -26,7 +26,7 @@ SUBROUTINE efg
 
   !-- local variables ----------------------------------------------------
   IMPLICIT NONE
-  complex(dp), allocatable:: aux(:), tmp(:,:,:)
+  complex(dp), allocatable:: aux(:), rho_s(:,:), tmp(:,:,:)
   real(dp), allocatable :: efg_bare(:,:,:), efg_ion(:,:,:)
   real(dp), allocatable :: zion(:), efg_gipaw(:,:,:), efg_tot(:,:,:)
   integer :: alpha, beta, na
@@ -39,11 +39,12 @@ SUBROUTINE efg
   allocate( efg_gipaw(3,3,nat), efg_tot(3,3,nat) )
 
   ! calculate the bare contribution
-  allocate( aux(nrxx) )
-  aux(:) = rho%of_r(:,1)
-  if (nspin == 2) aux(:) = aux(:) + rho%of_r(:,2)
+  allocate( rho_s(nrxxs,2), aux(nrxxs) )
+  call get_smooth_density(rho_s)
+  aux(:) = rho_s(:,1)
+  if (nspin == 2) aux(:) = aux(:) + rho_s(:,2)
   call efg_bare_el(aux, efg_bare)
-  deallocate( aux )
+  deallocate( rho_s, aux )
 
   ! calculate ionic contribution
   allocate ( tmp(nat,3,3) )
@@ -144,6 +145,64 @@ END SUBROUTINE efg
 
 
 !-----------------------------------------------------------------------
+SUBROUTINE get_smooth_density(rho)
+  !-----------------------------------------------------------------------
+  !
+  ! ... Get the charge density on the smooth grid
+  !  
+  USE kinds,        ONLY : dp 
+  USE mp,           ONLY : mp_sum
+  USE mp_global,    ONLY : intra_pool_comm
+  USE ions_base,    ONLY : nat, tau
+  USE lsda_mod,     ONLY : current_spin, isk
+  USE wvfct,        ONLY : nbnd, npwx, npw, igk, wg, g2kin, current_k
+  USE klist,        ONLY : nks, xk
+  USE gvect,        ONLY : ngm, g, ecutwfc, g2kin
+  USE gsmooth,      ONLY : nrxxs, nrx1s, nrx2s, nrx3s, nr1s, nr2s, nr3s, nls
+  USE wavefunctions_module, ONLY : evc
+  USE cell_base,    ONLY : tpiba2, omega
+  USE io_files,     ONLY : nwordwfc, iunwfc
+  USE buffers,      ONLY : get_buffer
+  USE mp,           ONLY : mp_sum
+  USE mp_global,    ONLY : intra_pool_comm, inter_pool_comm
+
+  !-- parameters ---------------------------------------------------------
+  IMPLICIT NONE
+  complex(dp), intent(out) :: rho(nrxxs,2)
+  !-- local variables ----------------------------------------------------
+  complex(dp) :: psic(nrxxs)
+  integer :: ibnd, ik
+
+  rho = (0.d0,0.d0)
+
+  ! loop over k-points
+  do ik = 1, nks
+      current_k = ik
+      current_spin = isk(ik)
+    
+      ! initialize at k-point k and read wfcs from file
+      call gk_sort(xk(1,ik), ngm, g, ecutwfc/tpiba2, npw, igk, g2kin)
+      call get_buffer (evc, nwordwfc, iunwfc, ik)
+
+      ! loop over bands
+      do ibnd = 1, nbnd
+          psic(:) = (0.d0,0.d0)
+          psic(nls(igk(1:npw))) = evc(1:npw,ibnd)
+          call cft3s( psic, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, 2 )
+          rho(:,current_spin) = rho(:,current_spin) + wg(ibnd,ik) * &
+              (dble(psic(:))**2 + aimag(psic(:))**2) / omega
+      enddo
+  enddo
+#ifdef __PARA
+  call mp_sum( rho, intra_pool_comm )
+  call mp_sum( rho, inter_pool_comm )
+#endif
+
+END SUBROUTINE get_smooth_density
+
+
+
+!-----------------------------------------------------------------------
 SUBROUTINE efg_bare_el(rho, efg_bare)
   !-----------------------------------------------------------------------
   !
@@ -153,14 +212,14 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
   USE mp,           ONLY : mp_sum
   USE mp_global,    ONLY : intra_pool_comm
   USE constants,    ONLY : tpi, fpi
-  USE gvect,        ONLY : nr1, nr2, nr3, nrx1, nrx2, nrx3, nrxx, &
-                           g, gg, nl, gstart, ngm
+  USE gsmooth,      ONLY : nrxxs, nrx1s, nrx2s, nrx3s, nr1s, nr2s, nr3s, nls, ngms
+  USE gvect,        ONLY : g, gg, gstart
   USE ions_base,    ONLY : nat, tau
   USE gipaw_module, ONLY : job
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
-  complex(dp), intent(in) :: rho(nrxx)
+  complex(dp), intent(in) :: rho(nrxxs)
   real(dp), intent(out) :: efg_bare(3,3,nat)  
   !-- local variables ----------------------------------------------------
   complex(dp), allocatable :: efg_g(:,:,:)
@@ -171,20 +230,20 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
   e2 = 1.0_dp  ! hartree
   fac = fpi * e2
   
-  allocate( efg_g(ngm,3,3) )
+  allocate( efg_g(ngms,3,3) )
   efg_g(:,:,:) = (0.d0,0.d0)
 
   ! transform to reciprocal space
-  call cft3(rho, nr1, nr2, nr3, nrx1, nrx2, nrx3, -1)
+  call cft3(rho, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, -1)
   
   ! electric field gradient in the G-space
-  do ig = gstart, ngm
+  do ig = gstart, ngms
      trace = 1.d0/3.d0 * gg(ig)
      do alpha = 1, 3
         efg_g(ig,alpha,alpha) = -trace
         do beta = 1, 3
            efg_g(ig,alpha,beta) = ( efg_g(ig,alpha,beta) + &
-                       g(alpha,ig)*g(beta,ig)) * fac * rho(nl(ig)) / gg(ig)
+                       g(alpha,ig)*g(beta,ig)) * fac * rho(nls(ig)) / gg(ig)
         enddo
      enddo
   enddo
@@ -194,7 +253,7 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
   do alpha = 1, 3
      do beta = 1, 3
         do na = 1, nat
-           do ig = gstart, ngm
+           do ig = gstart, ngms
               arg = sum(tau(1:3,na) * g(1:3,ig)) * tpi
               phase = cmplx(cos(arg),sin(arg), kind=dp)
               efg_bare(alpha,beta,na) = efg_bare(alpha,beta,na) + &

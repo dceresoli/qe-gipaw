@@ -19,7 +19,7 @@ SUBROUTINE hyperfine
   USE io_global,    ONLY : stdout
   USE parameters,   ONLY : ntypx
   USE constants,    ONLY : pi, tpi, fpi, angstrom_au, rytoev, electronvolt_si, c_si
-  USE gvect,        ONLY : nrxx
+  USE gsmooth,      ONLY : nrxxs
   USE scf,          ONLY : rho
   USE symme,        ONLY : symtensor
   USE lsda_mod,     ONLY : current_spin, nspin
@@ -41,7 +41,7 @@ SUBROUTINE hyperfine
   real(dp), parameter :: common_factor = mu0_by_fpi * mu_n / Bohr_radius ** 3
 
   !-- local variables ----------------------------------------------------
-  complex(dp), allocatable :: spin_den(:)
+  complex(dp), allocatable :: spin_den(:), rho_s(:,:)
   real(dp), allocatable :: hfi_dip_bare(:,:,:), hfi_dip_gipaw(:,:,:)
   real(dp), allocatable :: hfi_dip_tot(:,:,:)
   real(dp), allocatable :: hfi_fc_bare(:), hfi_fc_bare_zora(:)
@@ -63,9 +63,11 @@ SUBROUTINE hyperfine
   allocate( hfi_dip_bare(3,3,nat), hfi_dip_gipaw(3,3,nat), hfi_dip_tot(3,3,nat) )
 
   ! calculate the bare dipole contribution
-  allocate( spin_den(nrxx) )
-  spin_den(:) = rho%of_r(:,s_maj) - rho%of_r(:,s_min)
+  allocate( rho_s(nrxxs,2), spin_den(nrxxs) )
+  call get_smooth_density(rho_s)  ! this subroutine is efg.g90
+  spin_den(:) = rho_s(:,s_maj) - rho_s(:,s_min)
   call efg_bare_el(spin_den, hfi_dip_bare)
+  deallocate( rho_s)
 
   ! calculate GIPAW dipole correction
   call efg_correction(hfi_dip_gipaw)
@@ -230,14 +232,14 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   USE mp,           ONLY : mp_sum
   USE mp_global,    ONLY : intra_pool_comm
   USE constants,    ONLY : tpi, fpi
-  USE gvect,        ONLY : nr1, nr2, nr3, nrx1, nrx2, nrx3, nrxx, &
-                           g, gg, nl, gstart, ngm
+  USE gsmooth,      ONLY : nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, nrxxs, nls, ngms
+  USE gvect,        ONLY : g, gg, gstart
   USE parameters,   ONLY : ntypx
   USE ions_base,    ONLY : nat, tau, atm, ityp
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
-  complex(dp), intent(in) :: rho_s(nrxx)
+  complex(dp), intent(in) :: rho_s(nrxxs)
   real(dp), intent(out) :: hfi_bare(nat), hfi_bare_zora(nat)  
   !-- local variables ----------------------------------------------------
 #ifdef ZORA
@@ -248,7 +250,7 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   complex(dp) :: phase
 
   ! transform to reciprocal space
-  call cft3(rho_s, nr1, nr2, nr3, nrx1, nrx2, nrx3, -1)
+  call cft3(rho_s, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, -1)
 
 #ifdef ZORA
   ! Fourier transform of Thomson's delta function
@@ -259,13 +261,13 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   hfi_bare(:) = 0.d0
   hfi_bare_zora(:) = 0.d0
   do na = 1, nat
-      do ig = gstart, ngm
+      do ig = gstart, ngms
           arg = sum(tau(1:3,na) * g(1:3,ig)) * tpi
           phase = cmplx(cos(arg),sin(arg), kind=dp)
-          hfi_bare(na) = hfi_bare(na) + real(rho_s(nl(ig)) * phase, kind=dp)
+          hfi_bare(na) = hfi_bare(na) + real(rho_s(nls(ig)) * phase, kind=dp)
 #ifdef ZORA
           hfi_bare_zora(na) = hfi_bare_zora(na) + &
-              real(delta_Th(ig,ityp(na)) * rho_s(nl(ig)) * phase, kind=dp)
+              real(delta_Th(ig,ityp(na)) * rho_s(nls(ig)) * phase, kind=dp)
 #endif
       enddo
   enddo
