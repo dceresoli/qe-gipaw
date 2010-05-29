@@ -8,6 +8,7 @@ Things TODO in GIPAW
   - modify suscept_crystal to compute also EPR with ultrasoft
   - LDA+U in h_psiq
   - allocate j_ind and b_ind (induced current and field) only when needed
+  - remove symmetry operations that do not map cartesian axes
 
 2. Medium-term
   - write_fields: in raw format or NetCDF, for visualization

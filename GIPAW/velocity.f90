@@ -110,7 +110,7 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   !====================================================================
   do isign = -1,1,2
       dxk(:) = xk(:,ik)
-      dxk(ipol) = dxk(ipol) + isign * dk     ! k + dk
+      dxk(ipol) = dxk(ipol) + isign * dk     ! k \pm dk
 
       ! compute <\beta(k \pm dk)| and project on |psi>
       call init_us_2_no_phase(npw, igk, dxk, vkb)
