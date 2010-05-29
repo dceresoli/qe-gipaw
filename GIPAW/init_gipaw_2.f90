@@ -47,6 +47,7 @@ subroutine init_gipaw_2 (npw_, igk_, q_, vkb_)
   integer :: iq
   !
   !
+  vkb_ = (0.d0,0.d0)
   if (paw_lmaxkb.lt.0) return
   call start_clock ('init_gipaw_2')
   allocate (  sk( npw_))    
@@ -206,6 +207,7 @@ subroutine init_gipaw_2_no_phase (npw_, igk_, q_, vkb_)
   integer :: iq
   !
   !
+  vkb_ = (0.d0,0.d0)
   if (paw_lmaxkb.lt.0) return
   call start_clock ('init_gipaw_2')
   allocate (  sk( npw_))    
