@@ -65,6 +65,8 @@ SUBROUTINE suscept_crystal
 
   ! f-sum rule: Eq.(A7) of [1]
   real(dp) :: f_sum(3,3)                             ! Eq.(C7) of [2]
+  real(dp) :: f_sum_occ(3,3)                         ! Eq.(C7) of [2]
+  real(dp) :: f_sum_nelec
 
   ! Susceptibility (pGv => HH in Paratec, vGv => VV in Paratec)
   real(dp) :: q_pGv(3,3,-1:1), q_vGv(3,3,-1:1)       ! Eq.(65) of [1]
@@ -97,7 +99,9 @@ SUBROUTINE suscept_crystal
 
   ! zero the f-sum rule
   f_sum(:,:) = 0.d0
-  
+  f_sum_occ(:,:) = 0.d0
+  f_sum_nelec = 0.d0
+ 
   ! zero the Q tensors
   q_pGv(:,:,:) = 0.d0
   q_vGv(:,:,:) = 0.d0
@@ -170,6 +174,12 @@ SUBROUTINE suscept_crystal
     do ipol = 1, 3 
       do jpol = 1, 3
         do ibnd = 1, nbnd_occ(ik)
+          ! count number of electrons
+          if (ipol == 1 .and. jpol == 1) then
+              braket = -real(zdotc(npw, evc(1,ibnd), 1, evc(1,ibnd), 1), dp)
+              f_sum_nelec = f_sum_nelec + wg(ibnd,ik) * braket
+          endif
+
           ! this is the "p-G-v" term
           braket = 2.d0*real(zdotc(npw, p_evc(1,ibnd,ipol), 1, G_vel_evc(1,ibnd,jpol), 1), dp)
           f_sum(ipol,jpol) = f_sum(ipol,jpol) + wg(ibnd,ik) * braket
@@ -177,7 +187,7 @@ SUBROUTINE suscept_crystal
           ! this is the "occ-occ" term
           if (okvan) then
               braket = zdotc(npw, p_evc(1,ibnd,ipol), 1, u_svel_evc(1,ibnd,jpol), 1)
-              f_sum(ipol,jpol) = f_sum(ipol,jpol) + wg(ibnd,ik) * braket
+              f_sum_occ(ipol,jpol) = f_sum_occ(ipol,jpol) + wg(ibnd,ik) * braket
          endif
         enddo
       enddo
@@ -239,6 +249,8 @@ SUBROUTINE suscept_crystal
 #ifdef __PARA
   ! reduce over G-vectors
   call mp_sum( f_sum, intra_pool_comm )
+  call mp_sum( f_sum_occ, intra_pool_comm )
+  call mp_sum( f_sum_nelec, intra_pool_comm )
   call mp_sum( q_pGv, intra_pool_comm )
   call mp_sum( q_vGv, intra_pool_comm )
 #endif
@@ -246,6 +258,8 @@ SUBROUTINE suscept_crystal
 #ifdef __PARA
   ! reduce over k-points
   call mp_sum( f_sum, inter_pool_comm )
+  call mp_sum( f_sum_occ, inter_pool_comm )
+  call mp_sum( f_sum_nelec, inter_pool_comm )
   call mp_sum( q_pGv, inter_pool_comm )
   call mp_sum( q_vGv, inter_pool_comm )
   call mp_sum( j_bare, inter_pool_comm )
@@ -266,13 +280,16 @@ SUBROUTINE suscept_crystal
   if (okvan) deallocate( svel_evc, u_svel_evc )
   
   ! f-sum rule
-  if (iverbosity > 0) then
-    write(stdout, '(5X,''f-sum rule:'')')
-    write(stdout, tens_fmt) f_sum
-  endif
   call symmatrix (f_sum)
-  write(stdout, '(5X,''f-sum rule (symmetrized):'')')
-  write(stdout, tens_fmt) f_sum
+  call symmatrix (f_sum_occ)
+  if (iverbosity > 0) then
+    write(stdout, '(5X,''f-sum rule (1st term):'')')
+    write(stdout, tens_fmt) f_sum
+    write(stdout, '(5X,''f-sum rule (2nd term):'')')
+    write(stdout, tens_fmt) f_sum_occ
+  endif
+  write(stdout, '(5X,''f-sum rule (should be '',F10.4''):'')') f_sum_nelec
+  write(stdout, tens_fmt) f_sum + f_sum_occ
   if (job == 'f-sum') return
 
   ! F_{ij} = (2 - \delta_{ij}) Q_{ij}
