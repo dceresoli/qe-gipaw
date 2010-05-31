@@ -63,6 +63,7 @@ subroutine ch_psi_all (n, h, ah, e, ik, m)
   !
   !   then we compute the operator H-epsilon S
   !
+  ah = (0.d0,0.d0)
   do ibnd = 1, m
      do ig = 1, n
         ah (ig, ibnd) = hpsi (ig, ibnd) - e (ibnd) * spsi (ig, ibnd)
