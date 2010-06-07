@@ -17,8 +17,9 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   USE kinds,                ONLY : DP
   USE klist,                ONLY : xk
   USE wvfct,                ONLY : nbnd, npwx, npw, igk, wg
-  USE pwcom,                ONLY : nrxxs, g, tpiba, nls, nr1s, nr2s, nr3s, &
-                                   nrx1s, nrx2s, nrx3s
+  USE gsmooth,              ONLY : nrxxs, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, nls
+  USE gvect,                ONLY : g
+  USE cell_base,            ONLY : tpiba
   USE gipaw_module,         ONLY : nbnd_occ
 
   !-- parameters ---------------------------------------------------------

@@ -218,7 +218,7 @@ END SUBROUTINE diamagnetic_correction
 ! Ultrasoft augmentation (L_R Q_R) contribution to the bare and
 ! paramagnetic current
 !====================================================================
-SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare)
+SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   USE kinds,                  ONLY : dp
   USE ions_base,              ONLY : nat, ityp, ntyp => nsp
   USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, current_k
@@ -243,7 +243,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare)
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
   real(dp), intent(inout) :: paug_corr_tensor(3,3,nat)
-  real(dp), intent(inout) :: j_bare(nrxxs,3,3,nspin)
+  real(dp), intent(inout) :: j_bare_s(nrxxs,3,3,nspin)
 
   !-- local variables ----------------------------------------------------
   complex(dp), allocatable::pcorr_jpaug(:,:) 
@@ -391,7 +391,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare)
 
   ffact =  -( 2.0_dp * q_gipaw * tpiba )
   do ih = 1,3
-        call j_para(ffact,evc,g_LQ_evc(:,:,ih),ik,emine_q,j_bare(:,:,ih,current_spin))
+        call j_para(ffact,evc,g_LQ_evc(:,:,ih),ik,emine_q,j_bare_s(:,:,ih,current_spin))
   enddo
   ! adding this to sigma is easy coz there is no cross product..
   deallocate(pcorr_jpaug)
@@ -429,7 +429,7 @@ SUBROUTINE compute_sigma_bare(B_ind, chi_bare, sigma_bare)
     do ispin = 1, nspin
       do ig = gstart, ngm
         arg = (g(1,ig)*tau(1,na) + g(2,ig)*tau(2,na) + g(3,ig)*tau(3,na)) * tpi
-        tmp_sigma(:,:) = tmp_sigma(:,:) + b_ind(ig,:,:,ispin) * cmplx(cos(arg),sin(arg), dp)
+        tmp_sigma(:,:) = tmp_sigma(:,:) + B_ind(ig,:,:,ispin) * cmplx(cos(arg),sin(arg), dp)
       enddo
     enddo
     

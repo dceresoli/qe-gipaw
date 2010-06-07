@@ -75,7 +75,7 @@ SUBROUTINE biot_savart(j_bare, B_ind, B_ind_r)
       j_of_g(:,:) = (0.d0,0.d0)
       do ipol = 1, 3
         aux(1:nrxx) = j_bare(1:nrxx,ipol,jpol,ispin)
-        call cft3s(aux, nr1, nr2, nr3, nrx1, nrx2, nrx3, -1)
+        call cft3(aux, nr1, nr2, nr3, nrx1, nrx2, nrx3, -1)
         j_of_g(1:ngm,ipol) = aux(nl(1:ngm))
       enddo
 
@@ -91,7 +91,7 @@ SUBROUTINE biot_savart(j_bare, B_ind, B_ind_r)
       do ipol = 1, 3
         aux = (0.d0,0.d0)
         aux(nl(1:ngm)) = B_ind(1:ngm,ipol,jpol,ispin)
-        call cft3s(aux, nr1, nr2, nr3, nrx1, nrx2, nrx3, 1)
+        call cft3(aux, nr1, nr2, nr3, nrx1, nrx2, nrx3, 1)
         B_ind_r(1:nrxx,ipol,jpol,ispin) = real(aux(1:nrxx))
       enddo
 
