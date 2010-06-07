@@ -37,12 +37,14 @@ MODULE gipaw_module
   
   ! eigenvalues and eigenfunctions at k+q
   COMPLEX(DP), ALLOCATABLE :: evq(:,:)
-  
+
+#if 0  
   ! induced current (bare term) and induced magnetic field
-  REAL(DP), ALLOCATABLE :: j_bare(:,:,:,:), b_ind_r(:,:,:)
+  REAL(DP), ALLOCATABLE :: j_bare_s(:,:,:,:), b_ind_r(:,:,:)
   
   ! induced magnetic field in reciprocal space
   COMPLEX(DP), ALLOCATABLE :: b_ind(:,:,:)
+#endif
   
   ! convergence threshold for diagonalizationa and greenfunction
   REAL(DP) :: conv_threshold
@@ -213,7 +215,6 @@ CONTAINS
     IMPLICIT NONE
     
     allocate(evq(npwx,nbnd))
-    allocate(j_bare(nrxxs,3,3,nspin), b_ind_r(nrxxs,3,3), b_ind(ngm,3,3))
     if (.not. allocated(paw_recon) ) allocate ( paw_recon(ntyp) )
     
   END SUBROUTINE gipaw_allocate

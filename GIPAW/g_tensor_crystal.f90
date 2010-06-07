@@ -11,6 +11,9 @@ SUBROUTINE g_tensor_crystal
   !
   ! ... Compute the g-tensor: PRL 88, 086403 (2002)
   !
+RETURN
+
+#if 0
   USE kinds,                       ONLY : DP
   USE gsmooth,                     ONLY : nrxxs
   USE parameters,                  ONLY : lmaxx
@@ -939,6 +942,8 @@ CONTAINS
       end do
     enddo
   END SUBROUTINE add_to_sigma_para
+
+#endif
   
 END SUBROUTINE g_tensor_crystal
 

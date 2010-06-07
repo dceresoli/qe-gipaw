@@ -34,12 +34,11 @@ SUBROUTINE suscept_crystal
   USE symme,                  ONLY : symmatrix
   USE parameters,             ONLY : lmaxx
   USE constants,              ONLY : pi
-  USE gvect,                  ONLY : ngm, g, ecutwfc
+  USE gvect,                  ONLY : ngm, g, ecutwfc, nrxx
   USE gsmooth,                ONLY : nrxxs
   USE uspp,                   ONLY : vkb, okvan
   USE lsda_mod,               ONLY : nspin
-  USE gipaw_module,           ONLY : j_bare, b_ind, b_ind_r, tens_fmt, &
-                                     q_gipaw, iverbosity, alpha, evq, &
+  USE gipaw_module,           ONLY : tens_fmt, q_gipaw, iverbosity, alpha, evq, &
                                      avogadro, filcurr, filfield, &
                                      nbnd_occ, a0_to_cm, isolve, &
                                      conv_threshold, job
@@ -62,6 +61,13 @@ SUBROUTINE suscept_crystal
   complex(dp), allocatable, dimension(:,:,:) :: u_svel_evc    ! sum|evq><evq|s_{k+q,k}|evc>
   ! temporary working array, same size as evc/evq
   complex(dp), allocatable :: aux(:,:)
+
+  ! induced current on the soft and fine mesh
+  real(dp), allocatable, dimension(:,:,:,:) :: j_bare_s, j_bare
+
+  ! induced magnetic field in reciprocal and real space
+  real(dp), allocatable :: B_ind_r(:,:,:,:)
+  complex(dp), allocatable :: B_ind(:,:,:,:)
 
   ! f-sum rule: Eq.(A7) of [1]
   real(dp) :: f_sum(3,3)                             ! Eq.(C7) of [2]
@@ -95,6 +101,7 @@ SUBROUTINE suscept_crystal
   !-----------------------------------------------------------------------
   allocate ( p_evc(npwx,nbnd,3), vel_evc(npwx,nbnd,3) )
   allocate ( aux(npwx,nbnd), G_vel_evc(npwx,nbnd,3) )
+  allocate ( j_bare_s(nrxxs,3,3,nspin) )
   if (okvan) allocate ( svel_evc(npwx,nbnd,3), u_svel_evc(npwx,nbnd,3) )
 
   ! zero the f-sum rule
@@ -106,9 +113,8 @@ SUBROUTINE suscept_crystal
   q_pGv(:,:,:) = 0.d0
   q_vGv(:,:,:) = 0.d0
 
-  ! zero the current and the field
-  j_bare(:,:,:,:) = (0.d0,0.d0)
-  b_ind(:,:,:) = (0.d0,0.d0)
+  ! zero the current
+  j_bare_s(:,:,:,:) = (0.d0,0.d0)
   
   ! zero the chemical shift
   sigma_bare = 0.d0
@@ -157,7 +163,7 @@ SUBROUTINE suscept_crystal
     ! 2. the paramagnetic US augmentation: Eq.(30) of [2]
     if (okvan) then
       paramagnetic_corr_tensor_aug = 0.d0
-      call paramagnetic_correction_aug (paramagnetic_corr_tensor_aug)
+      call paramagnetic_correction_aug (paramagnetic_corr_tensor_aug, j_bare_s)
       sigma_paramagnetic_aug = sigma_paramagnetic_aug + paramagnetic_corr_tensor_aug
     endif
 
@@ -229,10 +235,10 @@ SUBROUTINE suscept_crystal
         call add_to_tensor(q_vGv(:,:,isign), vel_evc, G_vel_evc)
         
         ! now the j_bare term 
-        call add_to_current(j_bare(:,:,:,current_spin), evc, G_vel_evc)
+        call add_to_current(j_bare_s(:,:,:,current_spin), evc, G_vel_evc)
         if (okvan) then
           call apply_occ_occ_us
-          call add_to_current(j_bare(:,:,:,current_spin), evc, u_svel_evc)
+          call add_to_current(j_bare_s(:,:,:,current_spin), evc, u_svel_evc)
         endif
 
         ! paramagnetic terms
@@ -262,7 +268,7 @@ SUBROUTINE suscept_crystal
   call mp_sum( f_sum_nelec, inter_pool_comm )
   call mp_sum( q_pGv, inter_pool_comm )
   call mp_sum( q_vGv, inter_pool_comm )
-  call mp_sum( j_bare, inter_pool_comm )
+  call mp_sum( j_bare_s, inter_pool_comm )
   call mp_sum( sigma_diamagnetic, inter_pool_comm )
   call mp_sum( sigma_paramagnetic, inter_pool_comm )
   call mp_sum( sigma_paramagnetic_us, inter_pool_comm )
@@ -338,13 +344,17 @@ SUBROUTINE suscept_crystal
   write(stdout, tens_fmt) tmp(:,:)
 
   !--------------------------------------------------------------------
-  ! now get the current, induced field and chemical shifts
+  ! now get the current and induced field
   !--------------------------------------------------------------------
   chi_bare_pGv(:,:) = chi_bare_pGv(:,:) / omega
-  j_bare(:,:,:,:) = j_bare(:,:,:,:) * alpha &
-       / ( 2.0_dp * q_gipaw * tpiba * omega )
+  j_bare_s(:,:,:,:) = j_bare_s(:,:,:,:) * alpha / ( 2.d0 * q_gipaw * tpiba * omega )
 
-  ! either you symmetrize the current ...
+  ! interpolate induced current
+  allocate( j_bare(nrxx,3,3,nspin) )
+  call interpolate_current(j_bare_s, j_bare)
+  deallocate( j_bare_s )
+
+  ! symmetrize the current
   do ispin = 1, nspin
 #ifdef __PARA
     call psymmetrize_field(j_bare(:,:,:,ispin), 1)
@@ -354,25 +364,22 @@ SUBROUTINE suscept_crystal
   enddo
 
   ! compute induced field
-  do ipol = 1, 3
-    call biot_savart(ipol)
-  enddo
+  allocate( B_ind_r(nrxx,3,3,nspin), B_ind(ngm,3,3,nspin) )
+  call biot_savart(j_bare, B_ind, B_ind_r)
 
   ! write fields to disk
   do i = 1, nspin
-    if (trim(filcurr) /= '') &
-      call write_tensor_field(filcurr, i, j_bare(1,1,1,i))
+    if (trim(filcurr) /= '') call write_tensor_field(filcurr, i, j_bare(1,1,1,i))
+    if (trim(filfield) /= '') call write_tensor_field(filfield, i, B_ind_r(1,1,1,i))
   enddo
-  if (trim(filfield) /= '') &
-    call write_tensor_field(filfield, 0, b_ind_r)
+  deallocate( B_ind_r )
 
-  ! ... or you symmetrize the induced field
-  !call symmetrize_field(b_ind_r,0)
-  !call field_to_reciprocal_space
-
+  !--------------------------------------------------------------------
+  ! calculate the chemical shifts
+  !--------------------------------------------------------------------
   if (job == 'nmr') then
     ! compute bare chemical shift and print all results
-    call compute_sigma_bare( chi_bare_pGv, sigma_bare )
+    call compute_sigma_bare( B_ind, chi_bare_pGv, sigma_bare )
     call print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnetic, &
                                sigma_paramagnetic_us, sigma_paramagnetic_aug)
   endif
@@ -527,6 +534,5 @@ CONTAINS
       end do
     enddo
   END SUBROUTINE add_to_sigma_para
-
 
 END SUBROUTINE suscept_crystal

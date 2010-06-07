@@ -218,7 +218,7 @@ END SUBROUTINE diamagnetic_correction
 ! Ultrasoft augmentation (L_R Q_R) contribution to the bare and
 ! paramagnetic current
 !====================================================================
-SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor)
+SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare)
   USE kinds,                  ONLY : dp
   USE ions_base,              ONLY : nat, ityp, ntyp => nsp
   USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, current_k
@@ -227,10 +227,12 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor)
   USE becmod,                 ONLY : calbec, allocate_bec_type, deallocate_bec_type
   USE constants,              ONLY : pi
   USE parameters,             ONLY : lmaxx
+  USE gsmooth,                ONLY : nrxxs
+  USE lsda_mod,               ONLY : nspin
   USE uspp,                   ONLY : ap
   USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
   USE gipaw_module,           ONLY : lx, ly, lz, radial_integral_paramagnetic, &
-                                     j_bare, q_gipaw, alpha, nbnd_occ, iverbosity
+                                     q_gipaw, alpha, nbnd_occ, iverbosity
   USE uspp,                   ONLY : qq, vkb, nkb 
   USE uspp_param,             ONLY : nh
   USE cell_base,              ONLY : tpiba, omega, tpiba2
@@ -241,6 +243,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor)
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
   real(dp), intent(inout) :: paug_corr_tensor(3,3,nat)
+  real(dp), intent(inout) :: j_bare(nrxxs,3,3,nspin)
 
   !-- local variables ----------------------------------------------------
   complex(dp), allocatable::pcorr_jpaug(:,:) 
@@ -400,31 +403,34 @@ END SUBROUTINE paramagnetic_correction_aug
 ! Compute the bare contribution to the chemical shift by evaluating
 ! the induced magnetic field at the nuclei
 !====================================================================
-SUBROUTINE compute_sigma_bare(chi_bare, sigma_bare)
+SUBROUTINE compute_sigma_bare(B_ind, chi_bare, sigma_bare)
   USE kinds,                ONLY : dp
   USE gvect,                ONLY : ngm, gstart, nl, nlm, g
-  USE gsmooth,              ONLY : ngms
   USE ions_base,            ONLY : nat, tau, atm, ityp
   USE pwcom,                ONLY : pi, tpi
   USE gipaw_module,         ONLY : use_nmr_macroscopic_shape, &
-                                   nmr_macroscopic_shape, b_ind
+                                   nmr_macroscopic_shape
   USE mp_global,            ONLY : intra_pool_comm
+  USE lsda_mod,             ONLY : nspin
   USE mp,                   ONLY : mp_sum
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
+  complex(dp), intent(in) :: B_ind(ngm,3,3,nspin)
   real(dp), intent(in) :: chi_bare(3,3)
   real(dp), intent(out) :: sigma_bare(3,3,nat)
   !-- local variables ---------------------------------------------------
-  integer :: na, ig
+  integer :: na, ig, ispin
   real(dp) :: arg, tr_sigma
   complex(dp) :: tmp_sigma(3,3)
   
   do na = 1, nat
     tmp_sigma(:,:) = 0.d0
     
-    do ig = gstart, ngms
-      arg = (g(1,ig)*tau(1,na) + g(2,ig)*tau(2,na) + g(3,ig)*tau(3,na)) * tpi
-      tmp_sigma(:,:) = tmp_sigma(:,:) + b_ind(ig,:,:) * cmplx(cos(arg),sin(arg), dp)
+    do ispin = 1, nspin
+      do ig = gstart, ngm
+        arg = (g(1,ig)*tau(1,na) + g(2,ig)*tau(2,na) + g(3,ig)*tau(3,na)) * tpi
+        tmp_sigma(:,:) = tmp_sigma(:,:) + b_ind(ig,:,:,ispin) * cmplx(cos(arg),sin(arg), dp)
+      enddo
     enddo
     
     if (use_nmr_macroscopic_shape) then
