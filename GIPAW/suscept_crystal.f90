@@ -155,28 +155,23 @@ SUBROUTINE suscept_crystal
     if (job /= 'f-sum') call compute_u_kq(ik, q)
     call init_gipaw_2_no_phase (npw, igk, xk (1, ik), paw_vkb)
     call calbec (npw, paw_vkb, evc, paw_becp)
-    write(*,*)'ok 1.0'
     ! compute the terms that do not depend on 'q':
     ! 1. the diamagnetic contribution to the field: Eq.(58) of [1]
     diamagnetic_corr_tensor = 0.0d0
     call diamagnetic_correction (diamagnetic_corr_tensor)
     sigma_diamagnetic = sigma_diamagnetic + diamagnetic_corr_tensor
-    write(*,*)'ok 2.0'
     ! 2. the paramagnetic US augmentation: Eq.(30) of [2]
     if (okvan) then
       paramagnetic_corr_tensor_aug = 0.d0
       call paramagnetic_correction_aug (paramagnetic_corr_tensor_aug, j_bare_s)
       sigma_paramagnetic_aug = sigma_paramagnetic_aug + paramagnetic_corr_tensor_aug
     endif
-    write(*,*)'ok 3.0'
     ! compute p_k|evc>, v_{k,k}|evc>, G_k v_{k,k}|evc> and s_{k,k}|evc>
     call apply_operators
-    write(*,*)'ok 4.0'
     if (okvan) then 
         evq(:,:) = evc(:,:)
         call apply_occ_occ_us
     endif
-    write(*,*)'ok 4.0'
 
     !------------------------------------------------------------------
     ! f-sum rule
@@ -202,7 +197,6 @@ SUBROUTINE suscept_crystal
         enddo
       enddo
     enddo
-    write(*,*)'ok 5.0'
 
     !------------------------------------------------------------------
     ! pGv and vGv contribution to chi_{bare}
@@ -213,7 +207,6 @@ SUBROUTINE suscept_crystal
         call add_to_tensor(q_vGv(:,:,0), vel_evc, G_vel_evc)
       enddo
     endif
-    write(*,*)'ok 6.0'
 
     !------------------------------------------------------------------
     ! loop over -q and +q
