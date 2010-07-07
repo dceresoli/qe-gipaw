@@ -5,7 +5,6 @@
 ! in the root directory of the present distribution,
 ! or http://www.gnu.org/copyleft/gpl.txt .
 !
-!
 !----------------------------------------------------------------------
 subroutine init_gipaw_1
   !----------------------------------------------------------------------
@@ -15,7 +14,7 @@ subroutine init_gipaw_1
   !
   USE kinds ,      ONLY : dp
   USE parameters , ONLY : lqmax , lmaxx
-  USE gipaw_module,ONLY : nbrx
+  USE gipaw_module,ONLY : nbrx, pawproj
   USE cell_base ,  ONLY : omega
   USE ions_base,   ONLY : nat, ntyp => nsp, ityp
   USE constants,   ONLY : fpi
@@ -27,6 +26,7 @@ subroutine init_gipaw_1
   USE io_global,   ONLY : stdout
   USE mp_global,   ONLY : intra_pool_comm
   USE mp,          ONLY : mp_sum
+  USE uspp_param,   ONLY : upf  
 
   !
   implicit none
@@ -118,7 +118,6 @@ subroutine init_gipaw_1
      !
      ! Rescale the wavefunctions so that int_0^rc f|psi|^2=1
      ! 
-     
      pow = 1.0_dp
      do j = 1, paw_recon(nt)%paw_nbeta
         rc = paw_recon(nt)%psphi(j)%label%rc
@@ -235,13 +234,25 @@ subroutine init_gipaw_1
                    paw_recon(nt)%paw_betar(1:msh(nt),n1),rgrid(nt)%r(:), &
                    nrs,nrc,pow,msh(nt))
               paw_recon(nt)%paw_betar(1:ndm,n1) = aux(1:ndm)
+              !------------------------------------------------------
+              if (pawproj(nt))then
+                 write(*,*)'resetting projectors to PAW ones'
+                 paw_recon(nt)%paw_betar(1:ndm,n1) = upf(nt)%beta(1:ndm,n1)
+                 write(*,*)'resetting partial waves too'
+                 do nb = 1,paw_recon(nt)%paw_nbeta
+                    paw_recon(nt)%aephi(nb)%psi(:) = upf(nt)%aewfc(:, nb)
+                    paw_recon(nt)%psphi(nb)%psi(:) = upf(nt)%pswfc(:, nb)
+                 enddo
+              endif
            end do
            deallocate (sinv)
            deallocate (s)
            
         end if
      end do
-  end do
+     
+  end do 
+  
   IF ( n_overlap_warnings > 0 ) THEN
      WRITE ( stdout, '(A)' ) ""
   END IF
@@ -335,7 +346,7 @@ subroutine step_f(f2,f,r,nrs,nrc,pow,mesh)
   use kinds , only : dp
 
   !
-  ! This routine apply a fonction which go smoothly to zero from rs to rc
+  ! This routine apply a function which go smoothly to zero from rs to rc
   ! 
 
   implicit none

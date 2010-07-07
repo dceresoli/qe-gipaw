@@ -98,7 +98,8 @@ MODULE gipaw_module
   REAL(dp), ALLOCATABLE :: radial_integral_diamagnetic_so(:,:,:)
   REAL(dp), ALLOCATABLE :: radial_integral_rmc(:,:,:)
   !<apsi>
-  
+  LOGICAL :: pawproj( ntypx ) !EMINE: if true paw projectors will be used
+                                     !instead of GIPAW ones
   
 CONTAINS
   
@@ -113,6 +114,7 @@ CONTAINS
   !              filcurr = '...'
   !              filfield = '...'
   !              iverbosity = 0
+  !              pawproj(1:ntypx)= .false. if true paw proj. will be used instead of GIPAW ones
   !         /
   !-----------------------------------------------------------------------
   SUBROUTINE gipaw_readin()
@@ -129,7 +131,7 @@ CONTAINS
                          q_efg, hfi_output_unit, hfi_isotope, &
                          hfi_nuclear_g_factor, radial_integral_splines, &
                          hfi_via_reconstruction_only, &
-                         hfi_extrapolation_npoints
+                         hfi_extrapolation_npoints,pawproj
     
     if ( .not. ionode ) goto 400
     
@@ -158,7 +160,7 @@ CONTAINS
     hfi_via_reconstruction_only = .TRUE.
     hfi_extrapolation_npoints = 10000
     q_efg = 1.0
-    
+    pawproj(:) = .false. 
     read( 5, inputgipaw, err = 200, iostat = ios )
     
 200 call errore( 'gipaw_readin', 'reading inputgipaw namelist', abs( ios ) )
@@ -199,6 +201,7 @@ CONTAINS
     call mp_bcast ( radial_integral_splines, root )
     CALL mp_bcast ( hfi_via_reconstruction_only, root )
     CALL mp_bcast ( hfi_extrapolation_npoints, root )
+    CALL mp_bcast ( pawproj, root )
 #endif
   END SUBROUTINE gipaw_bcast_input
 
