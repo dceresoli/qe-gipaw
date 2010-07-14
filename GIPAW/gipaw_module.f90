@@ -18,8 +18,8 @@ MODULE gipaw_module
   IMPLICIT NONE
   SAVE
   
-  INTEGER, PARAMETER:: natx=20000 ! max number of atoms
-  INTEGER, PARAMETER:: nbrx=14   ! max number of beta functions
+  INTEGER, PARAMETER:: natx=2000  ! max number of atoms
+  INTEGER, PARAMETER:: nbrx=2*16  ! max number of beta functions
   ! alpha
   REAL(DP), PARAMETER :: alpha = 1.0_dp / 137.03599911_dp
   
@@ -469,11 +469,11 @@ CONTAINS
     allocate ( paw_becp2(paw_nkb,nbnd) )
     allocate ( paw_becp3(paw_nkb,nbnd) )
     
-    allocate ( radial_integral_diamagnetic(paw_nkb,paw_nkb,ntypx) )
-    allocate ( radial_integral_paramagnetic(paw_nkb,paw_nkb,ntypx) )
-    allocate ( radial_integral_diamagnetic_so(paw_nkb,paw_nkb,ntypx) )
-    allocate ( radial_integral_paramagnetic_so(paw_nkb,paw_nkb,ntypx) )
-    allocate ( radial_integral_rmc(paw_nkb,paw_nkb,ntypx) )
+    allocate ( radial_integral_diamagnetic(nbrx,nbrx,ntypx) )
+    allocate ( radial_integral_paramagnetic(nbrx,nbrx,ntypx) )
+    allocate ( radial_integral_diamagnetic_so(nbrx,nbrx,ntypx) )
+    allocate ( radial_integral_paramagnetic_so(nbrx,nbrx,ntypx) )
+    allocate ( radial_integral_rmc(nbrx,nbrx,ntypx) )
     radial_integral_diamagnetic = 0.0_dp
     radial_integral_paramagnetic = 0.0_dp
     radial_integral_diamagnetic_so = 0.0_dp

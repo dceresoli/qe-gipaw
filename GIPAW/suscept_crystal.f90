@@ -102,7 +102,11 @@ SUBROUTINE suscept_crystal
   allocate ( p_evc(npwx,nbnd,3), vel_evc(npwx,nbnd,3) )
   allocate ( aux(npwx,nbnd), G_vel_evc(npwx,nbnd,3) )
   allocate ( j_bare_s(nrxxs,3,3,nspin) )
-  allocate ( svel_evc(npwx,nbnd,3), u_svel_evc(npwx,nbnd,3) )
+  if (okvan) then
+      allocate ( svel_evc(npwx,nbnd,3), u_svel_evc(npwx,nbnd,3) )
+  else
+      allocate ( svel_evc(1,1,3), u_svel_evc(1,1,3) )  ! to save some memory
+  endif
   svel_evc = 0.d0 
   u_svel_evc = 0.d0
 
