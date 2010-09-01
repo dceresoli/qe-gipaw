@@ -30,8 +30,10 @@ RETURN
   USE becmod,                      ONLY : becp, calbec
   USE symme,                       ONLY : symmatrix
   USE scf,                         ONLY : v, vltot, rho
-  USE gvect,                       ONLY : ngm, nr1, nr2, nr3, nrx1, nrx2, &
-                                          nrx3, nrxx, nlm, g, ecutwfc, nl
+  USE fft_base,                    ONLY : dfftp
+  USE fft_interfaces,              ONLY : fwfft
+  USE gvect,                       ONLY : ngm, nr1, nr2, nr3,  &
+                                          nrxx, nlm, g, ecutwfc, nl
   USE gipaw_module,                ONLY : j_bare, b_ind, b_ind_r, q_gipaw, &
                                           evq, alpha, nbnd_occ, iverbosity, &
                                           isolve, conv_threshold
@@ -348,8 +350,7 @@ RETURN
      v_local(:,ispin) = vltot(:) + v%of_r(:,ispin)
   end do
   ! <ceres> which spin channel? </ceres>
-  call gradient ( nrx1, nrx2, nrx3, nr1, nr2, nr3, nrxx, v_local, &
-       ngm, g, nl, grad_vr )
+  call gradient ( nrxx, v_local, ngm, g, nl, grad_vr )
   grad_vr = grad_vr * units_Ry2Ha
   deallocate ( v_local )
   ! </apsi>
@@ -385,14 +386,13 @@ RETURN
   allocate(grad_vh(3,nrxx), vh(nrxx,nspin), aux1(nrxx))
   ! transform rho to G-space
   aux1(:) = rho%of_r(:,s_maj)-rho%of_r(:,s_min)
-  CALL cft3( aux1, nr1, nr2, nr3, nrx1, nrx2, nrx3, -1 )
+  CALL fwfft('Dense',aux1,dfftp)
   rho%of_g(:,1) = aux1(nl(:))
   rho%of_g(:,2) = 0.d0
   vh = 0.d0
   call v_h(rho%of_g, e_hartree, charge, vh)
   ! <ceres> which spin channel? </ceres>
-  call gradient ( nrx1, nrx2, nrx3, nr1, nr2, nr3, nrxx, vh, &
-       ngm, g, nl, grad_vh )
+  call gradient ( nrxx, vh, ngm, g, nl, grad_vh )
   grad_vh = grad_vh * units_Ry2Ha
   deallocate(vh, aux1)
   

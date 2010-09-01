@@ -17,11 +17,12 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   USE kinds,                ONLY : DP
   USE klist,                ONLY : xk
   USE wvfct,                ONLY : nbnd, npwx, npw, igk, wg
-  USE gsmooth,              ONLY : nrxxs, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, nls
+  USE gsmooth,              ONLY : nrxxs, nls
   USE gvect,                ONLY : g
   USE cell_base,            ONLY : tpiba
   USE gipaw_module,         ONLY : nbnd_occ
-
+  USE fft_base,             ONLY : dffts
+  USE fft_interfaces,       ONLY : invfft
   !-- parameters ---------------------------------------------------------
   IMPLICIT none
   INTEGER, INTENT(IN) :: ik               ! k-point
@@ -55,11 +56,11 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
       ! transform to real space
       p_psic(:) = (0.d0,0.d0)
       p_psic(nls(igk(1:npw))) = aux(1:npw)
-      call cft3s(p_psic, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, 2)
+      CALL invfft ('Wave', p_psic, dffts)
 
       psic(:) = (0.d0,0.d0)
       psic(nls(igk(1:npw))) = psi_m(1:npw,ibnd)
-      call cft3s(psic, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, 2)
+      CALL invfft ('Wave', psic, dffts)
 
       ! add to the current
       j(1:nrxxs,ipol) = j(1:nrxxs,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
@@ -74,11 +75,11 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
       ! transform to real space
       p_psic(:) = (0.d0,0.d0)
       p_psic(nls(igk(1:npw))) = aux(1:npw)
-      call cft3s(p_psic, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, 2)
+      CALL invfft ('Wave', p_psic, dffts)
 
       psic(:) = (0.d0,0.d0)
       psic(nls(igk(1:npw))) = psi_n(1:npw,ibnd)
-      call cft3s(psic, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, 2)
+      CALL invfft ('Wave', psic, dffts)
 
       ! add to the current
       j(1:nrxxs,ipol) = j(1:nrxxs,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &

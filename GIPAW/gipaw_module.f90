@@ -100,7 +100,6 @@ MODULE gipaw_module
   !<apsi>
   LOGICAL :: pawproj( ntypx ) !EMINE: if true paw projectors will be used
                                      !instead of GIPAW ones
-  
 CONTAINS
   
   !-----------------------------------------------------------------------
@@ -116,6 +115,7 @@ CONTAINS
   !              iverbosity = 0
   !              pawproj(1:ntypx)= .false. if true paw proj. will be used instead of GIPAW ones
   !         /
+ 
   !-----------------------------------------------------------------------
   SUBROUTINE gipaw_readin()
     USE io_files,      ONLY : nd_nmbr, prefix, tmp_dir  
@@ -160,7 +160,7 @@ CONTAINS
     hfi_via_reconstruction_only = .TRUE.
     hfi_extrapolation_npoints = 10000
     q_efg = 1.0
-    pawproj(:) = .false. 
+    pawproj(:) = .false.
     read( 5, inputgipaw, err = 200, iostat = ios )
     
 200 call errore( 'gipaw_readin', 'reading inputgipaw namelist', abs( ios ) )
@@ -319,8 +319,9 @@ CONTAINS
     WRITE( stdout, * )
     WRITE( stdout, * ) '    General routines'
     call print_clock ('calbec')
-    call print_clock ('cft3')
-    call print_clock ('cft3s')
+   call print_clock ('fft')
+   call print_clock ('ffts')
+   call print_clock ('fftw')
     call print_clock ('cinterpolate')
     call print_clock ('davcio')
     call print_clock ('write_rec')

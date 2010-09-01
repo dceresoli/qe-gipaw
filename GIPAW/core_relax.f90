@@ -22,8 +22,9 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
   USE radial_grids,          ONLY : ndmx
   USE paw_gipaw,             ONLY : paw_recon
   USE scf,                   ONLY : rho
-  USE gvect,                 ONLY : nr1, nr2, nr3, nrx1, nrx2, nrx3, nrxx, ecutwfc
-  USE gvect,                 ONLY : g, nl, gstart, ngm
+  USE gvect,                 ONLY : g, nl, gstart, ngm, ecutwfc,nrxx
+  USE fft_base,               ONLY : dfftp
+  USE fft_interfaces,         ONLY : fwfft
   USE lsda_mod,              ONLY : nspin, isk, current_spin
   USE buffers,               ONLY : get_buffer
   USE gipaw_module,          ONLY : iverbosity
@@ -130,7 +131,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
       ! bare density to reciprocal space
       do ispin = 1, nspin
         aux(1:nrxx) = rho%of_r(1:nrxx,ispin)
-        call cft3(aux,nr1,nr2,nr3,nrx1,nrx2,nrx3,-1)
+        CALL fwfft('Dense',aux,dfftp)
         call project_density(sph_rho_bare(:,na,ispin))
       enddo
   enddo

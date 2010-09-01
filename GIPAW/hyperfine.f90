@@ -232,10 +232,12 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   USE mp,           ONLY : mp_sum
   USE mp_global,    ONLY : intra_pool_comm
   USE constants,    ONLY : tpi, fpi
-  USE gsmooth,      ONLY : nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, nrxxs, nls, ngms
+  USE gsmooth,      ONLY : nrxxs, nls, ngms
   USE gvect,        ONLY : g, gg, gstart
   USE parameters,   ONLY : ntypx
   USE ions_base,    ONLY : nat, tau, atm, ityp
+  USE fft_base,     ONLY : dffts
+  USE fft_interfaces, ONLY : fwfft
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
@@ -250,7 +252,7 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   complex(dp) :: phase
 
   ! transform to reciprocal space
-  call cft3s(rho_s, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, -1)
+  CALL fwfft('Smooth', rho_s, dffts)
 
 #ifdef ZORA
   ! Fourier transform of Thomson's delta function

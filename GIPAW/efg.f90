@@ -158,13 +158,15 @@ SUBROUTINE get_smooth_density(rho)
   USE wvfct,        ONLY : nbnd, npwx, npw, igk, wg, g2kin, current_k
   USE klist,        ONLY : nks, xk
   USE gvect,        ONLY : ngm, g, ecutwfc, g2kin
-  USE gsmooth,      ONLY : nrxxs, nrx1s, nrx2s, nrx3s, nr1s, nr2s, nr3s, nls
+  USE gsmooth,      ONLY : nrxxs,  nls
   USE wavefunctions_module, ONLY : evc
   USE cell_base,    ONLY : tpiba2, omega
   USE io_files,     ONLY : nwordwfc, iunwfc
   USE buffers,      ONLY : get_buffer
   USE mp,           ONLY : mp_sum
   USE mp_global,    ONLY : intra_pool_comm, inter_pool_comm
+  USE fft_base,     ONLY : dffts
+  USE fft_interfaces, ONLY : invfft
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
@@ -188,7 +190,7 @@ SUBROUTINE get_smooth_density(rho)
       do ibnd = 1, nbnd
           psic(:) = (0.d0,0.d0)
           psic(nls(igk(1:npw))) = evc(1:npw,ibnd)
-          call cft3s( psic, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, 2 )
+          CALL invfft ('Wave', psic, dffts)
           rho(:,current_spin) = rho(:,current_spin) + wg(ibnd,ik) * &
               (dble(psic(:))**2 + aimag(psic(:))**2) / omega
       enddo
@@ -211,7 +213,9 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
   USE mp,           ONLY : mp_sum
   USE mp_global,    ONLY : intra_pool_comm
   USE constants,    ONLY : tpi, fpi
-  USE gsmooth,      ONLY : nrxxs, nrx1s, nrx2s, nrx3s, nr1s, nr2s, nr3s, nls, ngms
+  USE gsmooth,      ONLY : nrxxs, nls, ngms
+  USE fft_base,      ONLY : dffts
+  USE fft_interfaces, ONLY : fwfft
   USE gvect,        ONLY : g, gg, gstart
   USE ions_base,    ONLY : nat, tau
   USE gipaw_module, ONLY : job
@@ -233,7 +237,7 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
   efg_g(:,:,:) = (0.d0,0.d0)
 
   ! transform to reciprocal space
-  call cft3s(rho, nr1s, nr2s, nr3s, nrx1s, nrx2s, nrx3s, -1)
+  CALL fwfft ('Smooth', rho, dffts)
   
   ! electric field gradient in the G-space
   do ig = gstart, ngms
