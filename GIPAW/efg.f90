@@ -157,7 +157,7 @@ SUBROUTINE get_smooth_density(rho)
   USE lsda_mod,     ONLY : current_spin, isk
   USE wvfct,        ONLY : nbnd, npwx, npw, igk, wg, g2kin, current_k
   USE klist,        ONLY : nks, xk
-  USE gvect,        ONLY : ngm, g, ecutwfc, g2kin
+  USE gvect,        ONLY : ngm, g, ecutwfc
   USE gsmooth,      ONLY : nrxxs,  nls
   USE wavefunctions_module, ONLY : evc
   USE cell_base,    ONLY : tpiba2, omega

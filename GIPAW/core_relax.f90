@@ -127,7 +127,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
   do na = 1, nat
       nt = ityp(na)
       if (paw_recon(nt)%gipaw_ncore_orbital == 0) cycle
-      if (iverbosity > 1) write(stdout,'(5X,''core-relax: projecting around atom '',I3)'), na
+      if (iverbosity > 1) write(stdout,'(5X,''core-relax: projecting around atom '',I3)') na
       ! bare density to reciprocal space
       do ispin = 1, nspin
         aux(1:nrxx) = rho%of_r(1:nrxx,ispin)
