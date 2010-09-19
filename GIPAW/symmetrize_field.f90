@@ -14,17 +14,17 @@ SUBROUTINE symmetrize_field(field, iflag)
   !     iflag = 0  => tensor         (e.g. induced B field)
   !     iflag = 1  => pseudo-tensor  (e.g. induced current)
   !
-  !     don't use nrxx: in the parallel case nrx1*nrx2*nrx3 /= nrxx
+  !     don't use nrxx: in the parallel case nr1x*nr2x*nr3x /= nrxx
   !
   USE kinds,                           ONLY : DP
   USE cell_base,                       ONLY : at, bg
   USE symm_base,                       ONLY : s, nsym
   USE symme,                           ONLY : crys_to_cart, cart_to_crys
-  USE gvect,                           ONLY : nr1, nr2, nr3, nrx1, nrx2, nrx3, nrxx
+  USE gvect,                           ONLY : nr1, nr2, nr3, nr1x, nr2x, nr3x, nrxx
   USE gipaw_module
   !-- parameters ------------------------------------------------------
   IMPLICIT NONE
-  REAL(DP), INTENT(INOUT) :: field(nrx1*nrx2*nrx3,3,3)
+  REAL(DP), INTENT(INOUT) :: field(nr1x*nr2x*nr3x,3,3)
   INTEGER :: iflag
 
   !-- local variables ----------------------------------------------------
@@ -36,7 +36,7 @@ SUBROUTINE symmetrize_field(field, iflag)
   if (nsym <= 1) return
 
   ! cartesian to crystal
-  do i = 1, nrx1*nrx2*nrx3
+  do i = 1, nr1x*nr2x*nr3x
     tmp(:,:) = field(i,:,:)
     call cart_to_crys ( tmp )
     field(i,:,:) = tmp(:,:)
@@ -46,7 +46,7 @@ SUBROUTINE symmetrize_field(field, iflag)
   call syme2(field, iflag)
 
   ! crystal to cartesian
-  do i = 1, nrx1*nrx2*nrx3
+  do i = 1, nr1x*nr2x*nr3x
     tmp(:,:) = field(i,:,:)
     call crys_to_cart ( tmp )
     field(i,:,:) = tmp(:,:)
@@ -68,7 +68,7 @@ SUBROUTINE psymmetrize_field(field, iflag)
   USE fft_base,                        ONLY : grid_gather, grid_scatter
   USE mp_global,                       ONLY : me_pool
   USE symm_base,                       ONLY : s, nsym
-  USE gvect,                           ONLY : nr1, nr2, nr3, nrx1, nrx2, nrx3, nrxx
+  USE gvect,                           ONLY : nr1, nr2, nr3, nr1x, nr2x, nr3x, nrxx
   USE gipaw_module
 
   !-- parameters ------------------------------------------------------
@@ -83,7 +83,7 @@ SUBROUTINE psymmetrize_field(field, iflag)
   ! if no symmetries, return
   if (nsym.eq.1) return
 
-  allocate( aux(nrx1*nrx2*nrx3,3,3) )
+  allocate( aux(nr1x*nr2x*nr3x,3,3) )
   do i = 1, 3
     do j = 1, 3
       call grid_gather(field(:,i,j), aux(:,i,j))
@@ -108,11 +108,11 @@ subroutine syme2 (dvsym, iflag)
   use kinds,          ONLY : dp
   USE symm_base,      ONLY : s, nsym, ftau
   USE symme,          ONLY : crys_to_cart
-  USE gvect,          ONLY : nr1, nr2, nr3, nrx1, nrx2, nrx3
+  USE gvect,          ONLY : nr1, nr2, nr3, nr1x, nr2x, nr3x
 
   implicit none
 
-  real(DP) :: dvsym (nrx1,nrx2,nrx3, 3, 3)
+  real(DP) :: dvsym (nr1x,nr2x,nr3x, 3, 3)
   real(DP), allocatable :: aux (:,:,:,:,:)
   ! the function to symmetrize
   ! auxiliary space
@@ -125,9 +125,9 @@ subroutine syme2 (dvsym, iflag)
   real(dp) :: det(48), sc(3,3), d
 
   if (nsym.eq.1) return
-  allocate (aux(nrx1,nrx2,nrx3,3,3))
+  allocate (aux(nr1x,nr2x,nr3x,3,3))
 
-  call dcopy (nrx1 *nrx2 *nrx3 * 9, dvsym, 1, aux, 1)
+  call dcopy (nr1x *nr2x *nr3x * 9, dvsym, 1, aux, 1)
   
   ! compute determinants of transformation matrixes
   do irot = 1, nsym
@@ -178,7 +178,7 @@ subroutine syme2 (dvsym, iflag)
   enddo
   enddo
 
-  call dscal (nrx1*nrx2*nrx3*9, 1.d0 / DBLE (nsym), dvsym , 1)
+  call dscal (nr1x*nr2x*nr3x*9, 1.d0 / DBLE (nsym), dvsym , 1)
 
   deallocate (aux)
   return
