@@ -28,6 +28,7 @@ g_tensor_crystal.o \
 write_tensor_field.o \
 velocity.o \
 nmr_routines.o \
+epr_routines.o \
 efg.o hyperfine.o core_relax.o \
 util.o ascheq.o
 
