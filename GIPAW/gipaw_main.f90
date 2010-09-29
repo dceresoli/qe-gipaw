@@ -33,14 +33,13 @@ PROGRAM gipaw_main
   USE mp,              ONLY : mp_bcast
   USE cell_base,       ONLY : tpiba
   USE cellmd,          ONLY : cell_factor
-  USE gipaw_module,    ONLY : job, &
-                              q_gipaw, &
-                              gipaw_readin, gipaw_allocate, gipaw_setup, &
+  USE gipaw_module,    ONLY : job, q_gipaw, gipaw_readin, gipaw_allocate, gipaw_setup, &
                               gipaw_openfil, print_clock_gipaw, &
                               gipaw_summary
   USE control_flags,   ONLY : io_level, gamma_only
-  USE mp_global,       ONLY: mp_startup
-  USE environment,     ONLY: environment_start
+  USE mp_global,       ONLY : mp_startup
+  USE environment,     ONLY : environment_start
+  USE lsda_mod,        ONLY : nspin
 
   !------------------------------------------------------------------------
   IMPLICIT NONE
@@ -77,6 +76,7 @@ PROGRAM gipaw_main
      call suscept_crystal   
      
   case ( 'g_tensor' )
+     if (nspin /= 2) call errore('gipaw_main', 'g_tensor is only for spin-polarized', 1)
      call g_tensor_crystal
      
   case ( 'f-sum' )

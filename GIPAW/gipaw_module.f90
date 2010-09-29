@@ -17,18 +17,25 @@ MODULE gipaw_module
   
   IMPLICIT NONE
   SAVE
-  
+
+  ! TO BE REMOVED  
   INTEGER, PARAMETER:: natx=2000  ! max number of atoms
   INTEGER, PARAMETER:: nbrx=2*16  ! max number of beta functions
-  ! alpha
+
+  ! Physical constants
+  ! fine structure constant alpha (c = 1/alpha)
   REAL(DP), PARAMETER :: alpha = 1.0_dp / 137.03599911_dp
-  
-  ! speed of light in atomic units: c = 1/alpha
-  !REAL(DP), PARAMETER :: c = 137.03599911d0
   
   ! avogadro number
   REAL(DP), PARAMETER :: avogadro = 6.022142e23_dp
   
+  ! g_e and gprime
+  REAL(DP), PARAMETER :: g_e = 2.0023192778_DP
+  REAL(DP), PARAMETER :: gprime = (2.d0*g_e - 1.d0)
+ 
+  ! rydberg to Hartree
+  REAL(DP), PARAMETER :: ry2ha = 2.0_DP
+ 
   ! number of occupied bands at each k-point
   INTEGER :: nbnd_occ(npk)
   
