@@ -335,7 +335,7 @@ SUBROUTINE suscept_crystal
   call mp_sum( sigma_paramagnetic_aug, inter_pool_comm )
   call mp_sum( delta_g_rmc, intra_pool_comm)
   call mp_sum( delta_g_rmc_gipaw, intra_pool_comm)
-  call mp_sum( delta_g_so_dia inter_pool_comm )
+  call mp_sum( delta_g_so_dia, inter_pool_comm )
   call mp_sum( delta_g_so_para, inter_pool_comm )
   call mp_sum( delta_g_so_para_us, inter_pool_comm )
   call mp_sum( delta_g_so_para_aug, inter_pool_comm )

@@ -465,6 +465,8 @@ SUBROUTINE compute_delta_g_so (j_bare, s_maj, s_min, delta_g_so)
   USE scf,                    ONLY : vltot, v, rho
   USE lsda_mod,               ONLY : nspin
   USE gipaw_module,           ONLY : ry2ha, alpha, gprime
+  USE mp_global,              ONLY : intra_pool_comm
+  USE mp,                     ONLY : mp_sum
 
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
@@ -501,7 +503,7 @@ SUBROUTINE compute_delta_g_so (j_bare, s_maj, s_min, delta_g_so)
   deallocate (grad_vr)
   
 #ifdef __PARA
-  call mp_sum(delta_g_bare, intra_pool_comm)
+  call mp_sum(delta_g_so, intra_pool_comm)
 #endif
 
   d_omega = omega / real(nr1*nr2*nr3, dp)
@@ -532,6 +534,8 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
   USE gipaw_module,           ONLY : ry2ha, alpha, gprime
   USE fft_base,               ONLY : dfftp
   USE fft_interfaces,         ONLY : fwfft
+  USE mp_global,              ONLY : intra_pool_comm
+  USE mp,                     ONLY : mp_sum
 
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
@@ -592,7 +596,7 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
   enddo
 
 #ifdef __PARA
-   call mp_sum (delta_g_soo_2,intra_pool_comm)
+   call mp_sum(delta_g_soo2, intra_pool_comm)
 #endif
   
   d_omega = omega / real(nr1*nr2*nr3, dp)
