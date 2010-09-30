@@ -77,7 +77,7 @@ PROGRAM gipaw_main
      
   case ( 'g_tensor' )
      if (nspin /= 2) call errore('gipaw_main', 'g_tensor is only for spin-polarized', 1)
-     call g_tensor_crystal
+     call suscept_crystal
      
   case ( 'f-sum' )
      call suscept_crystal

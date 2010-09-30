@@ -24,7 +24,6 @@ biot_savart.o \
 init_gipaw_1.o \
 init_gipaw_2.o \
 init_us_2_no_phase.o \
-g_tensor_crystal.o \
 write_tensor_field.o \
 velocity.o \
 nmr_routines.o \
