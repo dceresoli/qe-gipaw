@@ -490,13 +490,13 @@ SUBROUTINE compute_delta_g_so (j_bare, s_maj, s_min, delta_g_so)
   do ipol = 1, 3
     delta_g_so(ipol,1) = sum( &
          ( j_bare(:,2,ipol,s_maj)-j_bare(:,2,ipol,s_min)) * grad_vr(3,:) &
-        -(j_bare(:,3,ipol,s_maj)-j_bare(:,3,ipol,s_min)) * grad_vr(2,:) )
+        -( j_bare(:,3,ipol,s_maj)-j_bare(:,3,ipol,s_min)) * grad_vr(2,:) )
     delta_g_so(ipol,2) = sum ( &
          ( j_bare(:,3,ipol,s_maj)-j_bare(:,3,ipol,s_min)) * grad_vr(1,:) &
-        -(j_bare(:,1,ipol,s_maj)-j_bare(:,1,ipol,s_min)) * grad_vr(3,:) )
+        -( j_bare(:,1,ipol,s_maj)-j_bare(:,1,ipol,s_min)) * grad_vr(3,:) )
     delta_g_so(ipol,3) = sum ( &
          ( j_bare(:,1,ipol,s_maj)-j_bare(:,1,ipol,s_min)) * grad_vr(2,:) &
-        -(j_bare(:,2,ipol,s_maj)-j_bare(:,2,ipol,s_min)) * grad_vr(1,:) )
+        -( j_bare(:,2,ipol,s_maj)-j_bare(:,2,ipol,s_min)) * grad_vr(1,:) )
   enddo
   deallocate (grad_vr)
   
@@ -552,7 +552,7 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
   aux1(:) = rho%of_r(:,s_maj) - rho%of_r(:,s_min)
   call fwfft('Dense', aux1, dfftp)
 
-  rho%of_g(:,1) = real(aux1(nl(:)),dp)
+  rho%of_g(:,1) = aux1(nl(:))
   rho%of_g(:,2) = 0.d0
   vh = 0.d0
 
@@ -628,7 +628,7 @@ SUBROUTINE print_g_tensor(delta_g_rmc, delta_g_rmc_gipaw, delta_g_so, &
   real(dp), intent(inout) :: delta_g_so_dia(3,3)
   !-- local variables ---------------------------------------------------
   real(dp) :: delta_g_tot(3,3), delta_g_tot2(3,3)
-  
+
   write(stdout,'(5X,''Contributions to the EPR g-tensor (in ppm): -----------------------------'')')
   write(stdout,*)
 
@@ -639,56 +639,62 @@ SUBROUTINE print_g_tensor(delta_g_rmc, delta_g_rmc_gipaw, delta_g_so, &
   delta_g_so_para = delta_g_so_para * gprime / 2.d0 * ry2ha * 1.0d6 
   delta_g_so_para_us = delta_g_so_para_us * gprime / 2.d0 * ry2ha * 1.0d6 
   delta_g_so_para_aug = delta_g_so_para_aug * gprime / 2.d0 * ry2ha * 1.0d6 
-  
-  delta_g_tot = delta_g_rmc + delta_g_rmc_gipaw + delta_g_so &
-       + delta_g_so_dia + delta_g_so_para + delta_g_so_para_aug + delta_g_so_para_us &
-       + delta_g_soo
-  
-  delta_g_tot2 = delta_g_rmc + delta_g_rmc_gipaw + delta_g_so &
-       + delta_g_so_dia + delta_g_so_para + delta_g_so_para_aug + delta_g_so_para_us &
-       + delta_g_soo2
 
-  write(stdout,'(5X,''Relativistic mass correction bare :'',F12.4)') delta_g_rmc
-  write(stdout,'(5X,''Relativistic mass correction gipaw:'',F12.4)') delta_g_rmc_gipaw
+  ! calculate total  
+  delta_g_tot = delta_g_so + delta_g_so_para + delta_g_so_para_aug + delta_g_so_para_us &
+       + delta_g_so_dia + delta_g_soo
+  delta_g_tot(1,1) = delta_g_tot(1,1) +  delta_g_rmc + delta_g_rmc_gipaw 
+  delta_g_tot(2,2) = delta_g_tot(2,2) +  delta_g_rmc + delta_g_rmc_gipaw 
+  delta_g_tot(3,3) = delta_g_tot(3,3) +  delta_g_rmc + delta_g_rmc_gipaw
+
+  delta_g_tot2 = delta_g_so + delta_g_so_para + delta_g_so_para_aug + delta_g_so_para_us &
+       + delta_g_so_dia + delta_g_soo2
+  delta_g_tot2(1,1) = delta_g_tot2(1,1) +  delta_g_rmc + delta_g_rmc_gipaw 
+  delta_g_tot2(2,2) = delta_g_tot2(2,2) +  delta_g_rmc + delta_g_rmc_gipaw 
+  delta_g_tot2(3,3) = delta_g_tot2(3,3) +  delta_g_rmc + delta_g_rmc_gipaw
+
+
+  write(stdout,'(5X,''Relativistic mass correction bare :'',F12.2)') delta_g_rmc
+  write(stdout,'(5X,''Relativistic mass correction gipaw:'',F12.2)') delta_g_rmc_gipaw
   write(stdout,*)
 
   write(stdout,'(5X,''Delta_g SO - bare term:'')')
-  write(stdout,'(3(5X,3(F12.6,2X)/))') delta_g_so(:,:)
+  write(stdout,'(3(5X,3(F12.2,2X)/))') delta_g_so(:,:)
   write(stdout,*)
 
   write(stdout,'(5X,''Delta_g SO - diamagnetic term:'')')
-  write(stdout,'(3(5X,3(F12.6,2X)/))') delta_g_so_dia(:,:)
+  write(stdout,'(3(5X,3(F12.2,2X)/))') delta_g_so_dia(:,:)
   write(stdout,*)
 
   write(stdout,'(5X,''Delta_g SO - paragnetic term:'')')
-  write(stdout,'(3(5X,3(F12.6,2X)/))') delta_g_so_para(:,:)
+  write(stdout,'(3(5X,3(F12.2,2X)/))') delta_g_so_para(:,:)
   write(stdout,*)
 
   if (okvan) then
     write(stdout,'(5X,''Delta_g SO - paragnetic US occ-occ term:'')')
-    write(stdout,'(3(5X,3(F12.6,2X)/))') delta_g_so_para_us(:,:)
+    write(stdout,'(3(5X,3(F12.2,2X)/))') delta_g_so_para_us(:,:)
     write(stdout,*)
     write(stdout,'(5X,''Delta_g SO - paragnetic US L_R Q_R term:'')')
-    write(stdout,'(3(5X,3(F12.6,2X)/))') delta_g_so_para_aug(:,:)
+    write(stdout,'(3(5X,3(F12.2,2X)/))') delta_g_so_para_aug(:,:)
     write(stdout,*)
   endif
 
   write(stdout,'(5X,''Delta_g SOO - a la Paratec:'')')
-  write(stdout,'(3(5X,3(F12.6,2X)/))') delta_g_soo(:,:)
+  write(stdout,'(3(5X,3(F12.2,2X)/))') delta_g_soo(:,:)
   write(stdout,*)
 
   write(stdout,'(5X,''Delta_g SOO - Eq.(7):'')')
-  write(stdout,'(3(5X,3(F12.6,2X)/))') delta_g_soo2(:,:)
+  write(stdout,'(3(5X,3(F12.2,2X)/))') delta_g_soo2(:,:)
   write(stdout,*)
 
   call symtensor(1, delta_g_tot)
   write(stdout,'(5X,''Delta_g total (SOO a la Paratec): ---------------------------------------'')')
-  write(stdout,'(3(5X,3(F12.6,2X)/))') delta_g_tot(:,:)
+  write(stdout,'(3(5X,3(F12.2,2X)/))') delta_g_tot(:,:)
   write (stdout,*) 
 
   call symtensor(1, delta_g_tot2) 
-  write(stdout,'(5X,''Delta_g total (SOO as in Eq.(7))): --------------------------------------'')')
-  write(stdout,'(3(5X,3(F12.6,2X)/))') delta_g_tot2(:,:)
+  write(stdout,'(5X,''Delta_g total (SOO as in Eq.(7)): ---------------------------------------'')')
+  write(stdout,'(3(5X,3(F12.2,2X)/))') delta_g_tot2(:,:)
   write (stdout,*) 
 
 END SUBROUTINE print_g_tensor

@@ -13,10 +13,10 @@ SUBROUTINE suscept_crystal
   ! the induced current, using the "crystal method".
   ! 
   ! References:
-  !   [1] Phys. Rev. B 63, 245101 (2001)   (norm-conserving GIPAW)
-  !   [2] Phys. Rev. B 76, 024401 (2007)   (ultrasoft)
-  !   [3] Phys. Rev. B 76, 165122 (2007)   (metallic systems)
-  !
+  !   [1] Phys. Rev. B 63, 245101 (2001)       (norm-conserving GIPAW)
+  !   [2] Phys. Rev. B 76, 024401 (2007)       (ultrasoft)
+  !   [3] Phys. Rev. B 76, 165122 (2007)       (metallic systems)
+  !   [4] Phys. Rev. Lett. 63, 245101 (2001)   (EPR g-tensor)
   ! Contributors:
   !   D. Ceresoli                        bare susceptibility and current
   !   A. P. Seitsonen and U. Gerstmann   GIPAW contributions
@@ -39,7 +39,7 @@ SUBROUTINE suscept_crystal
   USE uspp,                   ONLY : vkb, okvan
   USE lsda_mod,               ONLY : nspin
   USE gipaw_module,           ONLY : tens_fmt, q_gipaw, iverbosity, alpha, evq, &
-                                     avogadro, filcurr, filfield, &
+                                     avogadro, g_e, gprime, filcurr, filfield, &
                                      nbnd_occ, a0_to_cm, isolve, &
                                      conv_threshold, job
   USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
@@ -85,15 +85,27 @@ SUBROUTINE suscept_crystal
   real(dp) :: paramagnetic_corr_tensor_us(3,3,nat)   ! Eq.(41) of [2] ("occ-occ" term)
   real(dp) :: paramagnetic_corr_tensor_aug(3,3,nat)  ! Eq.(30) of [2] (L_R Q_R term)
 
-  ! Contributions to chemical shift
+  ! Contributions to NMR chemical shift
   real(dp) :: sigma_bare(3,3,nat)
   real(dp) :: sigma_diamagnetic(3,3,nat)
   real(dp) :: sigma_paramagnetic(3,3,nat)
   real(dp) :: sigma_paramagnetic_us(3,3,nat)
   real(dp) :: sigma_paramagnetic_aug(3,3,nat)
 
+  ! Contributions to EPR g-tensor
+  real(dp) :: delta_g_rmc, delta_g_rmc_gipaw         ! relativistic mass correction
+  real(dp) :: delta_g_so(3,3)                        ! spin-orbit
+  real(dp) :: delta_g_soo(3,3), delta_g_soo2(3,3)    ! spin-other-orbit (two versions)
+  real(dp) :: delta_g_so_para(3,3), delta_g_so_para_aug(3,3)  ! gipaw terms
+  real(dp) :: delta_g_so_para_us(3,3), delta_g_so_dia(3,3)    ! gipaw terms
+  real(dp) :: diamagnetic_corr_tensor_so(3,3)
+  real(dp) :: paramagnetic_corr_tensor_so(3,3)
+  real(dp) :: paramagnetic_corr_tensor_aug_so(3,3)
+  real(dp) :: paramagnetic_corr_tensor_us_so(3,3)
+
   integer :: ik, ipol, jpol, i, ibnd, jbnd, isign, ispin
   real(dp) :: tmp(3,3), q(3), k_plus_q(3), braket, cc
+  integer :: s_min, s_maj, s_weight
   complex(dp), external :: zdotc
 
   !-----------------------------------------------------------------------
@@ -129,6 +141,20 @@ SUBROUTINE suscept_crystal
   sigma_paramagnetic_us = 0.d0
   sigma_paramagnetic_aug = 0.d0 
 
+  ! zero the EPR contributions
+  delta_g_rmc = 0.d0
+  delta_g_rmc_gipaw = 0.d0
+  delta_g_so = 0.d0
+  delta_g_soo = 0.d0
+  delta_g_soo2 = 0.d0
+  delta_g_so_para = 0.d0
+  delta_g_so_para_aug = 0.d0
+  delta_g_so_para_us = 0.d0
+  delta_g_so_dia = 0.d0
+
+  ! EPR: select minority and majority spins
+  if (job == 'g_tensor') call select_spin(s_min, s_maj)
+
   write(stdout, '(5X,''Computing the magnetic susceptibility'',$)')
   write(stdout, '(5X,''isolve='',I1,4X,''ethr='',E10.4)') isolve, conv_threshold
   !====================================================================
@@ -144,7 +170,9 @@ SUBROUTINE suscept_crystal
 #endif
     current_k = ik
     current_spin = isk(ik)
-    
+    s_weight = +1
+    if ( current_spin == s_min ) s_weight = -1
+
     ! initialize at k-point k 
     call gk_sort(xk(1,ik), ngm, g, ecutwfc/tpiba2, npw, igk, g2kin)
     g2kin(:) = g2kin(:) * tpiba2
@@ -159,17 +187,35 @@ SUBROUTINE suscept_crystal
     if (job /= 'f-sum') call compute_u_kq(ik, q)
     call init_gipaw_2_no_phase (npw, igk, xk (1, ik), paw_vkb)
     call calbec (npw, paw_vkb, evc, paw_becp)
+
     ! compute the terms that do not depend on 'q':
-    ! 1. the diamagnetic contribution to the field: Eq.(58) of [1]
-    diamagnetic_corr_tensor = 0.0d0
-    call diamagnetic_correction (diamagnetic_corr_tensor)
-    sigma_diamagnetic = sigma_diamagnetic + diamagnetic_corr_tensor
+    ! 1. the diamagnetic contribution to the field: Eq.(58) of [1]/Eq.(9) of [4]
+    if (job == 'nmr') then
+      diamagnetic_corr_tensor = 0.0d0
+      call diamagnetic_correction (diamagnetic_corr_tensor)
+      sigma_diamagnetic = sigma_diamagnetic + diamagnetic_corr_tensor
+    elseif (job == 'g_tensor') then
+      diamagnetic_corr_tensor_so = 0.0d0
+      call diamagnetic_correction_so (diamagnetic_corr_tensor_so)
+      delta_g_so_dia = delta_g_so_dia + s_weight * diamagnetic_corr_tensor_so
+    endif
+
     ! 2. the paramagnetic US augmentation: Eq.(30) of [2]
     if (okvan) then
-      paramagnetic_corr_tensor_aug = 0.d0
-      call paramagnetic_correction_aug (paramagnetic_corr_tensor_aug, j_bare_s)
-      sigma_paramagnetic_aug = sigma_paramagnetic_aug + paramagnetic_corr_tensor_aug
+      if (job == 'nmr') then
+        paramagnetic_corr_tensor_aug = 0.d0
+        call paramagnetic_correction_aug (paramagnetic_corr_tensor_aug, j_bare_s)
+        sigma_paramagnetic_aug = sigma_paramagnetic_aug + paramagnetic_corr_tensor_aug
+      elseif (job == 'g_tensor') then
+        paramagnetic_corr_tensor_aug_so = 0.d0
+        call paramagnetic_correction_aug_so (paramagnetic_corr_tensor_aug_so, j_bare_s)
+        delta_g_so_para_aug = delta_g_so_para_aug + s_weight * paramagnetic_corr_tensor_aug_so
+      endif
     endif
+
+    ! 2. relativistic mass corrections for EPR
+    if (job == 'g_tensor') call rmc(s_weight, delta_g_rmc, delta_g_rmc_gipaw)
+
     ! compute p_k|evc>, v_{k,k}|evc>, G_k v_{k,k}|evc> and s_{k,k}|evc>
     call apply_operators
     if (okvan) then 
@@ -245,10 +291,19 @@ SUBROUTINE suscept_crystal
         endif
 
         ! paramagnetic terms
-        call paramagnetic_correction(paramagnetic_corr_tensor, paramagnetic_corr_tensor_us, &
-             G_vel_evc, u_svel_evc, i)
-        call add_to_sigma_para(paramagnetic_corr_tensor, sigma_paramagnetic)
-        if (okvan) call add_to_sigma_para(paramagnetic_corr_tensor_us, sigma_paramagnetic_us)
+        if (job == 'nmr') then
+          call paramagnetic_correction(paramagnetic_corr_tensor, paramagnetic_corr_tensor_us, &
+               G_vel_evc, u_svel_evc, i)
+          call add_to_sigma_para(paramagnetic_corr_tensor, sigma_paramagnetic)
+          if (okvan) call add_to_sigma_para(paramagnetic_corr_tensor_us, sigma_paramagnetic_us)
+        elseif (job == 'g_tensor') then
+          call paramagnetic_correction_so(paramagnetic_corr_tensor_so, paramagnetic_corr_tensor_us_so, &
+               G_vel_evc, u_svel_evc, i)
+          paramagnetic_corr_tensor_so = paramagnetic_corr_tensor_so * s_weight
+          paramagnetic_corr_tensor_us_so = paramagnetic_corr_tensor_us_so * s_weight
+          call add_to_sigma_para_so(paramagnetic_corr_tensor_so, delta_g_so_para)
+          if (okvan) call add_to_sigma_para_so(paramagnetic_corr_tensor_us_so, delta_g_so_para_us)
+        endif
 
       enddo  ! i=x,y,z
     enddo  ! isign
@@ -262,6 +317,8 @@ SUBROUTINE suscept_crystal
   call mp_sum( f_sum_nelec, intra_pool_comm )
   call mp_sum( q_pGv, intra_pool_comm )
   call mp_sum( q_vGv, intra_pool_comm )
+  call mp_sum( delta_g_rmc, intra_pool_comm)
+  call mp_sum( delta_g_rmc_gipaw, intra_pool_comm)
 #endif
   
 #ifdef __PARA
@@ -276,6 +333,12 @@ SUBROUTINE suscept_crystal
   call mp_sum( sigma_paramagnetic, inter_pool_comm )
   call mp_sum( sigma_paramagnetic_us, inter_pool_comm )
   call mp_sum( sigma_paramagnetic_aug, inter_pool_comm )
+  call mp_sum( delta_g_rmc, intra_pool_comm)
+  call mp_sum( delta_g_rmc_gipaw, intra_pool_comm)
+  call mp_sum( delta_g_so_dia inter_pool_comm )
+  call mp_sum( delta_g_so_para, inter_pool_comm )
+  call mp_sum( delta_g_so_para_us, inter_pool_comm )
+  call mp_sum( delta_g_so_para_aug, inter_pool_comm )
 #endif
   
   !====================================================================
@@ -376,7 +439,6 @@ SUBROUTINE suscept_crystal
     if (trim(filcurr) /= '') call write_tensor_field(filcurr, i, j_bare(1,1,1,i))
     if (trim(filfield) /= '') call write_tensor_field(filfield, i, B_ind_r(1,1,1,i))
   enddo
-  deallocate( B_ind_r )
 
   !--------------------------------------------------------------------
   ! calculate the chemical shifts
@@ -386,7 +448,17 @@ SUBROUTINE suscept_crystal
     call compute_sigma_bare( B_ind, chi_bare_pGv, sigma_bare )
     call print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnetic, &
                                sigma_paramagnetic_us, sigma_paramagnetic_aug)
+  elseif (job == 'g_tensor') then
+    call compute_delta_g_so(j_bare, s_maj, s_min, delta_g_so)
+    call compute_delta_g_soo(j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delta_g_soo2)
+    call print_g_tensor(delta_g_rmc, delta_g_rmc_gipaw, delta_g_so, &
+                        delta_g_soo, delta_g_soo2, delta_g_so_para, &
+                        delta_g_so_para_us, delta_g_so_para_aug, &
+                        delta_g_so_dia)
   endif
+
+  ! deallocate fields
+  deallocate( j_bare, B_ind_r, B_ind )
   
   
 CONTAINS
@@ -538,5 +610,33 @@ CONTAINS
       end do
     enddo
   END SUBROUTINE add_to_sigma_para
+
+  SUBROUTINE add_to_sigma_para_so(paramagnetic_correction, sigma_paramagnetic)
+    IMPLICIT NONE
+    real(dp), intent(in) :: paramagnetic_correction(3,3)
+    real(dp), intent(inout) :: sigma_paramagnetic(3,3)
+    real(dp) :: fact
+    integer :: ibdir, icomp, ipol, ind(3,3), mult(3,3)
+    
+    ! index for the cross product
+    ind(:,1) = (/ 1, 3, 2/);  mult(:,1) = (/ 0,-1, 1 /)
+    ind(:,2) = (/ 3, 2, 1/);  mult(:,2) = (/ 1, 0,-1 /)
+    ind(:,3) = (/ 2, 1, 3/);  mult(:,3) = (/-1, 1, 0 /)
+    
+    ! loop over B direction
+    do ibdir = 1, 3
+      if (i == ibdir) cycle
+      icomp = ind(ibdir,i)
+      fact = real(mult(ibdir,i)*isign)
+      
+      do ipol = 1, 3
+         sigma_paramagnetic ( ipol, icomp ) &
+              = sigma_paramagnetic ( ipol, icomp ) &
+              + fact * paramagnetic_correction ( ipol, ibdir ) &
+              / ( 2 * q_gipaw * tpiba )
+      end do
+    enddo
+  END SUBROUTINE add_to_sigma_para_so
+
 
 END SUBROUTINE suscept_crystal

@@ -31,10 +31,10 @@ MODULE gipaw_module
   
   ! g_e and gprime
   REAL(DP), PARAMETER :: g_e = 2.0023192778_DP
-  REAL(DP), PARAMETER :: gprime = (2.d0*g_e - 1.d0)
+  REAL(DP), PARAMETER :: gprime = 2.d0 * (g_e - 1.d0)
  
   ! rydberg to Hartree
-  REAL(DP), PARAMETER :: ry2ha = 2.0_DP
+  REAL(DP), PARAMETER :: ry2ha = 0.5_DP
  
   ! number of occupied bands at each k-point
   INTEGER :: nbnd_occ(npk)
