@@ -318,7 +318,6 @@ SUBROUTINE suscept_crystal
   call mp_sum( q_pGv, intra_pool_comm )
   call mp_sum( q_vGv, intra_pool_comm )
   call mp_sum( delta_g_rmc, intra_pool_comm)
-  call mp_sum( delta_g_rmc_gipaw, intra_pool_comm)
 #endif
   
 #ifdef __PARA
@@ -333,8 +332,8 @@ SUBROUTINE suscept_crystal
   call mp_sum( sigma_paramagnetic, inter_pool_comm )
   call mp_sum( sigma_paramagnetic_us, inter_pool_comm )
   call mp_sum( sigma_paramagnetic_aug, inter_pool_comm )
-  call mp_sum( delta_g_rmc, intra_pool_comm)
-  call mp_sum( delta_g_rmc_gipaw, intra_pool_comm)
+  call mp_sum( delta_g_rmc, inter_pool_comm)
+  call mp_sum( delta_g_rmc_gipaw, inter_pool_comm)
   call mp_sum( delta_g_so_dia, inter_pool_comm )
   call mp_sum( delta_g_so_para, inter_pool_comm )
   call mp_sum( delta_g_so_para_us, inter_pool_comm )
