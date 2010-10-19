@@ -36,11 +36,11 @@ PROGRAM gipaw_main
   USE gipaw_module,    ONLY : job, q_gipaw, gipaw_readin, gipaw_allocate, gipaw_setup, &
                               gipaw_openfil, print_clock_gipaw, &
                               gipaw_summary
-  USE control_flags,   ONLY : io_level, gamma_only
+  USE control_flags,   ONLY : io_level, gamma_only,use_para_diag
   USE mp_global,       ONLY : mp_startup
   USE environment,     ONLY : environment_start
   USE lsda_mod,        ONLY : nspin
-
+  USE klist,         ONLY : nelec
   !------------------------------------------------------------------------
   IMPLICIT NONE
   CHARACTER (LEN=9)   :: code = 'GIPAW'
@@ -58,6 +58,13 @@ PROGRAM gipaw_main
   ! read ground state wavefunctions
   cell_factor = 1.1d0
   call read_file
+!EMINE
+#ifdef __PARA
+  IF ( use_para_diag )  CALL check_para_diag( nelec )
+#else
+  use_para_diag = .FALSE.
+#endif
+!EMINE
   call gipaw_openfil
   
   if ( gamma_only ) call errore ( 'gipaw_main', 'gamma_only == .true.', 1 )
