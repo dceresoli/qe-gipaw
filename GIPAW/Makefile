@@ -42,7 +42,7 @@ all : tldeps gipaw.x
 gipaw.x : $(GIPAWOBJS) $(PWOBJS) $(LIBOBJS)
 	$(LD) $(LDFLAGS) -o $@ $(GIPAWOBJS) \
 		$(PWOBJS) $(EEOBJS) $(QEMODS) $(LIBOBJS) $(LIBS)
-	- ( cd ../bin; ln -fs ../QE-GIPAW/$@ . )
+	- ( cd ../bin; ln -fs ../GIPAW/$@ . )
 
 tldeps:
 	test -n "$(TLDEPS)" && ( cd .. ; $(MAKE) $(MFLAGS) $(TLDEPS) || exit 1) || :

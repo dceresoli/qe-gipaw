@@ -15,21 +15,21 @@ SUBROUTINE hyperfine
   !
   ! ... Calculate the nuclear hyperfine couplings
   !  
-  USE kinds,        ONLY : dp 
-  USE io_global,    ONLY : stdout
-  USE parameters,   ONLY : ntypx
-  USE constants,    ONLY : pi, tpi, fpi, angstrom_au, rytoev, electronvolt_si, c_si
-  USE gsmooth,      ONLY : nrxxs
-  USE scf,          ONLY : rho
-  USE symme,        ONLY : symtensor
-  USE lsda_mod,     ONLY : current_spin, nspin
-  USE wvfct,        ONLY : current_k
-  USE ions_base,    ONLY : nat, tau, atm, ityp
-  use constants,    ONLY : bohr_radius_si
-  USE mp_global,    ONLY : intra_pool_comm
-  USE mp,           ONLY : mp_sum
-  USE gipaw_module, ONLY : hfi_nuclear_g_factor, hfi_output_unit, &
-                           hfi_isotope, job, iverbosity, radial_integral_splines
+  USE kinds,                  ONLY : dp 
+  USE io_global,              ONLY : stdout
+  USE parameters,             ONLY : ntypx
+  USE constants,              ONLY : pi, tpi, fpi, angstrom_au, rytoev, electronvolt_si, c_si
+  USE smooth_grid_dimensions, ONLY : nrxxs
+  USE scf,                    ONLY : rho
+  USE symme,                  ONLY : symtensor
+  USE lsda_mod,               ONLY : current_spin, nspin
+  USE wvfct,                  ONLY : current_k
+  USE ions_base,              ONLY : nat, tau, atm, ityp
+  use constants,              ONLY : bohr_radius_si
+  USE mp_global,              ONLY : intra_pool_comm
+  USE mp,                     ONLY : mp_sum
+  USE gipaw_module,           ONLY : hfi_nuclear_g_factor, hfi_output_unit, &
+                                     hfi_isotope, job, iverbosity, radial_integral_splines
  
   !-- constants ----------------------------------------------------------
   IMPLICIT NONE
@@ -228,16 +228,17 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   !
   ! ... Calculate the bare contribution to the hyperfine
   !  
-  USE kinds,        ONLY : dp 
-  USE mp,           ONLY : mp_sum
-  USE mp_global,    ONLY : intra_pool_comm
-  USE constants,    ONLY : tpi, fpi
-  USE gsmooth,      ONLY : nrxxs, nls, ngms
-  USE gvect,        ONLY : g, gg, gstart
-  USE parameters,   ONLY : ntypx
-  USE ions_base,    ONLY : nat, tau, atm, ityp
-  USE fft_base,     ONLY : dffts
-  USE fft_interfaces, ONLY : fwfft
+  USE kinds,                  ONLY : dp 
+  USE mp,                     ONLY : mp_sum
+  USE mp_global,              ONLY : intra_pool_comm
+  USE constants,              ONLY : tpi, fpi
+  USE gsmooth,                ONLY : nls, ngms
+  USE smooth_grid_dimensions, ONLY : nrxxs
+  USE gvect,                  ONLY : g, gg, gstart
+  USE parameters,             ONLY : ntypx
+  USE ions_base,              ONLY : nat, tau, atm, ityp
+  USE fft_base,               ONLY : dffts
+  USE fft_interfaces,         ONLY : fwfft
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE

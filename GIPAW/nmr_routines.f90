@@ -227,7 +227,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   USE becmod,                 ONLY : calbec, allocate_bec_type, deallocate_bec_type
   USE constants,              ONLY : pi
   USE parameters,             ONLY : lmaxx
-  USE gsmooth,                ONLY : nrxxs
+  USE smooth_grid_dimensions, ONLY : nrxxs
   USE lsda_mod,               ONLY : nspin
   USE uspp,                   ONLY : ap
   USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon

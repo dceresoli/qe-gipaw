@@ -352,7 +352,8 @@ CONTAINS
     USE wvfct,         ONLY : nbnd, et, wg, npwx
     USE lsda_mod,      ONLY : nspin, lsda
     USE scf,           ONLY : v, vrs, vltot, rho, rho_core, kedtau
-    USE gvect,         ONLY : nrxx, ngm
+    USE gvect,         ONLY : ngm
+    USE grid_dimensions, ONLY : nrxx
     USE gsmooth,       ONLY : doublegrid
     USE klist,         ONLY : xk, degauss, ngauss, nks, nelec
     USE constants,     ONLY : degspin, pi
@@ -362,7 +363,7 @@ CONTAINS
     USE uspp_param,    ONLY : upf
     USE mp_global,     ONLY : inter_pool_comm 
     USE mp,            ONLY : mp_max, mp_min 
-    USE dfunct,                 only : newd
+    USE dfunct,        only : newd
 
     IMPLICIT none
     integer :: ik, nt, ibnd

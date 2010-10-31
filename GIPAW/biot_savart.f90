@@ -9,10 +9,10 @@
 SUBROUTINE interpolate_current(j_bare_s, j_bare)
   !-----------------------------------------------------------------------
   ! ... Interpolate the current to the fine mesh
-  USE kinds,     ONLY : dp
-  USE gvect,     ONLY : nrxx
-  USE gsmooth,   ONLY : nrxxs
-  USE lsda_mod,  ONLY : nspin
+  USE kinds,                  ONLY : dp
+  USE grid_dimensions,        ONLY : nrxx
+  USE smooth_grid_dimensions, ONLY : nrxxs
+  USE lsda_mod,               ONLY : nspin
   !-- parameters ---------------------------------------------------------
   IMPLICIT none
   real(dp), intent(in)  :: j_bare_s(nrxxs,3,3,nspin)
@@ -29,7 +29,6 @@ SUBROUTINE interpolate_current(j_bare_s, j_bare)
   enddo
 
 END SUBROUTINE interpolate_current
-
 
 !-----------------------------------------------------------------------
 SUBROUTINE biot_savart(j_bare, B_ind, B_ind_r)
@@ -49,7 +48,8 @@ SUBROUTINE biot_savart(j_bare, B_ind, B_ind_r)
   USE cell_base,            ONLY : tpiba
   USE gipaw_module,         ONLY : alpha
   USE lsda_mod,             ONLY : nspin
-  USE gvect,                ONLY : ngm, gstart, g, gg, nl, nlm, nrxx
+  USE gvect,                ONLY : ngm, gstart, g, gg, nl, nlm
+  USE grid_dimensions,      ONLY : nrxx
   USE fft_base,             ONLY : dfftp
   USE fft_interfaces,       ONLY : fwfft, invfft 
   !-- parameters ---------------------------------------------------------

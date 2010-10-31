@@ -12,17 +12,17 @@ SUBROUTINE efg
   !
   ! ... Calculate the electric field gradient (EFG)
   !  
-  USE kinds,        ONLY : dp 
-  USE io_global,    ONLY : stdout
-  USE constants,    ONLY : pi, tpi, fpi, angstrom_au, rytoev, electronvolt_si
-  USE scf,          ONLY : rho
-  USE gsmooth,      ONLY : nrxxs
-  USE ions_base,    ONLY : nat, atm, ityp, zv
-  USE symme,        ONLY : symtensor
-  USE lsda_mod,     ONLY : nspin
-  USE mp_global,    ONLY : intra_pool_comm
-  USE mp,           ONLY : mp_sum
-  USE gipaw_module, ONLY : q_efg, iverbosity
+  USE kinds,                  ONLY : dp 
+  USE io_global,              ONLY : stdout
+  USE constants,              ONLY : pi, tpi, fpi, angstrom_au, rytoev, electronvolt_si
+  USE scf,                    ONLY : rho
+  USE smooth_grid_dimensions, ONLY : nrxxs
+  USE ions_base,              ONLY : nat, atm, ityp, zv
+  USE symme,                  ONLY : symtensor
+  USE lsda_mod,               ONLY : nspin
+  USE mp_global,              ONLY : intra_pool_comm
+  USE mp,                     ONLY : mp_sum
+  USE gipaw_module,           ONLY : q_efg, iverbosity
 
   !-- local variables ----------------------------------------------------
   IMPLICIT NONE
@@ -150,23 +150,24 @@ SUBROUTINE get_smooth_density(rho)
   !
   ! ... Get the charge density on the smooth grid
   !  
-  USE kinds,        ONLY : dp 
-  USE mp,           ONLY : mp_sum
-  USE mp_global,    ONLY : intra_pool_comm
-  USE ions_base,    ONLY : nat, tau
-  USE lsda_mod,     ONLY : current_spin, isk
-  USE wvfct,        ONLY : nbnd, npwx, npw, igk, wg, g2kin, current_k
-  USE klist,        ONLY : nks, xk
-  USE gvect,        ONLY : ngm, g, ecutwfc
-  USE gsmooth,      ONLY : nrxxs,  nls
-  USE wavefunctions_module, ONLY : evc
-  USE cell_base,    ONLY : tpiba2, omega
-  USE io_files,     ONLY : nwordwfc, iunwfc
-  USE buffers,      ONLY : get_buffer
-  USE mp,           ONLY : mp_sum
-  USE mp_global,    ONLY : intra_pool_comm, inter_pool_comm
-  USE fft_base,     ONLY : dffts
-  USE fft_interfaces, ONLY : invfft
+  USE kinds,                  ONLY : dp 
+  USE mp,                     ONLY : mp_sum
+  USE mp_global,              ONLY : intra_pool_comm
+  USE ions_base,              ONLY : nat, tau
+  USE lsda_mod,               ONLY : current_spin, isk
+  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, current_k
+  USE klist,                  ONLY : nks, xk
+  USE gvect,                  ONLY : ngm, g, ecutwfc
+  USE gsmooth,                ONLY : nls
+  USE smooth_grid_dimensions, ONLY : nrxxs
+  USE wavefunctions_module,   ONLY : evc
+  USE cell_base,              ONLY : tpiba2, omega
+  USE io_files,               ONLY : nwordwfc, iunwfc
+  USE buffers,                ONLY : get_buffer
+  USE mp,                     ONLY : mp_sum
+  USE mp_global,              ONLY : intra_pool_comm, inter_pool_comm
+  USE fft_base,               ONLY : dffts
+  USE fft_interfaces,         ONLY : invfft
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
@@ -209,16 +210,17 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
   !
   ! ... Calculate the bare contribution to the EFG
   !  
-  USE kinds,        ONLY : dp 
-  USE mp,           ONLY : mp_sum
-  USE mp_global,    ONLY : intra_pool_comm
-  USE constants,    ONLY : tpi, fpi
-  USE gsmooth,      ONLY : nrxxs, nls, ngms
-  USE fft_base,      ONLY : dffts
-  USE fft_interfaces, ONLY : fwfft
-  USE gvect,        ONLY : g, gg, gstart
-  USE ions_base,    ONLY : nat, tau
-  USE gipaw_module, ONLY : job
+  USE kinds,                  ONLY : dp 
+  USE mp,                     ONLY : mp_sum
+  USE mp_global,              ONLY : intra_pool_comm
+  USE constants,              ONLY : tpi, fpi
+  USE gsmooth,                ONLY : nls, ngms
+  USE smooth_grid_dimensions, ONLY : nrxxs
+  USE fft_base,               ONLY : dffts
+  USE fft_interfaces,         ONLY : fwfft
+  USE gvect,                  ONLY : g, gg, gstart
+  USE ions_base,              ONLY : nat, tau
+  USE gipaw_module,           ONLY : job
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE

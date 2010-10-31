@@ -34,8 +34,9 @@ SUBROUTINE suscept_crystal
   USE symme,                  ONLY : symmatrix
   USE parameters,             ONLY : lmaxx
   USE constants,              ONLY : pi
-  USE gvect,                  ONLY : ngm, g, ecutwfc, nrxx
-  USE gsmooth,                ONLY : nrxxs
+  USE gvect,                  ONLY : ngm, g, ecutwfc
+  USE grid_dimensions,        ONLY : nrxx
+  USE smooth_grid_dimensions, ONLY : nrxxs
   USE uspp,                   ONLY : vkb, okvan
   USE lsda_mod,               ONLY : nspin
   USE gipaw_module,           ONLY : tens_fmt, q_gipaw, iverbosity, alpha, evq, &
@@ -253,8 +254,8 @@ SUBROUTINE suscept_crystal
     !------------------------------------------------------------------
     if (job /= 'f-sum') then
       do i = 1, 3
-        call add_to_tensor(q_pGv(:,:,0), p_evc, G_vel_evc)
-        call add_to_tensor(q_vGv(:,:,0), vel_evc, G_vel_evc)
+        call add_to_tensor(i,q_pGv(:,:,0), p_evc, G_vel_evc)
+        call add_to_tensor(i,q_vGv(:,:,0), vel_evc, G_vel_evc)
       enddo
     endif
 
@@ -280,8 +281,8 @@ SUBROUTINE suscept_crystal
         call init_gipaw_2_no_phase(npw, igk, k_plus_q, paw_vkb)
 
         ! pGv and vGv contribution to chi_bare
-        call add_to_tensor(q_pGv(:,:,isign), p_evc, G_vel_evc)
-        call add_to_tensor(q_vGv(:,:,isign), vel_evc, G_vel_evc)
+        call add_to_tensor(i,q_pGv(:,:,isign), p_evc, G_vel_evc)
+        call add_to_tensor(i,q_vGv(:,:,isign), vel_evc, G_vel_evc)
         
         ! now the j_bare term 
         call add_to_current(j_bare_s(:,:,:,current_spin), evc, G_vel_evc)
@@ -520,8 +521,9 @@ CONTAINS
   ! add contribution the Q tensors
   ! Q_{\alpha,\beta} += <(e_i \times ul)_\alpha | (e_i \times ur)_\beta>
   !====================================================================
-  SUBROUTINE add_to_tensor(qt, ul, ur)
+  SUBROUTINE add_to_tensor(i, qt, ul, ur)
     IMPLICIT NONE
+    integer, intent(in) :: i
     real(dp), intent(inout) :: qt(3,3)
     complex(dp), intent(in) :: ul(npwx,nbnd,3), ur(npwx,nbnd,3)
     real(dp) :: braket

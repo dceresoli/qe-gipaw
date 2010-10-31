@@ -22,9 +22,10 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
   USE radial_grids,          ONLY : ndmx
   USE paw_gipaw,             ONLY : paw_recon
   USE scf,                   ONLY : rho
-  USE gvect,                 ONLY : g, nl, gstart, ngm, ecutwfc,nrxx
-  USE fft_base,               ONLY : dfftp
-  USE fft_interfaces,         ONLY : fwfft
+  USE gvect,                 ONLY : g, nl, gstart, ngm, ecutwfc
+  USE grid_dimensions,       ONLY : nrxx
+  USE fft_base,              ONLY : dfftp
+  USE fft_interfaces,        ONLY : fwfft
   USE lsda_mod,              ONLY : nspin, isk, current_spin
   USE buffers,               ONLY : get_buffer
   USE gipaw_module,          ONLY : iverbosity

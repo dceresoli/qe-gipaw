@@ -16,11 +16,11 @@ SUBROUTINE symmetrize_field(field, iflag)
   !
   !     don't use nrxx: in the parallel case nr1x*nr2x*nr3x /= nrxx
   !
-  USE kinds,                           ONLY : DP
-  USE cell_base,                       ONLY : at, bg
-  USE symm_base,                       ONLY : s, nsym
-  USE symme,                           ONLY : crys_to_cart, cart_to_crys
-  USE gvect,                           ONLY : nr1, nr2, nr3, nr1x, nr2x, nr3x, nrxx
+  USE kinds,            ONLY : DP
+  USE cell_base,        ONLY : at, bg
+  USE symm_base,        ONLY : s, nsym
+  USE symme,            ONLY : crys_to_cart, cart_to_crys
+  USE grid_dimensions,  ONLY : nr1, nr2, nr3, nr1x, nr2x, nr3x, nrxx
   USE gipaw_module
   !-- parameters ------------------------------------------------------
   IMPLICIT NONE
@@ -64,11 +64,11 @@ SUBROUTINE psymmetrize_field(field, iflag)
   !     iflag = 0  => tensor         (e.g. induced B field)
   !     iflag = 1  => pseudo-tensor  (e.g. induced current)
   !
-  USE kinds,                           ONLY : DP
-  USE fft_base,                        ONLY : grid_gather, grid_scatter
-  USE mp_global,                       ONLY : me_pool
-  USE symm_base,                       ONLY : s, nsym
-  USE gvect,                           ONLY : nr1, nr2, nr3, nr1x, nr2x, nr3x, nrxx
+  USE kinds,            ONLY : DP
+  USE fft_base,         ONLY : grid_gather, grid_scatter
+  USE mp_global,        ONLY : me_pool
+  USE symm_base,        ONLY : s, nsym
+  USE grid_dimensions,  ONLY : nr1, nr2, nr3, nr1x, nr2x, nr3x, nrxx
   USE gipaw_module
 
   !-- parameters ------------------------------------------------------
@@ -105,10 +105,10 @@ END SUBROUTINE psymmetrize_field
 !---------------------------------------------------------------------
 subroutine syme2 (dvsym, iflag)
   !-------------------------------------------------------------------
-  use kinds,          ONLY : dp
-  USE symm_base,      ONLY : s, nsym, ftau
-  USE symme,          ONLY : crys_to_cart
-  USE gvect,          ONLY : nr1, nr2, nr3, nr1x, nr2x, nr3x
+  use kinds,            ONLY : dp
+  USE symm_base,        ONLY : s, nsym, ftau
+  USE symme,            ONLY : crys_to_cart
+  USE grid_dimensions,  ONLY : nr1, nr2, nr3, nr1x, nr2x, nr3x
 
   implicit none
 

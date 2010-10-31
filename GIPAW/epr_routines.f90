@@ -281,7 +281,7 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
   USE becmod,                 ONLY : calbec, allocate_bec_type, deallocate_bec_type
   USE constants,              ONLY : pi
   USE parameters,             ONLY : lmaxx
-  USE gsmooth,                ONLY : nrxxs
+  USE smooth_grid_dimensions, ONLY : nrxxs
   USE lsda_mod,               ONLY : nspin
   USE uspp,                   ONLY : ap
   USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
@@ -460,7 +460,8 @@ SUBROUTINE compute_delta_g_so (j_bare, s_maj, s_min, delta_g_so)
   USE constants,              ONLY : pi
   USE cell_base,              ONLY : tpiba, omega, tpiba2
   USE klist,                  ONLY : xk
-  USE gvect,                  ONLY : g, ecutwfc, ngm, nl, nr1, nr2, nr3, nrxx
+  USE gvect,                  ONLY : g, ecutwfc, ngm, nl
+  USE grid_dimensions,        ONLY : nr1, nr2, nr3, nrxx
   USE io_global,              ONLY : stdout, ionode
   USE scf,                    ONLY : vltot, v, rho
   USE lsda_mod,               ONLY : nspin
@@ -527,7 +528,8 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
   USE constants,              ONLY : pi
   USE cell_base,              ONLY : tpiba, omega, tpiba2
   USE klist,                  ONLY : xk
-  USE gvect,                  ONLY : g, ecutwfc, ngm, nl, nr1, nr2, nr3, nrxx
+  USE gvect,                  ONLY : g, ecutwfc, ngm, nl
+  USE grid_dimensions,        ONLY : nr1, nr2, nr3, nrxx
   USE scf,                    ONLY : vltot, v, rho
   USE io_global,              ONLY : stdout, ionode
   USE lsda_mod,               ONLY : nspin
