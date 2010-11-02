@@ -104,11 +104,12 @@ SUBROUTINE suscept_crystal
   real(dp) :: paramagnetic_corr_tensor_aug_so(3,3)
   real(dp) :: paramagnetic_corr_tensor_us_so(3,3)
 
-  integer :: ik, ipol, jpol, i, ibnd, jbnd, isign, ispin
+  integer :: ik, iq, ik0, iq0
+  integer :: ipol, jpol, i, ibnd, jbnd, isign, ispin
   real(dp) :: tmp(3,3), q(3), k_plus_q(3), braket, cc
   integer :: s_min, s_maj, s_weight
   complex(dp), external :: zdotc
-
+  !
   !-----------------------------------------------------------------------
   ! allocate memory
   !-----------------------------------------------------------------------
@@ -158,10 +159,18 @@ SUBROUTINE suscept_crystal
 
   write(stdout, '(5X,''Computing the magnetic susceptibility'',$)')
   write(stdout, '(5X,''isolve='',I1,4X,''ethr='',E10.4)') isolve, conv_threshold
+  !
+  ! check for recover file
+  !
+  call check_for_restart_info ( ik0, iq0 )
   !====================================================================
   ! loop over k-points
   !====================================================================
   do ik = 1, nks
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    if ( ik < ik0 ) cycle 
+    iq = 0
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #ifdef __PARA
     if (me_pool == root_pool) &
     write(*, '(5X,''k-point #'',I5,'' of '',I5,6X,''pool #'',I3)') &
@@ -169,6 +178,7 @@ SUBROUTINE suscept_crystal
 #else
     write(stdout, '(5X,''k-point #'',I5,'' of '',I5)') ik, nks
 #endif
+
     current_k = ik
     current_spin = isk(ik)
     s_weight = +1
@@ -188,6 +198,11 @@ SUBROUTINE suscept_crystal
     if (job /= 'f-sum') call compute_u_kq(ik, q)
     call init_gipaw_2_no_phase (npw, igk, xk (1, ik), paw_vkb)
     call calbec (npw, paw_vkb, evc, paw_becp)
+
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    if ( ik == ik0 .AND. iq0 > 0 ) goto 9
+    call save_info_for_restart(ik, iq)
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! compute the terms that do not depend on 'q':
     ! 1. the diamagnetic contribution to the field: Eq.(58) of [1]/Eq.(9) of [4]
@@ -259,6 +274,9 @@ SUBROUTINE suscept_crystal
       enddo
     endif
 
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  9 CONTINUE
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !------------------------------------------------------------------
     ! loop over -q and +q
     !------------------------------------------------------------------
@@ -267,6 +285,12 @@ SUBROUTINE suscept_crystal
       
       ! loop over cartesian directions
       do i = 1, 3
+        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        iq = iq + 1
+        if (ik == ik0 .and. iq < iq0 ) cycle
+        call save_info_for_restart ( ik, iq )
+        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
         ! set the q vector
         q(:) = 0.d0
         q(i) = dble(isign) * q_gipaw
@@ -308,6 +332,10 @@ SUBROUTINE suscept_crystal
 
       enddo  ! i=x,y,z
     enddo  ! isign
+
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    call save_info_for_restart(ik+1, 0)
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   enddo  ! ik
   
@@ -460,10 +488,9 @@ SUBROUTINE suscept_crystal
   ! deallocate fields
   deallocate( j_bare, B_ind_r, B_ind )
   
+  call restart_cleanup ( )
   
 CONTAINS
-
-
 
   !====================================================================
   ! compute p_k|evc>, v_{k+q,k}|evc>, G_{k+q} v_{k+q,k}|evc> and s_{k+q,k}|evc>
@@ -485,8 +512,6 @@ CONTAINS
       call greenfunction(ik, aux, G_vel_evc(1,1,ipol), q)
     enddo
   END SUBROUTINE apply_operators
-
-
 
   !====================================================================
   ! compute |evq><evq|s_{k+q,k}|evc>
@@ -514,8 +539,6 @@ CONTAINS
     enddo
     deallocate(ps)
   END SUBROUTINE apply_occ_occ_us
-
-
 
   !====================================================================
   ! add contribution the Q tensors
@@ -553,8 +576,6 @@ CONTAINS
     enddo  ! ia
   END SUBROUTINE add_to_tensor
 
-
-
   !====================================================================
   ! add contribution the the current
   ! j(r)_{\alpha,\beta} += <ul|J(r)|(B\times e_i \cdot ur)>
@@ -579,8 +600,6 @@ CONTAINS
       call j_para(fact, ul(1,1), ur(1,1,icomp), ik, q, j(1,1,ibdir))
     enddo
   END SUBROUTINE add_to_current
-  
-
 
   !====================================================================
   ! Add contribution to current: Eq.(46) of [1]
@@ -638,6 +657,107 @@ CONTAINS
       end do
     enddo
   END SUBROUTINE add_to_sigma_para_so
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+!             RESTART SECTION
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !--------------------------------------------------------
+  SUBROUTINE check_for_restart_info(ik0_, iq0_)
+    !
+    USE io_files, ONLY: find_free_unit
+    IMPLICIT NONE
+    INTEGER, INTENT (OUT) :: ik0_, iq0_
+    LOGICAL :: exst
+    INTEGER :: iunrec
+    CHARACTER(80) :: job_
+
+    ik0_ = 0
+    iq0_ = 0
+    iunrec = find_free_unit()
+    CALL seqopn (iunrec, 'gipaw_recover', 'unformatted', exst)
+    ! 
+    IF ( exst ) THEN
+       READ (iunrec) job_
+       IF (job_ /= job) exst = .false.
+    end if
+    !
+    IF ( exst ) THEN
+       WRITE(stdout, '(5X,''Restarting from a previous run'')')
+       !
+       READ (iunrec) ik0_, iq0_
+       READ (iunrec) f_sum(:,:), f_sum_occ(:,:), f_sum_nelec 
+       READ (iunrec) q_pGv(:,:,:), q_vGv(:,:,:)
+       READ (iunrec) j_bare_s(:,:,:,:)
+       READ (iunrec) sigma_bare, sigma_diamagnetic, sigma_paramagnetic, &
+                     sigma_paramagnetic_us, sigma_paramagnetic_aug 
+       READ (iunrec) delta_g_rmc, delta_g_rmc_gipaw, delta_g_so, delta_g_soo, &
+                     delta_g_soo2, delta_g_so_para, delta_g_so_para_aug, &
+                     delta_g_so_para_us, delta_g_so_dia 
+       CLOSE( UNIT = iunrec, STATUS = 'KEEP' )
+       WRITE (stdout,'(5X,''Resuming from k-point #'',I5,3X,''and q #'',I3)') ik0_, iq0_
+    END IF
+
+    CALL save_info_for_restart(ik0_,iq0_)
+     
+    RETURN
+    !
+  END SUBROUTINE check_for_restart_info
+  !--------------------------------------------------------
+  SUBROUTINE save_info_for_restart(ik0_, iq0_)
+    !
+    USE io_files, ONLY: find_free_unit
+    USE check_stop, ONLY : check_stop_now
+    USE gipaw_module, ONLY : print_clock_gipaw, gipaw_closefil
+    IMPLICIT NONE
+    INTEGER, INTENT (IN) :: ik0_, iq0_
+    INTEGER :: iunrec
+    LOGICAL :: exst
+    !
+    iunrec = find_free_unit()
+    CALL seqopn (iunrec, 'gipaw_recover', 'unformatted', exst)
+
+    WRITE (iunrec) job
+    WRITE (iunrec) ik0_, iq0_
+    WRITE (iunrec) f_sum(:,:), f_sum_occ(:,:), f_sum_nelec 
+    WRITE (iunrec) q_pGv(:,:,:), q_vGv(:,:,:)
+    WRITE (iunrec) j_bare_s(:,:,:,:)
+    WRITE (iunrec) sigma_bare, sigma_diamagnetic, sigma_paramagnetic, &
+                   sigma_paramagnetic_us, sigma_paramagnetic_aug 
+    WRITE (iunrec) delta_g_rmc, delta_g_rmc_gipaw, delta_g_so, delta_g_soo, &
+                   delta_g_soo2, delta_g_so_para, delta_g_so_para_aug, &
+                   delta_g_so_para_us, delta_g_so_dia 
+
+    CLOSE( UNIT = iunrec, STATUS = 'KEEP' )
+
+    IF (check_stop_now()) THEN
+       WRITE (stdout,'(5X,''Stopping at k-point #'',I5,3X,''and q #'',I3)') ik0_, iq0_
+       ! close files, print timings and stop the code
+       CALL gipaw_closefil
+       CALL print_clock_gipaw()
+       CALL stop_code( .FALSE. )
+    END IF
+
+    RETURN
+    !
+  END SUBROUTINE save_info_for_restart
+  !--------------------------------------------------------
+  SUBROUTINE restart_cleanup ( )
+    !
+    USE io_files, ONLY: find_free_unit
+    IMPLICIT NONE
+    INTEGER :: iunrec
+    LOGICAL :: exst
+    !
+    iunrec = find_free_unit()
+    !
+    CALL seqopn( iunrec, 'gipaw_recover', 'UNFORMATTED', exst )
+    !
+    CLOSE( UNIT = iunrec, STATUS = 'DELETE' )
+    !
+    RETURN
+    !
+  END SUBROUTINE restart_cleanup
 
 
 END SUBROUTINE suscept_crystal

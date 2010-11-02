@@ -128,6 +128,9 @@ CONTAINS
     USE io_files,      ONLY : nd_nmbr, prefix, tmp_dir  
     USE io_global,     ONLY : ionode
     USE us,            ONLY : spline_ps
+    USE input_parameters, ONLY : max_seconds
+    ! max_seconds  : maximum cputime for this run
+
     IMPLICIT NONE
     INTEGER :: ios
     NAMELIST /inputgipaw/ job, prefix, tmp_dir, conv_threshold, &
@@ -138,12 +141,16 @@ CONTAINS
                          q_efg, hfi_output_unit, hfi_isotope, &
                          hfi_nuclear_g_factor, radial_integral_splines, &
                          hfi_via_reconstruction_only, &
-                         hfi_extrapolation_npoints,pawproj
+                         hfi_extrapolation_npoints,pawproj, &
+                         max_seconds
     
     if ( .not. ionode ) goto 400
     
     CALL input_from_file()
     
+    !
+    ! define input default values
+    !
     job = ''
     prefix = 'pwscf'
     CALL get_env( 'ESPRESSO_TMPDIR', tmp_dir ) 
@@ -168,8 +175,13 @@ CONTAINS
     hfi_extrapolation_npoints = 10000
     q_efg = 1.0
     pawproj(:) = .false.
+    max_seconds  =  1.E+7_DP
+
     read( 5, inputgipaw, err = 200, iostat = ios )
     
+    ! check input
+    IF (max_seconds.LT.0.1D0) CALL errore ('gipaw_readin', ' Wrong max_seconds', 1)
+
 200 call errore( 'gipaw_readin', 'reading inputgipaw namelist', abs( ios ) )
     
 400 continue
@@ -209,6 +221,7 @@ CONTAINS
     CALL mp_bcast ( hfi_via_reconstruction_only, root )
     CALL mp_bcast ( hfi_extrapolation_npoints, root )
     CALL mp_bcast ( pawproj, root )
+    CALL mp_bcast ( max_seconds, root )
 #endif
   END SUBROUTINE gipaw_bcast_input
 
@@ -288,6 +301,39 @@ CONTAINS
     CALL seqopn( iunigk, 'igk', 'UNFORMATTED', exst )
     RETURN
   END SUBROUTINE gipaw_openfil
+
+  !-----------------------------------------------------------------------
+  ! Close files needed for GIPAW
+  !-----------------------------------------------------------------------
+  SUBROUTINE gipaw_closefil
+    USE io_global,        ONLY : stdout
+    USE ldaU,             ONLY : lda_plus_U  
+    USE io_files,         ONLY : prefix, iunat, iunsat, iunwfc, iunigk
+    USE buffers,          ONLY : close_buffer
+    USE control_flags,    ONLY : io_level    
+    IMPLICIT NONE  
+    LOGICAL            :: opnd
+    IF ( io_level > 0 ) THEN
+      iunwfc = 10   ! ... iunwfc=10: read/write wfc from/to file
+    ELSE
+      iunwfc = -1   ! ... iunwfc=-1: copy wfc to/from RAM 
+    END IF
+    CALL close_buffer( iunwfc, 'KEEP' )
+    ! ... Needed for LDA+U
+    ! ... iunat  contains the (orthogonalized) atomic wfcs 
+    ! ... iunsat contains the (orthogonalized) atomic wfcs * S
+    IF ( lda_plus_u ) then
+       CLOSE( UNIT = iunat, STATUS = 'KEEP' )
+       CLOSE( UNIT = iunsat, STATUS = 'KEEP' )
+    END IF
+    !
+    ! ... iunigk is kept open during the execution - close and remove
+    !
+    INQUIRE( UNIT = iunigk, OPENED = opnd )
+    IF ( opnd ) CLOSE( UNIT = iunigk, STATUS = 'DELETE' )
+
+    RETURN
+  END SUBROUTINE gipaw_closefil
 
 
   !-----------------------------------------------------------------------

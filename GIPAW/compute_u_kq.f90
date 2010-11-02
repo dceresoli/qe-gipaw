@@ -18,7 +18,7 @@ SUBROUTINE compute_u_kq(ik, q)
   USE io_files,             ONLY : iunigk, nwordatwfc, iunsat, iunwfc, &
                                    nwordwfc
   USE mp,                   ONLY : mp_sum
-  USE mp_global,            ONLY : inter_pool_comm, intra_pool_comm
+  USE mp_global,            ONLY : inter_pool_comm, intra_pool_comm, me_pool
   USE klist,                ONLY : nkstot, nks, xk, ngk
   USE uspp,                 ONLY : vkb, nkb
   USE wvfct,                ONLY : et, nbnd, npwx, igk, npw, g2kin, &
@@ -98,6 +98,7 @@ SUBROUTINE compute_u_kq(ik, q)
   CALL get_buffer( evc, nwordwfc, iunwfc, ik)
 
   ! randomize a little bit
+  rr = randy(ik+nks*me_pool) ! starting from a well defined k-dependent seed
   do i = 1, nbnd
     do ig = 1, npw
       rr = 0.1d0*(2.d0*randy() - 1.d0)

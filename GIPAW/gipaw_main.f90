@@ -33,14 +33,15 @@ PROGRAM gipaw_main
   USE mp,              ONLY : mp_bcast
   USE cell_base,       ONLY : tpiba
   USE cellmd,          ONLY : cell_factor
-  USE gipaw_module,    ONLY : job, q_gipaw, gipaw_readin, gipaw_allocate, gipaw_setup, &
-                              gipaw_openfil, print_clock_gipaw, &
-                              gipaw_summary
+  USE gipaw_module,    ONLY : job, q_gipaw, gipaw_readin, gipaw_allocate, &
+                              gipaw_setup, gipaw_openfil, gipaw_closefil, &
+                              print_clock_gipaw, gipaw_summary
   USE control_flags,   ONLY : io_level, gamma_only,use_para_diag
   USE mp_global,       ONLY : mp_startup
+  USE check_stop,      ONLY : check_stop_init
   USE environment,     ONLY : environment_start
   USE lsda_mod,        ONLY : nspin
-  USE klist,         ONLY : nelec
+  USE klist,           ONLY : nelec
   !------------------------------------------------------------------------
   IMPLICIT NONE
   CHARACTER (LEN=9)   :: code = 'GIPAW'
@@ -53,6 +54,8 @@ PROGRAM gipaw_main
   CALL environment_start ( code )
   !
   CALL gipaw_readin()
+  CALL check_stop_init()
+
   io_level = 1
  
   ! read ground state wavefunctions
@@ -100,6 +103,7 @@ PROGRAM gipaw_main
   end select
   
   ! print timings and stop the code
+  CALL gipaw_closefil
   CALL print_clock_gipaw()
   CALL stop_code( .TRUE. )
   
