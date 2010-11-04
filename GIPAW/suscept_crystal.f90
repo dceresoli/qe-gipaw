@@ -49,7 +49,7 @@ SUBROUTINE suscept_crystal
   USE mp_global,              ONLY : my_pool_id, me_pool, root_pool, &
                                      inter_pool_comm, intra_pool_comm
   USE mp,                     ONLY : mp_sum
-  
+
   !-- local variables ----------------------------------------------------
   IMPLICIT NONE
 
@@ -191,11 +191,6 @@ SUBROUTINE suscept_crystal
     
     ! read wfcs from file and compute becp
     call get_buffer (evc, nwordwfc, iunwfc, ik)
-
-    ! this is the case q = 0
-    q(:) = 0.d0
-
-    if (job /= 'f-sum') call compute_u_kq(ik, q)
     call init_gipaw_2_no_phase (npw, igk, xk (1, ik), paw_vkb)
     call calbec (npw, paw_vkb, evc, paw_becp)
 
@@ -203,6 +198,11 @@ SUBROUTINE suscept_crystal
     if ( ik == ik0 .AND. iq0 > 0 ) goto 9
     call save_info_for_restart(ik, iq)
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    ! this is the case q = 0
+    q(:) = 0.d0
+
+    if (job /= 'f-sum') call compute_u_kq(ik, q)
 
     ! compute the terms that do not depend on 'q':
     ! 1. the diamagnetic contribution to the field: Eq.(58) of [1]/Eq.(9) of [4]
