@@ -42,6 +42,7 @@ PROGRAM gipaw_main
   USE environment,     ONLY : environment_start
   USE lsda_mod,        ONLY : nspin
   USE klist,           ONLY : nelec
+  USE uspp,            ONLY : okvan
   !------------------------------------------------------------------------
   IMPLICIT NONE
   CHARACTER (LEN=9)   :: code = 'GIPAW'
@@ -61,13 +62,11 @@ PROGRAM gipaw_main
   ! read ground state wavefunctions
   cell_factor = 1.1d0
   call read_file
-!EMINE
 #ifdef __PARA
   IF ( use_para_diag )  CALL check_para_diag( nelec )
 #else
   use_para_diag = .FALSE.
 #endif
-!EMINE
   call gipaw_openfil
   
   if ( gamma_only ) call errore ( 'gipaw_main', 'gamma_only == .true.', 1 )
@@ -87,6 +86,7 @@ PROGRAM gipaw_main
      
   case ( 'g_tensor' )
      if (nspin /= 2) call errore('gipaw_main', 'g_tensor is only for spin-polarized', 1)
+     if (okvan) call errore('gipaw_main', 'g_tensor not available with ultrasoft', 1) 
      call suscept_crystal
      
   case ( 'f-sum' )
