@@ -18,7 +18,7 @@ subroutine init_gipaw_2 (npw_, igk_, q_, vkb_)
   USE wvfct ,     ONLY : npwx
   USE cell_base , ONLY : tpiba
   USE ions_base,  ONLY : nat, ntyp => nsp, ityp, tau
-  USE gvect ,     ONLY : eigts1, eigts2, eigts3, g, ig1, ig2, ig3 
+  USE gvect ,     ONLY : eigts1, eigts2, eigts3, g, mill 
   USE paw_gipaw,  ONLY : paw_nkb, paw_recon, paw_lmaxkb
   USE us,         ONLY : nqx, dq, spline_ps
   USE splinelib
@@ -128,9 +128,9 @@ subroutine init_gipaw_2 (npw_, igk_, q_, vkb_)
                   q_(3) * tau (3, na) ) * tpi
            phase = CMPLX(cos (arg), - sin (arg) ,kind=DP)
            do ig = 1, npw_
-              sk (ig) = eigts1 (ig1(igk_(ig)), na) * &
-                        eigts2 (ig2(igk_(ig)), na) * &
-                        eigts3 (ig3(igk_(ig)), na)
+              sk (ig) = eigts1 (mill(1,igk_(ig)), na) * &
+                        eigts2 (mill(2,igk_(ig)), na) * &
+                        eigts3 (mill(3,igk_(ig)), na)
            enddo
            do ih = 1, paw_recon(nt)%paw_nh
               jkb = jkb + 1
@@ -178,7 +178,7 @@ subroutine init_gipaw_2_no_phase (npw_, igk_, q_, vkb_)
   USE wvfct ,     ONLY : npwx
   USE cell_base , ONLY : tpiba
   USE ions_base,  ONLY : nat, ntyp => nsp, ityp, tau
-  USE gvect ,     ONLY : eigts1, eigts2, eigts3, g, ig1, ig2, ig3 
+  USE gvect ,     ONLY : eigts1, eigts2, eigts3, g, mill 
   USE paw_gipaw,  ONLY : paw_nkb, paw_recon, paw_lmaxkb
   USE us,         ONLY : nqx, dq, spline_ps
   USE splinelib
@@ -209,7 +209,7 @@ subroutine init_gipaw_2_no_phase (npw_, igk_, q_, vkb_)
   !
   vkb_ = (0.d0,0.d0)
   if (paw_lmaxkb.lt.0) return
-  call start_clock ('init_gipaw_2')
+  call start_clock ('init_gipaw_2_np')
   allocate (  sk( npw_))    
   allocate (  qg( npw_))    
   allocate (  vq( npw_))    
@@ -288,9 +288,9 @@ subroutine init_gipaw_2_no_phase (npw_, igk_, q_, vkb_)
                   q_(3) * tau (3, na) ) * tpi
            phase = CMPLX(cos (arg), - sin (arg) ,kind=DP)
            do ig = 1, npw_
-              sk (ig) = eigts1 (ig1(igk_(ig)), na) * &
-                        eigts2 (ig2(igk_(ig)), na) * &
-                        eigts3 (ig3(igk_(ig)), na)
+              sk (ig) = eigts1 (mill(1,igk_(ig)), na) * &
+                        eigts2 (mill(2,igk_(ig)), na) * &
+                        eigts3 (mill(3,igk_(ig)), na)
            enddo
            do ih = 1, paw_recon(nt)%paw_nh
               jkb = jkb + 1
@@ -313,7 +313,7 @@ subroutine init_gipaw_2_no_phase (npw_, igk_, q_, vkb_)
   deallocate (qg)
   deallocate (sk)
 
-  call stop_clock ('init_gipaw_2')
+  call stop_clock ('init_gipaw_2_np')
   return
 end subroutine init_gipaw_2_no_phase
 

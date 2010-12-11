@@ -17,7 +17,7 @@ subroutine init_us_2_no_phase (npw_, igk_, q_, vkb_)
   USE ions_base,  ONLY : nat, ntyp => nsp, ityp, tau
   USE cell_base,  ONLY : tpiba
   USE constants,  ONLY : tpi
-  USE gvect,      ONLY : eigts1, eigts2, eigts3, ig1, ig2, ig3, g
+  USE gvect,      ONLY : eigts1, eigts2, eigts3, mill, g
   USE wvfct,      ONLY : npw, npwx, igk
   USE us,         ONLY : nqx, dq, tab, tab_d2y, spline_ps
   USE splinelib
@@ -49,9 +49,9 @@ subroutine init_us_2_no_phase (npw_, igk_, q_, vkb_)
 
   !
   !
+  call start_clock('init_us_2_np')
   vkb_ = (0.d0,0.d0)
   if (lmaxkb.lt.0) return
-  call start_clock ('init_us_2')
   allocate (vkb1( npw_,nhm))    
   allocate (  sk( npw_))    
   allocate (  qg( npw_))    
@@ -132,9 +132,9 @@ subroutine init_us_2_no_phase (npw_, igk_, q_, vkb_)
            !       q_(3) * tau (3, na) ) * tpi
            !phase = CMPLX(cos (arg), - sin (arg) ,kind=DP)
            do ig = 1, npw_
-              sk (ig) = eigts1 (ig1(igk_(ig)), na) * &
-                        eigts2 (ig2(igk_(ig)), na) * &
-                        eigts3 (ig3(igk_(ig)), na)
+              sk (ig) = eigts1 (mill(1,igk_(ig)), na) * &
+                        eigts2 (mill(2,igk_(ig)), na) * &
+                        eigts3 (mill(3,igk_(ig)), na)
            enddo
            do ih = 1, nh (nt)
               jkb = jkb + 1
@@ -154,7 +154,7 @@ subroutine init_us_2_no_phase (npw_, igk_, q_, vkb_)
   deallocate (vkb1)
 
 
-  call stop_clock ('init_us_2')
+  call stop_clock ('init_us_2_np')
   return
 end subroutine init_us_2_no_phase
 
