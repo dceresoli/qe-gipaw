@@ -28,13 +28,14 @@ SUBROUTINE suscept_crystal
   USE cell_base,              ONLY : at, bg, omega, tpiba, tpiba2
   USE wavefunctions_module,   ONLY : evc
   USE klist,                  ONLY : nks, nkstot, wk, xk, nelec
-  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, current_k
+  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
+                                     current_k, ecutwfc
   USE lsda_mod,               ONLY : current_spin, lsda, isk
   USE becmod,                 ONLY : becp, calbec  
   USE symme,                  ONLY : symmatrix
   USE parameters,             ONLY : lmaxx
   USE constants,              ONLY : pi
-  USE gvect,                  ONLY : ngm, g, ecutwfc
+  USE gvect,                  ONLY : ngm, g
   USE grid_dimensions,        ONLY : nrxx
   USE smooth_grid_dimensions, ONLY : nrxxs
   USE uspp,                   ONLY : vkb, okvan

@@ -232,7 +232,7 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   USE mp,                     ONLY : mp_sum
   USE mp_global,              ONLY : intra_pool_comm
   USE constants,              ONLY : tpi, fpi
-  USE gsmooth,                ONLY : nls, ngms
+  USE gvecs,                  ONLY : nls, ngms
   USE smooth_grid_dimensions, ONLY : nrxxs
   USE gvect,                  ONLY : g, gg, gstart
   USE parameters,             ONLY : ntypx
@@ -353,11 +353,11 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   USE uspp,                  ONLY : ap
   USE parameters,            ONLY : lmaxx, ntypx
   USE atom,                  ONLY : rgrid
-  USE gvect,                 ONLY : g,ngm,ecutwfc, gg
+  USE gvect,                 ONLY : g, ngm, gg
   USE klist,                 ONLY : nks, xk, wk
   USE cell_base,             ONLY : tpiba2
   USE ions_base,             ONLY : nat, ityp, ntyp => nsp, atm
-  USE wvfct,                 ONLY : npwx, nbnd, npw, igk, g2kin
+  USE wvfct,                 ONLY : npwx, nbnd, npw, igk, g2kin, ecutwfc
   USE wavefunctions_module,  ONLY : evc
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
   USE becmod,                ONLY : calbec

@@ -18,7 +18,7 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   USE klist,                  ONLY : xk
   USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg
   USE smooth_grid_dimensions, ONLY : nrxxs
-  USE gsmooth,                ONLY : nls
+  USE gvecs,                  ONLY : nls
   USE gvect,                  ONLY : g
   USE cell_base,              ONLY : tpiba
   USE gipaw_module,           ONLY : nbnd_occ

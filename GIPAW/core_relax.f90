@@ -22,7 +22,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
   USE radial_grids,          ONLY : ndmx
   USE paw_gipaw,             ONLY : paw_recon
   USE scf,                   ONLY : rho
-  USE gvect,                 ONLY : g, nl, gstart, ngm, ecutwfc
+  USE gvect,                 ONLY : g, nl, gstart, ngm
   USE grid_dimensions,       ONLY : nrxx
   USE fft_base,              ONLY : dfftp
   USE fft_interfaces,        ONLY : fwfft
@@ -31,6 +31,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
   USE gipaw_module,          ONLY : iverbosity
   USE klist,                 ONLY : nks, xk, wk
   USE wvfct,                 ONLY : npwx, nbnd, npw, igk, g2kin, wg, current_k
+  USE wvfct,                 ONLY : ecutwfc
   USE becmod,                ONLY : calbec
   USE wavefunctions_module,  ONLY : evc
   USE io_global,             ONLY : stdout

@@ -155,10 +155,11 @@ SUBROUTINE get_smooth_density(rho)
   USE mp_global,              ONLY : intra_pool_comm
   USE ions_base,              ONLY : nat, tau
   USE lsda_mod,               ONLY : current_spin, isk
-  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, current_k
+  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
+                                     current_k, ecutwfc
   USE klist,                  ONLY : nks, xk
-  USE gvect,                  ONLY : ngm, g, ecutwfc
-  USE gsmooth,                ONLY : nls
+  USE gvect,                  ONLY : ngm, g
+  USE gvecs,                  ONLY : nls
   USE smooth_grid_dimensions, ONLY : nrxxs
   USE wavefunctions_module,   ONLY : evc
   USE cell_base,              ONLY : tpiba2, omega
@@ -214,7 +215,7 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
   USE mp,                     ONLY : mp_sum
   USE mp_global,              ONLY : intra_pool_comm
   USE constants,              ONLY : tpi, fpi
-  USE gsmooth,                ONLY : nls, ngms
+  USE gvecs,                  ONLY : nls, ngms
   USE smooth_grid_dimensions, ONLY : nrxxs
   USE fft_base,               ONLY : dffts
   USE fft_interfaces,         ONLY : fwfft
@@ -289,19 +290,19 @@ SUBROUTINE efg_correction(efg_corr_tens)
   USE uspp,                  ONLY : ap
   USE parameters,            ONLY : lmaxx, ntypx
   USE atom,                  ONLY : rgrid
-  USE gvect,                 ONLY : g,ngm,ecutwfc
+  USE gvect,                 ONLY : g, ngm
   USE klist,                 ONLY : nks, xk, wk
   USE cell_base,             ONLY : tpiba2
   USE ions_base,             ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                 ONLY : npwx, nbnd, npw, igk, g2kin
+  USE wvfct,                 ONLY : npwx, nbnd, npw, igk, g2kin, ecutwfc, &
+                                    current_k, wg
+  USE lsda_mod,              ONLY : current_spin, nspin, isk
   USE wavefunctions_module,  ONLY : evc
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
   USE becmod,                ONLY : calbec
   USE constants,             ONLY : pi, fpi
   USE buffers
   USE scf,                   ONLY : rho
-  USE lsda_mod,              ONLY : current_spin, nspin, isk
-  USE wvfct,                 ONLY : current_k, wg
   USE io_global,             ONLY : stdout
   USE gipaw_module,          ONLY : job, nbnd_occ, spline_integration, &
                                     radial_integral_splines, &

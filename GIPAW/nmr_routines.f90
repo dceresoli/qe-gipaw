@@ -221,7 +221,8 @@ END SUBROUTINE diamagnetic_correction
 SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   USE kinds,                  ONLY : dp
   USE ions_base,              ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, current_k
+  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
+                                     current_k, ecutwfc
   USE lsda_mod,               ONLY : current_spin
   USE wavefunctions_module,   ONLY : evc
   USE becmod,                 ONLY : calbec, allocate_bec_type, deallocate_bec_type
@@ -237,7 +238,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   USE uspp_param,             ONLY : nh
   USE cell_base,              ONLY : tpiba, omega, tpiba2
   USE klist,                  ONLY : xk
-  USE gvect,                  ONLY : g, ecutwfc, ngm
+  USE gvect,                  ONLY : g, ngm
   USE io_global,              ONLY : stdout, ionode
 
   !-- parameters --------------------------------------------------------
