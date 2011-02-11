@@ -182,8 +182,10 @@ SUBROUTINE suscept_crystal
 
     current_k = ik
     current_spin = isk(ik)
-    s_weight = +1
-    if ( current_spin == s_min ) s_weight = -1
+    if (job == 'g_tensor') then
+      s_weight = +1
+      if (current_spin == s_min) s_weight = -1
+    endif
 
     ! initialize at k-point k 
     call gk_sort(xk(1,ik), ngm, g, ecutwfc/tpiba2, npw, igk, g2kin)
