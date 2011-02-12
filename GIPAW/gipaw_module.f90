@@ -383,6 +383,23 @@ CONTAINS
     WRITE( stdout, * ) '    Parallel routines'
     call print_clock ('reduce')
 #endif
+    write(stdout,*)
+    write(stdout, *) '----- PRACE -----'
+  call print_clock('suscept_crystal')
+  call print_clock('susc:gk_sort')
+  call print_clock('susc:IO')
+  call print_clock('susc:calbec')
+  call print_clock('susc:dia')
+  call print_clock('susc:para')
+  call print_clock('susc:apply')
+  call print_clock('susc:f-sum')
+  call print_clock('susc:diagon')
+  call print_clock('susc:add-tensor')
+  call print_clock('susc:add-current')
+  call print_clock('susc:mp_sum')
+  call print_clock('susc:post')
+  call print_clock('susc:biot')
+
   END SUBROUTINE print_clock_gipaw
 
 

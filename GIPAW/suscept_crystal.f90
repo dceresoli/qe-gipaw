@@ -110,7 +110,8 @@ SUBROUTINE suscept_crystal
   real(dp) :: tmp(3,3), q(3), k_plus_q(3), braket, cc
   integer :: s_min, s_maj, s_weight
   complex(dp), external :: zdotc
-  !
+  
+  call start_clock('suscept_crystal')
   !-----------------------------------------------------------------------
   ! allocate memory
   !-----------------------------------------------------------------------
@@ -188,14 +189,20 @@ SUBROUTINE suscept_crystal
     endif
 
     ! initialize at k-point k 
+  call start_clock('susc:gk_sort')
     call gk_sort(xk(1,ik), ngm, g, ecutwfc/tpiba2, npw, igk, g2kin)
     g2kin(:) = g2kin(:) * tpiba2
     call init_us_2(npw, igk, xk(1,ik), vkb)
+  call stop_clock('susc:gk_sort')
     
     ! read wfcs from file and compute becp
+  call start_clock('susc:IO')
     call get_buffer (evc, nwordwfc, iunwfc, ik)
+  call stop_clock('susc:IO')
+  call start_clock('susc:calbec')
     call init_gipaw_2_no_phase (npw, igk, xk (1, ik), paw_vkb)
     call calbec (npw, paw_vkb, evc, paw_becp)
+  call stop_clock('susc:calbec')
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if ( ik == ik0 .AND. iq0 > 0 ) goto 9
@@ -209,6 +216,7 @@ SUBROUTINE suscept_crystal
 
     ! compute the terms that do not depend on 'q':
     ! 1. the diamagnetic contribution to the field: Eq.(58) of [1]/Eq.(9) of [4]
+  call start_clock('susc:dia')
     if (job == 'nmr') then
       diamagnetic_corr_tensor = 0.0d0
       call diamagnetic_correction (diamagnetic_corr_tensor)
@@ -218,8 +226,10 @@ SUBROUTINE suscept_crystal
       call diamagnetic_correction_so (diamagnetic_corr_tensor_so)
       delta_g_so_dia = delta_g_so_dia + s_weight * diamagnetic_corr_tensor_so
     endif
+  call stop_clock('susc:dia')
 
     ! 2. the paramagnetic US augmentation: Eq.(30) of [2]
+  call start_clock('susc:para')
     if (okvan) then
       if (job == 'nmr') then
         paramagnetic_corr_tensor_aug = 0.d0
@@ -231,20 +241,24 @@ SUBROUTINE suscept_crystal
         delta_g_so_para_aug = delta_g_so_para_aug + s_weight * paramagnetic_corr_tensor_aug_so
       endif
     endif
+  call stop_clock('susc:para')
 
     ! 2. relativistic mass corrections for EPR
     if (job == 'g_tensor') call rmc(s_weight, delta_g_rmc, delta_g_rmc_gipaw)
 
     ! compute p_k|evc>, v_{k,k}|evc>, G_k v_{k,k}|evc> and s_{k,k}|evc>
+  call start_clock('susc:apply')
     call apply_operators
     if (okvan) then 
         evq(:,:) = evc(:,:)
         call apply_occ_occ_us
     endif
+  call stop_clock('susc:apply')
 
     !------------------------------------------------------------------
     ! f-sum rule
     !------------------------------------------------------------------
+  call start_clock('susc:f-sum')
     do ipol = 1, 3 
       do jpol = 1, 3
         do ibnd = 1, nbnd_occ(ik)
@@ -266,16 +280,19 @@ SUBROUTINE suscept_crystal
         enddo
       enddo
     enddo
+  call stop_clock('susc:f-sum')
 
     !------------------------------------------------------------------
     ! pGv and vGv contribution to chi_{bare}
     !------------------------------------------------------------------
+  call start_clock('susc:add-tensor')
     if (job /= 'f-sum') then
       do i = 1, 3
         call add_to_tensor(i,q_pGv(:,:,0), p_evc, G_vel_evc)
         call add_to_tensor(i,q_vGv(:,:,0), vel_evc, G_vel_evc)
       enddo
     endif
+  call stop_clock('susc:add-tensor')
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   9 CONTINUE
@@ -291,7 +308,9 @@ SUBROUTINE suscept_crystal
         !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         iq = iq + 1
         if (ik == ik0 .and. iq < iq0 ) cycle
+  call start_clock('susc:IO')
         call save_info_for_restart ( ik, iq )
+  call stop_clock('susc:IO')
         !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         ! set the q vector
@@ -299,26 +318,35 @@ SUBROUTINE suscept_crystal
         q(i) = dble(isign) * q_gipaw
         
         ! compute the wfcs at k+q
+  call start_clock('susc:diagon')
         call compute_u_kq(ik, q)
+  call stop_clock('susc:diagon')
         
         ! compute p_k|evc>, v_k|evc> and G_{k+q} v_{k+q,k}|evc>
+  call start_clock('susc:apply')
         call apply_operators
+  call stop_clock('susc:apply')
       
         k_plus_q(1:3) = xk(1:3,ik) + q(1:3)
         call init_gipaw_2_no_phase(npw, igk, k_plus_q, paw_vkb)
 
         ! pGv and vGv contribution to chi_bare
+  call start_clock('susc:add-tensor')
         call add_to_tensor(i,q_pGv(:,:,isign), p_evc, G_vel_evc)
         call add_to_tensor(i,q_vGv(:,:,isign), vel_evc, G_vel_evc)
+  call stop_clock('susc:add-tensor')
         
         ! now the j_bare term 
+  call start_clock('susc:add-current')
         call add_to_current(j_bare_s(:,:,:,current_spin), evc, G_vel_evc)
         if (okvan) then
           call apply_occ_occ_us
           call add_to_current(j_bare_s(:,:,:,current_spin), evc, u_svel_evc)
         endif
+  call stop_clock('susc:add-current')
 
         ! paramagnetic terms
+  call start_clock('susc:para')
         if (job == 'nmr') then
           call paramagnetic_correction(paramagnetic_corr_tensor, paramagnetic_corr_tensor_us, &
                G_vel_evc, u_svel_evc, i)
@@ -332,16 +360,20 @@ SUBROUTINE suscept_crystal
           call add_to_sigma_para_so(paramagnetic_corr_tensor_so, delta_g_so_para)
           if (okvan) call add_to_sigma_para_so(paramagnetic_corr_tensor_us_so, delta_g_so_para_us)
         endif
+  call stop_clock('susc:para')
 
       enddo  ! i=x,y,z
     enddo  ! isign
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  call start_clock('susc:IO')
     call save_info_for_restart(ik+1, 0)
+  call stop_clock('susc:IO')
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   enddo  ! ik
-  
+
+  call start_clock('susc:mp_sum')
 #ifdef __PARA
   ! reduce over G-vectors
   call mp_sum( f_sum, intra_pool_comm )
@@ -371,6 +403,7 @@ SUBROUTINE suscept_crystal
   call mp_sum( delta_g_so_para_us, inter_pool_comm )
   call mp_sum( delta_g_so_para_aug, inter_pool_comm )
 #endif
+  call stop_clock('susc:mp_sum')
   
   !====================================================================
   ! print out results
@@ -382,7 +415,7 @@ SUBROUTINE suscept_crystal
   deallocate( p_evc, vel_evc, aux, G_vel_evc )
   deallocate( svel_evc, u_svel_evc )
   
-  
+  call start_clock('susc:post')
   ! f-sum rule
   call symmatrix (f_sum)
   call symmatrix (f_sum_occ)
@@ -440,10 +473,12 @@ SUBROUTINE suscept_crystal
   tmp(:,:) = chi_bare_vGv(:,:) * 1e6_dp * a0_to_cm**3.0_dp * avogadro
   write(stdout, '(5X,''chi_bare vGv (VV) in 10^{-6} cm^3/mol:'')')
   write(stdout, tens_fmt) tmp(:,:)
+  call stop_clock('susc:post')
 
   !--------------------------------------------------------------------
   ! now get the current and induced field
   !--------------------------------------------------------------------
+  call start_clock('susc:biot')
   chi_bare_pGv(:,:) = chi_bare_pGv(:,:) / omega
   j_bare_s(:,:,:,:) = j_bare_s(:,:,:,:) * alpha / ( 2.d0 * q_gipaw * tpiba * omega )
 
@@ -464,6 +499,7 @@ SUBROUTINE suscept_crystal
   ! compute induced field
   allocate( B_ind_r(nrxx,3,3,nspin), B_ind(ngm,3,3,nspin) )
   call biot_savart(j_bare, B_ind, B_ind_r)
+  call stop_clock('susc:biot')
 
   ! write fields to disk
   do i = 1, nspin
@@ -492,6 +528,7 @@ SUBROUTINE suscept_crystal
   deallocate( j_bare, B_ind_r, B_ind )
   
   call restart_cleanup ( )
+  call stop_clock('suscept_crystal')
   
 CONTAINS
 
