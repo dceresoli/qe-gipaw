@@ -198,6 +198,7 @@ CONTAINS
     USE mp,            ONLY : mp_bcast
     USE io_files,      ONLY : prefix, tmp_dir
     USE us,            ONLY : spline_ps
+    USE input_parameters, ONLY : max_seconds
     implicit none
     integer :: root = 0
     call mp_bcast(job, root)
