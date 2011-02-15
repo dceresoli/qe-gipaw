@@ -544,12 +544,20 @@ CONTAINS
     if(okvan) svel_evc(:,:,:) = (0.d0,0.d0)
     
     do ipol = 1, 3
+  call start_clock('apply:p')
       call apply_p(evc, p_evc(1,1,ipol), ik, ipol, q)
+  call stop_clock('apply:p')
+  call start_clock('apply:vel')
       call apply_vel(evc, vel_evc(1,1,ipol), ik, ipol, q)
+  call stop_clock('apply:vel')
+  call start_clock('apply:vel-NL')
       if (okvan) call apply_vel_NL('S', evc, svel_evc(1,1,ipol), ik, ipol, q)
+  call stop_clock('apply:vel-NL')
       ! necessary because aux is overwritten by subroutine greenfunction
       aux(:,:) = vel_evc(:,:,ipol)
+  call start_clock('apply:gf')
       call greenfunction(ik, aux, G_vel_evc(1,1,ipol), q)
+  call stop_clock('apply:gf')
     enddo
   END SUBROUTINE apply_operators
 
