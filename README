@@ -1,6 +1,6 @@
 This is the new version of the GIPAW code for quantum-Espresso.
 
-Contributors:
+Authors:
 * D. Ceresoli                        bare susceptibility, hyperfine core
 * A. P. Seitsonen and U. Gerstmann   GIPAW reconstruction
 * E. Kucukbenli                      ultrasoft and PAW pseudopotentials
@@ -9,6 +9,7 @@ Contributors:
 Contact:
 * Davide Ceresoli     <dceresoli@gmail.com>
 * Emine Kucukbenli    <emine@sissa.it>
+
 
 Build instructions:
 ===================
@@ -26,6 +27,18 @@ Build instructions:
 
 4) QE-GIPAW will be built according to the options and libraries specified
    in make.sys and the gipaw.x executable will be places in the bin folder.
+
+
+Quick start guide:
+==================
+To calculate NMR/EPR parameters you need:
+
+1) pseudopotentials containing the GIPAW reconstruction (look into folder pseudo)
+
+2) run pw.x to perform the SCF calculation
+
+3) run gipaw.x to calculate parameters (look into folder examples for
+   NMR shielding, EFG, EPR g-tensor and hyperfine couplings)
 
 
 
