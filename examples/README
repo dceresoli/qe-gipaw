@@ -1,0 +1,15 @@
+This folder contains some examples of NMR and EPR calculations.
+
+benzene-NCPP:  benzene NMR shielding using norm-conserving pseudopotentials
+benzene-USPP:  benzene NMR shielding using ultrasoft pseudopotentials
+quartz:        NMR shdielding and EFG of quartz
+H2O+:          EPR g-tensor and hyperfine couplings of H2O^+ radical
+
+The quartz example shows a limitation of the GIPAW formalism: symmetry
+operations that do not map cartesian axes are not allowed. If you have
+a triclinc cell, remove all symmetries (nosym = .true.). In the special
+case of an hexagonal cell, you can use ibrav = 0 and orient the cell
+like in the quartz examples. The keyword 'CELL_PARAMETERS cubic' prevent
+the code to detect 60 degrees rotations, which are incompatible with
+GIPAW.
+
