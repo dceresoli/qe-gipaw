@@ -1,0 +1,46 @@
+&control
+    calculation = 'scf'
+    restart_mode = 'from_scratch'
+    prefix = 'benzene'
+    tstress = .false.
+    tprnfor = .true.
+    pseudo_dir = './pseudo/'
+    outdir = '/tmp/ceresoli/'
+/
+&system
+    ibrav = 8
+    celldm(1) =  24.4265999286
+    celldm(2) =  0.948940120687
+    celldm(3) =  0.618907628037
+    nat = 12
+    ntyp = 2
+    ecutwfc = 35
+    ecutrho = 350
+    spline_ps = .true.
+/
+&electrons
+    diagonalization = 'david'
+    conv_thr =  1e-8
+    diago_thr_init = 1e-4
+/
+
+ATOMIC_SPECIES
+C   12.000  C.pbe-rrkjus-gipaw-dc.UPF
+H    2.000  H.pbe-rrkjus-gipaw-dc.UPF
+
+K_POINTS automatic
+1 1 1   0 0 0
+
+ATOMIC_POSITIONS angstrom
+C                     0.000000    1.391862    0.000000
+C                     1.205388    0.695931    0.000000
+C                     1.205388   -0.695931    0.000000
+C                     0.000000   -1.391862    0.000000
+C                    -1.205388   -0.695931    0.000000
+C                    -1.205388    0.695931    0.000000
+H                     0.000000    2.475623    0.000000
+H                     2.143952    1.237811    0.000000
+H                     2.143952   -1.237811    0.000000
+H                     0.000000   -2.475623    0.000000
+H                    -2.143952   -1.237811    0.000000
+H                    -2.143952    1.237811    0.000000
