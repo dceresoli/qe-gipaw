@@ -1,0 +1,42 @@
+&control
+    prefix = 'h2o+'
+    calculation = 'scf'
+    restart_mode = 'from_scratch'
+    pseudo_dir = './pseudo/'
+    outdir = '/tmp/ceresoli/'
+    lkpoint_dir = .false.
+    tstress = .false.
+    tprnfor = .false.
+    verbosity = 'high'
+/
+&system
+    ibrav = 1
+    celldm(1) = 20
+    nat = 3
+    ntyp = 2
+    ecutwfc = 100
+    occupations = 'fixed'
+    nspin = 2
+    tot_charge = 1
+    tot_magnetization = 1
+    starting_magnetization(1) = 0.2
+    starting_magnetization(2) = 0.1
+    spline_ps = .true.
+/
+&electrons
+    diagonalization = 'david'
+    diago_thr_init = 1e-4
+    conv_thr = 1e-8
+/
+ATOMIC_SPECIES
+O  16.0000    O.pbe-tm-gipaw.UPF
+H   1.0000    H.pbe-tm-gipaw.UPF
+
+ATOMIC_POSITIONS angstrom
+O        5.000000000   5.000000000   5.000000000
+H        5.820825291   5.569426766   5.000000000
+H        4.179174709   5.569426766   5.000000000
+
+K_POINTS automatic
+1 1 1 0 0 0
+

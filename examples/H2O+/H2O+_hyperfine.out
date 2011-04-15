@@ -1,0 +1,215 @@
+
+     Program GIPAW v.4.3        starts on 15Apr2011 at 12:25:44 
+
+     This program is part of the open-source Quantum ESPRESSO suite
+     for quantum simulation of materials; please cite
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 21 395502 (2009);
+          URL http://www.quantum-espresso.org", 
+     in publications or presentations arising from this work. More details at
+     http://www.quantum-espresso.org/wiki/index.php/Citing_Quantum-ESPRESSO
+
+   Info: using nr1, nr2, nr3 values from input
+
+   Info: using nr1s, nr2s, nr3s values from input
+ 
+   Stick Mesh
+   ----------
+   nst = 12745,  nstw =  3181, nsts = 12745
+               n.st   n.stw   n.sts    n.g    n.gw   n.gs
+   min       12745    3181   12745 1080751  135043 1080751
+   max       12745    3181   12745 1080751  135043 1080751
+      12745    3181   12745 1080751  135043 1080751
+ 
+     init_paw_1: ntyp= 1  rc=    1.4500  rs=    0.9667
+     init_paw_1: ntyp= 1  rc=    1.4500  rs=    0.9667
+     init_paw_1: ntyp= 1  rc=    1.4500  rs=    0.9667
+     init_paw_1: ntyp= 1  rc=    1.4500  rs=    0.9667
+
+     init_gipaw_1: projectors nearly linearly dependent:
+     ntyp =  1, l/n1/n2 =  1 2 1 -0.99382826
+     init_paw_1: ntyp= 2  rc=    1.2000  rs=    0.8000
+     init_paw_1: ntyp= 2  rc=    1.2000  rs=    0.8000
+     init_gipaw_1: projectors nearly linearly dependent:
+     ntyp =  2, l/n1/n2 =  0 2 1 -0.99707079
+
+DIA (NMR) :  1      0  0          0.2180
+PARA (NMR):  1      0  0        938.0307
+RMC (SO)  :  1      0  0          8.2287
+DIA (SO)  :  1      0  0          5.9459
+PARA (SO) :  1      0  0      15563.7592
+DIA (NMR) :  1      0  0         -0.2548
+PARA (NMR):  1      0  0      -1118.1806
+RMC (SO)  :  1      0  0         -9.9095
+DIA (SO)  :  1      0  0         -7.4881
+PARA (SO) :  1      0  0     -18620.0465
+DIA (NMR) :  1      0  0          0.2924
+PARA (NMR):  1      0  0       1332.3910
+RMC (SO)  :  1      0  0         12.0071
+DIA (SO)  :  1      0  0          9.7066
+PARA (SO) :  1      0  0      22276.5605
+DIA (NMR) :  1      1  1          0.1258
+PARA (NMR):  1      1  1          4.3270
+RMC (SO)  :  1      1  1          1.1869
+DIA (SO)  :  1      1  1          2.3739
+PARA (SO) :  1      1  1         98.0050
+DIA (NMR) :  1      1  1         -0.1859
+PARA (NMR):  1      1  1         -5.2704
+RMC (SO)  :  1      1  1         -1.6450
+DIA (SO)  :  1      1  1         -3.2830
+PARA (SO) :  1      1  1       -116.0546
+DIA (NMR) :  1      1  1          0.2591
+PARA (NMR):  1      1  1          6.3933
+RMC (SO)  :  1      1  1          2.2615
+DIA (SO)  :  1      1  1          4.4915
+PARA (SO) :  1      1  1        137.2888
+DIA (NMR) :  2      0  0          0.0661
+PARA (NMR):  2      0  0         26.4819
+RMC (SO)  :  2      0  0          0.0984
+DIA (SO)  :  2      0  0          0.1969
+PARA (SO) :  2      0  0        150.1990
+DIA (NMR) :  2      0  0         -0.0850
+PARA (NMR):  2      0  0        -30.2437
+RMC (SO)  :  2      0  0         -0.1298
+DIA (SO)  :  2      0  0         -0.2615
+PARA (SO) :  2      0  0       -168.5529
+DIA (NMR) :  2      0  0          0.1067
+PARA (NMR):  2      0  0         34.5189
+RMC (SO)  :  2      0  0          0.1791
+DIA (SO)  :  2      0  0          0.3555
+PARA (SO) :  2      0  0        189.1407
+     GIPAW        :    11.48s CPU        11.98s WALL
+
+     Warning: core-relaxation is an experimental feature
+     core-relax: calculating AE orbitals
+     O      1S   eig=    -39.1843 Ry   norm=      1.0000
+     O      2S   eig=     -2.9114 Ry   norm=      1.0000
+     O      3S   eig=     -0.4474 Ry   norm=      1.0000
+     O      4S   eig=     -0.1545 Ry   norm=      1.0000
+     O      5S   eig=     -0.0809 Ry   norm=      1.0000
+     O      6S   eig=     -0.0493 Ry   norm=      1.0000
+     O      7S   eig=     -0.0331 Ry   norm=      1.0000
+     O      8S   eig=     -0.0238 Ry   norm=      1.0000
+ 
+     core-relax: projecting around atom   1
+     O    1  1S -> 2S :   -0.263790
+     O    1  1S -> 3S :   -0.022623
+     O    1  1S -> 4S :   -0.003504
+     O    1  1S -> 5S :   -0.001541
+     O    1  1S -> 6S :   -0.000756
+     O    1  1S -> 7S :   -0.000419
+     O    1  1S -> 8S :   -0.000254
+ 
+ 
+     NUCLEAR G-TENSORS FROM INPUT:
+     O    1     -0.757500
+     H    2      5.585694
+     H    3      5.585694
+ 
+     NUCLEAR HYPERFINE COUPLINGS IN G         :
+ 
+     DIPOLAR COUPLINGS:
+     ----- bare term -----
+     O    1       33.246142       -0.001195       -0.000034
+     O    1       -0.001195       34.264079        0.000545
+     O    1       -0.000034        0.000545      -67.510221
+ 
+     H    2       14.174550       25.342255        0.000044
+     H    2       25.342255       -7.001292        0.000001
+     H    2        0.000044        0.000001       -7.173258
+ 
+     H    3       14.173626      -25.341418       -0.000051
+     H    3      -25.341418       -7.000988        0.000008
+     H    3       -0.000051        0.000008       -7.172638
+ 
+     ----- GIPAW term -----
+     O    1       24.414663       -0.000791       -0.000021
+     O    1       -0.000791       25.178828        0.000364
+     O    1       -0.000021        0.000364      -49.593491
+ 
+     H    2        0.000000        0.000000        0.000000
+     H    2        0.000000        0.000000        0.000000
+     H    2        0.000000        0.000000        0.000000
+ 
+     H    3        0.000000        0.000000        0.000000
+     H    3        0.000000        0.000000        0.000000
+     H    3        0.000000        0.000000        0.000000
+ 
+     ----- total dipolar -----
+     O    1       57.660805       -0.001986       -0.000054
+     O    1       -0.001986       59.442908        0.000909
+     O    1       -0.000054        0.000909     -117.103713
+ 
+     H    2       14.174550       25.342255        0.000044
+     H    2       25.342255       -7.001292        0.000001
+     H    2        0.000044        0.000001       -7.173258
+ 
+     H    3       14.173626      -25.341418       -0.000051
+     H    3      -25.341418       -7.000988        0.000008
+     H    3       -0.000051        0.000008       -7.172638
+ 
+     ----- total dipolar (symmetrized) -----
+     O    1       57.660805       -0.001986       -0.000054
+     O    1       -0.001986       59.442908        0.000909
+     O    1       -0.000054        0.000909     -117.103713
+ 
+     H    2       14.174550       25.342255        0.000044
+     H    2       25.342255       -7.001292        0.000001
+     H    2        0.000044        0.000001       -7.173258
+ 
+     H    3       14.173626      -25.341418       -0.000051
+     H    3      -25.341418       -7.000988        0.000008
+     H    3       -0.000051        0.000008       -7.172638
+ 
+ 
+     PRINCIPAL AXIS OF THE DIPOLAR COUPLINGS:
+     O    1    Axx=   57.6608    axis=(  0.999999  0.001114  0.000000)
+     O    1    Ayy=   59.4429    axis=( -0.001114  0.999999  0.000005)
+     O    1    Azz= -117.1037    axis=(  0.000000 -0.000005  1.000000)
+ 
+     H    2    Axx=   -7.1733    axis=(  0.000000 -0.000002  1.000000)
+     H    2    Ayy=  -23.8785    axis=(  0.554300 -0.832317 -0.000001)
+     H    2    Azz=   31.0518    axis=(  0.832317  0.554300  0.000001)
+ 
+     H    3    Axx=   -7.1726    axis=(  0.000000 -0.000002  1.000000)
+     H    3    Ayy=  -23.8778    axis=( -0.554303 -0.832315 -0.000001)
+     H    3    Azz=   31.0505    axis=(  0.832315 -0.554303 -0.000001)
+ 
+ 
+     SPIN DENSITIES IN bohrradius^-3 WITHOUT ZORA:
+     Warning: core-relaxation is an experimental feature
+               bare            GIPAW           core-relax      total
+     O    1        0.006667        0.337358       -0.292887        0.051138
+     H    2       -0.008880       -0.006290        0.000000       -0.015169
+     H    3       -0.008875       -0.006286        0.000000       -0.015161
+ 
+     ISOTROPIC (FERMI-CONTACT) COUPLINGS WITHOUT ZORA:
+     Warning: core-relaxation is an experimental feature
+               bare            GIPAW           core-relax      total
+     O    1       -1.442085      -72.970443       63.351469      -11.061059
+     H    2      -14.162531      -10.031552        0.000000      -24.194083
+     H    3      -14.154765      -10.026040        0.000000      -24.180805
+ 
+     GIPAW        :  1m55.23s CPU     1m56.03s WALL
+
+     INITIALIZATION:
+     gipaw_setup  :      0.74s CPU      0.77s WALL (       1 calls)
+ 
+     Linear response
+ 
+     Apply operators
+ 
+     Induced current
+ 
+     Other routines
+     hyperfine    :    103.75s CPU    104.04s WALL (       1 calls)
+     core_relax   :     97.29s CPU     97.37s WALL (       1 calls)
+ 
+     General routines
+     calbec       :      0.08s CPU      0.10s WALL (       6 calls)
+     fft          :      8.30s CPU      8.33s WALL (      21 calls)
+     ffts         :      0.98s CPU      0.99s WALL (       2 calls)
+     fftw         :      2.66s CPU      2.66s WALL (       8 calls)
+     davcio       :      0.00s CPU      0.04s WALL (       8 calls)
+ 
+ 
+ ----- PRACE -----

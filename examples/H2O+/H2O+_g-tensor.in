@@ -1,0 +1,9 @@
+&inputgipaw
+        job = 'g_tensor'
+        prefix = 'h2o+'
+        tmp_dir = '/tmp/ceresoli/'
+        isolve = 0
+        iverbosity = 1
+        q_gipaw = 0.01
+        spline_ps = .true.
+/

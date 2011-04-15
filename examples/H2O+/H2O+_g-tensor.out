@@ -1,0 +1,178 @@
+
+     Program GIPAW v.4.3        starts on 15Apr2011 at 11:27:47 
+
+     This program is part of the open-source Quantum ESPRESSO suite
+     for quantum simulation of materials; please cite
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 21 395502 (2009);
+          URL http://www.quantum-espresso.org", 
+     in publications or presentations arising from this work. More details at
+     http://www.quantum-espresso.org/wiki/index.php/Citing_Quantum-ESPRESSO
+
+   Info: using nr1, nr2, nr3 values from input
+
+   Info: using nr1s, nr2s, nr3s values from input
+ 
+   Stick Mesh
+   ----------
+   nst = 12745,  nstw =  3181, nsts = 12745
+               n.st   n.stw   n.sts    n.g    n.gw   n.gs
+   min       12745    3181   12745 1080751  135043 1080751
+   max       12745    3181   12745 1080751  135043 1080751
+      12745    3181   12745 1080751  135043 1080751
+ 
+     init_paw_1: ntyp= 1  rc=    1.4500  rs=    0.9667
+     init_paw_1: ntyp= 1  rc=    1.4500  rs=    0.9667
+     init_paw_1: ntyp= 1  rc=    1.4500  rs=    0.9667
+     init_paw_1: ntyp= 1  rc=    1.4500  rs=    0.9667
+
+     init_gipaw_1: projectors nearly linearly dependent:
+     ntyp =  1, l/n1/n2 =  1 2 1 -0.99382826
+     init_paw_1: ntyp= 2  rc=    1.2000  rs=    0.8000
+     init_paw_1: ntyp= 2  rc=    1.2000  rs=    0.8000
+     init_gipaw_1: projectors nearly linearly dependent:
+     ntyp =  2, l/n1/n2 =  0 2 1 -0.99707079
+
+     GIPAW        :    13.23s CPU        14.17s WALL
+
+     Computing the magnetic susceptibility     isolve=0    ethr=0.1000E-13
+     k-point #    1 of     2
+     k-point #    2 of     2
+     End of magnetic susceptibility calculation
+ 
+     f-sum rule (1st term):
+            -6.9999          0.0000          0.0000
+             0.0000         -6.9999          0.0000
+             0.0000          0.0000         -6.9999
+
+     f-sum rule (2nd term):
+             0.0000          0.0000          0.0000
+             0.0000          0.0000          0.0000
+             0.0000          0.0000          0.0000
+
+     f-sum rule (should be    -7.0000):
+            -6.9999          0.0000          0.0000
+             0.0000         -6.9999          0.0000
+             0.0000          0.0000         -6.9999
+
+     chi_bare pGv (HH) in paratec units:
+         2.054126     -0.000059     -0.000001
+         0.000004     -0.432406      0.000010
+        -0.000003      0.000221     -2.361563
+
+         2.054126     -0.000059     -0.000001
+         0.000004     -0.432406      0.000010
+        -0.000003      0.000221     -2.361563
+
+     chi_bare vGv (VV) in paratec units:
+         2.069454      0.000166      0.000000
+         0.000001     -0.402357      0.000008
+        -0.000001      0.000103     -2.380947
+
+         2.069454      0.000166      0.000000
+         0.000001     -0.402357      0.000008
+        -0.000001      0.000103     -2.380947
+
+     chi_bare pGv (HH) in 10^{-6} cm^3/mol:
+             9.7614         -0.0003          0.0000
+             0.0000         -2.0548          0.0000
+             0.0000          0.0011        -11.2224
+
+     chi_bare vGv (VV) in 10^{-6} cm^3/mol:
+             9.8342          0.0008          0.0000
+             0.0000         -1.9120          0.0000
+             0.0000          0.0005        -11.3145
+
+     Contributions to the EPR g-tensor (in ppm): -----------------------------
+ 
+     Relativistic mass correction bare :     -271.26
+     Relativistic mass correction gipaw:      -48.33
+ 
+     Delta_g SO - bare term:
+          3308.31          0.00          0.00
+             0.00       1302.02          0.00
+             0.00          0.00         61.19
+
+ 
+     Delta_g SO - diamagnetic term:
+            16.04          0.00          0.00
+             0.00         16.11          0.00
+             0.00          0.00          9.30
+
+ 
+     Delta_g SO - paragnetic term:
+          9827.71          0.00          0.00
+             0.01       3544.03          0.00
+             0.00          0.00         21.66
+
+ 
+     Delta_g SOO - a la Paratec:
+          -481.47          0.00          0.00
+             0.00       -159.20          0.00
+             0.00          0.00         84.07
+
+ 
+     Delta_g SOO - Eq.(7):
+          -192.57          0.00          0.00
+             0.00        -33.74          0.00
+             0.00          0.00         98.55
+
+ 
+     Delta_g total (SOO a la Paratec): ---------------------------------------
+         12351.00          0.00          0.00
+             0.01       4383.37          0.00
+             0.00          0.00       -143.37
+
+ 
+     Delta_g total (SOO as in Eq.(7)): ---------------------------------------
+         12639.91          0.00          0.00
+             0.01       4508.83          0.01
+             0.00          0.00       -128.89
+
+ 
+ 
+     GIPAW        : 49m 5.90s CPU    49m56.19s WALL
+
+     INITIALIZATION:
+     gipaw_setup  :      0.68s CPU      0.76s WALL (       1 calls)
+ 
+     Linear response
+     greenf       :   2005.26s CPU   2028.29s WALL (      42 calls)
+     cgsolve      :   2002.04s CPU   2025.05s WALL (      42 calls)
+     ch_psi       :   1976.55s CPU   1998.57s WALL (     900 calls)
+     h_psiq       :   1939.21s CPU   1960.44s WALL (     900 calls)
+ 
+     Apply operators
+     h_psi        :    520.49s CPU    527.07s WALL (     198 calls)
+     apply_vel    :      7.00s CPU      7.31s WALL (      42 calls)
+ 
+     Induced current
+     j_para       :    348.14s CPU    352.18s WALL (      24 calls)
+     biot_savart  :     21.19s CPU     21.93s WALL (       1 calls)
+ 
+     Other routines
+ 
+     General routines
+     calbec       :      6.87s CPU      7.23s WALL (    2204 calls)
+     fft          :     33.66s CPU     34.17s WALL (      65 calls)
+     fftw         :   2677.86s CPU   2706.87s WALL (    7944 calls)
+     davcio       :      0.00s CPU      0.16s WALL (      30 calls)
+ 
+ 
+ ----- PRACE -----
+     suscept_crys :   2932.67s CPU   2982.02s WALL (       1 calls)
+     susc:gk_sort :      0.07s CPU      0.08s WALL (       2 calls)
+     susc:IO      :      0.03s CPU     10.61s WALL (      16 calls)
+     susc:calbec  :      0.39s CPU      0.40s WALL (       2 calls)
+     susc:dia     :      0.00s CPU      0.00s WALL (       2 calls)
+     susc:para    :      0.58s CPU      0.56s WALL (      14 calls)
+     apply:p      :      0.33s CPU      0.34s WALL (      42 calls)
+     apply:vel    :      7.00s CPU      7.31s WALL (      42 calls)
+     apply:vel-NL :      0.00s CPU      0.00s WALL (      42 calls)
+     apply:gf     :   2005.26s CPU   2028.29s WALL (      42 calls)
+     susc:f-sum   :      0.07s CPU      0.07s WALL (       2 calls)
+     susc:diagon  :    466.77s CPU    473.51s WALL (      12 calls)
+     susc:add-ten :      0.50s CPU      0.49s WALL (      14 calls)
+     susc:add-cur :    348.14s CPU    352.18s WALL (      12 calls)
+     susc:mp_sum  :      0.00s CPU      0.00s WALL (       1 calls)
+     susc:post    :      0.00s CPU      0.00s WALL (       1 calls)
+     susc:biot    :     21.56s CPU     22.44s WALL (       1 calls)
