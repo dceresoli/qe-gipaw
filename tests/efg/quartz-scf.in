@@ -1,0 +1,50 @@
+&control
+    calculation = 'scf'
+    prefix = 'quartz'
+    restart_mode = 'from_scratch'
+    tstress = .true.
+    tprnfor = .true.
+    pseudo_dir = './pseudo/'
+    outdir = '/tmp/ceresoli/'
+    verbosity = 'high'
+/
+&system
+    ibrav = 0
+    celldm(1) = 4.6415377
+    nat = 9
+    ntyp = 2
+    ecutwfc = 20
+    ecutrho = 200
+    spline_ps = .true.
+/
+&electrons
+    diagonalization = 'david'
+    diago_thr_init = 1e-4
+    mixing_mode = 'plain'
+    mixing_beta = 0.7
+    conv_thr =  1e-10
+/
+
+ATOMIC_SPECIES
+Si 28.086  Si.pbe-tm-gipaw.UPF
+O  15.999  O.pbe-rrkjus-gipaw-dc.UPF
+
+ATOMIC_POSITIONS crystal
+Si    0.4701     0.0000      0.3333333333
+Si    0.0000     0.4701      0.6666666667
+Si   -0.4701    -0.4701      0.0000000000
+O     0.4139     0.2674      0.2144
+O     -0.2674    0.1465      0.5477333333
+O     -0.1465   -0.4139      0.8810666667
+O      0.2674    0.4139     -0.2144
+O      0.1465   -0.2674      0.4522666667
+O     -0.4139   -0.1465      0.1189333333
+
+CELL_PARAMETERS cubic
+1.0000000      -1.7320581       0.0000000
+1.0000000       1.7320581       0.0000000
+0.0000000       0.0000000       2.2000000
+
+K_POINTS automatic
+4 4 4   1 1 1
+
