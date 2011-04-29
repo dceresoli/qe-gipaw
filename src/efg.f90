@@ -138,7 +138,7 @@ SUBROUTINE efg
   call start_clock('efg')
 
 1001 FORMAT(5X,A,I3,4X,A,F10.4,4X,A,3F10.6,A)
-1002 FORMAT(5x,a,i3,4x,'Q=',F5.2,' 1e-30 m^2',4x'Cq=',F9.4,' MHz',4x,'eta=',F8.5)
+1002 FORMAT(5x,a,i3,4x,'Q=',F5.2,' 1e-30 m^2',4x,'Cq=',F9.4,' MHz',4x,'eta=',F8.5)
 
 END SUBROUTINE efg
 
