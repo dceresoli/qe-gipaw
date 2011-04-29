@@ -742,9 +742,9 @@ CONTAINS
        READ (iunrec) delta_g_rmc, delta_g_rmc_gipaw, delta_g_so, delta_g_soo, &
                      delta_g_soo2, delta_g_so_para, delta_g_so_para_aug, &
                      delta_g_so_para_us, delta_g_so_dia 
-       CLOSE( UNIT = iunrec, STATUS = 'KEEP' )
        WRITE (stdout,'(5X,''Resuming from k-point #'',I5,3X,''and q #'',I3)') ik0_, iq0_
     END IF
+    CLOSE( UNIT = iunrec, STATUS = 'KEEP' )
 
     CALL save_info_for_restart(ik0_,iq0_)
      
