@@ -107,6 +107,9 @@ MODULE gipaw_module
   !<apsi>
   LOGICAL :: pawproj( ntypx ) !EMINE: if true paw projectors will be used
                                      !instead of GIPAW ones
+  REAL(dp) :: r_rand !EMINE: determines the randimization range used in
+                 !compute_u_kq routine. read from input
+                 !change it for debugging only
 CONTAINS
   
   !-----------------------------------------------------------------------
@@ -120,9 +123,11 @@ CONTAINS
   !              filcurr = '...'
   !              filfield = '...'
   !              iverbosity = 0
-  !              pawproj(1:ntypx)= .false. if true paw proj. will be used instead of GIPAW ones
+  !              pawproj(1:ntypx)= .false. if true paw proj. 
+  !                                 will be used instead of GIPAW ones
+  !              r_rand=0.1 !randomization range in compute_u_kq
   !         /
- 
+  !
   !-----------------------------------------------------------------------
   SUBROUTINE gipaw_readin()
     USE io_files,      ONLY : nd_nmbr, prefix, tmp_dir  
@@ -142,7 +147,7 @@ CONTAINS
                          hfi_nuclear_g_factor, radial_integral_splines, &
                          hfi_via_reconstruction_only, &
                          hfi_extrapolation_npoints,pawproj, &
-                         max_seconds
+                         max_seconds,r_rand
     
     if ( .not. ionode ) goto 400
     
@@ -175,7 +180,9 @@ CONTAINS
     hfi_extrapolation_npoints = 10000
     q_efg = 1.0
     pawproj(:) = .false.
+    r_rand=0.1
     max_seconds  =  1.E+7_DP
+    
 
     read( 5, inputgipaw, err = 200, iostat = ios )
     
@@ -222,6 +229,7 @@ CONTAINS
     CALL mp_bcast ( hfi_via_reconstruction_only, root )
     CALL mp_bcast ( hfi_extrapolation_npoints, root )
     CALL mp_bcast ( pawproj, root )
+    CALL mp_bcast ( r_rand, root )
     CALL mp_bcast ( max_seconds, root )
 #endif
   END SUBROUTINE gipaw_bcast_input

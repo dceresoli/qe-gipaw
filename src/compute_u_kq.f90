@@ -101,7 +101,7 @@ SUBROUTINE compute_u_kq(ik, q)
   rr = randy(ik+nks*me_pool) ! starting from a well defined k-dependent seed
   do i = 1, nbnd
     do ig = 1, npw
-      rr = 0.1d0*(2.d0*randy() - 1.d0)
+      rr = r_rand*(2.d0*randy() - 1.d0)
       arg = tpi * randy()
       evc(ig,i) = evc(ig,i)*CMPLX(1.d0+rr*cos(arg),rr*sin(arg),kind=DP)
     enddo
