@@ -17,7 +17,7 @@ SUBROUTINE write_tensor_field(name, ispin, field)
   USE cell_base,                   ONLY : at, bg, alat
   USE ions_base,                   ONLY : nat, tau, atm, ityp
   USE pwcom
-  USE grid_dimensions,             ONLY : nr1x, nr2x, nr3x
+  USE grid_dimensions,             ONLY : nr1,nr2,nr3,nr1x, nr2x, nr3x
   USE gipaw_module
   !--------------------------------------------------------------------
   character*(*) name
