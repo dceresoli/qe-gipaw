@@ -481,7 +481,7 @@ SUBROUTINE print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnet
   write(stdout,'(5X,''Core contribution in ppm:'')')
   write(stdout,*)
   do na = 1, nat
-    write(stdout,'(5X,''Atom'',I3,2X,A3,'' pos: ('',3(F10.6),'')  sigma: '',F14.2)') &
+    write(stdout,'(5X,''Atom'',I3,2X,A3,'' pos: ('',3(F10.6),'') core sigma: '',F14.2)') &
           na, atm(ityp(na)), tau(:,na), nmr_shift_core(ityp(na))*1.0d6
   enddo
   write(stdout,*)
@@ -491,7 +491,7 @@ SUBROUTINE print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnet
   do na = 1, nat
     call trace(3, sigma_bare(1,1,na), tr_sigma)
     tr_sigma = tr_sigma / 3.d0
-    write(stdout,'(5X,''Atom'',I3,2X,A3,'' pos: ('',3(F10.6),'')  sigma: '',F14.2)') &
+    write(stdout,'(5X,''Atom'',I3,2X,A3,'' pos: ('',3(F10.6),'')  bare sigma: '',F14.2)') &
           na, atm(ityp(na)), tau(:,na), tr_sigma * 1.0d6
     if (iverbosity > 0) write(stdout,tens_fmt) sigma_bare(:,:,na) * 1.0d6
   enddo
@@ -502,7 +502,7 @@ SUBROUTINE print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnet
   do na = 1, nat
     call trace(3, sigma_diamagnetic(1,1,na), tr_sigma)
     tr_sigma = tr_sigma / 3.d0
-    write(stdout,'(5X,''Atom'',I3,2X,A3,'' pos: ('',3(F10.6),'')  sigma: '',F14.2)') &
+    write(stdout,'(5X,''Atom'',I3,2X,A3,'' pos: ('',3(F10.6),'')  dia sigma: '',F14.2)') &
         na, atm(ityp(na)), tau(:,na), tr_sigma*1.0d6
     if (iverbosity > 0) write(stdout,tens_fmt) sigma_diamagnetic(:,:,na) * 1.0d6
   enddo
@@ -513,7 +513,7 @@ SUBROUTINE print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnet
   do na = 1, nat
     call trace(3, sigma_paramagnetic(1,1,na), tr_sigma)
     tr_sigma = tr_sigma / 3.d0
-    write(stdout,'(5X,''Atom'',I3,2X,A3,'' pos: ('',3(F10.6),'')  sigma: '',F14.2)') &
+    write(stdout,'(5X,''Atom'',I3,2X,A3,'' pos: ('',3(F10.6),'')  para sigma: '',F14.2)') &
         na, atm(ityp(na)), tau(:,na), tr_sigma*1.0d6
     if (iverbosity > 0) write(stdout,tens_fmt) sigma_paramagnetic(:,:,na) * 1.0d6
   enddo
@@ -525,7 +525,7 @@ SUBROUTINE print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnet
     do na = 1, nat
       call trace(3, sigma_paramagnetic_us(1,1,na), tr_sigma)
       tr_sigma = tr_sigma / 3.d0
-      write(stdout,'(5X,''Atom'',I3,2X,A3,'' pos: ('',3(F10.6),'')  sigma: '',F14.2)') &
+      write(stdout,'(5X,''Atom'',I3,2X,A3,'' pos: ('',3(F10.6),'')  para_oo sigma: '',F14.2)') &
           na, atm(ityp(na)), tau(:,na), tr_sigma*1.0d6
       if (iverbosity > 0) write(stdout,tens_fmt) sigma_paramagnetic_us(:,:,na) * 1.0d6
     enddo
@@ -536,7 +536,7 @@ SUBROUTINE print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnet
     do na = 1, nat
       call trace(3, sigma_paramagnetic_aug(1,1,na), tr_sigma)
       tr_sigma = tr_sigma / 3.d0
-      write(stdout,'(5X,''Atom'',I3,2X,A3,'' pos: ('',3(F10.6),'')  sigma: '',F14.2)') &
+      write(stdout,'(5X,''Atom'',I3,2X,A3,'' pos: ('',3(F10.6),'')  para_lq sigma: '',F14.2)') &
           na, atm(ityp(na)), tau(:,na), tr_sigma*1.0d6
       if (iverbosity > 0) write(stdout,tens_fmt) sigma_paramagnetic_aug(:,:,na) * 1.0d6
     enddo
@@ -554,7 +554,7 @@ SUBROUTINE print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnet
 
     call trace(3, sigma_tot(1,1,na), tr_sigma)
     tr_sigma = tr_sigma / 3.d0
-    write(stdout,'(5X,''Atom'',I3,2X,A3,'' pos: ('',3(F10.6),'')  sigma: '',F14.2)') &
+    write(stdout,'(5X,''Atom'',I3,2X,A3,'' pos: ('',3(F10.6),'')  Total sigma: '',F14.2)') &
         na, atm(ityp(na)), tau(:,na), tr_sigma*1.0d6
 
     call principal_axis(sigma_tot(:,:,na), v, axis)
@@ -565,9 +565,9 @@ SUBROUTINE print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnet
       eta = 0.d0
     endif
     write(stdout,1000) atm(ityp(na)), na, 'anisotropy:', aniso*1.0d6, 'eta:', eta
-    write(stdout,1001) atm(ityp(na)), na, 'sigma_xx=', v(1)*1.0d6, 'axis=(', axis(1:3,1), ')'
-    write(stdout,1001) atm(ityp(na)), na, 'sigma_yy=', v(2)*1.0d6, 'axis=(', axis(1:3,2), ')'
-    write(stdout,1001) atm(ityp(na)), na, 'sigma_zz=', v(3)*1.0d6, 'axis=(', axis(1:3,3), ')'
+    write(stdout,1001) atm(ityp(na)), na, 'sigma_11=', v(1)*1.0d6, 'axis=(', axis(1:3,1), ')'
+    write(stdout,1001) atm(ityp(na)), na, 'sigma_22=', v(2)*1.0d6, 'axis=(', axis(1:3,2), ')'
+    write(stdout,1001) atm(ityp(na)), na, 'sigma_33=', v(3)*1.0d6, 'axis=(', axis(1:3,3), ')'
     write(stdout,*)
   enddo
 
