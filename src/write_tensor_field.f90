@@ -14,20 +14,34 @@ SUBROUTINE write_tensor_field(name, ispin, field)
   USE kinds,                       ONLY : DP
   USE io_global,                   ONLY : stdout
   USE mp_global,                   ONLY : me_pool  
-  USE cell_base,                   ONLY : at, bg, alat
+  USE cell_base,                   ONLY : at, alat
   USE ions_base,                   ONLY : nat, tau, atm, ityp
   USE pwcom
-  USE grid_dimensions,             ONLY : nr1,nr2,nr3,nr1x, nr2x, nr3x
+  USE grid_dimensions,             ONLY : nr1,nr2,nr3,nr1x, nr2x, nr3x,nrxx
+  USE fft_base,         ONLY : grid_gather
   USE gipaw_module
   !--------------------------------------------------------------------
   character*(*) name
   integer :: ispin
-  real(dp) :: field(nr1x,nr2x,nr3x,3)
+  real(dp) :: field(nrxx,3,3)
   !--------------------------------------------------------------------
   integer, parameter :: ounit = 48
   character*80 :: fname
   integer :: ios, ipol
-  
+  !-- local variables ----------------------------------------------------
+  real(dp), allocatable :: aux(:,:,:)
+!  integer :: i, j
+
+ allocate( aux(nr1x*nr2x*nr3x,3,3) )
+#ifdef __PARA
+  do i = 1, 3
+    do j = 1, 3
+      call grid_gather(field(:,i,j), aux(:,i,j))
+    enddo
+  enddo
+#else
+  aux=field
+#endif 
   if (me_pool /= 0) return
 
   do ipol = 1, 3
@@ -47,14 +61,14 @@ SUBROUTINE write_tensor_field(name, ispin, field)
       call errore('write_tensor_field', 'error opening '//fname, ounit)
 
     call xsf_struct (alat, at, nat, tau, atm, ityp, nr1*nr2*nr3, ounit)
-    call xsf_vector_3d(field(1,1,1,ipol), &
-                       nr1, nr2, nr3, nr1x, nr2x, nr3x, at, bg, alat, ounit)
+    write(*,*)aux(10,:,ipol)
+    call xsf_vector_3d(aux(:,:,ipol), &
+                       nr1, nr2, nr3,  at, alat, ounit)
     close(unit=48)
+    deallocate(aux)
   enddo
 end subroutine write_tensor_field
-
-
-
+!---------------------------------
 !
 ! Copyright (C) 2003 Tone Kokalj
 ! This file is distributed under the terms of the
@@ -106,27 +120,51 @@ end subroutine xsf_struct
 ! -------------------------------------------------------------------
 !   this routine writes a 3D vector field
 ! -------------------------------------------------------------------
-subroutine xsf_vector_3d(v, nr1, nr2, nr3, nr1x, nr2x, nr3x, &
-                         at, bg, alat, ounit)
+subroutine xsf_vector_3d(vin, nr1, nr2, nr3, &
+                         at, alat, ounit)
   USE kinds, only : DP
-  USE constants, only : BOHR_RADIUS_ANGS 
+  USE constants, only : BOHR_RADIUS_ANGS
+  USE io_global, ONLY : ionode
+  USE grid_dimensions,             ONLY : nr1x, nr2x, nr3x
   implicit none
-  integer  :: nr1x, nr2x, nr3x, nr1, nr2, nr3, ounit
-  real(DP) :: at(3,3), bg(3,3), x(3), alat, v(nr1x,nr2x,nr3x,3)
+  integer  ::  nr1, nr2, nr3, ounit
+  real(DP) :: at(3,3), x(3), alat
+  real(dp), intent(in)::vin(nr1x*nr2x*nr3x,3)  
   integer  :: i1, i2, i3
+  real(DP),allocatable ::vout(:,:,:,:)
+  INTEGER               :: i, j, k, bla
+  !REAL(dp)::thr = 1.d-12  
+  allocate(vout(nr1x,nr2x,nr3x,3))
+    DO k=1,nr3x
+     DO j = 1, nr2x
+      DO i = 1, nr1x
+        bla=i+(j-1)*nr1x+(k-1)*nr1x*nr2x
+        vout(i,j,k,:) = vin(bla,:)
+      END DO
+     END DO
+    END DO
 
-  do i1 = 1, nr1
-    do i2 = 1, nr2
-      do i3 = 1, nr3
+  IF ( ionode ) then
+     
+    do i1 = 1,nr1
+     do i2 = 1,nr2
+     do  i3 = 1,nr3
         ! coordinate in angstrom
-        x(1) = dble(i1)/dble(nr1)     
-        x(2) = dble(i2)/dble(nr2)     
-        x(3) = dble(i3)/dble(nr3)
+        x(1) = dble(i1-1)/dble(nr1)     
+        x(2) = dble(i2-1)/dble(nr2)     
+        x(3) = dble(i3-1)/dble(nr3)
         ! crystal to cartesian
-        call cryst_to_cart (1, x, bg, 1)
-        x = x * alat * BOHR_RADIUS_ANGS
-        write(ounit,'(''X  '',3x,3f15.9,2x,3e12.4)') x, v(i1,i2,i3,1:3)
+           call cryst_to_cart (1, x, at, 1)
+          x = x * alat * BOHR_RADIUS_ANGS
+        !if((abs(vout(i1,i2,i3,1)) .gt. thr).or. &
+        !   (abs(vout(i1,i2,i3,2)) .gt. thr).or. &
+        !   (abs(vout(i1,i2,i3,3)) .gt. thr)) then
+            write(ounit,'(''X  '',3x,3f15.9,2x,3e12.4)') x, vout(i1,i2,i3,1:3)
+            
+        !endif
       enddo
     enddo
-  enddo
+    enddo
+   endif
+   deallocate(vout) 
 end subroutine xsf_vector_3d
