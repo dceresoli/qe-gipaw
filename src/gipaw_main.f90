@@ -41,7 +41,7 @@ PROGRAM gipaw_main
   USE check_stop,      ONLY : check_stop_init
   USE environment,     ONLY : environment_start
   USE lsda_mod,        ONLY : nspin
-  USE klist,           ONLY : nelec
+  USE wvfct,           ONLY : nbnd
   USE uspp,            ONLY : okvan
   !------------------------------------------------------------------------
   IMPLICIT NONE
@@ -63,10 +63,12 @@ PROGRAM gipaw_main
   cell_factor = 1.1d0
   call read_file
 #ifdef __PARA
-  IF ( use_para_diag )  CALL check_para_diag( nelec )
+  use_para_diag = .true.
+  call check_para_diag( nbnd )
 #else
   use_para_diag = .FALSE.
 #endif
+
   call gipaw_openfil
   
   if ( gamma_only ) call errore ( 'gipaw_main', 'gamma_only == .true.', 1 )
