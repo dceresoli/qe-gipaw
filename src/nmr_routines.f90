@@ -42,9 +42,7 @@ SUBROUTINE paramagnetic_correction (paramagnetic_tensor, paramagnetic_tensor_us,
   complex(dp) :: para_corr(3,nat), para_corr_us(3,nat)
   complex(dp) :: bec_product, cc
   integer :: l1, m1, lm1, l2, m2, lm2, ih, ikb, nbs1, jh, jkb, nbs2
-  integer :: nt, ibnd, na, lm, j, ijkb0, jpol
-  integer :: mg, i1, i2, i3
-  
+  integer :: nt, ibnd, na, ijkb0, jpol
 
   do jpol = 1, 3 
      if ( jpol == ipol ) cycle
@@ -126,7 +124,7 @@ SUBROUTINE diamagnetic_correction (diamagnetic_tensor)
 
   !-- local variables ----------------------------------------------------
   integer :: l1, m1, lm1, l2, m2, lm2, ih, ikb, nbs1, jh, jkb, nbs2
-  integer :: nt, ibnd, na, lm, nrc, ijkb0
+  integer :: nt, ibnd, na, lm, ijkb0
   complex(dp) :: dia_corr(lmaxx**2,nat)
   complex(dp) :: bec_product
   
@@ -423,7 +421,7 @@ SUBROUTINE compute_sigma_bare(B_ind, chi_bare, sigma_bare)
   real(dp), intent(out) :: sigma_bare(3,3,nat)
   !-- local variables ---------------------------------------------------
   integer :: na, ig, ispin
-  real(dp) :: arg, tr_sigma
+  real(dp) :: arg
   complex(dp) :: tmp_sigma(3,3)
   
   do na = 1, nat

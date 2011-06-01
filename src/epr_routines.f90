@@ -32,7 +32,7 @@ SUBROUTINE rmc(s_weight, delta_g_rmc, delta_g_rmc_gipaw)
 
   !-- local variables ----------------------------------------------------
   integer :: l1, m1, lm1, l2, m2, lm2, ih, ikb, nbs1, jh, jkb, nbs2
-  integer :: nt, ibnd, na, lm, j, ijkb0, jpol
+  integer :: nt, ibnd, na, ijkb0
   complex(dp) :: rmc_corr, bec_product
 
   ! bare term
@@ -107,9 +107,7 @@ SUBROUTINE paramagnetic_correction_so (paramagnetic_tensor, paramagnetic_tensor_
   complex(dp) :: para_corr(3), para_corr_us(3)
   complex(dp) :: bec_product, cc
   integer :: l1, m1, lm1, l2, m2, lm2, ih, ikb, nbs1, jh, jkb, nbs2
-  integer :: nt, ibnd, na, lm, j, ijkb0, jpol
-  integer :: mg, i1, i2, i3
-  
+  integer :: nt, ibnd, na, ijkb0, jpol
 
   do jpol = 1, 3 
      if ( jpol == ipol ) cycle
@@ -191,7 +189,7 @@ SUBROUTINE diamagnetic_correction_so (diamagnetic_tensor)
 
   !-- local variables ----------------------------------------------------
   integer :: l1, m1, lm1, l2, m2, lm2, ih, ikb, nbs1, jh, jkb, nbs2
-  integer :: nt, ibnd, na, lm, nrc, ijkb0
+  integer :: nt, ibnd, na, lm, ijkb0
   complex(dp) :: dia_corr(lmaxx**2)
   complex(dp) :: bec_product
   
@@ -553,7 +551,7 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
   real(dp), allocatable :: grad_vh(:,:), vh(:,:)
   complex(dp), allocatable :: aux1(:)
   real(dp) :: d_omega, e_hartree, charge
-  integer :: ispin, ipol, jpol
+  integer :: ipol, jpol
 
   ! Paratec-way:  int dr j_up(r) \times v_h[n_unpaired](r) 
   allocate (grad_vh(3,nrxx), vh(nrxx,nspin), aux1(nrxx))

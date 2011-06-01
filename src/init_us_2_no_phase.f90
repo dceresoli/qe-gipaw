@@ -38,10 +38,10 @@ subroutine init_us_2_no_phase (npw_, igk_, q_, vkb_)
   !
   integer :: i0,i1,i2,i3, ig, l, lm, na, nt, nb, ih, jkb
 
-  real(DP) :: px, ux, vx, wx, arg
+  real(DP) :: px, ux, vx, wx
   real(DP), allocatable :: gk (:,:), qg (:), vq (:), ylm (:,:), vkb1(:,:)
 
-  complex(DP) :: phase, pref
+  complex(DP) :: pref
   complex(DP), allocatable :: sk(:)
 
   real(DP), allocatable :: xdata(:)

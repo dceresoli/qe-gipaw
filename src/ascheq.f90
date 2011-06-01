@@ -21,7 +21,7 @@ subroutine ascheq(nn,lam,e,mesh,grid,vpot,ze2,thresh0,y,nstop)
   integer :: mesh,lam, ierr
   integer:: nn,nstop,maxter,iter,l1,i,ik=0,ncross,n, &
        nstart,ns,n2,nst2,ndcr
-  real(DP) :: ze2,ddx12,eup,elw,b0e,ymx,rap,rstart,di,expn,  &
+  real(DP) :: ze2,ddx12,eup,elw,ymx,rap,rstart,di,expn,  &
        c1,c2,c3,c4,fe,a0,a1,a2,sum0,f2,sum,sqlhf,f0,f1,dfe,de,eps,&
        yln,xp,sum1
   real(DP):: vpot(mesh), y(mesh)
