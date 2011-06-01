@@ -245,8 +245,8 @@ CONTAINS
     character (len=256) :: readline
     logical :: file_exists, new_file_format
     integer :: iostatus, nlines
-    integer :: l,j,i, kkpsi
-    real(dp) :: d1, test1, test2
+    integer :: j,i, kkpsi
+    real(dp) :: d1
     INTEGER :: local_component
     
     type at_wfc_r
