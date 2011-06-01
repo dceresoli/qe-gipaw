@@ -12,6 +12,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
   !-----------------------------------------------------------------------
   !
   ! ... Compute the core contribution to hyperfine Fermi contact
+  ! ... according to: Bahramy, Sluiter, Kawazoe, PRB 76, 035124 (2007)
   !
   USE kinds,                 ONLY : dp
   USE constants,             ONLY : pi, tpi, fpi
@@ -30,8 +31,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
   USE buffers,               ONLY : get_buffer
   USE gipaw_module,          ONLY : iverbosity
   USE klist,                 ONLY : nks, xk, wk
-  USE wvfct,                 ONLY : npwx, nbnd, npw, igk, g2kin, wg, current_k
-  USE wvfct,                 ONLY : ecutwfc
+  USE wvfct,                 ONLY : npwx, nbnd, npw, igk, g2kin, wg, current_k, ecutwfc
   USE becmod,                ONLY : calbec
   USE wavefunctions_module,  ONLY : evc
   USE io_global,             ONLY : stdout
@@ -40,6 +40,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
   USE mp,                    ONLY : mp_sum
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
   USE funct,                 ONLY : xc, xc_spin
+  USE gipaw_module,          ONLY : nbrx
 
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
@@ -54,12 +55,11 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
   real(dp) :: ae_orb(ndmx,n_max,ntypx)
   real(dp), allocatable :: vpot(:)
   integer :: nt, nn, zz, nstop
-  real(dp) :: dx
   integer, external :: atomic_number
 
   integer :: s_maj, s_min, na, ispin, j
   complex(dp), allocatable :: aux(:)
-  real(dp), allocatable :: sph_rho_bare(:,:,:), sph_rho_gipaw(:,:,:)
+  real(dp), allocatable :: sph_rho_bare(:,:), sph_rho_gipaw(:,:)
 
   integer :: il1, il2, nrc, l1, l2
   real(dp), allocatable :: rho_recon(:,:,:,:)
@@ -68,7 +68,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
   complex(dp) :: bec_product
 
   real(dp), allocatable :: delta_v(:,:), work(:)
-  integer :: n1, n2, ncore, r_first, np
+  integer :: n1, n2, ncore, r_first
   real(dp) :: b(2), coeff, norm, contrib
 
   call start_clock('core_relax')
@@ -120,30 +120,8 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
   ! Select majority and minority spin components
   call select_spin(s_min, s_maj)
 
-  !====================================================================
-  ! project the density around each atom
-  !====================================================================
-  allocate( sph_rho_bare(ndmx,nat,nspin) )
-  sph_rho_bare = 0.d0
-  allocate( aux(nrxx) )
-  do na = 1, nat
-      nt = ityp(na)
-      if (paw_recon(nt)%gipaw_ncore_orbital == 0) cycle
-      if (iverbosity > 1) write(stdout,'(5X,''core-relax: projecting around atom '',I3)') na
-      ! bare density to reciprocal space
-      do ispin = 1, nspin
-        aux(1:nrxx) = rho%of_r(1:nrxx,ispin)
-        CALL fwfft('Dense',aux,dfftp)
-        call project_density(sph_rho_bare(:,na,ispin))
-      enddo
-  enddo
-  call mp_sum(sph_rho_bare, intra_pool_comm)
-  deallocate(aux)
-
-  !====================================================================
   ! prepare reconstruction terms
-  !====================================================================
-  allocate( rho_recon(ndmx,paw_nkb,paw_nkb,ntyp) )
+  allocate( rho_recon(ndmx,nbrx,nbrx,ntyp) )
   rho_recon = 0.d0
   do nt = 1, ntyp
     !!if (paw_recon(nt)%gipaw_ncore_orbital == 0) cycle
@@ -169,24 +147,49 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
     enddo ! il1
    enddo ! nt
 
+
   !====================================================================
-  ! do GIPAW reconstruction
+  ! loop over atoms with core electrons
   !====================================================================
-  allocate( sph_rho_gipaw(ndmx,nat,nspin) )
-  sph_rho_gipaw = 0.d0
-  do ik = 1, nks
-     current_k = ik
-     current_spin = isk(ik)
+  allocate( sph_rho_bare(ndmx,nspin) )
+  allocate( sph_rho_gipaw(ndmx,nspin) )
+  allocate( aux(nrxx) )
+  allocate( delta_v(ndmx,nat) )
+  delta_v = 0.d0
+
+  do na = 1, nat
+    nt = ityp(na)
+    if (paw_recon(nt)%gipaw_ncore_orbital == 0) cycle
+    if (iverbosity > 1) write(stdout,'(5X,''core-relax: projecting around atom '',I3)') na
+
+    !====================================================================
+    ! project the density around each atom
+    !====================================================================
+    sph_rho_bare = 0.d0
+    do ispin = 1, nspin
+      aux(1:nrxx) = rho%of_r(1:nrxx,ispin)
+      call fwfft('Dense',aux,dfftp)
+      call project_density(sph_rho_bare(:,ispin))
+    enddo
+    call mp_sum(sph_rho_bare, intra_pool_comm)
+
+
+    !====================================================================
+    ! do GIPAW reconstruction
+    !====================================================================
+    sph_rho_gipaw = 0.d0
+    do ik = 1, nks
+      current_k = ik
+      current_spin = isk(ik)
      
-     call gk_sort (xk(1,ik), ngm, g, ecutwfc / tpiba2, npw, igk, g2kin)
-     call get_buffer (evc, nwordwfc, iunwfc, ik)
-     call init_gipaw_2 (npw, igk, xk(1,ik), paw_vkb)
-     call calbec (npw, paw_vkb, evc, paw_becp)
+      call gk_sort (xk(1,ik), ngm, g, ecutwfc / tpiba2, npw, igk, g2kin)
+      call get_buffer (evc, nwordwfc, iunwfc, ik)
+      call init_gipaw_2 (npw, igk, xk(1,ik), paw_vkb)
+      call calbec (npw, paw_vkb, evc, paw_becp)
      
-     do ibnd = 1, nbnd
+      do ibnd = 1, nbnd
         ijkb0 = 0
         do nt = 1, ntyp
-           do na = 1, nat
               if ( ityp(na) == nt ) then
                  do ih = 1, paw_recon(nt)%paw_nh
                     ikb = ijkb0 + ih
@@ -208,31 +211,27 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
                        bec_product = paw_becp(jkb,ibnd) &
                             * conjg( paw_becp(ikb,ibnd) )
 
-                       sph_rho_gipaw(1:nrc,na,current_spin) = &
-                            sph_rho_gipaw(1:nrc,na,current_spin) + &
+                       sph_rho_gipaw(1:nrc,current_spin) = &
+                            sph_rho_gipaw(1:nrc,current_spin) + &
                             rho_recon(1:nrc,nbs1,nbs2,nt) * &
                             bec_product * wg(ibnd,ik)
                     end do  ! jh
                  end do  ! ih
                  ijkb0 = ijkb0 + paw_recon(nt)%paw_nh
               end if
-           end do  ! na
         end do  ! nt
-     end do  ! ibnd
-  end do  ! ik
+      end do  ! ibnd
+    end do  ! ik
 
-  !====================================================================
-  ! compute perturbing potential
-  !====================================================================
-  allocate( delta_v(ndmx,nat) )
-  delta_v = 0.d0
-  do na = 1, nat
+    !====================================================================
+    ! compute perturbing potential
+    !====================================================================
     nt = ityp(na)
     if (paw_recon(nt)%gipaw_ncore_orbital == 0) cycle
     do j = 1, rgrid(nt)%mesh
       if (rgrid(nt)%r(j) > r_max) cycle
       !! bare + gipaw
-      b(1:2) = sph_rho_bare(j,na,1:2) + sph_rho_gipaw(j,na,1:2)
+      b(1:2) = sph_rho_bare(j,1:2) + sph_rho_gipaw(j,1:2)
       delta_v(j,na) = -(1.d0/pi)*(b(s_maj)-b(s_min))/(b(1)+b(2))**(2.d0/3.d0)
       !! bare only
       !!b(1:2) = sph_rho_bare(j,na,1:2)
@@ -252,7 +251,12 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
       !!write(90+na,'(4(F12.8))') rgrid(nt)%r(j), delta_v(j,na), b(1), b(2)
       !! DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
     enddo
+
+  !====================================================================
+  ! end of the loop over atoms
+  !====================================================================
   enddo
+  deallocate(aux, sph_rho_bare, sph_rho_gipaw)
 
   !====================================================================
   ! now, do the core relaxation via pertubation theory (PRB 76, 035124)
@@ -301,9 +305,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
 
   write(stdout,*)
 
-  deallocate(sph_rho_bare)
   deallocate(rho_recon)
-  deallocate(sph_rho_gipaw)
   deallocate(delta_v)
   deallocate(work)
 
