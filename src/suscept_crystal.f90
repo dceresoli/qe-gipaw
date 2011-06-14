@@ -106,8 +106,8 @@ SUBROUTINE suscept_crystal
   real(dp) :: paramagnetic_corr_tensor_us_so(3,3)
 
   integer :: ik, iq, ik0, iq0
-  integer :: ipol, jpol, i, ibnd, jbnd, isign, ispin
-  real(dp) :: tmp(3,3), q(3), k_plus_q(3), braket, cc
+  integer :: ipol, jpol, i, ibnd, isign, ispin
+  real(dp) :: tmp(3,3), q(3), k_plus_q(3), braket
   integer :: s_min, s_maj, s_weight
   complex(dp), external :: zdotc
   
@@ -632,7 +632,7 @@ CONTAINS
     IMPLICIT NONE
     real(dp), intent(inout) :: j(nrxxs,3,3)
     complex(dp), intent(in) :: ul(npwx,nbnd), ur(npwx,nbnd,3)
-    real(dp) :: braket, fact
+    real(dp) :: fact
     integer :: ibdir, icomp, ind(3,3), mult(3,3)
 
     ! index for the cross product
