@@ -38,7 +38,7 @@ END SUBROUTINE principal_axis
 
 
 
-! Selent majority and minority spin
+! Select majority and minority spin
 SUBROUTINE select_spin(s_min, s_maj)
   USE kinds,        ONLY : dp
   USE scf,          ONLY : rho
@@ -81,4 +81,58 @@ SUBROUTINE trace(n, a, tr)
     tr = tr + a(i,i)
   enddo
 END SUBROUTINE trace
-  
+
+
+
+!-----------------------------------------------------------------------
+SUBROUTINE spherical_average(msh, r, r0, r_max, rho_g, sph)
+  !-----------------------------------------------------------------------
+  !
+  ! ... Compute the spherical average of a density distribution
+  ! ... around a point r0, up to a distance r_max
+  !
+  USE kinds,                 ONLY : dp
+  USE constants,             ONLY : pi, tpi, fpi
+  USE cell_base,             ONLY : tpiba
+  USE gvect,                 ONLY : ngm, g
+
+  !-- parameters --------------------------------------------------------
+  implicit none
+  integer, intent(in) :: msh
+  real(dp), intent(in) :: r(msh), r0(3), r_max
+  complex(dp), intent(in) :: rho_g(ngm)
+  real(dp), intent(out) :: sph(msh)
+
+  !-- local variables ----------------------------------------------------
+  real(dp), allocatable :: jl(:)
+  complex(dp) :: rho0g
+  real(dp) :: gg, arg
+  integer :: j, ig, jmax
+
+  sph(1:msh) = 0.d0
+
+  ! find index corresponding to r_max
+  jmax = msh
+  do j = 1, msh
+      if (r(j) < r_max) jmax = j
+  enddo
+
+  ! allocate Bessel function
+  allocate(jl(jmax))
+
+  ! loop over g-vectors
+  do ig = 1, ngm
+    gg = tpiba * sqrt(g(1,ig)*g(1,ig) + g(2,ig)*g(2,ig) + g(3,ig)*g(3,ig))
+
+    arg = tpi * (r0(1)*g(1,ig) + r0(2)*g(2,ig) + r0(3)*g(3,ig))
+    rho0g = rho_g(ig) * cmplx(cos(arg),sin(arg),kind=dp)
+
+    call sph_bes(jmax, r, gg, 0, jl)
+    sph(1:jmax) = sph(1:jmax) + real(rho0g,kind=dp) * jl(1:jmax)
+
+  enddo
+
+  deallocate(jl)
+
+END SUBROUTINE spherical_average
+
