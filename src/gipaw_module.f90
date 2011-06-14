@@ -70,7 +70,10 @@ MODULE gipaw_module
  
   ! job: nmr, g_tensor, efg, hyperfine
   CHARACTER(80) :: job
-  
+ 
+  ! core-relax method to calculate change of XC
+  INTEGER :: core_relax_method = 1
+ 
   ! format for a rank-2 tensor
   CHARACTER(*), PARAMETER :: tens_fmt = '(3(5X,3(F14.4,2X)/))'
   
@@ -146,8 +149,8 @@ CONTAINS
                          q_efg, hfi_output_unit, hfi_isotope, &
                          hfi_nuclear_g_factor, radial_integral_splines, &
                          hfi_via_reconstruction_only, &
-                         hfi_extrapolation_npoints,pawproj, &
-                         max_seconds,r_rand
+                         hfi_extrapolation_npoints, pawproj, &
+                         max_seconds, r_rand, core_relax_method
     
     if ( .not. ionode ) goto 400
     
@@ -171,7 +174,8 @@ CONTAINS
     nmr_macroscopic_shape = 2.0_dp / 3.0_dp
     spline_ps = .true.    ! TRUE in this case!!!!!
     isolve = 0
-    
+    core_relax_method = 1
+
     hfi_output_unit = 'MHz'
     hfi_isotope ( : ) = 0
     hfi_nuclear_g_factor ( : ) = 1.0
@@ -222,15 +226,16 @@ CONTAINS
     call mp_bcast(nmr_macroscopic_shape, root)
     call mp_bcast(spline_ps, root)
     call mp_bcast(isolve, root)
-    call mp_bcast ( hfi_output_unit, root )
-    call mp_bcast ( hfi_isotope, root )
-    call mp_bcast ( hfi_nuclear_g_factor, root )
-    call mp_bcast ( radial_integral_splines, root )
-    CALL mp_bcast ( hfi_via_reconstruction_only, root )
-    CALL mp_bcast ( hfi_extrapolation_npoints, root )
-    CALL mp_bcast ( pawproj, root )
-    CALL mp_bcast ( r_rand, root )
-    CALL mp_bcast ( max_seconds, root )
+    call mp_bcast(core_relax_method, root)
+    call mp_bcast(hfi_output_unit, root)
+    call mp_bcast(hfi_isotope, root)
+    call mp_bcast(hfi_nuclear_g_factor, root)
+    call mp_bcast(radial_integral_splines, root)
+    CALL mp_bcast(hfi_via_reconstruction_only, root)
+    CALL mp_bcast(hfi_extrapolation_npoints, root)
+    CALL mp_bcast(pawproj, root)
+    CALL mp_bcast(r_rand, root )
+    CALL mp_bcast(max_seconds, root)
 #endif
   END SUBROUTINE gipaw_bcast_input
 
@@ -452,7 +457,6 @@ CONTAINS
     integer :: sign_m1, sign_m2, il1, il2, l1, l2, j, kkpsi, nrc
     real(dp) :: alpha_lm, beta_lm
     integer, allocatable :: lm2l ( : ), lm2m ( : )
-    integer :: kkpsi_max
     real(dp), allocatable :: work(:), kinetic_aephi(:), kinetic_psphi(:)
     real(dp), allocatable :: aephi_dvloc_dr(:), psphi_dvloc_dr(:)
     
@@ -1206,7 +1210,7 @@ CONTAINS
     INTEGER, INTENT ( IN ) :: norders
     
     ! Local
-    INTEGER :: n, i, j
+    INTEGER :: i, j
     
     REAL ( dp ) :: a(0:norders,0:norders), b(0:norders), c(0:norders)
     

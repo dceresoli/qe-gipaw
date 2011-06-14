@@ -29,7 +29,8 @@ SUBROUTINE hyperfine
   USE mp_global,              ONLY : intra_pool_comm
   USE mp,                     ONLY : mp_sum
   USE gipaw_module,           ONLY : hfi_nuclear_g_factor, hfi_output_unit, &
-                                     hfi_isotope, job, iverbosity, radial_integral_splines
+                                     hfi_isotope, job, iverbosity, radial_integral_splines, &
+                                     core_relax_method
  
   !-- constants ----------------------------------------------------------
   IMPLICIT NONE
@@ -89,7 +90,7 @@ SUBROUTINE hyperfine
   call hfi_fc_gipaw_correction(hfi_fc_gipaw, hfi_fc_gipaw_zora)
 
   ! calculate the core-relaxation Fermi-contact contribution
-  call hfi_fc_core_relax(hfi_fc_core)
+  call hfi_fc_core_relax(core_relax_method, hfi_fc_core)
 
 
   !--------------------------------------------------------------------
@@ -178,11 +179,13 @@ SUBROUTINE hyperfine
   enddo
 1001 FORMAT(5X,A,I3,4X,A,F10.4,4X,A,3F10.6,A)
 
-
+  ! Print the Fermi contact term
+  write(stdout,*)
+  write(stdout,'(5X,''ISOTROPIC (FERMI-CONTACT) COUPLINGS WITHOUT ZORA:'')')
+  write(stdout,'(5X,''USING CORE-RELAXATION METHOD: PRB 76, 035124 (2007)'')')
+  write(stdout,'(5X,''Warning: core-relaxation is an experimental feature'')')
   if (iverbosity > 1) then
-    write(stdout,*)
-    write(stdout,'(5X,''SPIN DENSITIES IN bohrradius^-3 WITHOUT ZORA:'')')
-    write(stdout,'(5X,''Warning: core-relaxation is an experimental feature'')')
+    write(stdout,'(5X,''----- spin-densities in bohrradius^-3 -----'')')
     write(stdout,'(5X,8X,''  bare            GIPAW           core-relax      total'')')
     do na = 1, nat
         hfi_fc_tot(na) = hfi_fc_bare(na) + hfi_fc_gipaw(na) + hfi_fc_core(na)
@@ -190,10 +193,7 @@ SUBROUTINE hyperfine
             hfi_fc_gipaw(na), hfi_fc_core(na), hfi_fc_tot(na)
     enddo
   endif
-
-  write(stdout,*)
-  write(stdout,'(5X,''ISOTROPIC (FERMI-CONTACT) COUPLINGS WITHOUT ZORA:'')')
-  write(stdout,'(5X,''Warning: core-relaxation is an experimental feature'')')
+  write(stdout,'(5X,''----- Fermi contact in '',A,'' -----'')') trim(hfi_output_unit)
   write(stdout,'(5X,8X,''  bare            GIPAW           core-relax      total'')')
   do na = 1, nat
       hfi_fc_tot(na) = hfi_fc_bare(na) + hfi_fc_gipaw(na) + hfi_fc_core(na)

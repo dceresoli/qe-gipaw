@@ -8,14 +8,14 @@
 
 
 !-----------------------------------------------------------------------
-SUBROUTINE hfi_fc_core_relax(fc_core)
+SUBROUTINE hfi_fc_core_relax(method, fc_core)
   !-----------------------------------------------------------------------
   !
   ! ... Compute the core contribution to hyperfine Fermi contact
   ! ... according to: Bahramy, Sluiter, Kawazoe, PRB 76, 035124 (2007)
   !
   USE kinds,                 ONLY : dp
-  USE constants,             ONLY : pi, tpi, fpi
+  USE constants,             ONLY : pi, tpi, fpi, e2
   USE cell_base,             ONLY : tpiba, tpiba2
   USE parameters,            ONLY : ntypx
   USE ions_base,             ONLY : ntyp => nsp, atm, nat, tau, ityp, zv
@@ -44,10 +44,12 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
 
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
+  integer, intent(in) :: method
   real(dp), intent(out) :: fc_core(nat)
 
   ! -- constants ---------------------------------------------------------
-  real(dp), parameter :: r_max = 10.d0      ! max atom radius
+  !real(dp), parameter :: r_max = 2.5d0      ! max core radius
+  real(dp), parameter :: r_max = 5.0d0      ! max core radius
   integer, parameter :: n_max = 10          ! max number of s orbitals
 
   !-- local variables ----------------------------------------------------
@@ -58,8 +60,9 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
   integer, external :: atomic_number
 
   integer :: s_maj, s_min, na, ispin, j
-  complex(dp), allocatable :: aux(:)
+  complex(dp), allocatable :: aux(:), rho_g(:)
   real(dp), allocatable :: sph_rho_bare(:,:), sph_rho_gipaw(:,:)
+  real(dp) :: sph_rho_core(ndmx)
 
   integer :: il1, il2, nrc, l1, l2
   real(dp), allocatable :: rho_recon(:,:,:,:)
@@ -70,6 +73,12 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
   real(dp), allocatable :: delta_v(:,:), work(:)
   integer :: n1, n2, ncore, r_first
   real(dp) :: b(2), coeff, norm, contrib
+  integer :: mode, nin, mesh
+  real(dp) :: arho, zeta, ex, ec, vx(2), vc(2)
+
+  real(dp), allocatable :: rho_(:,:), rhoc(:), vgc(:,:), egc(:,:), tau_(:,:), vtau(:)
+
+  if (method < 1 .or. method > 3) call errore('core-relax', 'unknown method', abs(method))
 
   call start_clock('core_relax')
   fc_core = 0.d0
@@ -79,6 +88,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
   !====================================================================
   write(stdout,'(5X,''Warning: core-relaxation is an experimental feature'')')
   if (iverbosity > 1) write(stdout,'(5X,''core-relax: calculating AE orbitals'')')
+  if (iverbosity > 1) write(stdout,'(5X,''core-relax: method = '',I1)') method
   eigenvalue(:,:) = 0.d0
   ae_orb(:,:,:) = 0.d0
   do nt = 1, ntyp
@@ -94,9 +104,15 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
           ! setup potential
           vpot(:) = paw_recon(nt)%gipaw_ae_vloc(:) / rgrid(nt)%r(:)
 
-          ! solve atomic
-          call ascheq(nn, 0, eigenvalue(nn,nt), rgrid(nt)%mesh, rgrid(nt), &
-                      vpot, 2.d0*zz, 1d-12, ae_orb(1,nn,nt), nstop)
+          ! solve radial schroedinger equation
+          !!call ascheq(nn, 0, eigenvalue(nn,nt), rgrid(nt)%mesh, rgrid(nt), &
+          !!            vpot, 2.d0*zz, 1d-12, ae_orb(1,nn,nt), nstop)
+          mode = 2                ! non-relativistic
+          if (zz >= 20) mode = 1  ! scalar-relativistic
+          eigenvalue(nn,nt) = -(dble(zz)/dble(nn))**2.0
+          nin = 0
+          call lschps(mode, 2.d0*zz, 1d-12, rgrid(nt), nin, nn, 0, &
+                      eigenvalue(nn,nt), vpot, ae_orb(1,nn,nt), nstop)
           if (nstop /= 0 .and. nstop /= 50) then
               eigenvalue(nn,nt) = 0.d0
               exit
@@ -124,7 +140,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
   allocate( rho_recon(ndmx,nbrx,nbrx,ntyp) )
   rho_recon = 0.d0
   do nt = 1, ntyp
-    !!if (paw_recon(nt)%gipaw_ncore_orbital == 0) cycle
+
     do il1 = 1, paw_recon(nt)%paw_nbeta
       nrc = paw_recon(nt)%psphi(il1)%label%nrc
       l1 = paw_recon(nt)%psphi(il1)%label%l
@@ -132,7 +148,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
 
       do il2 = 1, paw_recon(nt)%paw_nbeta
         l2 = paw_recon(nt)%psphi(il2)%label%l
-        if (l2 /= 0 .or. l2 /= l1) cycle
+        if (l2 /= 0) cycle
 
         do j = 1, nrc
           rho_recon(j,il1,il2,nt) = &
@@ -153,10 +169,11 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
   !====================================================================
   allocate( sph_rho_bare(ndmx,nspin) )
   allocate( sph_rho_gipaw(ndmx,nspin) )
-  allocate( aux(nrxx) )
+  allocate( aux(nrxx), rho_g(ngm) )
   allocate( delta_v(ndmx,nat) )
   delta_v = 0.d0
 
+  if (iverbosity > 1) write(stdout,'(5X,''core-relax: max core radius (r_max) =  '',F12.4)') r_max
   do na = 1, nat
     nt = ityp(na)
     if (paw_recon(nt)%gipaw_ncore_orbital == 0) cycle
@@ -169,10 +186,11 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
     do ispin = 1, nspin
       aux(1:nrxx) = rho%of_r(1:nrxx,ispin)
       call fwfft('Dense',aux,dfftp)
-      call project_density(sph_rho_bare(:,ispin))
+      rho_g(1:ngm) = aux(nl(1:ngm))
+      call spherical_average(rgrid(nt)%mesh, rgrid(nt)%r, tau(1,na), r_max, rho_g, sph_rho_bare(1,ispin))
     enddo
     call mp_sum(sph_rho_bare, intra_pool_comm)
-
+    ! the density coming out are such that: \int_0^\infty 4\pi r^2 \rho(r) dr = N_{el}
 
     !====================================================================
     ! do GIPAW reconstruction
@@ -206,10 +224,9 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
                        l2 = paw_recon(nt)%paw_nhtol(jh)
                        m2 = paw_recon(nt)%paw_nhtom(jh)
                        lm2 = m2 + l2**2 
-                       if (l2 /= 0 .or. l1 /= l2) cycle
+                       if (l2 /= 0) cycle
 
-                       bec_product = paw_becp(jkb,ibnd) &
-                            * conjg( paw_becp(ikb,ibnd) )
+                       bec_product = paw_becp(jkb,ibnd) * conjg(paw_becp(ikb,ibnd))
 
                        sph_rho_gipaw(1:nrc,current_spin) = &
                             sph_rho_gipaw(1:nrc,current_spin) + &
@@ -228,35 +245,75 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
     !====================================================================
     nt = ityp(na)
     if (paw_recon(nt)%gipaw_ncore_orbital == 0) cycle
-    do j = 1, rgrid(nt)%mesh
-      if (rgrid(nt)%r(j) > r_max) cycle
-      !! bare + gipaw
-      b(1:2) = sph_rho_bare(j,1:2) + sph_rho_gipaw(j,1:2)
-      delta_v(j,na) = -(1.d0/pi)*(b(s_maj)-b(s_min))/(b(1)+b(2))**(2.d0/3.d0)
-      !! bare only
-      !!b(1:2) = sph_rho_bare(j,na,1:2)
-      !!delta_v(j,na) = -(2.d0/pi)*(b(s_maj)-b(s_min))/(b(1)+b(2))**(2.d0/3.d0)
 
-      !! compute the true XC potential, but this overestimated core relaxation
-      !!arho = abs(b(1)+b(2))
-      !!zeta = (b(s_maj)-b(s_min))/arho
-      !!call xc_spin(arho, zeta, ex, ec, vx(s_maj), vx(s_min), vc(s_maj), vc(s_min))
-      !!delta_v(j,na) = vx(s_maj)+vc(s_maj)-vx(s_min)-vc(s_min)
-      !!delta_v(j,na) = vx(s_maj)-vx(s_min)
+    mesh = rgrid(nt)%mesh
 
-      !! DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
-      !!write(70+na,'(5(F12.8))') rgrid(nt)%r(j), &
-      !!   sph_rho_bare(j,na,1), sph_rho_bare(j,na,2), &
-      !!   sph_rho_gipaw(j,na,1), sph_rho_gipaw(j,na,2)
-      !!write(90+na,'(4(F12.8))') rgrid(nt)%r(j), delta_v(j,na), b(1), b(2)
-      !! DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
+    sph_rho_core = 0.d0
+    do n1 = 1, paw_recon(nt)%gipaw_ncore_orbital
+      if (paw_recon(nt)%gipaw_core_orbital_l(n1) /= 0) cycle
+      do j = 1, mesh
+        sph_rho_core(j) = sph_rho_core(j) + 2.d0*paw_recon(nt)%gipaw_core_orbital(j,n1)**2.d0 / rgrid(nt)%r2(j) / fpi
+      enddo
     enddo
+
+    allocate(work(mesh))
+    do j = 1, mesh
+      work(j) = sph_rho_bare(j,1)+sph_rho_bare(j,2)+sph_rho_gipaw(j,1)+sph_rho_gipaw(j,2)+sph_rho_core(j)
+      work(j) = work(j) * fpi * rgrid(nt)%r(j)**2.0
+
+      if (rgrid(nt)%r(j) > r_max) cycle
+
+      ! calculate density and magnetization
+      b(1:2) = sph_rho_bare(j,1:2) + sph_rho_gipaw(j,1:2) + sph_rho_core(j)
+      !b(1:2) = b(1:2) * rgrid(nt)%r(j)**2 * fpi
+      arho = abs(b(1)+b(2))
+      zeta = (b(s_maj)-b(s_min))/arho
+
+      ! compute the perturbing potential, three possibilities
+      select case (method)
+         case (1) ! simple local exchange: Eq.(20) or PRB 76, 035124
+         delta_v(j,na) = -(e2*2.d0/pi) * (b(s_maj)-b(s_min)) / arho**(2.d0/3.d0)
+
+         case (2) ! Exchange only
+         call xc_spin(arho, zeta, ex, ec, vx(s_maj), vx(s_min), vc(s_maj), vc(s_min))
+         delta_v(j,na) = e2*(vx(s_maj) - vx(s_min))
+
+         case (3) ! Full XC
+         call xc_spin(arho, zeta, ex, ec, vx(s_maj), vx(s_min), vc(s_maj), vc(s_min))
+         delta_v(j,na) = e2*(vx(s_maj)+vc(s_maj)-vx(s_min)-vc(s_min))
+      end select
+
+      !! DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
+      write(70+na,'(7(F12.6))') rgrid(nt)%r(j), sph_rho_bare(j,1), sph_rho_bare(j,2), &
+                                sph_rho_gipaw(j,1), sph_rho_gipaw(j,2), sph_rho_core(j), delta_v(j,na)
+      !! DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
+    enddo
+
+    ! gradient correction    
+    if (method == 3) then
+      allocate(rho_(mesh,2), rhoc(mesh), vgc(mesh,2), egc(mesh,2), tau_(mesh,2), vtau(mesh))
+      rhoc = 0.d0
+      tau_ = 0.d0
+      vtau = 0.d0
+      rho_(1:mesh,1) = (sph_rho_bare(1:mesh,1) + sph_rho_gipaw(1:mesh,1) + sph_rho_core(1:mesh)) * fpi * rgrid(nt)%r2(1:mesh)
+      rho_(1:mesh,2) = (sph_rho_bare(1:mesh,2) + sph_rho_gipaw(1:mesh,2) + sph_rho_core(1:mesh)) * fpi * rgrid(nt)%r2(1:mesh)
+      call vxcgc(mesh, mesh, nspin, rgrid(nt)%r, rgrid(nt)%r2, rho_, rhoc, vgc, egc, tau_, vtau, 1)
+      delta_v(:,na) = delta_v(:,na) + vgc(:,1) - vgc(:,2)
+      do j = 1, mesh
+        write(80+na,'(4(F12.6))') rgrid(nt)%r(j), delta_v(j,na), vgc(j,1), vgc(j,2)
+      enddo
+      deallocate(rho_, rhoc, vgc, egc, tau_, vtau)
+    endif
+
+    call simpson(rgrid(nt)%mesh, work, rgrid(nt)%rab, norm)
+    deallocate(work)
+    if (iverbosity > 1) write(stdout,'(5X,''core-relax: integrated charge = '',F10.4)') norm
 
   !====================================================================
   ! end of the loop over atoms
   !====================================================================
   enddo
-  deallocate(aux, sph_rho_bare, sph_rho_gipaw)
+  deallocate(aux, rho_g, sph_rho_bare, sph_rho_gipaw)
 
   !====================================================================
   ! now, do the core relaxation via pertubation theory (PRB 76, 035124)
@@ -282,18 +339,35 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
       ncore = ncore + 1
     enddo
 
+    if (iverbosity > 1) then
+      do n1 = 1, ncore
+        work = 0.d0
+        do j = 1, rgrid(nt)%mesh
+          work(j) = ae_orb(j,n1,nt) * delta_v(j,na) * ae_orb(j,n1,nt)
+        end do
+        call simpson(rgrid(nt)%mesh, work, rgrid(nt)%rab, coeff)
+        write(stdout,'(5X,A,I3,2X,I1''S splitting:'',F12.6)') atm(ityp(na)), na, n1, coeff
+      enddo
+    endif
+
     do n1 = 1, ncore
       do n2 = n1+1, n_max
         if (eigenvalue(n2, nt) == 0.d0) cycle  ! unbound
 
         work = 0.d0
+        !!DEBUG: write(80+na,'(''#'',2I4)') n1, n2
         do j = 1, rgrid(nt)%mesh
           work(j) = ae_orb(j,n1,nt) * delta_v(j,na) * ae_orb(j,n2,nt)
+          !!DEBUG: write(80+na,'(5(F12.8))') rgrid(nt)%r(j), ae_orb(j,n1,nt), ae_orb(j,n2,nt), &
+          !!DEBUG:                           delta_v(j,na), work(j)
         end do
+        !!DEBUG: write(80+na,*)
+
         call simpson(rgrid(nt)%mesh, work, rgrid(nt)%rab, coeff)
-        contrib = 4.d0 * ae_orb(r_first,n1,nt) * ae_orb(r_first,n2,nt) * &
+        contrib = 2.d0 * 4.d0 * ae_orb(r_first,n1,nt) * ae_orb(r_first,n2,nt) * &
                   coeff / (eigenvalue(n1,nt) - eigenvalue(n2,nt)) / &
-                  rgrid(nt)%r(r_first)**2   !/ fpi
+                  rgrid(nt)%r(r_first)**2 / fpi
+
         fc_core(na) = fc_core(na) + contrib
         if (iverbosity > 0) &
             write(stdout,'(5X,A,I3,2X,I1,''S -> '',I1,''S :'',F12.6)') &
@@ -311,46 +385,7 @@ SUBROUTINE hfi_fc_core_relax(fc_core)
 
   call stop_clock('core_relax')
 
-CONTAINS
-
-  SUBROUTINE project_density(sph)
-  implicit none
-  real(dp), intent(inout) :: sph(:)
-  complex(dp) :: rho0g
-  real(dp) :: gg, gr, arg
-  integer :: ig, jmax
-
-  jmax = rgrid(nt)%mesh
-  do j = 1, rgrid(nt)%mesh
-      if (rgrid(nt)%r(j) < r_max) jmax = j
-  enddo
-
-  ! loop over g-vectors
-  do ig = 1, ngm
-    gg = sqrt(sum(g(:,ig)**2.d0))
-    if (gg < 1.d-10) then  ! g = 0
-      sph(:) = sph(:) + real(aux(nl(ig)))
-    else
-      arg = (tau(1,na)*g(1,ig)+tau(2,na)*g(2,ig)+tau(3,na)*g(3,ig))*tpi
-      rho0g = aux(nl(ig)) * cmplx(cos(arg),sin(arg))
-
-      do j = 1, jmax
-        if (rgrid(nt)%r(j) < 1d-6) then
-          sph(j) = sph(j) + real(rho0g)
-        else
-          gr = tpiba * gg * rgrid(nt)%r(j) 
-          sph(j) = sph(j) + real(rho0g) * sin(gr)/gr
-        endif
-      enddo
-
-    endif
-  enddo
-  END SUBROUTINE project_density
-
 END SUBROUTINE hfi_fc_core_relax
-
-
-
 
 
 
