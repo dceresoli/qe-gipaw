@@ -67,10 +67,13 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   USE klist,                ONLY : xk
   USE wvfct,                ONLY : nbnd, npwx, npw, igk  
   USE becmod,               ONLY : bec_type, becp, calbec, &
-                                   allocate_bec_type, deallocate_bec_type
+                                   allocate_bec_type, deallocate_bec_type, calbec_new
   USE uspp,                 ONLY : nkb, vkb
   USE cell_base,            ONLY : tpiba
-  USE gipaw_module,         ONLY : q_gipaw, nbnd_occ
+  USE gipaw_module,         ONLY : q_gipaw, nbnd_occ, ibnd_start, ibnd_end
+  USE mp_image_global_module, ONLY: inter_image_comm  
+  USE mp,                   ONLY : mp_sum
+  USE mp_global,            ONLY : inter_bgrp_comm
 
   !-- paramters ----------------------------------------------------------
   IMPLICIT NONE
@@ -83,8 +86,8 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
 
   !-- local variables ----------------------------------------------------
   real(dp), parameter :: ryd_to_hartree = 0.5d0
-  complex(dp), allocatable :: aux(:,:), vkb_save(:,:)
-  real(dp) :: dk, dxk(3)
+  complex(dp), allocatable :: aux(:,:), vkb_save(:,:), aux2(:,:)
+  real(dp) :: dk, dxk(3) 
   integer :: isign
   logical :: q_is_zero
 
@@ -93,14 +96,14 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
 
   ! set dk
   dk = q_gipaw/2.d0
-  
   ! check if |q| is zero
   q_is_zero = .false.
   if (sqrt(q(1)*q(1)+q(2)*q(2)+q(3)*q(3)) < 1d-8) q_is_zero = .true.
 
   ! allocate temporary arrays, save old NL-potential
   call allocate_bec_type(nkb, nbnd_occ(ik), becp)
-  allocate(aux(npwx,nbnd), vkb_save(npwx,nkb))
+  allocate(aux(npwx,nbnd), vkb_save(npwx,nkb), aux2(npwx,nbnd))
+  aux2 = (0.0d0, 0.0d0)
   vkb_save = vkb
 
   !====================================================================
@@ -114,7 +117,8 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
 
       ! compute <\beta(k \pm dk)| and project on |psi>
       call init_us_2_no_phase(npw, igk, dxk, vkb)
-      call calbec (npw, vkb, psi, becp, nbnd_occ(ik))
+      !call calbec (npw, vkb, psi, becp, nbnd_occ(ik))
+      call calbec_new (npw, vkb, psi, becp, nbnd_occ(ik), ibnd_start, ibnd_end)
 
       ! |q|!=0 => compute |\beta(k \pm dk + q)>
       if (.not. q_is_zero) then
@@ -125,25 +129,36 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
       aux = (0.d0,0.d0)
       if (what == 'V' .or. what == 'v') then
           ! apply |\beta(k \pm dk+q)>D<\beta(k \pm dk)| to |psi>
-          call add_vuspsi(npwx, npw, nbnd_occ(ik), aux)
+          !call add_vuspsi(npwx, npw, nbnd_occ(ik), aux)
+          call add_vuspsi_new(npwx, npw, nbnd_occ(ik), aux, ibnd_start, ibnd_end)
           !! Hubbard? any other term here?
-          vel_psi = vel_psi + dble(isign) * ryd_to_hartree * aux/(2.d0*dk*tpiba)
+          !vel_psi = vel_psi + dble(isign) * ryd_to_hartree * aux/(2.d0*dk*tpiba)
+          aux2(:,ibnd_start:ibnd_end) = aux2(:,ibnd_start:ibnd_end) + dble(isign) * ryd_to_hartree * aux(:,ibnd_start:ibnd_end)/(2.d0*dk*tpiba)
 
       elseif (what == 'S' .or. what == 's') then
           ! apply |\beta(k \pm dk+q)>S<\beta(k \pm dk)| to |psi>
-          call s_psi(npwx, npw, nbnd_occ(ik), psi, aux)
-          vel_psi = vel_psi + dble(isign) * aux/(2.d0*dk*tpiba)
+          !call s_psi(npwx, npw, nbnd_occ(ik), psi, aux)
+          call s_psi_new(npwx, npw, nbnd_occ(ik), psi, aux, ibnd_start, ibnd_end)
+          !vel_psi = vel_psi + dble(isign) * aux/(2.d0*dk*tpiba)
+          aux2(:,ibnd_start:ibnd_end) = aux2(:,ibnd_start:ibnd_end) + dble(isign) * aux(:,ibnd_start:ibnd_end)/(2.d0*dk*tpiba)
       else
           call errore('apply_vel_NL', '''what'' parameter has the wrong value', 1)
       endif 
   enddo
+#ifdef __PARA 
+#ifdef __BANDS
+  call mp_sum(aux2, inter_bgrp_comm)
+#endif
+#endif
 
+  vel_psi = vel_psi + aux2
+ 
   ! restore NL-potential at k
   vkb = vkb_save
   
   ! free memory
   call deallocate_bec_type(becp)
-  deallocate(aux, vkb_save)
+  deallocate(aux, vkb_save, aux2)
 
 END SUBROUTINE apply_vel_NL
 
@@ -157,8 +172,9 @@ SUBROUTINE apply_vel(psi, vel_psi, ik, ipol, q)
   USE kinds,                ONLY : DP
   USE wvfct,                ONLY : nbnd, npwx, npw, igk, et 
   USE uspp,                 ONLY : nkb, vkb, okvan
-  USE gipaw_module,         ONLY : nbnd_occ
-
+  USE gipaw_module,         ONLY : nbnd_occ, ibnd_start, ibnd_end
+  USE mp_image_global_module, ONLY : inter_image_comm
+  USE mp,                   ONLY : mp_sum
   !-- paramters ----------------------------------------------------------
   IMPLICIT NONE
   INTEGER, INTENT(IN) :: ipol       ! cartesian direction (1..3)

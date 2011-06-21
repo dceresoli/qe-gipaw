@@ -18,7 +18,7 @@ SUBROUTINE compute_u_kq(ik, q)
   USE io_files,             ONLY : iunigk, nwordatwfc, iunsat, iunwfc, &
                                    nwordwfc
   USE mp,                   ONLY : mp_sum
-  USE mp_global,            ONLY : inter_pool_comm, intra_pool_comm, me_pool
+  USE mp_global,            ONLY : inter_pool_comm, intra_pool_comm, me_pool, me_bgrp,mpime, inter_bgrp_comm
   USE klist,                ONLY : nkstot, nks, xk, ngk
   USE uspp,                 ONLY : vkb, nkb
   USE wvfct,                ONLY : et, nbnd, npwx, igk, npw, g2kin, &
@@ -95,10 +95,19 @@ SUBROUTINE compute_u_kq(ik, q)
 
   ! read in wavefunctions from the previous iteration
   !!IF ( nks > 1 .OR. (io_level > 1) .OR. lelfield ) &
+  
   CALL get_buffer( evc, nwordwfc, iunwfc, ik)
-
+#ifdef __BANDS
+  call mp_sum(evc,inter_bgrp_comm)
+#endif
+  !write(mpime,*) evc
+  !stop
   ! randomize a little bit
+#ifdef __BANDS
+  rr = randy(ik+nks*me_bgrp) ! starting from a well defined k-dependent seed
+#else
   rr = randy(ik+nks*me_pool) ! starting from a well defined k-dependent seed
+#endif
   do i = 1, nbnd
     do ig = 1, npw
       rr = r_rand*(2.d0*randy() - 1.d0)
@@ -143,6 +152,9 @@ SUBROUTINE compute_u_kq(ik, q)
   ! restore wavefunctions
   evq = evc
   CALL get_buffer( evc, nwordwfc, iunwfc, ik)
+#ifdef __BANDS
+  call mp_sum(evc,inter_bgrp_comm)
+#endif
 
   CALL stop_clock( 'c_bands' )  
   RETURN

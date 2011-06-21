@@ -26,7 +26,7 @@ SUBROUTINE hyperfine
   USE wvfct,                  ONLY : current_k
   USE ions_base,              ONLY : nat, tau, atm, ityp
   use constants,              ONLY : bohr_radius_si
-  USE mp_global,              ONLY : intra_pool_comm
+  USE mp_global,              ONLY : intra_bgrp_comm, intra_pool_comm
   USE mp,                     ONLY : mp_sum
   USE gipaw_module,           ONLY : hfi_nuclear_g_factor, hfi_output_unit, &
                                      hfi_isotope, job, iverbosity, radial_integral_splines, &
@@ -230,7 +230,7 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   !  
   USE kinds,                  ONLY : dp 
   USE mp,                     ONLY : mp_sum
-  USE mp_global,              ONLY : intra_pool_comm
+  USE mp_global,              ONLY : intra_bgrp_comm
   USE constants,              ONLY : tpi, fpi
   USE gvecs,                  ONLY : nls, ngms
   USE smooth_grid_dimensions, ONLY : nrxxs
@@ -274,9 +274,13 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
 #endif
       enddo
   enddo
+#ifdef __BANDS
+  call mp_sum(hfi_bare, intra_bgrp_comm)
+  call mp_sum(hfi_bare_zora, intra_bgrp_comm)
+#else
   call mp_sum(hfi_bare, intra_pool_comm)
   call mp_sum(hfi_bare_zora, intra_pool_comm)
-
+#endif
   return
 END SUBROUTINE hfi_fc_bare_el
 
@@ -362,7 +366,7 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
   USE becmod,                ONLY : calbec
   USE constants,             ONLY : pi, fpi
-  USE mp_global,             ONLY : intra_pool_comm
+  USE mp_global,             ONLY : intra_bgrp_comm
   USE mp,                    ONLY : mp_sum
   USE buffers,               ONLY : get_buffer
   USE io_files,              ONLY : nwordwfc, iunwfc

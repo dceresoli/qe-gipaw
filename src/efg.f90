@@ -20,7 +20,7 @@ SUBROUTINE efg
   USE ions_base,              ONLY : nat, atm, ityp, zv
   USE symme,                  ONLY : symtensor
   USE lsda_mod,               ONLY : nspin
-  USE mp_global,              ONLY : intra_pool_comm
+  USE mp_global,              ONLY : intra_bgrp_comm
   USE mp,                     ONLY : mp_sum
   USE gipaw_module,           ONLY : q_efg, iverbosity
 
@@ -152,7 +152,7 @@ SUBROUTINE get_smooth_density(rho)
   !  
   USE kinds,                  ONLY : dp 
   USE mp,                     ONLY : mp_sum
-  USE mp_global,              ONLY : inter_pool_comm
+  USE mp_global,              ONLY : intra_bgrp_comm
   USE ions_base,              ONLY : nat, tau
   USE lsda_mod,               ONLY : current_spin, isk
   USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
@@ -165,6 +165,8 @@ SUBROUTINE get_smooth_density(rho)
   USE cell_base,              ONLY : tpiba2, omega
   USE io_files,               ONLY : nwordwfc, iunwfc
   USE buffers,                ONLY : get_buffer
+  USE mp,                     ONLY : mp_sum
+  USE mp_global,              ONLY : intra_bgrp_comm, inter_pool_comm
   USE fft_base,               ONLY : dffts
   USE fft_interfaces,         ONLY : invfft
 
@@ -211,7 +213,7 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
   !  
   USE kinds,                  ONLY : dp 
   USE mp,                     ONLY : mp_sum
-  USE mp_global,              ONLY : intra_pool_comm
+  USE mp_global,              ONLY : intra_bgrp_comm
   USE constants,              ONLY : tpi, fpi
   USE gvecs,                  ONLY : nls, ngms
   USE smooth_grid_dimensions, ONLY : nrxxs
@@ -266,9 +268,7 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
         enddo
      enddo
   enddo
-#ifdef __PARA
-  call mp_sum( efg_bare, intra_pool_comm )
-#endif
+  call mp_sum( efg_bare, intra_bgrp_comm )
 
   ! opposite sign for hyperfine
   if (job == 'hyperfine') efg_bare(:,:,:) = -efg_bare(:,:,:)
@@ -307,7 +307,7 @@ SUBROUTINE efg_correction(efg_corr_tens)
   USE gipaw_module,          ONLY : job, nbnd_occ, spline_integration, &
                                     radial_integral_splines, &
                                     radial_integral_diamagnetic
-  USE mp_global,             ONLY : intra_pool_comm, inter_pool_comm
+  USE mp_global,             ONLY : intra_bgrp_comm, inter_pool_comm
   USE mp,                    ONLY : mp_sum
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
