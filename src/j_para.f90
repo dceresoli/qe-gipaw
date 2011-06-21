@@ -24,11 +24,6 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   USE gipaw_module,           ONLY : nbnd_occ
   USE fft_base,               ONLY : dffts
   USE fft_interfaces,         ONLY : invfft
-  USE mp_image_global_module,      ONLY : inter_image_comm, nimage, my_image_id
-  USE mp,                          ONLY : mp_sum 
-  USE mp_global,                   ONLY : inter_bgrp_comm
-  USE gipaw_module,                ONLY : ibnd_start, ibnd_end
-  
   !-- parameters ---------------------------------------------------------
   IMPLICIT none
   INTEGER, INTENT(IN) :: ik               ! k-point
@@ -38,24 +33,21 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   REAL(DP), INTENT(INOUT) :: j(nrxxs,3)
 
   !-- local variables ----------------------------------------------------
-  REAL(DP), allocatable :: j_new(:,:) 
   COMPLEX(DP), allocatable :: p_psic(:), psic(:), aux(:)
   REAL(DP) :: gk
-  INTEGER :: ig, ipol, ibnd, ierr
+  INTEGER :: ig, ipol, ibnd
 
   call start_clock('j_para')
 
   ! allocate real space wavefunctions
-  allocate(p_psic(nrxxs), psic(nrxxs), aux(npwx), j_new(nrxxs,3))
+  allocate(p_psic(nrxxs), psic(nrxxs), aux(npwx))
 
-  j_new = 0.0d0  
-  ! loop over cartesian component
+  ! loop over cartesian components
   do ipol = 1, 3
   
     ! loop over bands
-    !do ibnd = 1, nbnd_occ(ik)
-    do ibnd = ibnd_start, ibnd_end
-    
+    do ibnd = 1, nbnd_occ(ik)
+
       ! apply p_k on the left
       do ig = 1, npw
         gk = xk(ipol,ik) + g(ipol,igk(ig))
@@ -72,7 +64,7 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
       CALL invfft ('Wave', psic, dffts)
 
       ! add to the current
-      j_new(1:nrxxs,ipol) = j_new(1:nrxxs,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
+      j(1:nrxxs,ipol) = j(1:nrxxs,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
                         aimag(conjg(p_psic(1:nrxxs)) * psic(1:nrxxs))
 
       ! apply p_{k+q} on the right
@@ -91,21 +83,14 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
       CALL invfft ('Wave', psic, dffts)
 
       ! add to the current
-      j_new(1:nrxxs,ipol) = j_new(1:nrxxs,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
+      j(1:nrxxs,ipol) = j(1:nrxxs,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
                         aimag(conjg(psic(1:nrxxs)) * p_psic(1:nrxxs))
 
     enddo ! ibnd
-
-    !CALL MPI_ALLGATHERV( MPI_IN_PLACE, 0, MPI_DATATYPE_NULL, j_new(1,ipol),  rcount, displ, MPI_DOUBLE_PRECISION, inter_image_comm, ierr)
-#ifdef __PARA 
-#ifdef __BANDS
-    call mp_sum(j_new(1:nrxxs,ipol),inter_bgrp_comm)
-#endif
-#endif
   enddo ! ipol
+
   ! free memory
-  j = j+j_new
-  deallocate(p_psic, psic, aux, j_new)
+  deallocate(p_psic, psic, aux)
 
   call stop_clock('j_para')
 

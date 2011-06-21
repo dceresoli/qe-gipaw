@@ -43,18 +43,15 @@ SUBROUTINE select_spin(s_min, s_maj)
   USE kinds,        ONLY : dp
   USE scf,          ONLY : rho
   USE lsda_mod,     ONLY : nspin
-  USE mp_global,    ONLY : intra_bgrp_comm, intra_pool_comm
+  USE mp_global,    ONLY : intra_pool_comm
   USE mp,           ONLY : mp_sum
   IMPLICIT NONE
   integer, intent(out) :: s_min, s_maj
   real(dp) :: rho_diff
 
   rho_diff = sum(rho%of_r(:,1) - rho%of_r(:,nspin))
-#ifdef __BANDS
-  call mp_sum(rho_diff, intra_bgrp_comm)
-#else
   call mp_sum(rho_diff, intra_pool_comm)
-#endif
+
   if ( nspin > 1 .and. abs(rho_diff) < 1.0d-3 ) &
      call errore("select_spin", "warning, rho_diff is small", -1)
 

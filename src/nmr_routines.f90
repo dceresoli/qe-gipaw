@@ -42,9 +42,7 @@ SUBROUTINE paramagnetic_correction (paramagnetic_tensor, paramagnetic_tensor_us,
   complex(dp) :: para_corr(3,nat), para_corr_us(3,nat)
   complex(dp) :: bec_product, cc
   integer :: l1, m1, lm1, l2, m2, lm2, ih, ikb, nbs1, jh, jkb, nbs2
-  integer :: nt, ibnd, na, lm, j, ijkb0, jpol
-  integer :: mg, i1, i2, i3
-  
+  integer :: nt, ibnd, na, ijkb0, jpol
 
   do jpol = 1, 3 
      if ( jpol == ipol ) cycle
@@ -225,7 +223,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
                                      current_k, ecutwfc
   USE lsda_mod,               ONLY : current_spin
   USE wavefunctions_module,   ONLY : evc
-  USE becmod,                 ONLY : calbec, allocate_bec_type, deallocate_bec_type, calbec_new
+  USE becmod,                 ONLY : calbec, allocate_bec_type, deallocate_bec_type
   USE constants,              ONLY : pi
   USE parameters,             ONLY : lmaxx
   USE smooth_grid_dimensions, ONLY : nrxxs
@@ -233,16 +231,14 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   USE uspp,                   ONLY : ap
   USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
   USE gipaw_module,           ONLY : lx, ly, lz, radial_integral_paramagnetic, &
-                                     q_gipaw, alpha, nbnd_occ, iverbosity, ibnd_start, ibnd_end
+                                     q_gipaw, alpha, nbnd_occ, iverbosity
   USE uspp,                   ONLY : qq, vkb, nkb 
   USE uspp_param,             ONLY : nh
   USE cell_base,              ONLY : tpiba, omega, tpiba2
   USE klist,                  ONLY : xk
   USE gvect,                  ONLY : g, ngm
   USE io_global,              ONLY : stdout, ionode
-  USE mp_image_global_module, ONLY : inter_image_comm
-  USE mp,                     ONLY : mp_sum
-  USE mp_global,              ONLY : inter_bgrp_comm, mpime
+
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
   real(dp), intent(inout) :: paug_corr_tensor(3,3,nat)
@@ -272,18 +268,14 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   call gk_sort(xk(1,ik), ngm, g, ecutwfc/tpiba2, npw, igk, g2kin)
   vkb = (0.d0,0.d0)
   call init_us_2 (npw, igk, xk(:,ik), vkb)
-  !call calbec (npwx, vkb, evc, becp2, nbnd)
-  
-  call calbec_new (npwx, vkb, evc, becp2, nbnd, ibnd_start, ibnd_end)
-  !write(mpime,*)sum(becp2)
-  !stop
+  call calbec (npwx, vkb, evc, becp2, nbnd)
   ps(:,:) = (0.d0, 0.d0)
+
   ijkb0 = 0 
   do nt = 1, ntyp
      do na = 1, nat
         if (ityp (na) .eq.nt) then
-           !do ibnd = 1, nbnd
-           do ibnd = ibnd_start, ibnd_end
+           do ibnd = 1, nbnd
               do ih = 1, nh(nt) 
                  ikb = ijkb0 + ih
                  do jh = 1, nh(nt)
@@ -346,18 +338,10 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   allocate (LQ(npwx,nbnd,3))
   LQ(:,:,:) = (0.d0,0.d0)
   do kpol = 1,3
-        !call zgemm ('N', 'N', npwx, nbnd, nkb, &
-        !    (1.d0,0.d0),Lp(:,:,kpol), npwx, ps, nkb, (1.d0,0.d0), &
-        !    LQ(1,1,kpol), npwx )
-        call zgemm ('N', 'N', npwx, ibnd_end-ibnd_start+1, nkb, &
-            (1.d0,0.d0),Lp(:,:,kpol), npwx, ps(1,ibnd_start), nkb, (1.d0,0.d0), &
-            LQ(1,ibnd_start,kpol), npwx )
+        call zgemm ('N', 'N', npwx, nbnd, nkb, &
+            (1.d0,0.d0),Lp(:,:,kpol), npwx, ps, nkb, (1.d0,0.d0), &
+            LQ(1,1,kpol), npwx )
   enddo
-#ifdef __PARA 
-#ifdef __BANDS
-  call mp_sum(LQ,inter_bgrp_comm)
-#endif
-#endif
   ! now we have LQ (npw,nbnd)  
   !apply Greens function
   allocate(aux1(npwx,nbnd),aux2 (npwx,nbnd),pcorr_jpaug(3,nat))
@@ -370,10 +354,8 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
      call greenfunction(ik,aux1, aux2 ,0.d0)
  call stop_clock('para:gf')
      g_LQ_evc(:,:,kpol) = aux2(:,:)
-     !call calbec (npwx, paw_vkb , aux2 ,paw_becp_gLQ)
-     call calbec_new (npwx, paw_vkb , aux2 ,paw_becp_gLQ, nbnd,ibnd_start, ibnd_end)
-     !do ibnd = 1, nbnd
-     do ibnd = ibnd_start, ibnd_end
+     call calbec (npwx, paw_vkb , aux2 ,paw_becp_gLQ)
+     do ibnd = 1, nbnd
         ijkb0 = 0
         do nt = 1 , ntyp
               do na = 1, nat
@@ -399,13 +381,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
                  endif !ityp(na)==nt
              enddo ! nat
         enddo !ntyp 
-     enddo !bands
-           
-#ifdef __PARA
-#ifdef __BANDS
-     call mp_sum(pcorr_jpaug, inter_bgrp_comm)
-#endif  
-#endif  
+     enddo !bands        
      paug_corr_tensor(:,kpol,:) = REAL (pcorr_jpaug(:,:), dp)
      if ( iverbosity > 20 ) then
         write(6,'("PARA_AUG",1I3,3(F16.7,2X))') &
@@ -435,7 +411,7 @@ SUBROUTINE compute_sigma_bare(B_ind, chi_bare, sigma_bare)
   USE pwcom,                ONLY : pi, tpi
   USE gipaw_module,         ONLY : use_nmr_macroscopic_shape, &
                                    nmr_macroscopic_shape
-  USE mp_global,            ONLY : intra_bgrp_comm, intra_pool_comm
+  USE mp_global,            ONLY : intra_pool_comm
   USE lsda_mod,             ONLY : nspin
   USE mp,                   ONLY : mp_sum
   !-- parameters --------------------------------------------------------
@@ -469,11 +445,7 @@ SUBROUTINE compute_sigma_bare(B_ind, chi_bare, sigma_bare)
     sigma_bare(:,:,na) = real(tmp_sigma(:,:), dp)
   enddo
 #ifdef __PARA
-#ifdef __BANDS
-  call mp_sum( sigma_bare, intra_bgrp_comm )
-#else
   call mp_sum( sigma_bare, intra_pool_comm )
-#endif
 #endif
 END SUBROUTINE compute_sigma_bare
 

@@ -36,7 +36,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   USE wavefunctions_module,  ONLY : evc
   USE io_global,             ONLY : stdout
   USE io_files,              ONLY : nwordwfc, iunwfc
-  USE mp_global,             ONLY : intra_pool_comm, intra_bgrp_comm
+  USE mp_global,             ONLY : intra_pool_comm
   USE mp,                    ONLY : mp_sum
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
   USE funct,                 ONLY : xc, xc_spin
@@ -189,11 +189,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
       rho_g(1:ngm) = aux(nl(1:ngm))
       call spherical_average(rgrid(nt)%mesh, rgrid(nt)%r, tau(1,na), r_max, rho_g, sph_rho_bare(1,ispin))
     enddo
-#ifdef __BANDS
-    call mp_sum(sph_rho_bare, intra_bgrp_comm)
-#else
     call mp_sum(sph_rho_bare, intra_pool_comm)
-#endif
     ! the density coming out are such that: \int_0^\infty 4\pi r^2 \rho(r) dr = N_{el}
 
     !====================================================================

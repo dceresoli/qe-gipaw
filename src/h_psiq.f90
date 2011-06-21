@@ -7,7 +7,7 @@
 !
 !
 !-----------------------------------------------------------------------
-subroutine h_psiq (lda, n, m, psi, hpsi, spsi, ibnd_start, ibnd_end)
+subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   !-----------------------------------------------------------------------
   !
   !     This routine computes the product of the Hamiltonian
@@ -25,16 +25,13 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi, ibnd_start, ibnd_end)
   USE uspp,                  ONLY : vkb
   USE scf,                   ONLY : vrs
   USE wavefunctions_module,  ONLY : psic
-  USE becmod,                ONLY : becp, calbec, calbec_new
+  USE becmod,                ONLY : becp, calbec
   USE kinds,                 only : DP
-  !use gipaw_module
-  USE mp_image_global_module, only : inter_image_comm, nimage
-  USE mp,             ONLY : mp_sum
+  use gipaw_module
   implicit none
   !
   !     Here the local variables
   !
-  integer, intent(in) :: ibnd_start, ibnd_end
   integer :: ibnd
   ! counter on bands
 
@@ -54,14 +51,12 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi, ibnd_start, ibnd_end)
   call start_clock ('h_psiq')
   call start_clock ('init')
 
-
   !it was: call ccalbec (nkb, npwx, n, m, becp, vkb, psi)
-  call calbec_new (n, vkb, psi, becp, m, ibnd_start, ibnd_end)
+  call calbec (n, vkb, psi, becp, m)
   !
   ! Here we apply the kinetic energy (k+G)^2 psi
   !
-  !do ibnd = 1, m
-  do ibnd = ibnd_start, ibnd_end
+  do ibnd = 1, m
      do j = 1, n
         hpsi (j, ibnd) = g2kin (j) * psi (j, ibnd)
      enddo
@@ -71,8 +66,7 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi, ibnd_start, ibnd_end)
   ! the local potential V_Loc psi. First the psi in real space
   !
 
-  !do ibnd = 1, m
-  do ibnd = ibnd_start, ibnd_end
+  do ibnd = 1, m
      call start_clock ('firstfft')
      psic(:) = (0.d0, 0.d0)
      !do j = 1, n
@@ -105,10 +99,11 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi, ibnd_start, ibnd_end)
   !
   !  Here the product with the non local potential V_NL psi
   !
-  call add_vuspsi_new (lda, n, m, hpsi, ibnd_start, ibnd_end)
-  !call add_vuspsi (lda, n, m, hpsi)
-  call s_psi_new (lda, n, m, psi, spsi, ibnd_start, ibnd_end )
-  !call s_psi (lda, n, m, psi, spsi )
+
+  call add_vuspsi (lda, n, m, hpsi)
+
+  call s_psi (lda, n, m, psi, spsi)
+
   call stop_clock ('h_psiq')
   return
 end subroutine h_psiq

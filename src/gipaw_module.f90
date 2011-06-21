@@ -83,8 +83,7 @@ MODULE gipaw_module
   ! macroscopic shape for the NMR
   LOGICAL :: use_nmr_macroscopic_shape
   REAL(DP) :: nmr_macroscopic_shape ( 3, 3 )
-  
-  INTEGER :: ibnd_start, ibnd_end
+
   ! contribution to NMR chemical shift due to core contribution
   REAL(dp) :: nmr_shift_core(ntypx)
   
@@ -135,7 +134,7 @@ CONTAINS
   !-----------------------------------------------------------------------
   SUBROUTINE gipaw_readin()
     USE io_files,      ONLY : nd_nmbr, prefix, tmp_dir  
-    USE io_global,     ONLY : ionode, meta_ionode
+    USE io_global,     ONLY : ionode
     USE us,            ONLY : spline_ps
     USE input_parameters, ONLY : max_seconds
     ! max_seconds  : maximum cputime for this run
@@ -153,7 +152,7 @@ CONTAINS
                          hfi_extrapolation_npoints, pawproj, &
                          max_seconds, r_rand, core_relax_method
     
-    if ( .not. meta_ionode ) goto 400
+    if ( .not. ionode ) goto 400
     
     CALL input_from_file()
     
@@ -209,12 +208,10 @@ CONTAINS
 #ifdef __PARA
     USE mp,            ONLY : mp_bcast
     USE io_files,      ONLY : prefix, tmp_dir
-    USE io_global,     ONLY :  meta_ionode_id
     USE us,            ONLY : spline_ps
     USE input_parameters, ONLY : max_seconds
     implicit none
-    integer :: root 
-    root = meta_ionode_id
+    integer :: root = 0
     call mp_bcast(job, root)
     call mp_bcast(prefix, root)
     call mp_bcast(tmp_dir, root)
@@ -1346,33 +1343,6 @@ CONTAINS
     
   END SUBROUTINE test_symmetries
   
-  SUBROUTINE init_parallel_over_band(comm,nbnd)
-    IMPLICIT NONE
-    include 'mpif.h'
-    INTEGER, INTENT(IN) :: comm, nbnd 
-
-    INTEGER :: mp_size, mp_rank, ierror, rest, k
-
-    call mpi_comm_rank(comm, mp_rank, ierror)
-    call mpi_comm_size(comm, mp_size, ierror)
-    rest = mod(nbnd, mp_size)
-    k = int(nbnd/mp_size)
-    
-    if(k.ge.1)then
-     if(rest > mp_rank)then
-       ibnd_start = (mp_rank)*k + (mp_rank+1)
-       ibnd_end  =  (mp_rank+1)*k + (mp_rank+1)
-     else
-       ibnd_start = (mp_rank)*k + rest + 1
-       ibnd_end  =  (mp_rank+1)*k + rest
-     endif
-    else
-     ibnd_start = 1
-     ibnd_end = nbnd
-    endif   
-
-  END SUBROUTINE init_parallel_over_band
-
  
 !-----------------------------------------------------------------------
 END MODULE gipaw_module

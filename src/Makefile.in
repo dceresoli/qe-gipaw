@@ -7,14 +7,12 @@ FFLAGS += -warn unused
 MODFLAGS = $(MOD_FLAG)@qe_source@/iotk/src $(MOD_FLAG)@qe_source@/Modules \
            $(MOD_FLAG)@qe_source@/PW $(MOD_FLAG).
 
-NEBOBJS = @qe_source@/NEB/libneb.a
-
 GIPAW_OBJS = gipaw_module.o gipaw_main.o paw_gipaw.o stop_code.o greenfunction.o \
 	     cgsolve_all.o h_psiq.o cg_psi.o symmetrize_field.o ch_psi_all.o \
 	     compute_u_kq.o suscept_crystal.o j_para.o biot_savart.o \
 	     init_gipaw_1.o init_gipaw_2.o init_us_2_no_phase.o write_tensor_field.o \
 	     velocity.o nmr_routines.o epr_routines.o efg.o hyperfine.o core_relax.o \
-	     util.o atomic.o s_psi.o add_vuspsi.o
+	     util.o atomic.o
 
 LIBOBJS = @qe_source@/flib/ptools.a @qe_source@/flib/flib.a @qe_source@/clib/clib.a \
  	  @qe_source@/iotk/src/libiotk.a
@@ -24,7 +22,7 @@ PWOBJS  = @qe_source@/PW/libpw.a
 all: gipaw.x
 
 gipaw.x: $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS)
-	$(LD) $(LDFLAGS) -o $@ $(GIPAW_OBJS) $(PWOBJS) $(NEBOBJS) $(QEMODS) $(LIBOBJS) $(LIBS)
+	$(LD) $(LDFLAGS) -o $@ $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS) $(LIBS)
 	(cd ../bin; ln -sf ../src/gipaw.x .)
 
 clean:

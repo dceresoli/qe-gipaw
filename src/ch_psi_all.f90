@@ -7,7 +7,7 @@
 !
 
 !-----------------------------------------------------------------------
-subroutine ch_psi_all (n, h, ah, e, ik, m, ibnd_start, ibnd_end)
+subroutine ch_psi_all (n, h, ah, e, ik, m)
   !-----------------------------------------------------------------------
   !
   ! This routine applies the operator ( H - \epsilon S + alpha_pv P_v)
@@ -16,16 +16,15 @@ subroutine ch_psi_all (n, h, ah, e, ik, m, ibnd_start, ibnd_end)
 
   USE wvfct,        ONLY : npwx, nbnd
   USE uspp,         ONLY : vkb
-  USE becmod,       ONLY : becp, calbec, calbec_new
+  USE becmod,       ONLY : becp, calbec
   USE kinds,        ONLY : DP
-  USE gipaw_module, ONLY : nbnd_occ, alpha_pv, evq, init_parallel_over_band
-  USE mp_global,    ONLY : intra_bgrp_comm, mpime, intra_pool_comm
+  USE gipaw_module, ONLY : nbnd_occ, alpha_pv, evq
+  USE mp_global,    ONLY : intra_pool_comm
   USE mp,           ONLY : mp_sum
 
   implicit none
 
   integer :: n, m, ik
-  integer, intent(in) :: ibnd_start, ibnd_end
   ! input: the dimension of h
   ! input: the number of bands
   ! input: the k point
@@ -58,15 +57,14 @@ subroutine ch_psi_all (n, h, ah, e, ik, m, ibnd_start, ibnd_end)
   !
   !   compute the product of the hamiltonian with the h vector
   !
-  call h_psiq (npwx, n, m, h, hpsi, spsi, ibnd_start, ibnd_end)
+  call h_psiq (npwx, n, m, h, hpsi, spsi)
 
   call start_clock ('last')
   !
   !   then we compute the operator H-epsilon S
   !
   ah = (0.d0,0.d0)
-  !do ibnd = 1, m
-  do ibnd = ibnd_start, ibnd_end 
+  do ibnd = 1, m
      do ig = 1, n
         ah (ig, ibnd) = hpsi (ig, ibnd) - e (ibnd) * spsi (ig, ibnd)
      enddo
@@ -80,55 +78,31 @@ subroutine ch_psi_all (n, h, ah, e, ik, m, ibnd_start, ibnd_end)
   !!!   ikq = 2 * ik
   !!!endif
   ps (:,:) = (0.d0, 0.d0)
-#ifdef __BANDS
-  call zgemm ('C', 'N', nbnd_occ (ikq) , ibnd_end-ibnd_start+1, n, (1.d0, 0.d0) , evq, &
-       npwx, spsi(1,ibnd_start), npwx, (0.d0, 0.d0) , ps(1,ibnd_start), nbnd)
-  ps (:,ibnd_start:ibnd_end) = ps(:,ibnd_start:ibnd_end) * alpha_pv
-#else
+
   call zgemm ('C', 'N', nbnd_occ (ikq) , m, n, (1.d0, 0.d0) , evq, &
        npwx, spsi, npwx, (0.d0, 0.d0) , ps, nbnd)
   ps (:,:) = ps(:,:) * alpha_pv
-#endif
 #ifdef __PARA
-#ifdef __BANDS
-  call mp_sum ( ps, intra_bgrp_comm )
-#else
   call mp_sum ( ps, intra_pool_comm )
-#endif
 #endif
 
   hpsi (:,:) = (0.d0, 0.d0)
-#ifdef __BANDS
-  call zgemm ('N', 'N', n, ibnd_end-ibnd_start+1, nbnd_occ (ikq) , (1.d0, 0.d0) , evq, &
-       npwx, ps(1,ibnd_start), nbnd, (1.d0, 0.d0) , hpsi(1,ibnd_start), npwx)
-  spsi(:,ibnd_start:ibnd_end) = hpsi(:,ibnd_start:ibnd_end)
-#else
   call zgemm ('N', 'N', n, m, nbnd_occ (ikq) , (1.d0, 0.d0) , evq, &
        npwx, ps, nbnd, (1.d0, 0.d0) , hpsi, npwx)
   spsi(:,:) = hpsi(:,:)
-#endif
   !
   !    And apply S again
   !
   !it was: call ccalbec (nkb, npwx, n, m, becp, vkb, hpsi)
-#ifdef __BANDS
-  call calbec_new(n, vkb, hpsi, becp, m, ibnd_start, ibnd_end)
-  call s_psi_new (npwx, n, m, hpsi, spsi, ibnd_start, ibnd_end)
-#else
-  call calbec(n, vkb, hpsi, becp, m)
-  call s_psi (npwx, n, m, hpsi, spsi)
-#endif
+  call calbec (n, vkb, hpsi, becp, m)
 
-#ifdef __BANDS
-  do ibnd = ibnd_start, ibnd_end 
-#else
+  call s_psi (npwx, n, m, hpsi, spsi)
   do ibnd = 1, m
-#endif
      do ig = 1, n
         ah (ig, ibnd) = ah (ig, ibnd) + spsi (ig, ibnd)
      enddo
   enddo
-  
+
   deallocate (spsi)
   deallocate (hpsi)
   deallocate (ps)
