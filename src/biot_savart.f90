@@ -10,13 +10,12 @@ SUBROUTINE interpolate_current(j_bare_s, j_bare)
   !-----------------------------------------------------------------------
   ! ... Interpolate the current to the fine mesh
   USE kinds,                  ONLY : dp
-  USE grid_dimensions,        ONLY : nrxx
-  USE smooth_grid_dimensions, ONLY : nrxxs
+  USE fft_base,               ONLY : dfftp, dffts
   USE lsda_mod,               ONLY : nspin
   !-- parameters ---------------------------------------------------------
   IMPLICIT none
-  real(dp), intent(in)  :: j_bare_s(nrxxs,3,3,nspin)
-  real(dp), intent(out) :: j_bare(nrxx,3,3,nspin)
+  real(dp), intent(in)  :: j_bare_s(dffts%nnr,3,3,nspin)
+  real(dp), intent(out) :: j_bare(dfftp%nnr,3,3,nspin)
   !-- local variables ----------------------------------------------------
   integer :: ispin, ipol, jpol
   
@@ -49,13 +48,12 @@ SUBROUTINE biot_savart(j_bare, B_ind, B_ind_r)
   USE gipaw_module,         ONLY : alpha
   USE lsda_mod,             ONLY : nspin
   USE gvect,                ONLY : ngm, gstart, g, gg, nl, nlm
-  USE grid_dimensions,      ONLY : nrxx
   USE fft_base,             ONLY : dfftp
   USE fft_interfaces,       ONLY : fwfft, invfft 
   !-- parameters ---------------------------------------------------------
   implicit none
-  real(dp), intent(in)     :: j_bare(nrxx,3,3,nspin)
-  real(dp), intent(out)    :: B_ind_r(nrxx,3,3,nspin)
+  real(dp), intent(in)     :: j_bare(dfftp%nnr,3,3,nspin)
+  real(dp), intent(out)    :: B_ind_r(dfftp%nnr,3,3,nspin)
   complex(dp), intent(out) :: B_ind(ngm,3,3,nspin)
 
   !-- local variables ----------------------------------------------------
@@ -66,7 +64,7 @@ SUBROUTINE biot_savart(j_bare, B_ind, B_ind_r)
   call start_clock('biot_savart')
 
   ! allocate memory
-  allocate(aux(nrxx), j_of_g(1:ngm,3))  
+  allocate(aux(dfftp%nnr), j_of_g(1:ngm,3))  
 
   do ispin = 1, nspin
     do jpol = 1, 3
@@ -74,7 +72,7 @@ SUBROUTINE biot_savart(j_bare, B_ind, B_ind_r)
       ! transform current to reciprocal space
       j_of_g(:,:) = (0.d0,0.d0)
       do ipol = 1, 3
-        aux(1:nrxx) = j_bare(1:nrxx,ipol,jpol,ispin)
+        aux(1:dfftp%nnr) = j_bare(1:dfftp%nnr,ipol,jpol,ispin)
         CALL fwfft ('Dense', aux, dfftp)
         j_of_g(1:ngm,ipol) = aux(nl(1:ngm))
       enddo
@@ -92,7 +90,7 @@ SUBROUTINE biot_savart(j_bare, B_ind, B_ind_r)
         aux = (0.d0,0.d0)
         aux(nl(1:ngm)) = B_ind(1:ngm,ipol,jpol,ispin)
         CALL invfft ('Dense', aux, dfftp)
-        B_ind_r(1:nrxx,ipol,jpol,ispin) = real(aux(1:nrxx))
+        B_ind_r(1:dfftp%nnr,ipol,jpol,ispin) = real(aux(1:dfftp%nnr))
       enddo
 
     enddo ! jpol

@@ -16,7 +16,7 @@ SUBROUTINE efg
   USE io_global,              ONLY : stdout
   USE constants,              ONLY : pi, tpi, fpi, angstrom_au, rytoev, electronvolt_si
   USE scf,                    ONLY : rho
-  USE smooth_grid_dimensions, ONLY : nrxxs
+  USE fft_base,               ONLY : dffts
   USE ions_base,              ONLY : nat, atm, ityp, zv
   USE symme,                  ONLY : symtensor
   USE lsda_mod,               ONLY : nspin
@@ -39,7 +39,7 @@ SUBROUTINE efg
   allocate( efg_gipaw(3,3,nat), efg_tot(3,3,nat) )
 
   ! calculate the bare contribution
-  allocate( rho_s(nrxxs,2), aux(nrxxs) )
+  allocate( rho_s(dffts%nnr,2), aux(dffts%nnr) )
   call get_smooth_density(rho_s)
   aux(:) = rho_s(:,1)
   if (nspin == 2) aux(:) = aux(:) + rho_s(:,2)
@@ -160,7 +160,6 @@ SUBROUTINE get_smooth_density(rho)
   USE klist,                  ONLY : nks, xk
   USE gvect,                  ONLY : ngm, g
   USE gvecs,                  ONLY : nls
-  USE smooth_grid_dimensions, ONLY : nrxxs
   USE wavefunctions_module,   ONLY : evc
   USE cell_base,              ONLY : tpiba2, omega
   USE io_files,               ONLY : nwordwfc, iunwfc
@@ -170,9 +169,9 @@ SUBROUTINE get_smooth_density(rho)
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
-  complex(dp), intent(out) :: rho(nrxxs,2)
+  complex(dp), intent(out) :: rho(dffts%nnr,2)
   !-- local variables ----------------------------------------------------
-  complex(dp) :: psic(nrxxs)
+  complex(dp) :: psic(dffts%nnr)
   integer :: ibnd, ik
 
   rho = (0.d0,0.d0)
@@ -214,7 +213,6 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
   USE mp_global,              ONLY : intra_pool_comm
   USE constants,              ONLY : tpi, fpi
   USE gvecs,                  ONLY : nls, ngms
-  USE smooth_grid_dimensions, ONLY : nrxxs
   USE fft_base,               ONLY : dffts
   USE fft_interfaces,         ONLY : fwfft
   USE gvect,                  ONLY : g, gg, gstart
@@ -223,7 +221,7 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
-  complex(dp), intent(in) :: rho(nrxxs)
+  complex(dp), intent(in) :: rho(dffts%nnr)
   real(dp), intent(out) :: efg_bare(3,3,nat)  
   !-- local variables ----------------------------------------------------
   complex(dp), allocatable :: efg_g(:,:,:)

@@ -19,10 +19,10 @@ version=`grep version_number ${qe_source}/Modules/version.f90 | cut -d\' -f2`
 AC_MSG_RESULT([$version])
 
 case $version in
-  "4.3a") ;;
-  "4.3b") ;;
-  "4.3") ;;
-  "4.3.1") ;;
+  4.3a  ) ;;
+  4.3b  ) ;;
+  4.3   ) ;;
+  4.3.* ) ;;
   *) AC_MSG_ERROR([Cannot compile against this version of quantum-Espresso]) ;;
 esac
 

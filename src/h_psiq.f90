@@ -19,7 +19,6 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   USE fft_base,              ONLY : dffts
   USE fft_interfaces,        ONLY : fwfft, invfft
   USE gvecs,                 ONLY : nls
-  USE smooth_grid_dimensions, only : nrxxs
   USE lsda_mod,              ONLY : current_spin
   USE wvfct,                 ONLY : igk, g2kin
   USE uspp,                  ONLY : vkb
@@ -69,19 +68,13 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   do ibnd = 1, m
      call start_clock ('firstfft')
      psic(:) = (0.d0, 0.d0)
-     !do j = 1, n
-     !   psic (nls(igk(j))) = psi (j, ibnd)
-     !enddo
      psic (nls(igk(1:n))) = psi(1:n, ibnd)
      CALL invfft ('Wave', psic, dffts)
      call stop_clock ('firstfft')
      !
      !   and then the product with the potential vrs = (vltot+vr) on the smoo
      !
-     !do j = 1, nrxxs
-     !   psic (j) = psic (j) * vrs (j, current_spin)
-     !enddo
-     psic (1:nrxxs) = psic (1:nrxxs) * vrs (1:nrxxs, current_spin)
+     psic (1:dffts%nnr) = psic (1:dffts%nnr) * vrs (1:dffts%nnr, current_spin)
      !
      !   back to reciprocal space
      !
@@ -90,9 +83,6 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
      !
      !   addition to the total product
      !
-     !do j = 1, n
-     !   hpsi (j, ibnd) = hpsi (j, ibnd) + psic (nls(igk(j)))
-     !enddo
      hpsi (1:n, ibnd) = hpsi (1:n, ibnd) + psic (nls(igk(1:n)))
      call stop_clock ('secondfft')
   enddo

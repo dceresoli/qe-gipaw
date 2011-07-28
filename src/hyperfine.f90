@@ -19,7 +19,7 @@ SUBROUTINE hyperfine
   USE io_global,              ONLY : stdout
   USE parameters,             ONLY : ntypx
   USE constants,              ONLY : pi, tpi, fpi, angstrom_au, rytoev, electronvolt_si, c_si
-  USE smooth_grid_dimensions, ONLY : nrxxs
+  USE fft_base,               ONLY : dffts, dfftp
   USE scf,                    ONLY : rho
   USE symme,                  ONLY : symtensor
   USE lsda_mod,               ONLY : current_spin, nspin
@@ -64,7 +64,7 @@ SUBROUTINE hyperfine
   allocate( hfi_dip_bare(3,3,nat), hfi_dip_gipaw(3,3,nat), hfi_dip_tot(3,3,nat) )
 
   ! calculate the bare dipole contribution
-  allocate( rho_s(nrxxs,2), spin_den(nrxxs) )
+  allocate( rho_s(dffts%nnr,2), spin_den(dfftp%nnr) )
   call get_smooth_density(rho_s)  ! this subroutine is efg.g90
   spin_den(:) = rho_s(:,s_maj) - rho_s(:,s_min)
   call efg_bare_el(spin_den, hfi_dip_bare)
@@ -233,7 +233,6 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   USE mp_global,              ONLY : intra_pool_comm
   USE constants,              ONLY : tpi, fpi
   USE gvecs,                  ONLY : nls, ngms
-  USE smooth_grid_dimensions, ONLY : nrxxs
   USE gvect,                  ONLY : g, gg, gstart
   USE parameters,             ONLY : ntypx
   USE ions_base,              ONLY : nat, tau, atm, ityp
@@ -242,7 +241,7 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
-  complex(dp), intent(in) :: rho_s(nrxxs)
+  complex(dp), intent(in) :: rho_s(dffts%nnr)
   real(dp), intent(out) :: hfi_bare(nat), hfi_bare_zora(nat)  
   !-- local variables ----------------------------------------------------
 #ifdef ZORA

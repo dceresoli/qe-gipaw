@@ -226,7 +226,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   USE becmod,                 ONLY : calbec, allocate_bec_type, deallocate_bec_type
   USE constants,              ONLY : pi
   USE parameters,             ONLY : lmaxx
-  USE smooth_grid_dimensions, ONLY : nrxxs
+  USE fft_base,               ONLY : dffts
   USE lsda_mod,               ONLY : nspin
   USE uspp,                   ONLY : ap
   USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
@@ -242,7 +242,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
   real(dp), intent(inout) :: paug_corr_tensor(3,3,nat)
-  real(dp), intent(inout) :: j_bare_s(nrxxs,3,3,nspin)
+  real(dp), intent(inout) :: j_bare_s(dffts%nnr,3,3,nspin)
 
   !-- local variables ----------------------------------------------------
   complex(dp), allocatable::pcorr_jpaug(:,:) 

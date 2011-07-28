@@ -280,12 +280,12 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
   USE becmod,                 ONLY : calbec, allocate_bec_type, deallocate_bec_type
   USE constants,              ONLY : pi
   USE parameters,             ONLY : lmaxx
-  USE smooth_grid_dimensions, ONLY : nrxxs
   USE lsda_mod,               ONLY : nspin
   USE uspp,                   ONLY : ap
   USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
   USE gipaw_module,           ONLY : lx, ly, lz, radial_integral_paramagnetic_so, &
                                      q_gipaw, alpha, nbnd_occ, iverbosity
+  USE fft_base,               ONLY : dffts
   USE uspp,                   ONLY : qq, vkb, nkb 
   USE uspp_param,             ONLY : nh
   USE cell_base,              ONLY : tpiba, omega, tpiba2
@@ -296,7 +296,7 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
   real(dp), intent(inout) :: paug_corr_tensor(3,3)
-  real(dp), intent(inout) :: j_bare_s(nrxxs,3,3,nspin)
+  real(dp), intent(inout) :: j_bare_s(dffts%nnr,3,3,nspin)
 
   !-- local variables ----------------------------------------------------
   complex(dp), allocatable::pcorr_jpaug(:) 
@@ -461,7 +461,7 @@ SUBROUTINE compute_delta_g_so (j_bare, s_maj, s_min, delta_g_so)
   USE cell_base,              ONLY : tpiba, omega, tpiba2
   USE klist,                  ONLY : xk
   USE gvect,                  ONLY : g, ngm, nl
-  USE grid_dimensions,        ONLY : nr1, nr2, nr3, nrxx
+  USE fft_base,               ONLY : dfftp
   USE io_global,              ONLY : stdout, ionode
   USE scf,                    ONLY : vltot, v, rho
   USE lsda_mod,               ONLY : nspin
@@ -471,7 +471,7 @@ SUBROUTINE compute_delta_g_so (j_bare, s_maj, s_min, delta_g_so)
 
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
-  real(dp), intent(in) :: j_bare(nrxx,3,3,nspin)
+  real(dp), intent(in) :: j_bare(dfftp%nnr,3,3,nspin)
   integer, intent(in) :: s_maj, s_min
   real(dp), intent(out) :: delta_g_so(3,3)
 
@@ -480,13 +480,13 @@ SUBROUTINE compute_delta_g_so (j_bare, s_maj, s_min, delta_g_so)
   real(dp) :: d_omega
   integer :: ispin, ipol
   
-  allocate (grad_vr(3,nrxx), v_local(nrxx,nspin))
+  allocate (grad_vr(3,dfftp%nnr), v_local(dfftp%nnr,nspin))
   do ispin = 1, nspin
      v_local(:,ispin) = vltot(:) + v%of_r(:,ispin)
   enddo
 
   ! calculate the gradient of the potential (WHICH SPIN COMPONENT????)
-  call gradient(nrxx, v_local, ngm, g, nl, grad_vr)
+  call gradient(dfftp%nnr, v_local, ngm, g, nl, grad_vr)
   grad_vr = grad_vr * ry2ha
   deallocate (v_local)
   
@@ -507,7 +507,7 @@ SUBROUTINE compute_delta_g_so (j_bare, s_maj, s_min, delta_g_so)
   call mp_sum(delta_g_so, intra_pool_comm)
 #endif
 
-  d_omega = omega / real(nr1*nr2*nr3, dp)
+  d_omega = omega / real(dfftp%nr1*dfftp%nr2*dfftp%nr3, dp)
   delta_g_so = delta_g_so * d_omega
   delta_g_so = -delta_g_so * gprime / 2.d0 * alpha * 1.0d6
 
@@ -530,7 +530,6 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
   USE cell_base,              ONLY : tpiba, omega, tpiba2
   USE klist,                  ONLY : xk
   USE gvect,                  ONLY : g, ngm, nl
-  USE grid_dimensions,        ONLY : nr1, nr2, nr3, nrxx
   USE scf,                    ONLY : vltot, v, rho
   USE io_global,              ONLY : stdout, ionode
   USE lsda_mod,               ONLY : nspin
@@ -542,8 +541,8 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
 
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
-  real(dp), intent(in) :: j_bare(nrxx,3,3,nspin)
-  real(dp), intent(in) :: B_ind_r(nrxx,3,3,nspin)
+  real(dp), intent(in) :: j_bare(dfftp%nnr,3,3,nspin)
+  real(dp), intent(in) :: B_ind_r(dfftp%nnr,3,3,nspin)
   integer, intent(in) :: s_maj, s_min
   real(dp), intent(out) :: delta_g_soo(3,3), delta_g_soo2(3,3)
 
@@ -554,7 +553,7 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
   integer :: ipol, jpol
 
   ! Paratec-way:  int dr j_up(r) \times v_h[n_unpaired](r) 
-  allocate (grad_vh(3,nrxx), vh(nrxx,nspin), aux1(nrxx))
+  allocate (grad_vh(3,dfftp%nnr), vh(dfftp%nnr,nspin), aux1(dfftp%nnr))
 
   aux1(:) = rho%of_r(:,s_maj) - rho%of_r(:,s_min)
   call fwfft('Dense', aux1, dfftp)
@@ -564,7 +563,7 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
   vh = 0.d0
 
   call v_h(rho%of_g, e_hartree, charge, vh)
-  call gradient (nrxx, vh, ngm, g, nl, grad_vh)
+  call gradient (dfftp%nnr, vh, ngm, g, nl, grad_vh)
   grad_vh = grad_vh * ry2ha
 
   deallocate (vh, aux1)
@@ -585,7 +584,7 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
   call mp_sum(delta_g_soo, intra_pool_comm)
 #endif
 
-  d_omega = omega / real(nr1*nr2*nr3, dp)
+  d_omega = omega / real(dfftp%nr1*dfftp%nr2*dfftp%nr3, dp)
   delta_g_soo = delta_g_soo * d_omega
   delta_g_soo = delta_g_soo * 2.d0 * alpha * 1.0d6
   
@@ -602,7 +601,7 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
    call mp_sum(delta_g_soo2, intra_pool_comm)
 #endif
   
-  d_omega = omega / real(nr1*nr2*nr3, dp)
+  d_omega = omega / real(dfftp%nr1*dfftp%nr2*dfftp%nr3, dp)
   delta_g_soo2 = delta_g_soo2 * d_omega
   delta_g_soo2 = delta_g_soo2 * 2.d0 * 1.0d6
 

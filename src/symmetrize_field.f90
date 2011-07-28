@@ -20,11 +20,11 @@ SUBROUTINE symmetrize_field(field, iflag)
   USE cell_base,        ONLY : at, bg
   USE symm_base,        ONLY : s, nsym
   USE symme,            ONLY : crys_to_cart, cart_to_crys
-  USE grid_dimensions,  ONLY : nr1, nr2, nr3, nr1x, nr2x, nr3x, nrxx
+  USE fft_base,         ONLY : dfftp
   USE gipaw_module
   !-- parameters ------------------------------------------------------
   IMPLICIT NONE
-  REAL(DP), INTENT(INOUT) :: field(nr1x*nr2x*nr3x,3,3)
+  REAL(DP), INTENT(INOUT) :: field(dfftp%nr1x*dfftp%nr2x*dfftp%nr3x,3,3)
   INTEGER :: iflag
 
   !-- local variables ----------------------------------------------------
@@ -35,7 +35,7 @@ SUBROUTINE symmetrize_field(field, iflag)
   if (nsym <= 1) return
 
   ! cartesian to crystal
-  do i = 1, nr1x*nr2x*nr3x
+  do i = 1, dfftp%nr1x*dfftp%nr2x*dfftp%nr3x
     tmp(:,:) = field(i,:,:)
     call cart_to_crys ( tmp )
     field(i,:,:) = tmp(:,:)
@@ -45,7 +45,7 @@ SUBROUTINE symmetrize_field(field, iflag)
   call syme2(field, iflag)
 
   ! crystal to cartesian
-  do i = 1, nr1x*nr2x*nr3x
+  do i = 1, dfftp%nr1x*dfftp%nr2x*dfftp%nr3x
     tmp(:,:) = field(i,:,:)
     call crys_to_cart ( tmp )
     field(i,:,:) = tmp(:,:)
@@ -67,12 +67,12 @@ SUBROUTINE psymmetrize_field(field, iflag)
   USE fft_base,         ONLY : grid_gather, grid_scatter
   USE mp_global,        ONLY : me_pool
   USE symm_base,        ONLY : s, nsym
-  USE grid_dimensions,  ONLY : nr1, nr2, nr3, nr1x, nr2x, nr3x, nrxx
+  USE fft_base,         ONLY : dfftp
   USE gipaw_module
 
   !-- parameters ------------------------------------------------------
   IMPLICIT NONE
-  REAL(DP), INTENT(INOUT) :: field(nrxx,3,3)
+  REAL(DP), INTENT(INOUT) :: field(dfftp%nnr,3,3)
   INTEGER :: iflag
 
   !-- local variables ----------------------------------------------------
@@ -82,7 +82,7 @@ SUBROUTINE psymmetrize_field(field, iflag)
   ! if no symmetries, return
   if (nsym.eq.1) return
 
-  allocate( aux(nr1x*nr2x*nr3x,3,3) )
+  allocate( aux(dfftp%nr1x*dfftp%nr2x*dfftp%nr3x,3,3) )
   do i = 1, 3
     do j = 1, 3
       call grid_gather(field(:,i,j), aux(:,i,j))
@@ -107,11 +107,11 @@ subroutine syme2 (dvsym, iflag)
   use kinds,            ONLY : dp
   USE symm_base,        ONLY : s, nsym, ftau
   USE symme,            ONLY : crys_to_cart
-  USE grid_dimensions,  ONLY : nr1, nr2, nr3, nr1x, nr2x, nr3x
+  USE fft_base,         ONLY : dfftp
 
   implicit none
 
-  real(DP) :: dvsym (nr1x,nr2x,nr3x, 3, 3)
+  real(DP) :: dvsym (dfftp%nr1x,dfftp%nr2x,dfftp%nr3x, 3, 3)
   real(DP), allocatable :: aux (:,:,:,:,:)
   ! the function to symmetrize
   ! auxiliary space
@@ -124,9 +124,9 @@ subroutine syme2 (dvsym, iflag)
   real(dp) :: det(48), sc(3,3), d
 
   if (nsym.eq.1) return
-  allocate (aux(nr1x,nr2x,nr3x,3,3))
+  allocate (aux(dfftp%nr1x,dfftp%nr2x,dfftp%nr3x,3,3))
 
-  call dcopy (nr1x *nr2x *nr3x * 9, dvsym, 1, aux, 1)
+  call dcopy (dfftp%nr1x*dfftp%nr2x*dfftp%nr3x * 9, dvsym, 1, aux, 1)
   
   ! compute determinants of transformation matrixes
   do irot = 1, nsym
@@ -150,12 +150,12 @@ subroutine syme2 (dvsym, iflag)
   !
   !  symmmetrize 
   !
-  do kx = 1, nr3
-  do jx = 1, nr2
-  do ix = 1, nr1
+  do kx = 1, dfftp%nr3
+  do jx = 1, dfftp%nr2
+  do ix = 1, dfftp%nr1
      do irot = 1, nsym
         call ruotaijk(s (1, 1, irot), ftau (1, irot), ix, jx, kx, &
-                      nr1, nr2, nr3, ri, rj, rk)
+                     dfftp%nr1, dfftp%nr2, dfftp%nr3, ri, rj, rk)
         !
         ! ruotaijk finds the rotated of ix,jx,kx with the inverse of S
         !
@@ -177,7 +177,7 @@ subroutine syme2 (dvsym, iflag)
   enddo
   enddo
 
-  call dscal (nr1x*nr2x*nr3x*9, 1.d0 / DBLE (nsym), dvsym , 1)
+  call dscal (dfftp%nr1x*dfftp%nr2x*dfftp%nr3x * 9, 1.d0 / DBLE (nsym), dvsym , 1)
 
   deallocate (aux)
   return

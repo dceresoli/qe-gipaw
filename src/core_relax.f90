@@ -24,7 +24,6 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   USE paw_gipaw,             ONLY : paw_recon
   USE scf,                   ONLY : rho
   USE gvect,                 ONLY : g, nl, gstart, ngm
-  USE grid_dimensions,       ONLY : nrxx
   USE fft_base,              ONLY : dfftp
   USE fft_interfaces,        ONLY : fwfft
   USE lsda_mod,              ONLY : nspin, isk, current_spin
@@ -169,7 +168,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   !====================================================================
   allocate( sph_rho_bare(ndmx,nspin) )
   allocate( sph_rho_gipaw(ndmx,nspin) )
-  allocate( aux(nrxx), rho_g(ngm) )
+  allocate( aux(dfftp%nnr), rho_g(ngm) )
   allocate( delta_v(ndmx,nat) )
   delta_v = 0.d0
 
@@ -184,7 +183,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
     !====================================================================
     sph_rho_bare = 0.d0
     do ispin = 1, nspin
-      aux(1:nrxx) = rho%of_r(1:nrxx,ispin)
+      aux(1:dfftp%nnr) = rho%of_r(1:dfftp%nnr,ispin)
       call fwfft('Dense',aux,dfftp)
       rho_g(1:ngm) = aux(nl(1:ngm))
       call spherical_average(rgrid(nt)%mesh, rgrid(nt)%r, tau(1,na), r_max, rho_g, sph_rho_bare(1,ispin))

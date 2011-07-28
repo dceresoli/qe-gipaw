@@ -30,7 +30,6 @@ SUBROUTINE compute_u_kq(ik, q)
   USE noncollin_module,     ONLY : noncolin, npol
   USE wavefunctions_module, ONLY : evc  
   USE gvect,                ONLY : g, ngm, ngl
-  USE grid_dimensions,      ONLY : nr1, nr2, nr3, nr1x, nr2x, nr3x, nrxx
   USE cell_base,            ONLY : at, bg, omega, tpiba, tpiba2
   USE bp,                   ONLY : lelfield
   USE becmod,               ONLY : becp

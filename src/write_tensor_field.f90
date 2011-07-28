@@ -5,166 +5,129 @@
 ! in the root directory of the present distribution,
 ! or http://www.gnu.org/copyleft/gpl.txt .
 !
+
 !-----------------------------------------------------------------------
 SUBROUTINE write_tensor_field(name, ispin, field)
   !-----------------------------------------------------------------------
   !
-  ! ... write the tensor field in xcrysden format
+  ! ... write the tensor field in VTK format
   !
-  USE kinds,                       ONLY : DP
-  USE io_global,                   ONLY : stdout
-  USE mp_global,                   ONLY : me_pool  
+  USE kinds,                       ONLY : dp
+  USE io_global,                   ONLY : stdout, ionode
   USE cell_base,                   ONLY : at, alat
   USE ions_base,                   ONLY : nat, tau, atm, ityp
+  USE fft_base,                    ONLY : dfftp, grid_gather
   USE pwcom
-  USE grid_dimensions,             ONLY : nr1,nr2,nr3,nr1x, nr2x, nr3x,nrxx
-  USE fft_base,         ONLY : grid_gather
   USE gipaw_module
   !--------------------------------------------------------------------
+  implicit none
   character*(*) name
   integer :: ispin
-  real(dp) :: field(nrxx,3,3)
+  real(dp) :: field(dfftp%nnr,3,3)
   !--------------------------------------------------------------------
   integer, parameter :: ounit = 48
   character*80 :: fname
   integer :: ios, ipol
   !-- local variables ----------------------------------------------------
   real(dp), allocatable :: aux(:,:,:)
-!  integer :: i, j
-
- allocate( aux(nr1x*nr2x*nr3x,3,3) )
 #ifdef __PARA
+  integer :: i, j
+#endif
+
+ allocate( aux(dfftp%nr1x*dfftp%nr2x*dfftp%nr3x,3,3) )
+
+#ifdef __PARA
+ ! gather the data 
   do i = 1, 3
     do j = 1, 3
       call grid_gather(field(:,i,j), aux(:,i,j))
     enddo
   enddo
 #else
-  aux=field
-#endif 
-  if (me_pool /= 0) return
+  aux = field
+#endif
 
-  do ipol = 1, 3
-    ! form the name of the output file
-    if (ispin == 0) fname = trim(name)//'_'
-    if (ispin == 1) fname = trim(name)//'_UP_'
-    if (ispin == 2) fname = trim(name)//'_DW_'
+  if (ionode) then
+    do ipol = 1, 3
+      ! form the name of the output file
+      if (nspin == 1) then
+        fname = trim(name)//'_'
+      elseif (nspin == 2 .and. ispin == 1) then
+        fname = trim(name)//'_UP_'
+      elseif (ispin == 2 .and. ispin == 2) then
+        fname = trim(name)//'_DW_'
+      endif
 
-    if (ipol == 1) fname = trim(fname)//'X.xsf'
-    if (ipol == 2) fname = trim(fname)//'Y.xsf'
-    if (ipol == 3) fname = trim(fname)//'Z.xsf'
-    write(stdout, '(5X,''write_tensor_field: '',A40)') fname
+      if (ipol == 1) fname = trim(fname)//'X.vtk'
+      if (ipol == 2) fname = trim(fname)//'Y.vtk'
+      if (ipol == 3) fname = trim(fname)//'Z.vtk'
+      write(stdout, '(5X,''write_tensor_field: '',A40)') fname
 
-    open(unit=ounit, file=fname, iostat=ios, form='formatted', &
-         status='unknown')
-    if (ios /= 0) &
-      call errore('write_tensor_field', 'error opening '//fname, ounit)
+      open(unit=ounit, file=fname, iostat=ios, form='formatted', status='unknown')
+      if (ios /= 0) call errore('write_tensor_field', 'error opening '//fname, ounit)
 
-    call xsf_struct (alat, at, nat, tau, atm, ityp, nr1*nr2*nr3, ounit)
-    write(*,*)aux(10,:,ipol)
-    call xsf_vector_3d(aux(:,:,ipol), &
-                       nr1, nr2, nr3,  at, alat, ounit)
-    close(unit=48)
-    deallocate(aux)
-  enddo
+      call vtk_vector_3d(aux(:,:,ipol), dfftp%nr1, dfftp%nr2, dfftp%nr3, at, alat, ounit)
+
+      close(unit=ounit)
+    enddo
+  endif
+
+  deallocate(aux)
+
 end subroutine write_tensor_field
-!---------------------------------
-!
-! Copyright (C) 2003 Tone Kokalj
-! This file is distributed under the terms of the
-! GNU General Public License. See the file `License'
-! in the root directory of the present distribution,
-! or http://www.gnu.org/copyleft/gpl.txt .
-!
-! This file holds XSF (=Xcrysden Structure File) utilities.
-! Routines written by Tone Kokalj on Mon Jan 27 18:51:17 CET 2003
-!
-! -------------------------------------------------------------------
-!   this routine writes the crystal structure in XSF format
-! -------------------------------------------------------------------
-subroutine xsf_struct (alat, at, nat, tau, atm, ityp, nr, ounit)
-  USE kinds, only : DP
-  USE constants, only : BOHR_RADIUS_ANGS 
+
+
+!-------------------------------------------------------------------
+! this routine writes a 3D vector field in VTK format
+!-------------------------------------------------------------------
+subroutine vtk_vector_3d(vin, nr1, nr2, nr3, at, alat, ounit)
+  USE kinds,           only : dp
+  USE constants,       only : bohr_radius_angs
+  USE fft_base,        only : dfftp
+
   implicit none
-  integer          :: nat, ityp (nat), nr, ounit
-  character(len=3) :: atm(*)
-  real(DP)    :: alat, tau (3, nat), at (3, 3)
-  ! --
-  integer          :: i, j, n
-  real(DP)    :: at1 (3, 3)
-  ! convert lattice vectors to ANGSTROM units ...
-  do i=1,3
-     do j=1,3
-        at1(j,i) = at(j,i)*alat*BOHR_RADIUS_ANGS
-     enddo
-  enddo
+  integer, intent(in) ::  nr1, nr2, nr3, ounit
+  real(dp), intent(in) :: at(3,3), alat
+  real(dp), intent(in) :: vin(dfftp%nr1x*dfftp%nr2x*dfftp%nr3x,3)  
 
-  write(ounit,*) 'CRYSTAL'
-  write(ounit,*) 'PRIMVEC'
-  write(ounit,'(2(3F15.9/),3f15.9)') at1
-  write(ounit,*) 'PRIMCOORD'
-  write(ounit,*) nat + nr, 1
+  integer :: i1, i2, i3, bla
+  real(dp) :: x(3)
 
-  do n=1,nat
-     ! positions are in Angstroms
-     write(ounit,'(a3,3x,3f15.9)') atm(ityp(n)), &
-          tau(1,n)*alat*BOHR_RADIUS_ANGS, &
-          tau(2,n)*alat*BOHR_RADIUS_ANGS, &
-          tau(3,n)*alat*BOHR_RADIUS_ANGS
-  enddo
-  return
-end subroutine xsf_struct
+  ! header
+  write(ounit,'(A)') '# vtk DataFile Version 2.0'
+  write(ounit,'(A)') 'created by qe-gipaw'
+  write(ounit,'(A)') 'ASCII'
+  write(ounit,'(A)') 'DATASET STRUCTURED_GRID'
+  write(ounit,'(A,3I5)') 'DIMENSIONS', nr1, nr2, nr3
+  write(ounit,'(A,I10,4X,A)') 'POINTS', nr1*nr2*nr3, 'float'
 
-
-
-! -------------------------------------------------------------------
-!   this routine writes a 3D vector field
-! -------------------------------------------------------------------
-subroutine xsf_vector_3d(vin, nr1, nr2, nr3, &
-                         at, alat, ounit)
-  USE kinds, only : DP
-  USE constants, only : BOHR_RADIUS_ANGS
-  USE io_global, ONLY : ionode
-  USE grid_dimensions,             ONLY : nr1x, nr2x, nr3x
-  implicit none
-  integer  ::  nr1, nr2, nr3, ounit
-  real(DP) :: at(3,3), x(3), alat
-  real(dp), intent(in)::vin(nr1x*nr2x*nr3x,3)  
-  integer  :: i1, i2, i3
-  real(DP),allocatable ::vout(:,:,:,:)
-  INTEGER               :: i, j, k, bla
-  !REAL(dp)::thr = 1.d-12  
-  allocate(vout(nr1x,nr2x,nr3x,3))
-    DO k=1,nr3x
-     DO j = 1, nr2x
-      DO i = 1, nr1x
-        bla=i+(j-1)*nr1x+(k-1)*nr1x*nr2x
-        vout(i,j,k,:) = vin(bla,:)
-      END DO
-     END DO
-    END DO
-
-  IF ( ionode ) then
-     
-    do i1 = 1,nr1
-     do i2 = 1,nr2
-     do  i3 = 1,nr3
+  ! point coordinates
+  do i3 = 1, nr3
+    do i2 = 1, nr2
+      do i1 = 1, nr1
         ! coordinate in angstrom
         x(1) = dble(i1-1)/dble(nr1)     
         x(2) = dble(i2-1)/dble(nr2)     
         x(3) = dble(i3-1)/dble(nr3)
         ! crystal to cartesian
-           call cryst_to_cart (1, x, at, 1)
-          x = x * alat * BOHR_RADIUS_ANGS
-        !if((abs(vout(i1,i2,i3,1)) .gt. thr).or. &
-        !   (abs(vout(i1,i2,i3,2)) .gt. thr).or. &
-        !   (abs(vout(i1,i2,i3,3)) .gt. thr)) then
-            write(ounit,'(''X  '',3x,3f15.9,2x,3e12.4)') x, vout(i1,i2,i3,1:3)
-            
-        !endif
+        call cryst_to_cart (1, x, at, 1)
+        x = x * alat * BOHR_RADIUS_ANGS
+        write(ounit,'(3F15.8)') x
       enddo
     enddo
+  enddo
+
+  ! vectors
+  write(ounit,'(A,I10)') 'POINT_DATA', nr1*nr2*nr3
+  write(ounit,'(A)') 'VECTORS vectors float'
+  do i3 = 1, nr3
+    do i2 = 1, nr2
+      do i1 = 1, nr1
+        bla = i1 + (i2-1)*dfftp%nr1x + (i3-1)*dfftp%nr1x*dfftp%nr2x
+        write(ounit,'(3E15.8)') vin(bla,1:3)
+      enddo
     enddo
-   endif
-   deallocate(vout) 
-end subroutine xsf_vector_3d
+  enddo
+
+end subroutine vtk_vector_3d
+

@@ -17,7 +17,6 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   USE kinds,                  ONLY : DP
   USE klist,                  ONLY : xk
   USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg
-  USE smooth_grid_dimensions, ONLY : nrxxs
   USE gvecs,                  ONLY : nls
   USE gvect,                  ONLY : g
   USE cell_base,              ONLY : tpiba
@@ -30,7 +29,7 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   REAL(DP), INTENT(IN) :: fact            ! multiplication factor
   REAL(DP), INTENT(IN) :: q(3)
   COMPLEX(DP), INTENT(IN) :: psi_n(npwx,nbnd), psi_m(npwx,nbnd)
-  REAL(DP), INTENT(INOUT) :: j(nrxxs,3)
+  REAL(DP), INTENT(INOUT) :: j(dffts%nnr,3)
 
   !-- local variables ----------------------------------------------------
   COMPLEX(DP), allocatable :: p_psic(:), psic(:), aux(:)
@@ -40,7 +39,7 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   call start_clock('j_para')
 
   ! allocate real space wavefunctions
-  allocate(p_psic(nrxxs), psic(nrxxs), aux(npwx))
+  allocate(p_psic(dffts%nnr), psic(dffts%nnr), aux(npwx))
 
   ! loop over cartesian components
   do ipol = 1, 3
@@ -64,8 +63,8 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
       CALL invfft ('Wave', psic, dffts)
 
       ! add to the current
-      j(1:nrxxs,ipol) = j(1:nrxxs,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
-                        aimag(conjg(p_psic(1:nrxxs)) * psic(1:nrxxs))
+      j(1:dffts%nnr,ipol) = j(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
+                            aimag(conjg(p_psic(1:dffts%nnr)) * psic(1:dffts%nnr))
 
       ! apply p_{k+q} on the right
       do ig = 1, npw
@@ -83,8 +82,8 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
       CALL invfft ('Wave', psic, dffts)
 
       ! add to the current
-      j(1:nrxxs,ipol) = j(1:nrxxs,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
-                        aimag(conjg(psic(1:nrxxs)) * p_psic(1:nrxxs))
+      j(1:dffts%nnr,ipol) = j(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
+                            aimag(conjg(psic(1:dffts%nnr)) * p_psic(1:dffts%nnr))
 
     enddo ! ibnd
   enddo ! ipol

@@ -36,8 +36,7 @@ SUBROUTINE suscept_crystal
   USE parameters,             ONLY : lmaxx
   USE constants,              ONLY : pi
   USE gvect,                  ONLY : ngm, g
-  USE grid_dimensions,        ONLY : nrxx
-  USE smooth_grid_dimensions, ONLY : nrxxs
+  USE fft_base,               ONLY : dfftp, dffts
   USE uspp,                   ONLY : vkb, okvan
   USE lsda_mod,               ONLY : nspin
   USE gipaw_module,           ONLY : tens_fmt, q_gipaw, iverbosity, alpha, evq, &
@@ -117,7 +116,7 @@ SUBROUTINE suscept_crystal
   !-----------------------------------------------------------------------
   allocate ( p_evc(npwx,nbnd,3), vel_evc(npwx,nbnd,3) )
   allocate ( aux(npwx,nbnd), G_vel_evc(npwx,nbnd,3) )
-  allocate ( j_bare_s(nrxxs,3,3,nspin) )
+  allocate ( j_bare_s(dffts%nnr,3,3,nspin) )
   if (okvan) then
       allocate ( svel_evc(npwx,nbnd,3), u_svel_evc(npwx,nbnd,3) )
   else
@@ -483,7 +482,7 @@ SUBROUTINE suscept_crystal
   j_bare_s(:,:,:,:) = j_bare_s(:,:,:,:) * alpha / ( 2.d0 * q_gipaw * tpiba * omega )
 
   ! interpolate induced current
-  allocate( j_bare(nrxx,3,3,nspin) )
+  allocate( j_bare(dfftp%nnr,3,3,nspin) )
   call interpolate_current(j_bare_s, j_bare)
   deallocate( j_bare_s )
 
@@ -497,7 +496,7 @@ SUBROUTINE suscept_crystal
   enddo
 
   ! compute induced field
-  allocate( B_ind_r(nrxx,3,3,nspin), B_ind(ngm,3,3,nspin) )
+  allocate( B_ind_r(dfftp%nnr,3,3,nspin), B_ind(ngm,3,3,nspin) )
   call biot_savart(j_bare, B_ind, B_ind_r)
   call stop_clock('susc:biot')
 
@@ -630,7 +629,7 @@ CONTAINS
   !====================================================================
   SUBROUTINE add_to_current(j, ul, ur)
     IMPLICIT NONE
-    real(dp), intent(inout) :: j(nrxxs,3,3)
+    real(dp), intent(inout) :: j(dfftp%nnr,3,3)
     complex(dp), intent(in) :: ul(npwx,nbnd), ur(npwx,nbnd,3)
     real(dp) :: fact
     integer :: ibdir, icomp, ind(3,3), mult(3,3)
