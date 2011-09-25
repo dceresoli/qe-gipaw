@@ -135,13 +135,13 @@ CONTAINS
   SUBROUTINE gipaw_readin()
     USE io_files,      ONLY : nd_nmbr, prefix, tmp_dir  
     USE io_global,     ONLY : ionode
-    USE io_files,      ONLY : trimcheck
     USE us,            ONLY : spline_ps
     USE input_parameters, ONLY : max_seconds
     ! max_seconds  : maximum cputime for this run
 
     IMPLICIT NONE
     INTEGER :: ios
+    character(len=256), external :: trimcheck
     NAMELIST /inputgipaw/ job, prefix, tmp_dir, conv_threshold, &
                          q_gipaw, iverbosity, filcurr, filfield, &
                          read_recon_in_paratec_fmt, &
