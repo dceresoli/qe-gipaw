@@ -629,7 +629,7 @@ CONTAINS
   !====================================================================
   SUBROUTINE add_to_current(j, ul, ur)
     IMPLICIT NONE
-    real(dp), intent(inout) :: j(dfftp%nnr,3,3)
+    real(dp), intent(inout) :: j(dffts%nnr,3,3)
     complex(dp), intent(in) :: ul(npwx,nbnd), ur(npwx,nbnd,3)
     real(dp) :: fact
     integer :: ibdir, icomp, ind(3,3), mult(3,3)

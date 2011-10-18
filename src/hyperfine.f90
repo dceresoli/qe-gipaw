@@ -64,8 +64,8 @@ SUBROUTINE hyperfine
   allocate( hfi_dip_bare(3,3,nat), hfi_dip_gipaw(3,3,nat), hfi_dip_tot(3,3,nat) )
 
   ! calculate the bare dipole contribution
-  allocate( rho_s(dffts%nnr,2), spin_den(dfftp%nnr) )
-  call get_smooth_density(rho_s)  ! this subroutine is efg.g90
+  allocate( rho_s(dffts%nnr,2), spin_den(dffts%nnr) )
+  call get_smooth_density(rho_s)  ! this subroutine is in efg.g90
   spin_den(:) = rho_s(:,s_maj) - rho_s(:,s_min)
   call efg_bare_el(spin_den, hfi_dip_bare)
   deallocate( rho_s)
