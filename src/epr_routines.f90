@@ -404,7 +404,7 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
      pcorr_jpaug(:) = (0.0d0,0.d0)
      aux1(:,:) = (0.d0,0.d0);aux2(:,:) = (0.d0,0.d0)
      aux1(:,:) = LQ(:,:,kpol)!coz it changes in gf
-     call greenfunction(ik,aux1, aux2 ,0.d0)
+     call greenfunction(ik, aux1, aux2, (/0.d0, 0.d0, 0.d0/))
      g_LQ_evc(:,:,kpol) = aux2(:,:)
      call calbec (npwx, paw_vkb , aux2 ,paw_becp_gLQ)
      do ibnd = 1, nbnd

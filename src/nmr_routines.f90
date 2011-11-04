@@ -351,7 +351,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
      aux1(:,:) = (0.d0,0.d0);aux2(:,:) = (0.d0,0.d0)
      aux1(:,:) = LQ(:,:,kpol)!coz it changes in gf
  call start_clock('para:gf')
-     call greenfunction(ik,aux1, aux2 ,0.d0)
+     call greenfunction(ik, aux1, aux2, (/0.d0, 0.d0, 0.d0/))
  call stop_clock('para:gf')
      g_LQ_evc(:,:,kpol) = aux2(:,:)
      call calbec (npwx, paw_vkb , aux2 ,paw_becp_gLQ)
