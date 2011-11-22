@@ -1,11 +1,11 @@
 # Makefile for ce-gipaw
 
-include @qe_source@/make.sys
-FFLAGS += -warn unused
+QE_SOURCE=@qe_source@
+include $(QE_SOURCE)/make.sys
 
 # location of needed modules
-MODFLAGS = $(MOD_FLAG)@qe_source@/iotk/src $(MOD_FLAG)@qe_source@/Modules \
-           $(MOD_FLAG)@qe_source@/PW $(MOD_FLAG).
+MODFLAGS = $(MOD_FLAG)$(QE_SOURCE)/iotk/src $(MOD_FLAG)$(QE_SOURCE)/Modules \
+           $(MOD_FLAG)$(QE_SOURCE)/PW $(MOD_FLAG).
 
 GIPAW_OBJS = gipaw_module.o gipaw_main.o paw_gipaw.o stop_code.o greenfunction.o \
 	     cgsolve_all.o h_psiq.o cg_psi.o symmetrize_field.o ch_psi_all.o \
@@ -14,10 +14,10 @@ GIPAW_OBJS = gipaw_module.o gipaw_main.o paw_gipaw.o stop_code.o greenfunction.o
 	     velocity.o nmr_routines.o epr_routines.o efg.o hyperfine.o core_relax.o \
 	     util.o atomic.o
 
-LIBOBJS = @qe_source@/flib/ptools.a @qe_source@/flib/flib.a @qe_source@/clib/clib.a \
- 	  @qe_source@/iotk/src/libiotk.a
-QEMODS  = @qe_source@/Modules/libqemod.a
-PWOBJS  = @qe_source@/PW/libpw.a
+LIBOBJS = $(QE_SOURCE)/flib/ptools.a $(QE_SOURCE)/flib/flib.a $(QE_SOURCE)/clib/clib.a \
+ 	  $(QE_SOURCE)/iotk/src/libiotk.a
+QEMODS  = $(QE_SOURCE)/Modules/libqemod.a
+PWOBJS  = $(QE_SOURCE)/PW/libpw.a
 
 all: gipaw.x
 
