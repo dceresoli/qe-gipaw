@@ -16,7 +16,7 @@ SUBROUTINE suscept_crystal
   !   [1] Phys. Rev. B 63, 245101 (2001)       (norm-conserving GIPAW)
   !   [2] Phys. Rev. B 76, 024401 (2007)       (ultrasoft)
   !   [3] Phys. Rev. B 76, 165122 (2007)       (metallic systems)
-  !   [4] Phys. Rev. Lett. 63, 245101 (2001)   (EPR g-tensor)
+  !   [4] Phys. Rev. Lett. 88, 086403 (2002)   (EPR g-tensor)
   ! Contributors:
   !   D. Ceresoli                        bare susceptibility and current
   !   A. P. Seitsonen and U. Gerstmann   GIPAW contributions
