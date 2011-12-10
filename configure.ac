@@ -23,6 +23,7 @@ case $version in
   4.3b  ) ;;
   4.3   ) ;;
   4.3.* ) ;;
+  4.99* ) ;;
   *) AC_MSG_ERROR([Cannot compile against this version of quantum-Espresso]) ;;
 esac
 
