@@ -8,7 +8,7 @@ MODFLAGS = $(MOD_FLAG)$(QE_SOURCE)/iotk/src $(MOD_FLAG)$(QE_SOURCE)/Modules \
            $(MOD_FLAG)$(QE_SOURCE)/PW $(MOD_FLAG).
 
 GIPAW_OBJS = gipaw_module.o gipaw_main.o paw_gipaw.o stop_code.o greenfunction.o \
-	     cgsolve_all.o h_psiq.o cg_psi.o symmetrize_field.o ch_psi_all.o \
+	     cgsolve_all.o h_psiq.o cg_psi.o symmetrize_rho.o symmetrize_field.o ch_psi_all.o \
 	     compute_u_kq.o suscept_crystal.o j_para.o biot_savart.o \
 	     init_gipaw_1.o init_gipaw_2.o init_us_2_no_phase.o write_tensor_field.o \
 	     velocity.o nmr_routines.o epr_routines.o efg.o hyperfine.o core_relax.o \
