@@ -68,7 +68,6 @@ SUBROUTINE hyperfine
   call get_smooth_density(rho_s)  ! this subroutine is in efg.g90
   spin_den(:) = rho_s(:,s_maj) - rho_s(:,s_min)
   call efg_bare_el(spin_den, hfi_dip_bare)
-  deallocate( rho_s)
 
   ! calculate GIPAW dipole correction
   call efg_correction(hfi_dip_gipaw)
@@ -82,9 +81,9 @@ SUBROUTINE hyperfine
   allocate( hfi_fc_core(nat), hfi_fc_tot(nat) )
 
   ! calculate the bare Fermi-contact contribution
-  spin_den(:) = rho%of_r(:,s_maj) - rho%of_r(:,s_min)
+  spin_den(:) = rho_s(:,s_maj) - rho_s(:,s_min)
   call hfi_fc_bare_el(spin_den, hfi_fc_bare, hfi_fc_bare_zora)
-  deallocate( spin_den )
+  deallocate( rho_s, spin_den )
 
   ! calculate the GIPAW Fermi-contact contribution
   call hfi_fc_gipaw_correction(hfi_fc_gipaw, hfi_fc_gipaw_zora)

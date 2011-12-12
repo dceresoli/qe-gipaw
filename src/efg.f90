@@ -154,7 +154,7 @@ SUBROUTINE get_smooth_density(rho)
   USE mp,                     ONLY : mp_sum
   USE mp_global,              ONLY : inter_pool_comm
   USE ions_base,              ONLY : nat, tau
-  USE lsda_mod,               ONLY : current_spin, isk
+  USE lsda_mod,               ONLY : current_spin, isk, nspin
   USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
                                      current_k, ecutwfc
   USE klist,                  ONLY : nks, xk
@@ -166,13 +166,12 @@ SUBROUTINE get_smooth_density(rho)
   USE buffers,                ONLY : get_buffer
   USE fft_base,               ONLY : dffts
   USE fft_interfaces,         ONLY : invfft
-
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
-  complex(dp), intent(out) :: rho(dffts%nnr,2)
+  complex(dp), intent(out) :: rho(dffts%nnr,nspin)
   !-- local variables ----------------------------------------------------
   complex(dp) :: psic(dffts%nnr)
-  integer :: ibnd, ik
+  integer :: ibnd, ik, is
 
   rho = (0.d0,0.d0)
 
@@ -189,14 +188,23 @@ SUBROUTINE get_smooth_density(rho)
       do ibnd = 1, nbnd
           psic(:) = (0.d0,0.d0)
           psic(nls(igk(1:npw))) = evc(1:npw,ibnd)
-          CALL invfft ('Wave', psic, dffts)
+          call invfft ('Wave', psic, dffts)
           rho(:,current_spin) = rho(:,current_spin) + wg(ibnd,ik) * &
               (dble(psic(:))**2 + aimag(psic(:))**2) / omega
       enddo
   enddo
 #ifdef __PARA
+  ! reduce over k-points
   call mp_sum( rho, inter_pool_comm )
 #endif
+
+  do is = 1, nspin
+#ifdef __PARA
+    call psymmetrize_rho_s(rho(1,is))
+#else
+    call symmetrize_rho_s(rho(1,is))
+#endif
+  enddo
 
 END SUBROUTINE get_smooth_density
 

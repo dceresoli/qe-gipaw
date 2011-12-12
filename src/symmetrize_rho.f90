@@ -44,14 +44,14 @@ SUBROUTINE symmetrize_rho_s (rho)
               do isym = 1, nsym
                  call ruotaijk(s(1,1,isym), ftau(1,isym), i, j, k, &
                       dffts%nr1, dffts%nr2, dffts%nr3, ri(isym), rj(isym), rk(isym))
-                 sum = sum + rho(ri(isym), rj(isym), rk(isym))
+                 sum = sum + rho(ri(isym),rj(isym),rk(isym))
               enddo
               sum = sum / real(nsym,kind=dp)
               ! sum contains the symmetrized charge density at point r.
               ! now fill the star of r with this sum.
               do isym = 1, nsym
                  rho(ri(isym),rj(isym),rk(isym)) = sum
-                 symflag(ri(isym), rj(isym), rk(isym)) = 1
+                 symflag(ri(isym),rj(isym),rk(isym)) = 1
               enddo
            endif
         enddo
