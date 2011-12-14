@@ -29,8 +29,7 @@ SUBROUTINE hyperfine
   USE mp_global,              ONLY : intra_pool_comm
   USE mp,                     ONLY : mp_sum
   USE gipaw_module,           ONLY : hfi_nuclear_g_factor, hfi_output_unit, &
-                                     hfi_isotope, job, iverbosity, radial_integral_splines, &
-                                     core_relax_method
+                                     job, iverbosity, core_relax_method
  
   !-- constants ----------------------------------------------------------
   IMPLICIT NONE
@@ -292,8 +291,7 @@ SUBROUTINE delta_thomson_radial_ft(delta_th)
   USE ions_base,             ONLY : ntyp => nsp, atm
   USE constants,             ONLY : pi, fpi
   USE cell_base,             ONLY : tpiba
-  USE gipaw_module,          ONLY : alpha, iverbosity, spline_integration, &
-                                    radial_integral_splines
+  USE gipaw_module,          ONLY : alpha, iverbosity
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
   real(dp), intent(out) :: delta_th(ngm, ntyp)
@@ -326,12 +324,7 @@ SUBROUTINE delta_thomson_radial_ft(delta_th)
                   work(j) = f_radial(j)*fpi * sin(gr)/gr
               endif
           enddo
-          if (radial_integral_splines) then
-              delta_th(gv,nt) = spline_integration(rgrid(nt)%r(:rgrid(nt)%mesh), &
-                  work(:rgrid(nt)%mesh) )
-          else
-              call simpson(rgrid(nt)%mesh, work, rgrid(nt)%rab(:), delta_th(gv,nt))
-          endif
+          call simpson(rgrid(nt)%mesh, work, rgrid(nt)%rab(:), delta_th(gv,nt))
      enddo
 
      deallocate (work, f_radial)
@@ -368,10 +361,7 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   USE lsda_mod,              ONLY : current_spin, nspin, isk
   USE wvfct,                 ONLY : current_k, wg
   USE io_global,             ONLY : stdout
-  USE gipaw_module,          ONLY : job, nbnd_occ, alpha, iverbosity, &
-                                    spline_integration, &
-                                    spline_integration_mirror, &
-                                    radial_integral_splines
+  USE gipaw_module,          ONLY : job, nbnd_occ, alpha, iverbosity
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
   real(dp), intent(out) :: fc_gipaw(nat), fc_gipaw_zora(nat)
@@ -428,11 +418,7 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
               work(j) = work(j) * 2/(r_thomson * (1+2*rgrid(nt)%r(j)/r_thomson)**2)
            enddo
            
-           if (radial_integral_splines) then
-              at_hfi_zora(il1,il2,nt) = spline_integration(rgrid(nt)%r(:nrc), work(:nrc))
-           else
-              call simpson(nrc, work, rgrid(nt)%rab(:), at_hfi_zora(il1,il2,nt))
-           endif
+           call simpson(nrc, work, rgrid(nt)%rab(:), at_hfi_zora(il1,il2,nt))
 #endif
         enddo
      enddo

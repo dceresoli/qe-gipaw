@@ -25,7 +25,8 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   USE gipaw_module
   USE mp_global,                   ONLY : intra_pool_comm
   USE mp,                          ONLY : mp_sum
-
+  USE ldaU,                        ONLY : lda_plus_u, swfcatom
+  USE io_files,                    ONLY : iunsat, nwordatwfc
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT none
@@ -126,7 +127,15 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   endif
   !it was: call ccalbec (nkb, npwx, npw, nbnd, becp, vkb, psi)
   call calbec (npw, vkb, psi, becp, nbnd)
-    
+
+  if (lda_plus_u) then
+    if (q_is_zero) then
+      call davcio(swfcatom, nwordatwfc, iunsat, ik, -1)
+    else
+      call orthoatwfc1(ik)
+    endif
+  endif
+
   ! initial guess
   g_psi(:,:) = (0.d0, 0.d0)
 

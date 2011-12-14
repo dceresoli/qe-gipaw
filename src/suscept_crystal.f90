@@ -755,7 +755,6 @@ CONTAINS
     !
     USE io_files, ONLY: find_free_unit
     USE check_stop, ONLY : check_stop_now
-    USE gipaw_module, ONLY : print_clock_gipaw, gipaw_closefil
     IMPLICIT NONE
     INTEGER, INTENT (IN) :: ik0_, iq0_
     INTEGER :: iunrec

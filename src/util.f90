@@ -84,6 +84,38 @@ END SUBROUTINE trace
 
 
 
+! More operations with splines
+SUBROUTINE radial_kinetic_energy (np, l, rdata, ydata, kin_ydata)
+  USE kinds
+  USE splinelib
+  integer, intent(in) :: l
+  real(dp), intent(in) :: rdata(np), ydata(np)
+  real(dp), intent(out) :: kin_ydata(np)
+  real(dp) :: d1
+      
+  d1 = ( ydata(2) - ydata(1) ) / ( rdata(2) - rdata(1) )
+  call spline ( rdata, ydata, 0.0_dp, d1, kin_ydata )
+  kin_ydata = -kin_ydata + l*(l+1) * ydata / rdata ** 2
+END SUBROUTINE radial_kinetic_energy
+
+
+SUBROUTINE radial_derivative (np, rdata, ydata, dydata_dr)
+  USE kinds
+  USE splinelib
+  real(dp), intent(in) :: rdata(np), ydata (np)   ! ydata passed as y * r
+  real(dp), intent(out) :: dydata_dr(np)
+  integer :: j
+  real(dp) :: d1, tab_d2y(np)
+      
+  d1 = ( ydata(2) - ydata(1) ) / ( rdata(2) - rdata(1) )
+  call spline ( rdata, ydata, 0.0_dp, d1, tab_d2y )
+  do j = 1, np
+    dydata_dr(j) = ( splint_deriv(rdata, ydata, tab_d2y, rdata(j)) - ydata(j)/rdata(j) ) / rdata(j)
+  end do
+END SUBROUTINE radial_derivative
+
+
+
 !-----------------------------------------------------------------------
 SUBROUTINE spherical_average(msh, r, r0, r_max, rho_g, sph)
   !-----------------------------------------------------------------------

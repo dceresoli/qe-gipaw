@@ -310,9 +310,7 @@ SUBROUTINE efg_correction(efg_corr_tens)
   USE buffers
   USE scf,                   ONLY : rho
   USE io_global,             ONLY : stdout
-  USE gipaw_module,          ONLY : job, nbnd_occ, spline_integration, &
-                                    radial_integral_splines, &
-                                    radial_integral_diamagnetic
+  USE gipaw_module,          ONLY : job, nbnd_occ, radial_integral_diamagnetic
   USE mp_global,             ONLY : intra_pool_comm, inter_pool_comm
   USE mp,                    ONLY : mp_sum
   !-- parameters ---------------------------------------------------------
@@ -359,11 +357,7 @@ SUBROUTINE efg_correction(efg_corr_tens)
                    / rgrid(nt)%r(j) ** 3
            enddo
            
-           if ( radial_integral_splines ) then
-              at_efg(il1,il2,nt) = spline_integration(rgrid(nt)%r(:nrc), work(:nrc))
-           else
-              call simpson(nrc,work,rgrid(nt)%rab,at_efg(il1,il2,nt))
-           endif
+           call simpson(nrc,work,rgrid(nt)%rab,at_efg(il1,il2,nt))
            
         enddo
      enddo

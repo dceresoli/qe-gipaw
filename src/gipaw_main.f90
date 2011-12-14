@@ -33,9 +33,7 @@ PROGRAM gipaw_main
   USE mp,              ONLY : mp_bcast
   USE cell_base,       ONLY : tpiba
   USE cellmd,          ONLY : cell_factor
-  USE gipaw_module,    ONLY : job, q_gipaw, gipaw_readin, gipaw_allocate, &
-                              gipaw_setup, gipaw_openfil, gipaw_closefil, &
-                              print_clock_gipaw, gipaw_summary
+  USE gipaw_module,    ONLY : job, q_gipaw
   USE control_flags,   ONLY : io_level, gamma_only,use_para_diag
   USE mp_global,       ONLY : mp_startup
   USE check_stop,      ONLY : check_stop_init
@@ -98,6 +96,7 @@ PROGRAM gipaw_main
      call efg
      
   case ( 'hyperfine' )
+     if (nspin /= 2) call errore('gipaw_main', 'hyperfine is only for spin-polarized', 1)
      call hyperfine
      
   case default
