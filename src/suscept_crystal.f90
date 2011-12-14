@@ -42,7 +42,7 @@ SUBROUTINE suscept_crystal
   USE gipaw_module,           ONLY : tens_fmt, q_gipaw, iverbosity, alpha, evq, &
                                      avogadro, g_e, gprime, filcurr, filfield, &
                                      nbnd_occ, a0_to_cm, isolve, &
-                                     conv_threshold, job
+                                     conv_threshold, job, restart_mode
   USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
   USE ions_base,              ONLY : nat
   USE buffers,                ONLY : get_buffer
@@ -718,6 +718,11 @@ CONTAINS
     LOGICAL :: exst
     INTEGER :: iunrec
     CHARACTER(80) :: job_
+
+    if (restart_mode == 'from_scratch') then
+       write(stdout, '(5X,''Starting from scratch'')')
+       return
+    endif
 
     ik0_ = 0
     iq0_ = 0

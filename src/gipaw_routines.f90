@@ -41,7 +41,7 @@ SUBROUTINE gipaw_readin()
   tmp_dir = trimcheck(tmp_dir)
   job = ''
   prefix = 'pwscf'
-  restart_mode = 'from_scratch'
+  restart_mode = 'restart'
   conv_threshold = 1d-14
   q_gipaw = 0.01d0
   iverbosity = 0
@@ -112,6 +112,7 @@ SUBROUTINE gipaw_bcast_input
   call mp_bcast(pawproj, root)
   call mp_bcast(r_rand, root)
   call mp_bcast(max_seconds, root)
+  call mp_bcast(restart_mode, root)
 
 END SUBROUTINE gipaw_bcast_input
 #endif

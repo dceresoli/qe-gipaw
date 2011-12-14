@@ -49,9 +49,9 @@ stand-alone package that to be compiled against Quantum-Espresso.
   \item Parallelization over k-points (pools) and g-vectors
   \item Automatic checkpoint and restart
   \item Magnetic susceptibility
-  \item NMR chemical shielding tensors
+  \item NMR chemical shielding tensors~\cite{pickard01,yates07}
   \item Electric Field Gradients (EFG)
-  \item EPR g-tensor
+  \item EPR g-tensor~\cite{pickard02}
   \item Hyperfine couplings
 \end{itemize}
 
@@ -134,7 +134,7 @@ following keywords:
 \begin{description}
 \item[job] (type: character, default: \texttt{'nmr'})\\
 Description: select calculation to perform. The possible values are:\\
-\begin{tabular}{cl}
+\begin{tabular}{ll}
   \texttt{'f-sum'} & check the f-sum rule\\
   \texttt{'nmr'}   & compute the magnetic susceptibility and NMR chemical shifts\\
   \texttt{'efg'}   & compute the electric field gradients at the nuclei\\
@@ -150,6 +150,10 @@ Description: temporary directory for \texttt{pw.x} restart files
 
 \item[max\_seconds] (type: real, default: 10$^7$)\\
 Description: max wall time clock before writing the checkpoint and terminate
+
+\item[restart\_mode] (type: character, default: \texttt{'restart'})\\
+Description: if \texttt{'restart'} attempt to restart froma a previous
+interrupted run. If \texttt{'from\_scratch'}, discard any restart information
 
 \item[conv\_threshold] (type: real, default: 10$^{-14}$, units: Ry$^2$)\\
 Description: convergence threshold for the diagonalization and for the Green's function solver
@@ -188,6 +192,15 @@ Description: units for hyperfine couplings in output. The possible values are:
 
 \item[hfi\_nuclear\_g\_factor(1..ntyp)] (type: real, default: 0.0)\\
 Description: for each atomic specie, the nuclear g-factor
+
+\item[core\_relax\_method] (type: integer, default: 1)\\
+Description: select the method to evaluate the core polarization contribution
+to the isotropic hyperfine (Fermi contact). The possible values are:\\
+\begin{tabular}{ll}
+  1 & perturbative~\cite{bahramy07}, exchange-only (Slater X-$\alpha$)\\
+  2 & perturbative~\cite{bahramy07}, exchange-only\\
+  3 & perturbative~\cite{bahramy07}, exchange and correlation\\
+\end{tabular}
 
 \end{description}
 There a number of obsolete or development variables that can be removed at any
@@ -230,8 +243,8 @@ to detect 120$^\circ$ rotations.
 \bibitem{pickard02}
   C. J. Pickard and F. Mauri, Phys. Rev. Lett. \textbf{88}, 086403 (2002)
 
-\bibitem{davezac07}
-  M. d'Avezac, N. Marzari and F. Mauri, Phys. Rev. B \textbf{76}, 165122 (2007)
+%\bibitem{davezac07}
+%  M. d'Avezac, N. Marzari and F. Mauri, Phys. Rev. B \textbf{76}, 165122 (2007)
 
 \bibitem{bahramy07}
   M. S. Bahramy, M. H. F. Sluiter and Y. Kawazoe, Phys. Rev. B  \textbf{76}, 035124 (2007)
