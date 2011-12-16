@@ -5,7 +5,7 @@ include $(QE_SOURCE)/make.sys
 
 # location of needed modules
 MODFLAGS = $(MOD_FLAG)$(QE_SOURCE)/iotk/src $(MOD_FLAG)$(QE_SOURCE)/Modules \
-           $(MOD_FLAG)$(QE_SOURCE)/PW $(MOD_FLAG).
+           $(MOD_FLAG)$(QE_SOURCE)/PW/src $(MOD_FLAG).
 
 GIPAW_OBJS = gipaw_module.o gipaw_main.o paw_gipaw.o stop_code.o gipaw_setup.o \
 	     gipaw_routines.o greenfunction.o orthoatwfc1.o \
@@ -18,7 +18,7 @@ GIPAW_OBJS = gipaw_module.o gipaw_main.o paw_gipaw.o stop_code.o gipaw_setup.o \
 LIBOBJS = $(QE_SOURCE)/flib/ptools.a $(QE_SOURCE)/flib/flib.a $(QE_SOURCE)/clib/clib.a \
  	  $(QE_SOURCE)/iotk/src/libiotk.a
 QEMODS  = $(QE_SOURCE)/Modules/libqemod.a
-PWOBJS  = $(QE_SOURCE)/PW/libpw.a
+PWOBJS  = $(QE_SOURCE)/PW/src/libpw.a
 
 all: gipaw.x
 
