@@ -166,7 +166,7 @@ SUBROUTINE gipaw_summary
     endif
   endif
 
-  if (lda_plus_U == .true.) call write_ns
+  if (lda_plus_U .eqv. .true.) call write_ns
 
   write(stdout,*)
 
