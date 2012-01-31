@@ -71,7 +71,12 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   USE uspp,                 ONLY : nkb, vkb
   USE cell_base,            ONLY : tpiba
   USE gipaw_module,         ONLY : q_gipaw, nbnd_occ
-
+  USE mp,                   ONLY : mp_sum
+#ifdef __BANDS
+  USE mp_global,            ONLY : inter_bgrp_comm
+  USE gipaw_module,         ONLY : ibnd_start, ibnd_end
+  USE becmod,               ONLY : calbec_bands
+#endif
   !-- paramters ----------------------------------------------------------
   IMPLICIT NONE
   CHARACTER, INTENT(IN) :: what     ! 'S' or 'V'
@@ -84,6 +89,9 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   !-- local variables ----------------------------------------------------
   real(dp), parameter :: ryd_to_hartree = 0.5d0
   complex(dp), allocatable :: aux(:,:), vkb_save(:,:)
+#ifdef __BANDS
+  complex(dp), allocatable :: aux2(:,:)
+#endif
   real(dp) :: dk, dxk(3)
   integer :: isign
   logical :: q_is_zero
@@ -93,7 +101,7 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
 
   ! set dk
   dk = q_gipaw/2.d0
-  
+
   ! check if |q| is zero
   q_is_zero = .false.
   if (sqrt(q(1)*q(1)+q(2)*q(2)+q(3)*q(3)) < 1d-8) q_is_zero = .true.
@@ -102,6 +110,11 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   call allocate_bec_type(nkb, nbnd_occ(ik), becp)
   allocate(aux(npwx,nbnd), vkb_save(npwx,nkb))
   vkb_save = vkb
+
+#ifdef __BANDS
+  allocate(aux2(npwx,nbnd))
+  aux2 = (0.0d0, 0.0d0)
+#endif
 
   !====================================================================
   ! compute (1/2|dk|) ( V^{NL}_{k+dk+q,k+dk} |psi> - 
@@ -114,7 +127,11 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
 
       ! compute <\beta(k \pm dk)| and project on |psi>
       call init_us_2_no_phase(npw, igk, dxk, vkb)
+#ifdef __BANDS
+      call calbec_bands (npw, vkb, psi, becp, nbnd_occ(ik), ibnd_start, ibnd_end)
+#else
       call calbec (npw, vkb, psi, becp, nbnd_occ(ik))
+#endif
 
       ! |q|!=0 => compute |\beta(k \pm dk + q)>
       if (.not. q_is_zero) then
@@ -125,18 +142,34 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
       aux = (0.d0,0.d0)
       if (what == 'V' .or. what == 'v') then
           ! apply |\beta(k \pm dk+q)>D<\beta(k \pm dk)| to |psi>
+          !! Hubbard? any other term here?
+#ifdef __BANDS
+          call add_vuspsi_new(npwx, npw, nbnd_occ(ik), aux, ibnd_start, ibnd_end)
+          aux2(:,ibnd_start:ibnd_end) = aux2(:,ibnd_start:ibnd_end) + dble(isign) * ryd_to_hartree * aux(:,ibnd_start:ibnd_end)/(2.d0*dk*tpiba)
+#else
           call add_vuspsi(npwx, npw, nbnd_occ(ik), aux)
           !! Hubbard? any other term here?
           vel_psi = vel_psi + dble(isign) * ryd_to_hartree * aux/(2.d0*dk*tpiba)
+#endif
 
       elseif (what == 'S' .or. what == 's') then
           ! apply |\beta(k \pm dk+q)>S<\beta(k \pm dk)| to |psi>
+#ifdef __BANDS
+          call s_psi_new(npwx, npw, nbnd_occ(ik), psi, aux, ibnd_start, ibnd_end)
+          aux2(:,ibnd_start:ibnd_end) = aux2(:,ibnd_start:ibnd_end) + dble(isign) * aux(:,ibnd_start:ibnd_end)/(2.d0*dk*tpiba)
+#else
           call s_psi(npwx, npw, nbnd_occ(ik), psi, aux)
           vel_psi = vel_psi + dble(isign) * aux/(2.d0*dk*tpiba)
+#endif
       else
           call errore('apply_vel_NL', '''what'' parameter has the wrong value', 1)
       endif 
   enddo
+
+#if defined(__PARA) && defined(__BANDS)  
+  call mp_sum(aux2, inter_bgrp_comm)
+  vel_psi = vel_psi + aux2
+#endif
 
   ! restore NL-potential at k
   vkb = vkb_save
@@ -144,6 +177,9 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   ! free memory
   call deallocate_bec_type(becp)
   deallocate(aux, vkb_save)
+#ifdef __BANDS
+  deallocate(aux2)
+#endif
 
 END SUBROUTINE apply_vel_NL
 

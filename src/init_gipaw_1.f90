@@ -24,9 +24,12 @@ subroutine init_gipaw_1
   USE uspp,        ONLY : ap, aainit
   USE atom,        ONLY : rgrid, msh
   USE io_global,   ONLY : stdout
-  USE mp_global,   ONLY : intra_pool_comm
+#ifdef __BANDS
+  USE mp_global,   ONLY : intra_bgrp_comm, inter_bgrp_comm
+#endif
+  USE mp_global,   ONLY : intra_pool_comm, mpime
   USE mp,          ONLY : mp_sum
-  USE uspp_param,   ONLY : upf  
+  USE uspp_param,  ONLY : upf  
 
   !
   implicit none
@@ -304,9 +307,14 @@ subroutine init_gipaw_1
      end do
   
 #ifdef __PARA
+#  ifdef __BANDS
+     call mp_sum ( paw_recon(nt)%paw_tab(:,:), intra_bgrp_comm )
+     call mp_sum ( paw_recon(nt)%paw_tab(:,:), inter_bgrp_comm )
+#  else
      call mp_sum ( paw_recon(nt)%paw_tab(:,:), intra_pool_comm )
+#  endif
 #endif
-     
+
   end do
   
   ! initialize spline interpolation
