@@ -177,7 +177,7 @@ SUBROUTINE suscept_crystal
     if ( ik < ik0 ) cycle 
     iq = 0
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#ifdef __PARA
+#ifdef __MPI
     if (me_pool == root_pool) &
     write(*, '(5X,''k-point #'',I5,'' of '',I5,6X,''pool #'',I3)') &
       ik, nks, my_pool_id+1
@@ -462,7 +462,7 @@ SUBROUTINE suscept_crystal
   enddo  ! ik
 
   call start_clock('susc:mp_sum')
-#ifdef __PARA
+#ifdef __MPI
   ! reduce over G-vectors
 #ifdef __BANDS
   call mp_sum( f_sum, intra_bgrp_comm )
@@ -481,7 +481,7 @@ SUBROUTINE suscept_crystal
 #endif
 #endif
   
-#ifdef __PARA
+#ifdef __MPI
   ! reduce over k-points
   call mp_sum( f_sum, inter_pool_comm )
   call mp_sum( f_sum_occ, inter_pool_comm )
@@ -604,7 +604,7 @@ SUBROUTINE suscept_crystal
 
   ! symmetrize the current
   do ispin = 1, nspin
-#ifdef __PARA
+#ifdef __MPI
     call psymmetrize_field(j_bare(:,:,:,ispin), 1)
 #else
     call symmetrize_field(j_bare(:,:,:,ispin), 1)
@@ -691,7 +691,7 @@ CONTAINS
       CALL ZGEMM('C', 'N', nbnd_occ(ik), nbnd_occ(ik), npw, &
                 (1.d0,0.d0), evq(1,1), npwx, aux(1,1), npwx, (0.d0,0.d0), &
                 ps(1,1), nbnd)
-#ifdef __PARA
+#ifdef __MPI
 #  ifdef __BANDS
       call mp_sum(ps, intra_bgrp_comm)
 #  else

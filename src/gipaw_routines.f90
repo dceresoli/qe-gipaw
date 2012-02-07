@@ -69,7 +69,7 @@ SUBROUTINE gipaw_readin()
     
 400 continue
  
-#ifdef __PARA
+#ifdef __MPI
   ! broadcast input variables  
   call gipaw_bcast_input
 #endif
@@ -77,7 +77,7 @@ SUBROUTINE gipaw_readin()
 END SUBROUTINE gipaw_readin
 
 
-#ifdef __PARA
+#ifdef __MPI
 !-----------------------------------------------------------------------
 SUBROUTINE gipaw_bcast_input
   !-----------------------------------------------------------------------
@@ -319,7 +319,7 @@ SUBROUTINE print_clock_gipaw
   call print_clock ('write_rec')
   write(stdout,*)
 
-#ifdef __PARA
+#ifdef __MPI
   write(stdout,*) '    Parallel routines'
   call print_clock ('reduce')  
   call print_clock( 'fft_scatter' )

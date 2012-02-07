@@ -175,7 +175,7 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
         endif
      enddo
      kter_eff = kter_eff + DBLE (lbnd) / DBLE (nbnd)
-#ifdef __PARA
+#ifdef __MPI
 #  ifdef __BANDS
      call mp_sum(  rho(ibnd_start:lbnd), intra_bgrp_comm )
 #  else
@@ -259,7 +259,7 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
            c(lbnd) = zdotc (ndmx*npol, h(1,ibnd), 1, t(1,lbnd), 1)
         end if
      end do
-#ifdef __PARA
+#ifdef __MPI
 #  ifdef __BANDS
      call mp_sum(  a(ibnd_start:lbnd), intra_bgrp_comm )
      call mp_sum(  c(ibnd_start:lbnd), intra_bgrp_comm )

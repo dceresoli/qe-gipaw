@@ -30,13 +30,13 @@ SUBROUTINE write_tensor_field(name, ispin, field)
   integer :: ios, ipol
   !-- local variables ----------------------------------------------------
   real(dp), allocatable :: aux(:,:,:)
-#ifdef __PARA
+#ifdef __MPI
   integer :: i, j
 #endif
 
  allocate( aux(dfftp%nr1x*dfftp%nr2x*dfftp%nr3x,3,3) )
 
-#ifdef __PARA
+#ifdef __MPI
  ! gather the data 
   do i = 1, 3
     do j = 1, 3

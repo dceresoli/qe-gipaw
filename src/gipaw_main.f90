@@ -60,7 +60,7 @@ PROGRAM gipaw_main
   !------------------------------------------------------------------------
 
   ! ... and begin with the initialization part
-#ifdef __PARA
+#ifdef __MPI
   CALL mp_start (nproc, mpime, gipaw_comm)
   CALL mp_image_startup(root, gipaw_comm)
   CALL engine_mp_start()
@@ -77,7 +77,7 @@ PROGRAM gipaw_main
   ! read ground state wavefunctions
   cell_factor = 1.1d0
   call read_file
-#ifdef __PARA
+#ifdef __MPI
   use_para_diag = .true.
   call check_para_diag( nbnd )
 #else

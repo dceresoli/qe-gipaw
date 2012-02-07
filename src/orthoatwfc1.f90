@@ -57,7 +57,7 @@ SUBROUTINE orthoatwfc1(ik)
   ! calculate overlap
   call zgemm('c', 'n', natomwfc, natomwfc, npw, (1.d0,0.d0), &
              wfcatom, npwx, swfcatom, npwx, (0.d0, 0.d0), overlap, natomwfc)
-#ifdef __PARA
+#ifdef __MPI
   call mp_sum(overlap, intra_pool_comm)
 #endif
 

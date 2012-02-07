@@ -78,7 +78,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
              (1.d0,0.d0), evq(1,1), npwx, psi(1,1), npwx, (0.d0,0.d0), &
              ps(1,1), nbnd)
 #endif   
-#ifdef __PARA
+#ifdef __MPI
 #  ifdef __BANDS
   call mp_sum(ps,intra_bgrp_comm)
 #  else
@@ -97,7 +97,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   CALL s_psi (npwx, npw, nbnd_occ(ik), evq, g_psi)
 #endif
 
-#ifdef __PARA 
+#ifdef __MPI 
 #  ifdef __BANDS
   call mp_sum(g_psi, inter_bgrp_comm)
 #  else
@@ -148,7 +148,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
      enddo
      eprec (ibnd) = 1.35d0 * zdotc (npw, evq (1, ibnd), 1, work, 1)
   enddo
-#ifdef __PARA
+#ifdef __MPI
 #  ifdef __BANDS
   call mp_sum ( eprec( 1:nbnd_occ(ik) ), intra_bgrp_comm )
 #  else
@@ -195,7 +195,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   call cgsolve_all (ch_psi_all, cg_psi, et(1,ik), psi, g_psi, &
        h_diag, npwx, npw, thresh, ik, lter, conv_root, anorm, &
        nbnd_occ(ik), npol )
-#if defined(__PARA) && defined(__BANDS)
+#if defined(__MPI) && defined(__BANDS)
   call mp_sum(g_psi,inter_bgrp_comm)
 #endif
   !! debug  

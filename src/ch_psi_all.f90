@@ -107,7 +107,7 @@ subroutine ch_psi_all (n, h, ah, e, ik, m)
   ps (:,:) = ps(:,:) * alpha_pv
 #endif
 
-#if defined(__PARA) && defined(__BANDS)
+#if defined(__MPI) && defined(__BANDS)
   call mp_sum ( ps, intra_bgrp_comm )
 #else
   call mp_sum ( ps, intra_pool_comm )

@@ -166,7 +166,7 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
       endif 
   enddo
 
-#if defined(__PARA) && defined(__BANDS)  
+#if defined(__MPI) && defined(__BANDS)  
   call mp_sum(aux2, inter_bgrp_comm)
   vel_psi = vel_psi + aux2
 #endif

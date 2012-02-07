@@ -306,7 +306,7 @@ subroutine init_gipaw_1
         end do
      end do
   
-#ifdef __PARA
+#ifdef __MPI
 #  ifdef __BANDS
      call mp_sum ( paw_recon(nt)%paw_tab(:,:), intra_bgrp_comm )
      call mp_sum ( paw_recon(nt)%paw_tab(:,:), inter_bgrp_comm )

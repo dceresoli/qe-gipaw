@@ -503,7 +503,7 @@ SUBROUTINE compute_delta_g_so (j_bare, s_maj, s_min, delta_g_so)
   enddo
   deallocate (grad_vr)
   
-#ifdef __PARA
+#ifdef __MPI
   call mp_sum(delta_g_so, intra_pool_comm)
 #endif
 
@@ -580,7 +580,7 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
   enddo
   deallocate ( grad_vh )
   
-#ifdef __PARA
+#ifdef __MPI
   call mp_sum(delta_g_soo, intra_pool_comm)
 #endif
 
@@ -597,7 +597,7 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
     enddo
   enddo
 
-#ifdef __PARA
+#ifdef __MPI
    call mp_sum(delta_g_soo2, intra_pool_comm)
 #endif
   

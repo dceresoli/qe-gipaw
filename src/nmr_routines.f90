@@ -363,7 +363,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
             LQ(1,1,kpol), npwx )
 #endif
   enddo
-#if defined(__PARA) && defined(__BANDS) 
+#if defined(__MPI) && defined(__BANDS) 
   call mp_sum(LQ, inter_bgrp_comm)
 #endif
   ! now we have LQ (npw,nbnd)  
@@ -411,7 +411,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
              enddo ! nat
         enddo !ntyp 
      enddo !bands
-#if definded(__PARA) && defined(__BANDS)
+#if definded(__MPI) && defined(__BANDS)
      call mp_sum(pcorr_jpaug, inter_bgrp_comm)
 #endif  
      paug_corr_tensor(:,kpol,:) = REAL (pcorr_jpaug(:,:), dp)
@@ -476,7 +476,7 @@ SUBROUTINE compute_sigma_bare(B_ind, chi_bare, sigma_bare)
     
     sigma_bare(:,:,na) = real(tmp_sigma(:,:), dp)
   enddo
-#ifdef __PARA
+#ifdef __MPI
   call mp_sum( sigma_bare, intra_pool_comm )
 #endif
 END SUBROUTINE compute_sigma_bare

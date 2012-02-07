@@ -193,13 +193,13 @@ SUBROUTINE get_smooth_density(rho)
               (dble(psic(:))**2 + aimag(psic(:))**2) / omega
       enddo
   enddo
-#ifdef __PARA
+#ifdef __MPI
   ! reduce over k-points
   call mp_sum( rho, inter_pool_comm )
 #endif
 
   do is = 1, nspin
-#ifdef __PARA
+#ifdef __MPI
     call psymmetrize_rho_s(rho(1,is))
 #else
     call symmetrize_rho_s(rho(1,is))
@@ -272,7 +272,7 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
         enddo
      enddo
   enddo
-#ifdef __PARA
+#ifdef __MPI
   call mp_sum( efg_bare, intra_pool_comm )
 #endif
 
@@ -439,7 +439,7 @@ SUBROUTINE efg_correction(efg_corr_tens)
   
   efg_corr_tens = - sqrt(4.0_dp*pi/5.0_dp)*efg_corr_tens
 
-#ifdef __PARA
+#ifdef __MPI
   call mp_sum( efg_corr_tens, inter_pool_comm )
 #endif
   
