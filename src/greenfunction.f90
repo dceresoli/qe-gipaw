@@ -23,10 +23,15 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   USE uspp,                        ONLY : nkb, vkb
   USE io_files,                    ONLY : nwordwfc, iunwfc
   USE gipaw_module
-  USE mp_global,                   ONLY : intra_pool_comm
+  USE mp_global,                   ONLY : inter_bgrp_comm, intra_pool_comm, inter_pool_comm
   USE mp,                          ONLY : mp_sum
   USE ldaU,                        ONLY : lda_plus_u, swfcatom
   USE io_files,                    ONLY : iunsat, nwordatwfc
+  USE mp_image_global_module,      ONLY : inter_image_comm, nimage
+#ifdef __BANDS
+  USE mp_global,                   ONLY : intra_bgrp_comm
+  USE becmod,                      ONLY : calbec_bands
+#endif
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT none
@@ -64,21 +69,51 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   !====================================================================
   ! project on <evq|: ps(i,j) = <evq(i)|psi(j)>
   ps = (0.d0,0.d0)
+#ifdef __BANDS
+  CALL zgemm('C', 'N', nbnd_occ (ik), ibnd_end-ibnd_start+1, npw, &
+             (1.d0,0.d0), evq(1,1), npwx, psi(1,ibnd_start), npwx, (0.d0,0.d0), &
+             ps(1,ibnd_start), nbnd)
+#else
   CALL zgemm('C', 'N', nbnd_occ (ik), nbnd_occ (ik), npw, &
              (1.d0,0.d0), evq(1,1), npwx, psi(1,1), npwx, (0.d0,0.d0), &
              ps(1,1), nbnd)
+#endif   
 #ifdef __PARA
-  call mp_sum(ps, intra_pool_comm)
+#  ifdef __BANDS
+  call mp_sum(ps,intra_bgrp_comm)
+#  else
+  call mp_sum(ps,intra_pool_comm)
+#  endif
 #endif
 
   ! this is the case with overlap (ultrasoft)
   ! g_psi is used as work space to store S|evq>
   ! |psi> = -(|psi> - S|evq><evq|psi>)
+#ifdef __BANDS
+  CALL calbec_new (npw, vkb, evq, becp, nbnd_occ(ik), ibnd_start, ibnd_end)
+  CALL s_psi_new (npwx, npw, nbnd_occ(ik), evq, g_psi, ibnd_start, ibnd_end)
+#else
   CALL calbec (npw, vkb, evq, becp)
   CALL s_psi (npwx, npw, nbnd_occ(ik), evq, g_psi)
+#endif
+
+#ifdef __PARA 
+#  ifdef __BANDS
+  call mp_sum(g_psi, inter_bgrp_comm)
+#  else
+  call mp_sum(g_psi, inter_bgrp_comm)
+#  endif
+#endif
+
+#ifdef __BANDS
+  CALL zgemm( 'N', 'N', npw, ibnd_end-ibnd_start+1, nbnd_occ(ik), &
+       (1.d0,0.d0), g_psi(1,1), npwx, ps(1,ibnd_start), nbnd, (-1.d0,0.d0), &
+       psi(1,ibnd_start), npwx )
+#else
   CALL zgemm( 'N', 'N', npw, nbnd_occ(ik), nbnd_occ(ik), &
        (1.d0,0.d0), g_psi(1,1), npwx, ps(1,1), nbnd, (-1.d0,0.d0), &
        psi(1,1), npwx )
+#endif
 
   !! this is the old code for norm-conserving:
   !! |psi> = -(1 - |evq><evq|) |psi>
@@ -103,17 +138,29 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
 
   ! preconditioning of the linear system
   work = (0.d0,0.d0)
+#ifdef __BANDS
+  do ibnd = ibnd_start, ibnd_end
+#else
   do ibnd = 1, nbnd_occ (ik)
+#endif
      do ig = 1, npw
         work (ig) = g2kin (ig) * evq (ig, ibnd)
      enddo
      eprec (ibnd) = 1.35d0 * zdotc (npw, evq (1, ibnd), 1, work, 1)
   enddo
 #ifdef __PARA
+#  ifdef __BANDS
+  call mp_sum ( eprec( 1:nbnd_occ(ik) ), intra_bgrp_comm )
+#  else
   call mp_sum ( eprec( 1:nbnd_occ(ik) ), intra_pool_comm )
+#  endif
 #endif
   h_diag = 0.d0
+#ifdef __BANDS
+  do ibnd = ibnd_start, ibnd_end
+#else
   do ibnd = 1, nbnd_occ (ik)
+#endif
      do ig = 1, npw
         h_diag (ig, ibnd) = 1.d0 / max (1.0d0, g2kin (ig) / eprec (ibnd) )
      enddo
@@ -126,7 +173,11 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
     call init_us_2(npw, igk, xk(1,ik), vkb)
   endif
   !it was: call ccalbec (nkb, npwx, npw, nbnd, becp, vkb, psi)
+#ifdef __BANDS
+  call calbec_new (npw, vkb, psi, becp, nbnd, ibnd_start, ibnd_end)
+#else
   call calbec (npw, vkb, psi, becp, nbnd)
+#endif
 
   if (lda_plus_u) then
     if (q_is_zero) then
@@ -144,7 +195,9 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   call cgsolve_all (ch_psi_all, cg_psi, et(1,ik), psi, g_psi, &
        h_diag, npwx, npw, thresh, ik, lter, conv_root, anorm, &
        nbnd_occ(ik), npol )
-
+#if defined(__PARA) && defined(__BANDS)
+  call mp_sum(g_psi,inter_bgrp_comm)
+#endif
   !! debug  
   !!write(stdout, '(5X,''cgsolve_all converged in '',I3,'' iterations'')') &
   !!      lter

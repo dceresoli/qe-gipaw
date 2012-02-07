@@ -31,7 +31,7 @@ SUBROUTINE suscept_crystal
   USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
                                      current_k, ecutwfc
   USE lsda_mod,               ONLY : current_spin, lsda, isk
-  USE becmod,                 ONLY : becp, calbec  
+  USE becmod,                 ONLY : becp, calbec
   USE symme,                  ONLY : symmatrix
   USE parameters,             ONLY : lmaxx
   USE constants,              ONLY : pi
@@ -49,7 +49,12 @@ SUBROUTINE suscept_crystal
   USE mp_global,              ONLY : my_pool_id, me_pool, root_pool, &
                                      inter_pool_comm, intra_pool_comm
   USE mp,                     ONLY : mp_sum
-
+  USE mp_image_global_module, ONLY : my_image_id, inter_image_comm, nimage
+#ifdef __BANDS
+  USE becmod,                 ONLY : calbec_bands
+  USE gipaw_module,           ONLY : ibnd_start, ibnd_end
+  USE mp_global,              ONLY : intra_bgrp_comm, inter_bgrp_comm
+#endif
   !-- local variables ----------------------------------------------------
   IMPLICIT NONE
 
@@ -105,7 +110,7 @@ SUBROUTINE suscept_crystal
   real(dp) :: paramagnetic_corr_tensor_us_so(3,3)
 
   integer :: ik, iq, ik0, iq0
-  integer :: ipol, jpol, i, ibnd, isign, ispin
+  integer :: ipol, jpol, i, ibnd, jbnd, isign, ispin, iend, isignend, inew, isignnew
   real(dp) :: tmp(3,3), q(3), k_plus_q(3), braket
   integer :: s_min, s_maj, s_weight
   complex(dp), external :: zdotc
@@ -197,6 +202,9 @@ SUBROUTINE suscept_crystal
     ! read wfcs from file and compute becp
   call start_clock('susc:IO')
     call get_buffer (evc, nwordwfc, iunwfc, ik)
+#ifdef __BANDS
+    call mp_sum(evc, inter_bgrp_comm)
+#endif
   call stop_clock('susc:IO')
   call start_clock('susc:calbec')
     call init_gipaw_2_no_phase (npw, igk, xk (1, ik), paw_vkb)
@@ -210,6 +218,8 @@ SUBROUTINE suscept_crystal
 
     ! this is the case q = 0
     q(:) = 0.d0
+
+    if(my_image_id.eq.0)then
 
     if (job /= 'f-sum') call compute_u_kq(ik, q)
 
@@ -299,13 +309,16 @@ SUBROUTINE suscept_crystal
     !------------------------------------------------------------------
     ! loop over -q and +q
     !------------------------------------------------------------------
+    if(nimage.eq.1)then
     do isign = -1, 1, 2
       if (job == 'f-sum') cycle
       
       ! loop over cartesian directions
       do i = 1, 3
         !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        iq = iq + 1
+      if (job == 'f-sum') cycle
+
+          iq = iq + 1
         if (ik == ik0 .and. iq < iq0 ) cycle
   call start_clock('susc:IO')
         call save_info_for_restart ( ik, iq )
@@ -363,24 +376,109 @@ SUBROUTINE suscept_crystal
 
       enddo  ! i=x,y,z
     enddo  ! isign
+    call stop_clock('susc:loop over 6')
+    endif
+    else
+
+     if(nimage>1)then
+    
+
+          iq = iq + 1 + my_image_id
+        if(my_image_id<4)then
+          isign=-1
+          i=my_image_id 
+        else
+          isign=1
+          i=my_image_id-3
+        endif 
+        if (ik == ik0 .and. iq < iq0 ) cycle
+  call start_clock('susc:IO')
+        call save_info_for_restart ( ik, iq )
+  call stop_clock('susc:IO')
+        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        ! set the q vector
+        q(:) = 0.d0
+        q(i) = dble(isign) * q_gipaw
+        
+        ! compute the wfcs at k+q
+  call start_clock('susc:diagon')
+        call compute_u_kq(ik, q)
+  call stop_clock('susc:diagon')
+        
+        ! compute p_k|evc>, v_k|evc> and G_{k+q} v_{k+q,k}|evc>
+  call start_clock('susc:apply')
+        call apply_operators
+  call stop_clock('susc:apply')
+      
+        k_plus_q(1:3) = xk(1:3,ik) + q(1:3)
+        call init_gipaw_2_no_phase(npw, igk, k_plus_q, paw_vkb)
+
+        ! pGv and vGv contribution to chi_bare
+  call start_clock('susc:add-tensor')
+        call add_to_tensor(i,q_pGv(:,:,isign), p_evc, G_vel_evc)
+        call add_to_tensor(i,q_vGv(:,:,isign), vel_evc, G_vel_evc)
+  call stop_clock('susc:add-tensor')
+        
+        ! now the j_bare term 
+  call start_clock('susc:add-current')
+        call add_to_current(j_bare_s(:,:,:,current_spin), evc, G_vel_evc)
+        if (okvan) then
+          call apply_occ_occ_us
+          call add_to_current(j_bare_s(:,:,:,current_spin), evc, u_svel_evc)
+        endif
+  call stop_clock('susc:add-current')
+
+        ! paramagnetic terms
+  call start_clock('susc:para')
+        if (job == 'nmr') then
+          call paramagnetic_correction(paramagnetic_corr_tensor, paramagnetic_corr_tensor_us, &
+               G_vel_evc, u_svel_evc, i)
+          call add_to_sigma_para(paramagnetic_corr_tensor, sigma_paramagnetic)
+          if (okvan) call add_to_sigma_para(paramagnetic_corr_tensor_us, sigma_paramagnetic_us)
+        elseif (job == 'g_tensor') then
+          call paramagnetic_correction_so(paramagnetic_corr_tensor_so, paramagnetic_corr_tensor_us_so, &
+               G_vel_evc, u_svel_evc, i)
+          paramagnetic_corr_tensor_so = paramagnetic_corr_tensor_so * s_weight
+          paramagnetic_corr_tensor_us_so = paramagnetic_corr_tensor_us_so * s_weight
+          call add_to_sigma_para_so(paramagnetic_corr_tensor_so, delta_g_so_para)
+          if (okvan) call add_to_sigma_para_so(paramagnetic_corr_tensor_us_so, delta_g_so_para_us)
+        endif
+  call stop_clock('susc:para')
+
+ 
+
+    
+
+
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   call start_clock('susc:IO')
     call save_info_for_restart(ik+1, 0)
   call stop_clock('susc:IO')
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+  endif
+  endif
   enddo  ! ik
 
   call start_clock('susc:mp_sum')
 #ifdef __PARA
   ! reduce over G-vectors
+#ifdef __BANDS
+  call mp_sum( f_sum, intra_bgrp_comm )
+  call mp_sum( f_sum_occ, intra_bgrp_comm )
+  call mp_sum( f_sum_nelec, intra_bgrp_comm )
+  call mp_sum( q_pGv, intra_bgrp_comm )
+  call mp_sum( q_vGv, intra_bgrp_comm )
+  call mp_sum( delta_g_rmc, intra_bgrp_comm)
+#else
   call mp_sum( f_sum, intra_pool_comm )
   call mp_sum( f_sum_occ, intra_pool_comm )
   call mp_sum( f_sum_nelec, intra_pool_comm )
   call mp_sum( q_pGv, intra_pool_comm )
   call mp_sum( q_vGv, intra_pool_comm )
   call mp_sum( delta_g_rmc, intra_pool_comm)
+#endif
 #endif
   
 #ifdef __PARA
@@ -401,6 +499,24 @@ SUBROUTINE suscept_crystal
   call mp_sum( delta_g_so_para, inter_pool_comm )
   call mp_sum( delta_g_so_para_us, inter_pool_comm )
   call mp_sum( delta_g_so_para_aug, inter_pool_comm )
+  if(nimage>1)then
+  call mp_sum( f_sum, inter_image_comm )
+  call mp_sum( f_sum_occ, inter_image_comm )
+  call mp_sum( f_sum_nelec, inter_image_comm )
+  call mp_sum( q_pGv, inter_image_comm )
+  call mp_sum( q_vGv, inter_image_comm )
+  call mp_sum( j_bare_s, inter_image_comm )
+  call mp_sum( sigma_diamagnetic, inter_image_comm )
+  call mp_sum( sigma_paramagnetic, inter_image_comm )
+  call mp_sum( sigma_paramagnetic_us, inter_image_comm )
+  call mp_sum( sigma_paramagnetic_aug, inter_image_comm )
+  call mp_sum( delta_g_rmc, inter_image_comm)
+  call mp_sum( delta_g_rmc_gipaw, inter_image_comm)
+  call mp_sum( delta_g_so_dia, inter_image_comm )
+  call mp_sum( delta_g_so_para, inter_image_comm )
+  call mp_sum( delta_g_so_para_us, inter_image_comm )
+  call mp_sum( delta_g_so_para_aug, inter_image_comm )
+  endif
 #endif
   call stop_clock('susc:mp_sum')
   
@@ -576,7 +692,11 @@ CONTAINS
                 (1.d0,0.d0), evq(1,1), npwx, aux(1,1), npwx, (0.d0,0.d0), &
                 ps(1,1), nbnd)
 #ifdef __PARA
+#  ifdef __BANDS
+      call mp_sum(ps, intra_bgrp_comm)
+#  else
       call mp_sum(ps, intra_pool_comm)
+#  endif
 #endif
       aux = (0.d0,0.d0)
       CALL ZGEMM('N', 'N', npw, nbnd_occ(ik), nbnd_occ(ik), &
