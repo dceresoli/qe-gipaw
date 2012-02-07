@@ -23,6 +23,11 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   USE gipaw_module,           ONLY : nbnd_occ
   USE fft_base,               ONLY : dffts
   USE fft_interfaces,         ONLY : invfft
+#ifdef __BANDS
+  USE mp,                          ONLY : mp_sum 
+  USE mp_global,                   ONLY : inter_bgrp_comm
+  USE gipaw_module,                ONLY : ibnd_start, ibnd_end
+#endif  
   !-- parameters ---------------------------------------------------------
   IMPLICIT none
   INTEGER, INTENT(IN) :: ik               ! k-point
@@ -35,17 +40,29 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   COMPLEX(DP), allocatable :: p_psic(:), psic(:), aux(:)
   REAL(DP) :: gk
   INTEGER :: ig, ipol, ibnd
+#ifdef __BANDS
+  REAL(DP), allocatable :: jaux(:,:) 
+  INTEGER :: ierr
+#endif
 
   call start_clock('j_para')
 
   ! allocate real space wavefunctions
   allocate(p_psic(dffts%nnr), psic(dffts%nnr), aux(npwx))
+#ifdef __BANDS
+  allocate(jaux(dffts%nnr,3))
+  jaux = 0.0d0  
+#endif
 
   ! loop over cartesian components
   do ipol = 1, 3
   
     ! loop over bands
+#ifdef __BANDS
+    do ibnd = ibnd_start, ibnd_end
+#else
     do ibnd = 1, nbnd_occ(ik)
+#endif
 
       ! apply p_k on the left
       do ig = 1, npw
@@ -63,9 +80,13 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
       CALL invfft ('Wave', psic, dffts)
 
       ! add to the current
+#ifdef __BANDS
+      jaux(1:dffts%nnr,ipol) = jaux(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
+                               aimag(conjg(p_psic(1:dffts%nnr)) * psic(1:dffts%nnr))
+#else
       j(1:dffts%nnr,ipol) = j(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
                             aimag(conjg(p_psic(1:dffts%nnr)) * psic(1:dffts%nnr))
-
+#endif
       ! apply p_{k+q} on the right
       do ig = 1, npw
         gk = xk(ipol,ik) + g(ipol,igk(ig)) + q(ipol)
@@ -82,14 +103,29 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
       CALL invfft ('Wave', psic, dffts)
 
       ! add to the current
+#ifdef __BANDS
+      jaux(1:dffts%nnr,ipol) = jaux(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
+                               aimag(conjg(psic(1:dffts%nnr)) * p_psic(1:dffts%nnr))
+#else
       j(1:dffts%nnr,ipol) = j(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
                             aimag(conjg(psic(1:dffts%nnr)) * p_psic(1:dffts%nnr))
-
+#endif
     enddo ! ibnd
+
+#if defined(__PARA) && defined(__BANDS) 
+    call mp_sum(j_new(1:dffts%nnr,ipol),inter_bgrp_comm)
+#endif
   enddo ! ipol
+
+#ifdef __BANDS
+  j(:,:) = j(:,:) + jaux(:,:)
+#endif
 
   ! free memory
   deallocate(p_psic, psic, aux)
+#ifdef __BANDS
+  deallocate(jaux)
+#endif
 
   call stop_clock('j_para')
 

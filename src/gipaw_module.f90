@@ -98,6 +98,9 @@ MODULE gipaw_module
   REAL(dp) :: r_rand ! EMINE: determines the randimization range used in
                      ! compute_u_kq routine. read from input. change it for debugging only
 
+#ifdef __BANDS
+  INTEGER :: ibnd_start, ibnd_end
+#endif
 !-----------------------------------------------------------------------
 END MODULE gipaw_module
 !-----------------------------------------------------------------------

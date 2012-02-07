@@ -27,7 +27,7 @@ PROGRAM gipaw_main
   ! ... C. J. Pickard and F. Mauri, Phys. Rev. Lett. 88, 086403 (2002)
   ! ...
   USE kinds,           ONLY : DP
-  USE io_global,       ONLY : stdout, ionode, ionode_id
+  USE io_global,       ONLY : stdout, ionode, ionode_id, meta_ionode, meta_ionode_id
   USE io_files,        ONLY : prefix, tmp_dir, nd_nmbr
   USE klist,           ONLY : nks
   USE mp,              ONLY : mp_bcast
@@ -35,23 +35,40 @@ PROGRAM gipaw_main
   USE cellmd,          ONLY : cell_factor
   USE gipaw_module,    ONLY : job, q_gipaw
   USE control_flags,   ONLY : io_level, gamma_only,use_para_diag
-  USE mp_global,       ONLY : mp_startup
+  USE mp_global,       ONLY : mp_startup, my_image_id,  mpime, nproc, root
   USE check_stop,      ONLY : check_stop_init
   USE environment,     ONLY : environment_start
   USE lsda_mod,        ONLY : nspin
   USE wvfct,           ONLY : nbnd
   USE uspp,            ONLY : okvan
+  USE wvfct,                ONLY : nbnd, npw 
+  USE mp_image_global_module, ONLY : mp_image_startup, world_comm
+  USE mp_image_global_module, ONLY : me_image, nimage, inter_image_comm, intra_image_comm
+  USE mp_global,             ONLY : mp_start, mpime, nproc, root, inter_bgrp_comm
+  USE image_io_routines, ONLY : io_image_start
+  USE iotk_module  
+  USE xml_io_base
+
+
+  ! ... and begin with the initialization part
+
   !------------------------------------------------------------------------
   IMPLICIT NONE
   CHARACTER (LEN=9)   :: code = 'GIPAW'
+  CHARACTER (LEN=10)  :: dirname = 'dummy'
+  INTEGER             :: i, gipaw_comm
   !------------------------------------------------------------------------
 
   ! ... and begin with the initialization part
 #ifdef __PARA
-  CALL mp_startup ( )
+  CALL mp_start (nproc, mpime, gipaw_comm)
+  CALL mp_image_startup(root, gipaw_comm)
+  CALL engine_mp_start()
+  !CALL mp_startup()
 #endif
+
   CALL environment_start ( code )
-  !
+  CALL io_image_start()
   CALL gipaw_readin()
   CALL check_stop_init()
 
@@ -79,7 +96,15 @@ PROGRAM gipaw_main
   ! convert q_gipaw into units of tpiba
   q_gipaw = q_gipaw / tpiba
   
+ IF( nimage >= 1 ) THEN
+  WRITE( dirname, FMT = '( I5.5 )' ) my_image_id
+  tmp_dir = TRIM( tmp_dir ) // '/' // TRIM( dirname )
+  CALL create_directory( tmp_dir )
+  ENDIF 
   ! calculation
+#ifdef __BANDS
+  CALL init_parallel_over_band(inter_bgrp_comm, nbnd)
+#endif
   select case ( trim(job) )
   case ( 'nmr' )
      call suscept_crystal   

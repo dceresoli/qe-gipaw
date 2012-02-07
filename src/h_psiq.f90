@@ -7,7 +7,11 @@
 !
 !
 !-----------------------------------------------------------------------
+#ifdef __BANDS
+subroutine h_psiq (lda, n, m, psi, hpsi, spsi, ibnd_start, ibnd_end)
+#else
 subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
+#endif
   !-----------------------------------------------------------------------
   !
   !     This routine computes the product of the Hamiltonian
@@ -16,6 +20,7 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   !     wavefunctions and then with the routines hus_1psi and
   !     s_psi computes for each band the required products
   !
+  USE kinds,                 ONLY : DP
   USE fft_base,              ONLY : dffts
   USE fft_interfaces,        ONLY : fwfft, invfft
   USE gvecs,                 ONLY : nls
@@ -25,13 +30,20 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   USE scf,                   ONLY : vrs
   USE wavefunctions_module,  ONLY : psic
   USE becmod,                ONLY : becp, calbec
-  USE kinds,                 only : DP
-  use gipaw_module
+  USE gipaw_module
+#ifdef __BANDS
+  USE becmod,                ONLY : calbec_bands
+  USE mp,                    ONLY : mp_sum
+#endif
   implicit none
   !
   !     Here the local variables
   !
+#ifdef __BANDS
+  integer :: ibnd_start, ibnd_end
+#else
   integer :: ibnd
+#endif
   ! counter on bands
 
   integer :: lda, n, m
@@ -51,11 +63,19 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   call start_clock ('init')
 
   !it was: call ccalbec (nkb, npwx, n, m, becp, vkb, psi)
+#ifdef __BANDS
+  call calbec_bands (n, vkb, psi, becp, m, ibnd_start, ibnd_end)
+#else
   call calbec (n, vkb, psi, becp, m)
+#endif
   !
   ! Here we apply the kinetic energy (k+G)^2 psi
   !
+#ifdef __BANDS
+  do ibnd = ibnd_start, ibnd_end
+#else
   do ibnd = 1, m
+#endif
      do j = 1, n
         hpsi (j, ibnd) = g2kin (j) * psi (j, ibnd)
      enddo
@@ -65,7 +85,11 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   ! the local potential V_Loc psi. First the psi in real space
   !
 
+#ifdef __BANDS
+  do ibnd = ibnd_start, ibnd_end
+#else
   do ibnd = 1, m
+#endif
      call start_clock ('firstfft')
      psic(:) = (0.d0, 0.d0)
      psic (nls(igk(1:n))) = psi(1:n, ibnd)
@@ -89,10 +113,13 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   !
   !  Here the product with the non local potential V_NL psi
   !
-
+#ifdef __BANDS
+  call add_vuspsi_bands (lda, n, m, hpsi, ibnd_start, ibnd_end)
+  call s_psi_bands (lda, n, m, psi, spsi, ibnd_start, ibnd_end)
+#else
   call add_vuspsi (lda, n, m, hpsi)
-
   call s_psi (lda, n, m, psi, spsi)
+#endif
 
   call stop_clock ('h_psiq')
   return

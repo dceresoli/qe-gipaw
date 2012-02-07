@@ -238,7 +238,13 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   USE klist,                  ONLY : xk
   USE gvect,                  ONLY : g, ngm
   USE io_global,              ONLY : stdout, ionode
-
+#ifdef __BANDS
+  USE becmod,                 ONLY : calbec_bands
+  USE gipaw_module,           ONLY : ibnd_start, ibnd_end
+  USE mp_image_global_module, ONLY : inter_image_comm
+  USE mp,                     ONLY : mp_sum
+  USE mp_global,              ONLY : inter_bgrp_comm, mpime
+#endif
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
   real(dp), intent(inout) :: paug_corr_tensor(3,3,nat)
@@ -268,14 +274,23 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   call gk_sort(xk(1,ik), ngm, g, ecutwfc/tpiba2, npw, igk, g2kin)
   vkb = (0.d0,0.d0)
   call init_us_2 (npw, igk, xk(:,ik), vkb)
+#ifdef __BANDS
+  call calbec_bands (npwx, vkb, evc, becp2, nbnd, ibnd_start, ibnd_end)
+#else
   call calbec (npwx, vkb, evc, becp2, nbnd)
+#endif
+
   ps(:,:) = (0.d0, 0.d0)
 
   ijkb0 = 0 
   do nt = 1, ntyp
      do na = 1, nat
         if (ityp (na) .eq.nt) then
+#ifdef __BANDS
+           do ibnd = ibnd_start, ibnd_end
+#else
            do ibnd = 1, nbnd
+#endif
               do ih = 1, nh(nt) 
                  ikb = ijkb0 + ih
                  do jh = 1, nh(nt)
@@ -338,10 +353,19 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   allocate (LQ(npwx,nbnd,3))
   LQ(:,:,:) = (0.d0,0.d0)
   do kpol = 1,3
+#ifdef __BANDS
+        call zgemm ('N', 'N', npwx, ibnd_end-ibnd_start+1, nkb, &
+            (1.d0,0.d0),Lp(:,:,kpol), npwx, ps(1,ibnd_start), nkb, (1.d0,0.d0), &
+            LQ(1,ibnd_start,kpol), npwx )
+#else
         call zgemm ('N', 'N', npwx, nbnd, nkb, &
             (1.d0,0.d0),Lp(:,:,kpol), npwx, ps, nkb, (1.d0,0.d0), &
             LQ(1,1,kpol), npwx )
+#endif
   enddo
+#if defined(__PARA) && defined(__BANDS) 
+  call mp_sum(LQ, inter_bgrp_comm)
+#endif
   ! now we have LQ (npw,nbnd)  
   !apply Greens function
   allocate(aux1(npwx,nbnd),aux2 (npwx,nbnd),pcorr_jpaug(3,nat))
@@ -354,8 +378,13 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
      call greenfunction(ik, aux1, aux2, (/0.d0, 0.d0, 0.d0/))
  call stop_clock('para:gf')
      g_LQ_evc(:,:,kpol) = aux2(:,:)
+#ifdef __BANDS
+     call calbec_bands (npwx, paw_vkb , aux2 ,paw_becp_gLQ, nbnd,ibnd_start, ibnd_end)
+     do ibnd = ibnd_start, ibnd_end
+#else
      call calbec (npwx, paw_vkb , aux2 ,paw_becp_gLQ)
      do ibnd = 1, nbnd
+#endif
         ijkb0 = 0
         do nt = 1 , ntyp
               do na = 1, nat
@@ -381,7 +410,10 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
                  endif !ityp(na)==nt
              enddo ! nat
         enddo !ntyp 
-     enddo !bands        
+     enddo !bands
+#if definded(__PARA) && defined(__BANDS)
+     call mp_sum(pcorr_jpaug, inter_bgrp_comm)
+#endif  
      paug_corr_tensor(:,kpol,:) = REAL (pcorr_jpaug(:,:), dp)
      if ( iverbosity > 20 ) then
         write(6,'("PARA_AUG",1I3,3(F16.7,2X))') &
