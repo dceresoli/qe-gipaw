@@ -376,7 +376,7 @@ SUBROUTINE suscept_crystal
 
       enddo  ! i=x,y,z
     enddo  ! isign
-    call stop_clock('susc:loop over 6')
+
     endif
     else
 

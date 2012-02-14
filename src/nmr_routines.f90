@@ -411,7 +411,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
              enddo ! nat
         enddo !ntyp 
      enddo !bands
-#if definded(__MPI) && defined(__BANDS)
+#if defined(__MPI) && defined(__BANDS)
      call mp_sum(pcorr_jpaug, inter_bgrp_comm)
 #endif  
      paug_corr_tensor(:,kpol,:) = REAL (pcorr_jpaug(:,:), dp)

@@ -19,11 +19,12 @@ LIBOBJS = $(QE_SOURCE)/flib/ptools.a $(QE_SOURCE)/flib/flib.a $(QE_SOURCE)/clib/
  	  $(QE_SOURCE)/iotk/src/libiotk.a
 QEMODS  = $(QE_SOURCE)/Modules/libqemod.a
 PWOBJS  = $(QE_SOURCE)/PW/src/libpw.a
+NEBOBJS = $(QE_SOURCE)/NEB/src/libneb.a
 
 all: gipaw.x
 
-gipaw.x: $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS)
-	$(LD) $(LDFLAGS) -o $@ $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS) $(LIBS)
+gipaw.x: $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS) $(NEBOBJS)
+	$(LD) $(LDFLAGS) -o $@ $(GIPAW_OBJS) $(PWOBJS) $(NEBOBJS) $(QEMODS) $(LIBOBJS) $(LIBS)
 	(cd ../bin; ln -sf ../src/gipaw.x .)
 
 clean:
