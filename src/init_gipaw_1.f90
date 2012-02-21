@@ -288,7 +288,7 @@ subroutine init_gipaw_1
   !     fill the interpolation table tab
   !
   pref = fpi / sqrt ( omega )
-  call divide ( nqx, startq, lastq )
+  call divide ( intra_pool_comm, nqx, startq, lastq )
   do nt = 1, ntyp
      paw_recon(nt)%paw_tab (:,:) = 0.0_dp
      
