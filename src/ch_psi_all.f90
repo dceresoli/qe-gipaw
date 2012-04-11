@@ -27,7 +27,6 @@ subroutine ch_psi_all (n, h, ah, e, ik, m)
   USE mp,           ONLY : mp_sum
 #ifdef __BANDS
   USE becmod,       ONLY : calbec_bands
-  USE gipaw_module, ONLY : init_parallel_over_band
   USE mp_global,    ONLY : intra_bgrp_comm
 #endif
   implicit none
@@ -128,7 +127,7 @@ subroutine ch_psi_all (n, h, ah, e, ik, m)
   !
   !it was: call ccalbec (nkb, npwx, n, m, becp, vkb, hpsi)
 #ifdef __BANDS
-  call calbec_bands(n, vkb, hpsi, becp, m, ibnd_start, ibnd_end)
+  call calbec_bands(n, vkb, hpsi, becp%k, m, ibnd_start, ibnd_end)
   call s_psi_bands (npwx, n, m, hpsi, spsi, ibnd_start, ibnd_end)
 #else
   call calbec(n, vkb, hpsi, becp, m)

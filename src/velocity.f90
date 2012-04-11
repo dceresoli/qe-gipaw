@@ -128,7 +128,7 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
       ! compute <\beta(k \pm dk)| and project on |psi>
       call init_us_2_no_phase(npw, igk, dxk, vkb)
 #ifdef __BANDS
-      call calbec_bands (npw, vkb, psi, becp, nbnd_occ(ik), ibnd_start, ibnd_end)
+      call calbec_bands (npw, vkb, psi, becp%k, nbnd_occ(ik), ibnd_start, ibnd_end)
 #else
       call calbec (npw, vkb, psi, becp, nbnd_occ(ik))
 #endif
@@ -144,7 +144,7 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
           ! apply |\beta(k \pm dk+q)>D<\beta(k \pm dk)| to |psi>
           !! Hubbard? any other term here?
 #ifdef __BANDS
-          call add_vuspsi_new(npwx, npw, nbnd_occ(ik), aux, ibnd_start, ibnd_end)
+          call add_vuspsi_bands(npwx, npw, nbnd_occ(ik), aux, ibnd_start, ibnd_end)
           aux2(:,ibnd_start:ibnd_end) = aux2(:,ibnd_start:ibnd_end) + dble(isign) * ryd_to_hartree * aux(:,ibnd_start:ibnd_end)/(2.d0*dk*tpiba)
 #else
           call add_vuspsi(npwx, npw, nbnd_occ(ik), aux)
@@ -155,7 +155,7 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
       elseif (what == 'S' .or. what == 's') then
           ! apply |\beta(k \pm dk+q)>S<\beta(k \pm dk)| to |psi>
 #ifdef __BANDS
-          call s_psi_new(npwx, npw, nbnd_occ(ik), psi, aux, ibnd_start, ibnd_end)
+          call s_psi_bands(npwx, npw, nbnd_occ(ik), psi, aux, ibnd_start, ibnd_end)
           aux2(:,ibnd_start:ibnd_end) = aux2(:,ibnd_start:ibnd_end) + dble(isign) * aux(:,ibnd_start:ibnd_end)/(2.d0*dk*tpiba)
 #else
           call s_psi(npwx, npw, nbnd_occ(ik), psi, aux)

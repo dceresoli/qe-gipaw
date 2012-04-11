@@ -90,8 +90,8 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   ! g_psi is used as work space to store S|evq>
   ! |psi> = -(|psi> - S|evq><evq|psi>)
 #ifdef __BANDS
-  CALL calbec_new (npw, vkb, evq, becp, nbnd_occ(ik), ibnd_start, ibnd_end)
-  CALL s_psi_new (npwx, npw, nbnd_occ(ik), evq, g_psi, ibnd_start, ibnd_end)
+  CALL calbec_bands (npw, vkb, evq, becp%k, nbnd_occ(ik), ibnd_start, ibnd_end)
+  CALL s_psi_bands (npwx, npw, nbnd_occ(ik), evq, g_psi, ibnd_start, ibnd_end)
 #else
   CALL calbec (npw, vkb, evq, becp)
   CALL s_psi (npwx, npw, nbnd_occ(ik), evq, g_psi)
@@ -174,7 +174,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   endif
   !it was: call ccalbec (nkb, npwx, npw, nbnd, becp, vkb, psi)
 #ifdef __BANDS
-  call calbec_new (npw, vkb, psi, becp, nbnd, ibnd_start, ibnd_end)
+  call calbec_bands (npw, vkb, psi, becp%k, nbnd, ibnd_start, ibnd_end)
 #else
   call calbec (npw, vkb, psi, becp, nbnd)
 #endif

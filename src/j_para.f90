@@ -113,7 +113,7 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
     enddo ! ibnd
 
 #if defined(__MPI) && defined(__BANDS) 
-    call mp_sum(j_new(1:dffts%nnr,ipol),inter_bgrp_comm)
+    call mp_sum(jaux(1:dffts%nnr,ipol),inter_bgrp_comm)
 #endif
   enddo ! ipol
 

@@ -30,7 +30,6 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   USE scf,                   ONLY : vrs
   USE wavefunctions_module,  ONLY : psic
   USE becmod,                ONLY : becp, calbec
-  USE gipaw_module
 #ifdef __BANDS
   USE becmod,                ONLY : calbec_bands
   USE mp,                    ONLY : mp_sum
@@ -40,7 +39,7 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   !     Here the local variables
   !
 #ifdef __BANDS
-  integer :: ibnd_start, ibnd_end
+  integer :: ibnd_start, ibnd_end, ibnd
 #else
   integer :: ibnd
 #endif
@@ -64,7 +63,7 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
 
   !it was: call ccalbec (nkb, npwx, n, m, becp, vkb, psi)
 #ifdef __BANDS
-  call calbec_bands (n, vkb, psi, becp, m, ibnd_start, ibnd_end)
+  call calbec_bands (n, vkb, psi, becp%k, m, ibnd_start, ibnd_end)
 #else
   call calbec (n, vkb, psi, becp, m)
 #endif
@@ -124,3 +123,35 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   call stop_clock ('h_psiq')
   return
 end subroutine h_psiq
+
+
+
+#ifdef __BANDS
+!-----------------------------------------------------------------------
+subroutine s_psi_bands (lda, n, m, psi, spsi, ibnd_start, ibnd_end)
+  !-----------------------------------------------------------------------
+  USE kinds,                 only : dp
+  IMPLICIT NONE
+  integer, intent(in) :: lda, n, m
+  integer, intent(in) :: ibnd_start, ibnd_end
+  complex(dp), intent(in) :: psi(lda,m)
+  complex(dp), intent(out) :: spsi(lda,m)
+
+  call s_psi(lda, n, ibnd_end-ibnd_start+1, psi(1,ibnd_start), spsi(1,ibnd_start))
+
+end subroutine s_psi_bands
+
+!-----------------------------------------------------------------------
+subroutine add_vuspsi_bands (lda, n, m, psi, ibnd_start, ibnd_end)
+  !-----------------------------------------------------------------------
+  USE kinds,                 only : dp
+  IMPLICIT NONE
+  integer, intent(in) :: lda, n, m
+  integer, intent(in) :: ibnd_start, ibnd_end
+  complex(dp), intent(inout) :: psi(lda,m)
+
+  call add_vuspsi(lda, n, ibnd_end-ibnd_start+1, psi(1,ibnd_start))
+
+end subroutine add_vuspsi_bands
+
+#endif

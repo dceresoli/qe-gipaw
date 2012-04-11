@@ -184,7 +184,7 @@ SUBROUTINE gipaw_openfil
   !
   USE gipaw_module
   USE io_global,        ONLY : stdout
-  USE io_files,         ONLY : diropn
+  USE io_files,         ONLY : diropn, seqopn
   USE basis,            ONLY : natomwfc, starting_wfc
   USE wvfct,            ONLY : nbnd, npwx
   USE ldaU,             ONLY : lda_plus_U  
@@ -337,6 +337,7 @@ SUBROUTINE init_parallel_over_band(comm, nbnd)
   !
   ! ... Setup band indexes for band parallelization
   !
+  USE gipaw_module, ONLY : ibnd_start, ibnd_end
   IMPLICIT NONE
 #include 'mpif.h'
   INTEGER, INTENT(IN) :: comm, nbnd 
