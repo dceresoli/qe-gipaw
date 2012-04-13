@@ -6,6 +6,8 @@
 ! or http://www.gnu.org/copyleft/gpl.txt .
 !
 !
+! see also gipaw_routines_bands.f90 for s_spi_bands and add_vuspsi_bands
+!
 !-----------------------------------------------------------------------
 #ifdef __BANDS
 subroutine h_psiq (lda, n, m, psi, hpsi, spsi, ibnd_start, ibnd_end)

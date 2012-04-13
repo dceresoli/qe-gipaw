@@ -44,7 +44,7 @@ PROGRAM gipaw_main
   USE wvfct,                ONLY : nbnd, npw 
   USE mp_image_global_module, ONLY : mp_image_startup, world_comm
   USE mp_image_global_module, ONLY : me_image, nimage, inter_image_comm, intra_image_comm
-  USE mp_global,             ONLY : mp_start, mpime, nproc, root, inter_bgrp_comm
+  USE mp_global,             ONLY : mp_start, mpime, nproc, root, inter_bgrp_comm, nbgrp
   USE image_io_routines, ONLY : io_image_start
   USE iotk_module  
   USE xml_io_base
@@ -68,6 +68,11 @@ PROGRAM gipaw_main
 #endif
 
   CALL environment_start ( code )
+#ifndef __BANDS
+  if (nbgrp > 1) &
+    call errore('gipaw_main', 'configure and recompile GIPAW with --enable-band-parallel', 1)
+#endif
+
   CALL io_image_start()
   CALL gipaw_readin()
   CALL check_stop_init()
