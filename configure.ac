@@ -1,11 +1,18 @@
 # Autoconf template for ce-gipaw
-AC_INIT(ce-gipaw, 4.3svn, dceresoli@gmail.com, ce-gipaw)
+AC_INIT(ce-gipaw, 4.99svn, dceresoli@gmail.com, ce-gipaw)
 
-# The only option is the quantum-Espresso source directory (QE_SOURCE)
+# Option: Quantum-Espresso source directory (QE_SOURCE)
 AC_ARG_WITH(qe-source,
    [AC_HELP_STRING([--with-qe-source=DIR],[Quantum-Espresso source directory (QE_SOURCE)])],
    [qe_source=$withval],
    [qe_source=$QE_SOURCE])
+
+# Option: enable band parallelization
+AC_ARG_ENABLE(band-parallel,
+   [AC_HELP_STRING([--enable-band-parallel],[enable band parallelization (EXPERIMENTAL!)])],
+   BAND_PARALLEL="$enableval",
+   BAND_PARALLEL="no"
+)
 
 # Look for make.sys
 AC_CHECK_FILE(${qe_source}/make.sys, [], [AC_MSG_ERROR([Cannot find make.sys in ${qe_source}])])
@@ -23,8 +30,14 @@ case $version in
   *) AC_MSG_ERROR([Cannot compile against this version of quantum-Espresso]) ;;
 esac
 
+# process options
+dflags_gipaw=''
+if test $BAND_PARALLEL = yes ; then 
+  dflags_gipaw="${dflags_gipaw} -D__BANDS"
+fi
+
 # export settings to generated files
-AC_SUBST(qe_source)
+AC_SUBST(qe_source dflags_gipaw)
 AC_OUTPUT([makedeps.sh src/Makefile], [chmod +x makedeps.sh])
 
 # default commands
