@@ -51,7 +51,6 @@ SUBROUTINE suscept_crystal
   USE mp,                     ONLY : mp_sum
   USE mp_image_global_module, ONLY : my_image_id, inter_image_comm, nimage
 #ifdef __BANDS
-  USE becmod,                 ONLY : calbec_bands
   USE gipaw_module,           ONLY : ibnd_start, ibnd_end
   USE mp_global,              ONLY : intra_bgrp_comm, inter_bgrp_comm
 #endif
@@ -270,7 +269,11 @@ SUBROUTINE suscept_crystal
   call start_clock('susc:f-sum')
     do ipol = 1, 3 
       do jpol = 1, 3
+#ifdef __BANDS
+        do ibnd = ibnd_start, ibnd_end
+#else
         do ibnd = 1, nbnd_occ(ik)
+#endif
           ! count number of electrons
           if (ipol == 1 .and. jpol == 1) then
               braket = -real(zdotc(npw, evc(1,ibnd), 1, evc(1,ibnd), 1), dp)
@@ -461,6 +464,7 @@ SUBROUTINE suscept_crystal
   endif
   enddo  ! ik
 
+  !print*, f_sum(1,1)
   call start_clock('susc:mp_sum')
 #ifdef __MPI
   ! reduce over G-vectors
@@ -471,6 +475,7 @@ SUBROUTINE suscept_crystal
   call mp_sum( q_pGv, intra_bgrp_comm )
   call mp_sum( q_vGv, intra_bgrp_comm )
   call mp_sum( delta_g_rmc, intra_bgrp_comm)
+  print*, f_sum(1,1)
 #else
   call mp_sum( f_sum, intra_pool_comm )
   call mp_sum( f_sum_occ, intra_pool_comm )
@@ -481,19 +486,29 @@ SUBROUTINE suscept_crystal
 #endif
 #endif
   
+! reduce over k-points
 #ifdef __MPI
-  ! reduce over k-points
+#ifdef __BANDS
+  !call mp_sum( f_sum, inter_bgrp_comm )
+  !call mp_sum( f_sum_occ, inter_bgrp_comm )
+  call mp_sum( f_sum_nelec, inter_bgrp_comm )
+  !call mp_sum( q_pGv, inter_bgrp_comm )
+  !call mp_sum( q_vGv, inter_bgrp_comm )
+  call mp_sum( delta_g_rmc, inter_bgrp_comm)
+  print*, f_sum(1,1)
+#else
   call mp_sum( f_sum, inter_pool_comm )
   call mp_sum( f_sum_occ, inter_pool_comm )
   call mp_sum( f_sum_nelec, inter_pool_comm )
   call mp_sum( q_pGv, inter_pool_comm )
   call mp_sum( q_vGv, inter_pool_comm )
+  call mp_sum( delta_g_rmc, inter_pool_comm)
+#endif
   call mp_sum( j_bare_s, inter_pool_comm )
   call mp_sum( sigma_diamagnetic, inter_pool_comm )
   call mp_sum( sigma_paramagnetic, inter_pool_comm )
   call mp_sum( sigma_paramagnetic_us, inter_pool_comm )
   call mp_sum( sigma_paramagnetic_aug, inter_pool_comm )
-  call mp_sum( delta_g_rmc, inter_pool_comm)
   call mp_sum( delta_g_rmc_gipaw, inter_pool_comm)
   call mp_sum( delta_g_so_dia, inter_pool_comm )
   call mp_sum( delta_g_so_para, inter_pool_comm )
@@ -732,7 +747,11 @@ CONTAINS
         comp_ib = ind(ib,i)
         if (mult(ib,i) == 0) cycle
 
+#ifdef __BANDS
+        do ibnd = ibnd_start, ibnd_end
+#else
         do ibnd = 1, nbnd_occ(ik)
+#endif
           braket = real(zdotc(npw, ul(1,ibnd,comp_ia), 1, &
                                    ur(1,ibnd,comp_ib), 1), dp)
           qt(ia,ib) = qt(ia,ib) + wg(ibnd,ik) * &

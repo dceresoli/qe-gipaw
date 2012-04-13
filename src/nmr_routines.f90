@@ -239,7 +239,6 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   USE gvect,                  ONLY : g, ngm
   USE io_global,              ONLY : stdout, ionode
 #ifdef __BANDS
-  USE becmod,                 ONLY : calbec_bands
   USE gipaw_module,           ONLY : ibnd_start, ibnd_end
   USE mp_image_global_module, ONLY : inter_image_comm
   USE mp,                     ONLY : mp_sum

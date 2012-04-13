@@ -328,39 +328,3 @@ SUBROUTINE print_clock_gipaw
 
 END SUBROUTINE print_clock_gipaw
 
-
-
-#ifdef __BANDS 
-!-----------------------------------------------------------------------
-SUBROUTINE init_parallel_over_band(comm, nbnd)
-  !-----------------------------------------------------------------------
-  !
-  ! ... Setup band indexes for band parallelization
-  !
-  USE gipaw_module, ONLY : ibnd_start, ibnd_end
-  IMPLICIT NONE
-#include 'mpif.h'
-  INTEGER, INTENT(IN) :: comm, nbnd 
-
-  INTEGER :: mp_size, mp_rank, ierror, rest, k
-
-  call mpi_comm_rank(comm, mp_rank, ierror)
-  call mpi_comm_size(comm, mp_size, ierror)
-  rest = mod(nbnd, mp_size)
-  k = int(nbnd/mp_size)
-    
-  if (k.ge.1) then
-     if (rest > mp_rank) then
-        ibnd_start = (mp_rank)*k + (mp_rank+1)
-        ibnd_end  =  (mp_rank+1)*k + (mp_rank+1)
-     else
-        ibnd_start = (mp_rank)*k + rest + 1
-        ibnd_end  =  (mp_rank+1)*k + rest
-     endif
-  else
-     ibnd_start = 1
-     ibnd_end = nbnd
-  endif   
-
-END SUBROUTINE init_parallel_over_band
-#endif

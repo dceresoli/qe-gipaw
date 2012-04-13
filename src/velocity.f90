@@ -26,7 +26,10 @@ SUBROUTINE apply_p(psi, p_psi, ik, ipol, q)
   USE klist,                ONLY : xk
   USE wvfct,                ONLY : nbnd, npwx, npw, igk  
   USE pwcom
-  USE gipaw_module
+  USE gipaw_module,         ONLY : nbnd_occ
+#ifdef __BANDS
+  USE gipaw_module,         ONLY : ibnd_start, ibnd_end
+#endif
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT none
@@ -40,7 +43,11 @@ SUBROUTINE apply_p(psi, p_psi, ik, ipol, q)
   REAL(DP) :: gk
   INTEGER :: ig, ibnd
 
+#ifdef __BANDS
+  do ibnd = ibnd_start, ibnd_end
+#else
   do ibnd = 1, nbnd_occ(ik)
+#endif
     do ig = 1, npw
       gk = xk(ipol,ik) + g(ipol,igk(ig)) + q(ipol)
       p_psi(ig,ibnd) = p_psi(ig,ibnd) + gk * tpiba * psi(ig,ibnd)
@@ -75,7 +82,6 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
 #ifdef __BANDS
   USE mp_global,            ONLY : inter_bgrp_comm
   USE gipaw_module,         ONLY : ibnd_start, ibnd_end
-  USE becmod,               ONLY : calbec_bands
 #endif
   !-- paramters ----------------------------------------------------------
   IMPLICIT NONE
@@ -194,6 +200,9 @@ SUBROUTINE apply_vel(psi, vel_psi, ik, ipol, q)
   USE wvfct,                ONLY : nbnd, npwx, npw, igk, et 
   USE uspp,                 ONLY : nkb, vkb, okvan
   USE gipaw_module,         ONLY : nbnd_occ
+#ifdef __BANDS
+  USE gipaw_module,         ONLY : ibnd_start, ibnd_end
+#endif
 
   !-- paramters ----------------------------------------------------------
   IMPLICIT NONE
@@ -211,7 +220,11 @@ SUBROUTINE apply_vel(psi, vel_psi, ik, ipol, q)
 
   if (okvan) then
       call apply_vel_NL('S', psi, vel_psi, ik, ipol, q)
+#ifdef __BANDS
+      do ibnd = 1, ibnd_start, ibnd_end
+#else
       do ibnd = 1, nbnd_occ(ik)
+#endif
           vel_psi(1:npwx,ibnd) = -et(ibnd,ik) * ryd_to_hartree * vel_psi(1:npwx,ibnd)
       enddo
   endif

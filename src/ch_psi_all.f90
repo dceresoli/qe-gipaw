@@ -26,7 +26,6 @@ subroutine ch_psi_all (n, h, ah, e, ik, m)
   USE mp_global,    ONLY : intra_pool_comm
   USE mp,           ONLY : mp_sum
 #ifdef __BANDS
-  USE becmod,       ONLY : calbec_bands
   USE mp_global,    ONLY : intra_bgrp_comm
 #endif
   implicit none

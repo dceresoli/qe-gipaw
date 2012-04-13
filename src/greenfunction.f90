@@ -30,7 +30,6 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   USE mp_image_global_module,      ONLY : inter_image_comm, nimage
 #ifdef __BANDS
   USE mp_global,                   ONLY : intra_bgrp_comm
-  USE becmod,                      ONLY : calbec_bands
 #endif
 
   !-- parameters ---------------------------------------------------------
