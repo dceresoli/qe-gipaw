@@ -166,6 +166,7 @@ SUBROUTINE get_smooth_density(rho)
   USE buffers,                ONLY : get_buffer
   USE fft_base,               ONLY : dffts
   USE fft_interfaces,         ONLY : invfft
+  USE gipaw_module,           ONLY : job
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
   complex(dp), intent(out) :: rho(dffts%nnr,nspin)
@@ -198,13 +199,15 @@ SUBROUTINE get_smooth_density(rho)
   call mp_sum( rho, inter_pool_comm )
 #endif
 
-  do is = 1, nspin
+  if (job == 'hyperfine') then
+    do is = 1, nspin
 #ifdef __MPI
-    call psymmetrize_rho_s(rho(1,is))
+      call psymmetrize_rho_s(rho(1,is))
 #else
-    call symmetrize_rho_s(rho(1,is))
+      call symmetrize_rho_s(rho(1,is))
 #endif
-  enddo
+    enddo
+  endif
 
 END SUBROUTINE get_smooth_density
 
