@@ -86,6 +86,7 @@ SUBROUTINE select_spin(s_min, s_maj)
 
   rho_diff = sum(rho%of_r(:,1) - rho%of_r(:,nspin))
 #ifdef __BANDS
+  ! siamo sicuri di questo comunicatore?
   call mp_sum(rho_diff, intra_bgrp_comm)
 #else
   call mp_sum(rho_diff, intra_pool_comm)

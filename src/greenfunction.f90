@@ -28,6 +28,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   USE ldaU,                        ONLY : lda_plus_u, swfcatom
   USE io_files,                    ONLY : iunsat, nwordatwfc
   USE mp_image_global_module,      ONLY : inter_image_comm, nimage
+  USE mp_global,                   ONLY : mpime
 #ifdef __BANDS
   USE mp_global,                   ONLY : intra_bgrp_comm
 #endif
@@ -77,17 +78,19 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
              (1.d0,0.d0), evq(1,1), npwx, psi(1,1), npwx, (0.d0,0.d0), &
              ps(1,1), nbnd)
 #endif   
+
 #ifdef __MPI
-#  ifdef __BANDS
-  call mp_sum(ps,intra_bgrp_comm)
-#  else
-  call mp_sum(ps,intra_pool_comm)
-#  endif
+#ifdef __BANDS
+  call mp_sum(ps, intra_bgrp_comm)
+#else
+  call mp_sum(ps, intra_pool_comm)
+#endif
 #endif
 
   ! this is the case with overlap (ultrasoft)
   ! g_psi is used as work space to store S|evq>
   ! |psi> = -(|psi> - S|evq><evq|psi>)
+if (mpime==0) print*, mpime, 'A: g_psi=', g_psi(1,1)
 #ifdef __BANDS
   CALL calbec_bands (npw, vkb, evq, becp%k, nbnd_occ(ik), ibnd_start, ibnd_end)
   CALL s_psi_bands (npwx, npw, nbnd_occ(ik), evq, g_psi, ibnd_start, ibnd_end)
@@ -95,15 +98,14 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   CALL calbec (npw, vkb, evq, becp)
   CALL s_psi (npwx, npw, nbnd_occ(ik), evq, g_psi)
 #endif
+if (mpime==0) print*, mpime, 'B: g_psi=', g_psi(1,1)
 
-#ifdef __MPI 
-#  ifdef __BANDS
+#if defined(__MPI) && defined(__BANDS)
+  ! replicate wfc
   call mp_sum(g_psi, inter_bgrp_comm)
-#  else
-  call mp_sum(g_psi, inter_bgrp_comm)
-#  endif
 #endif
 
+if (mpime==0) print*, mpime, 'C: psi=', psi(1,1)
 #ifdef __BANDS
   CALL zgemm( 'N', 'N', npw, ibnd_end-ibnd_start+1, nbnd_occ(ik), &
        (1.d0,0.d0), g_psi(1,1), npwx, ps(1,ibnd_start), nbnd, (-1.d0,0.d0), &
@@ -114,6 +116,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
        psi(1,1), npwx )
 #endif
 
+if (mpime==0) print*, mpime, 'D: psi=', psi(1,1)
   !! this is the old code for norm-conserving:
   !! |psi> = -(1 - |evq><evq|) |psi>
   !!CALL zgemm('N', 'N', npw, nbnd_occ(ik), nbnd_occ(ik), &
@@ -148,11 +151,11 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
      eprec (ibnd) = 1.35d0 * zdotc (npw, evq (1, ibnd), 1, work, 1)
   enddo
 #ifdef __MPI
-#  ifdef __BANDS
+#ifdef __BANDS
   call mp_sum ( eprec( 1:nbnd_occ(ik) ), intra_bgrp_comm )
-#  else
+#else
   call mp_sum ( eprec( 1:nbnd_occ(ik) ), intra_pool_comm )
-#  endif
+#endif
 #endif
   h_diag = 0.d0
 #ifdef __BANDS
@@ -194,16 +197,14 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   call cgsolve_all (ch_psi_all, cg_psi, et(1,ik), psi, g_psi, &
        h_diag, npwx, npw, thresh, ik, lter, conv_root, anorm, &
        nbnd_occ(ik), npol )
+!print*, mpime, 'g_psi=', g_psi(1,1)
 #if defined(__MPI) && defined(__BANDS)
-  call mp_sum(g_psi,inter_bgrp_comm)
+  ! replicate wfc
+  call mp_sum(g_psi, inter_bgrp_comm)
 #endif
-  !! debug  
-  !!write(stdout, '(5X,''cgsolve_all converged in '',I3,'' iterations'')') &
-  !!      lter
 
-  if (.not.conv_root) WRITE( stdout, '(5x,"ik",i4," ibnd",i4, &
-       & " linter: root not converged ",e10.3)') &
-       ik, ibnd, anorm
+  if (iverbosity > 10) &
+    write(stdout, '(5X,''cgsolve_all iterations: '',I3,2X,''anorm='',E12.2)')  lter, anorm
 
   ! convert to Hartree
   g_psi(:,:) = g_psi(:,:) / ryd_to_hartree

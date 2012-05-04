@@ -56,10 +56,10 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
   !   revised (to reduce memory) 29 May 2004 by S. de Gironcoli
   !
   USE kinds, only : DP
-  USE mp_global, ONLY: intra_pool_comm
+  USE mp_global, ONLY: intra_pool_comm, me_pool
   USE mp,        ONLY: mp_sum
 #ifdef __BANDS
-  USE mp_global, ONLY: intra_bgrp_comm
+  USE mp_global, ONLY: intra_bgrp_comm, me_bgrp
   USE gipaw_module, ONLY: ibnd_start, ibnd_end
 #endif
 
@@ -297,6 +297,17 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
      enddo
   enddo
 100 continue
+
+#ifdef __BANDS
+   do ibnd = ibnd_start, ibnd_end
+     if (conv(ibnd) == 0 .and. me_bgrp == 0) &
+#else
+   do ibnd = 1, nbnd
+     if (conv(ibnd) == 0 .and. me_pool == 0) &
+#endif
+       write(*,'(5x,"ik",i4," ibnd",i4,4x,"cgsolve_all: root not converged ",e10.3)') ik, ibnd, anorm
+   enddo
+
   kter = kter_eff
   deallocate (eu)
   deallocate (rho, rhoold)

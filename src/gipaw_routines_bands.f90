@@ -15,7 +15,6 @@ SUBROUTINE init_parallel_over_band(comm, nbnd)
   !
   USE gipaw_module, ONLY : ibnd_start, ibnd_end
   IMPLICIT NONE
-!#include 'mpif.h'
   INTEGER, INTENT(IN) :: comm, nbnd 
 
   INTEGER :: mp_size, mp_rank, ierror, rest, k
@@ -50,41 +49,35 @@ SUBROUTINE calbec_bands (npw, beta, psi, betapsi, nbnd, ibnd_start, ibnd_end)
   ! ... matrix times matrix with summation index (k=1,npw) running on
   ! ... G-vectors or PWs : betapsi(i,j) = \sum_k beta^*(i,k) psi(k,j)
   !
-  USE mp_global,             only : intra_bgrp_comm, intra_pool_comm
-  USE mp,                    only : mp_sum
   USE kinds,                 only : dp
+  USE mp_global,             only : intra_bgrp_comm
+  USE mp,                    only : mp_sum
   IMPLICIT NONE
   integer, intent(in) :: npw
   complex(dp), intent(in) :: beta(:,:), psi(:,:)
   complex(dp), intent(out) :: betapsi(:,:)
   integer, intent(in) :: nbnd, ibnd_start, ibnd_end
-  integer :: nkb, npwx, m
+  integer :: nkb, npwx
 
+  nkb = size(beta,2)
+  if (nkb == 0) return
+
+  npwx = size(beta,1)
+  if (npwx /= size(psi,1)) call errore('calbec_bands', 'size mismatch', 1)
+  if (npwx < npw) call errore('calbec_bands', 'size mismatch', 2)
+  if (nkb /= size(betapsi,1) .or. nbnd > size(betapsi,2)) &
+    call errore ('calbec_bands', 'size mismatch', 3)
 #ifdef DEBUG
-  write (*,*) 'calbec_bands'
-  write (*,*)  nkb, size(betapsi,1), m, size (betapsi, 2), ibnd_start, ibnd_end
+  write(*,*) 'calbec_bands'
+  write(*,*) nkb,  size(betapsi,1), nbnd,  size(betapsi, 2)
 #endif
 
-  npwx = size(beta, 1)
-  m = size(psi, 2)
-  nkb = size(beta, 2)
-  if ( nkb == 0 ) return
-  if ( npwx /= size (psi, 1) ) call errore ('calbec', 'size mismatch', 1)
-  if ( npwx < npw ) call errore ('calbec', 'size mismatch', 2)
-  if ( nkb /= size (betapsi,1) .or. m > size (betapsi, 2) ) &
-    call errore ('calbec', 'size mismatch', 3)
-
   call start_clock( 'calbec' )
- 
-  if ( m == 1 ) then
-    call ZGEMV('C', npw, nkb, (1.d0,0.d0), beta, npwx, psi, 1, (0.d0, 0.d0), betapsi, 1)
- 
-  else
-    call ZGEMM('C', 'N', nkb, ibnd_end-ibnd_start+1, npw, (1.d0,0.d0), &
-               beta, npwx, psi(1,ibnd_start), npwx, (0.d0,0.d0), betapsi(1,ibnd_start), nkb)
-  endif
 
-  call mp_sum(betapsi(:,1:m), intra_bgrp_comm)
+  call ZGEMM('C', 'N', nkb, ibnd_end-ibnd_start+1, npw, (1.d0,0.d0), &
+             beta, npwx, psi(1,ibnd_start), npwx, (0.d0,0.d0), betapsi(1,ibnd_start), nkb)
+
+  call mp_sum(betapsi(:,1:nbnd), intra_bgrp_comm)
 
   call stop_clock( 'calbec' )
 
@@ -142,12 +135,8 @@ SUBROUTINE s_psi_bands (lda, n, m, psi, spsi, ibnd_start, ibnd_end)
     end if
   end do ! nt
 
-  if ( m == 1 ) then
-    call ZGEMV('N', n, nkb, (1.d0,0.d0), vkb, lda, ps, 1, (1.d0,0.d0), spsi, 1)
-  else
-    call ZGEMM('N', 'N', n, ibnd_end-ibnd_start+1, nkb, (1.d0,0.d0), vkb, &
-               lda, ps(1,ibnd_start), nkb, (1.d0,0.d0), spsi(1,ibnd_start), lda)
-  end if
+  call ZGEMM('N', 'N', n, ibnd_end-ibnd_start+1, nkb, (1.d0,0.d0), vkb, &
+             lda, ps(1,ibnd_start), nkb, (1.d0,0.d0), spsi(1,ibnd_start), lda)
 
   deallocate( ps )
   return

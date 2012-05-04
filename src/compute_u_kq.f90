@@ -96,11 +96,9 @@ SUBROUTINE compute_u_kq(ik, q)
   IF ( nkb > 0 ) CALL init_us_2( npw, igk, xk(1,ik), vkb )
 
   ! read in wavefunctions from the previous iteration
-  !!IF ( nks > 1 .OR. (io_level > 1) .OR. lelfield ) &
   CALL get_buffer( evc, nwordwfc, iunwfc, ik)
-
 #ifdef __BANDS
-  call mp_sum(evc,inter_bgrp_comm)
+  call mp_sum(evc, inter_bgrp_comm)
 #endif
 
   ! randomize a little bit
@@ -133,7 +131,9 @@ SUBROUTINE compute_u_kq(ik, q)
 
   ! check if diagonalization was ok
   if (iverbosity > 10) then
+    write(stdout,'(5X,''eigenvalues at k:'')')
     write(stdout,'(8F9.4)') et_old(1:nbnd,ik)*RytoeV
+    write(stdout,'(5X,''eigenvalues at k+q:'')')
     write(stdout,'(8F9.4)') et(1:nbnd,ik)*RytoeV
   endif
 

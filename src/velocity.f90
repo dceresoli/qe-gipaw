@@ -28,6 +28,8 @@ SUBROUTINE apply_p(psi, p_psi, ik, ipol, q)
   USE pwcom
   USE gipaw_module,         ONLY : nbnd_occ
 #ifdef __BANDS
+  USE mp_global,            ONLY : inter_bgrp_comm
+  USE mp,                   ONLY : mp_sum
   USE gipaw_module,         ONLY : ibnd_start, ibnd_end
 #endif
 
@@ -43,11 +45,7 @@ SUBROUTINE apply_p(psi, p_psi, ik, ipol, q)
   REAL(DP) :: gk
   INTEGER :: ig, ibnd
 
-#ifdef __BANDS
-  do ibnd = ibnd_start, ibnd_end
-#else
   do ibnd = 1, nbnd_occ(ik)
-#endif
     do ig = 1, npw
       gk = xk(ipol,ik) + g(ipol,igk(ig)) + q(ipol)
       p_psi(ig,ibnd) = p_psi(ig,ibnd) + gk * tpiba * psi(ig,ibnd)
@@ -78,9 +76,9 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   USE uspp,                 ONLY : nkb, vkb
   USE cell_base,            ONLY : tpiba
   USE gipaw_module,         ONLY : q_gipaw, nbnd_occ
-  USE mp,                   ONLY : mp_sum
 #ifdef __BANDS
   USE mp_global,            ONLY : inter_bgrp_comm
+  USE mp,                   ONLY : mp_sum
   USE gipaw_module,         ONLY : ibnd_start, ibnd_end
 #endif
   !-- paramters ----------------------------------------------------------
@@ -227,6 +225,7 @@ SUBROUTINE apply_vel(psi, vel_psi, ik, ipol, q)
 #endif
           vel_psi(1:npwx,ibnd) = -et(ibnd,ik) * ryd_to_hartree * vel_psi(1:npwx,ibnd)
       enddo
+      ! mp_sum inter_bgrp_comm? oppure, farlo su tutte le bande
   endif
 
   call apply_vel_NL('V', psi, vel_psi, ik, ipol, q)

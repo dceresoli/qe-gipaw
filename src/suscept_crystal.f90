@@ -47,7 +47,7 @@ SUBROUTINE suscept_crystal
   USE ions_base,              ONLY : nat
   USE buffers,                ONLY : get_buffer
   USE mp_global,              ONLY : my_pool_id, me_pool, root_pool, &
-                                     inter_pool_comm, intra_pool_comm
+                                     inter_pool_comm, intra_pool_comm, mpime
   USE mp,                     ONLY : mp_sum
   USE mp_image_global_module, ONLY : my_image_id, inter_image_comm, nimage
 #ifdef __BANDS
@@ -202,6 +202,7 @@ SUBROUTINE suscept_crystal
   call start_clock('susc:IO')
     call get_buffer (evc, nwordwfc, iunwfc, ik)
 #ifdef __BANDS
+    ! replicate wavefunction over band groups
     call mp_sum(evc, inter_bgrp_comm)
 #endif
   call stop_clock('susc:IO')
@@ -464,19 +465,24 @@ SUBROUTINE suscept_crystal
   endif
   enddo  ! ik
 
-  !print*, f_sum(1,1)
-  call start_clock('susc:mp_sum')
 #ifdef __MPI
-  ! reduce over G-vectors
+  call start_clock('susc:mp_sum')
+
 #ifdef __BANDS
+  write(*,'(''mpime='',I3,4X,''bands='',2I4,4X,''f_sum_nelec='',F10.4)') mpime, ibnd_start, ibnd_end, f_sum_nelec
+  ! reduce over G-vectors
   call mp_sum( f_sum, intra_bgrp_comm )
+  call mp_sum( f_sum, inter_bgrp_comm )
   call mp_sum( f_sum_occ, intra_bgrp_comm )
+  call mp_sum( f_sum_occ, inter_bgrp_comm )
   call mp_sum( f_sum_nelec, intra_bgrp_comm )
+  call mp_sum( f_sum_nelec, inter_bgrp_comm )
+
   call mp_sum( q_pGv, intra_bgrp_comm )
   call mp_sum( q_vGv, intra_bgrp_comm )
   call mp_sum( delta_g_rmc, intra_bgrp_comm)
-  print*, f_sum(1,1)
 #else
+  ! reduce over G-vectors
   call mp_sum( f_sum, intra_pool_comm )
   call mp_sum( f_sum_occ, intra_pool_comm )
   call mp_sum( f_sum_nelec, intra_pool_comm )
@@ -484,26 +490,19 @@ SUBROUTINE suscept_crystal
   call mp_sum( q_vGv, intra_pool_comm )
   call mp_sum( delta_g_rmc, intra_pool_comm)
 #endif
-#endif
-  
-! reduce over k-points
-#ifdef __MPI
-#ifdef __BANDS
-  !call mp_sum( f_sum, inter_bgrp_comm )
-  !call mp_sum( f_sum_occ, inter_bgrp_comm )
-  call mp_sum( f_sum_nelec, inter_bgrp_comm )
-  !call mp_sum( q_pGv, inter_bgrp_comm )
-  !call mp_sum( q_vGv, inter_bgrp_comm )
-  call mp_sum( delta_g_rmc, inter_bgrp_comm)
-  print*, f_sum(1,1)
-#else
+!  ! reduce over bands
+!  call mp_sum( q_pGv, inter_bgrp_comm )
+!  call mp_sum( q_vGv, inter_bgrp_comm )
+!  call mp_sum( delta_g_rmc, inter_bgrp_comm)
+
+  ! reduce over k-point pools
   call mp_sum( f_sum, inter_pool_comm )
   call mp_sum( f_sum_occ, inter_pool_comm )
   call mp_sum( f_sum_nelec, inter_pool_comm )
   call mp_sum( q_pGv, inter_pool_comm )
   call mp_sum( q_vGv, inter_pool_comm )
   call mp_sum( delta_g_rmc, inter_pool_comm)
-#endif
+
   call mp_sum( j_bare_s, inter_pool_comm )
   call mp_sum( sigma_diamagnetic, inter_pool_comm )
   call mp_sum( sigma_paramagnetic, inter_pool_comm )
@@ -514,26 +513,29 @@ SUBROUTINE suscept_crystal
   call mp_sum( delta_g_so_para, inter_pool_comm )
   call mp_sum( delta_g_so_para_us, inter_pool_comm )
   call mp_sum( delta_g_so_para_aug, inter_pool_comm )
-  if(nimage>1)then
-  call mp_sum( f_sum, inter_image_comm )
-  call mp_sum( f_sum_occ, inter_image_comm )
-  call mp_sum( f_sum_nelec, inter_image_comm )
-  call mp_sum( q_pGv, inter_image_comm )
-  call mp_sum( q_vGv, inter_image_comm )
-  call mp_sum( j_bare_s, inter_image_comm )
-  call mp_sum( sigma_diamagnetic, inter_image_comm )
-  call mp_sum( sigma_paramagnetic, inter_image_comm )
-  call mp_sum( sigma_paramagnetic_us, inter_image_comm )
-  call mp_sum( sigma_paramagnetic_aug, inter_image_comm )
-  call mp_sum( delta_g_rmc, inter_image_comm)
-  call mp_sum( delta_g_rmc_gipaw, inter_image_comm)
-  call mp_sum( delta_g_so_dia, inter_image_comm )
-  call mp_sum( delta_g_so_para, inter_image_comm )
-  call mp_sum( delta_g_so_para_us, inter_image_comm )
-  call mp_sum( delta_g_so_para_aug, inter_image_comm )
+
+  ! reduce over images (q-star)
+  if (nimage > 1) then
+    call mp_sum( f_sum, inter_image_comm )
+    call mp_sum( f_sum_occ, inter_image_comm )
+    call mp_sum( f_sum_nelec, inter_image_comm )
+    call mp_sum( q_pGv, inter_image_comm )
+    call mp_sum( q_vGv, inter_image_comm )
+    call mp_sum( j_bare_s, inter_image_comm )
+    call mp_sum( sigma_diamagnetic, inter_image_comm )
+    call mp_sum( sigma_paramagnetic, inter_image_comm )
+    call mp_sum( sigma_paramagnetic_us, inter_image_comm )
+    call mp_sum( sigma_paramagnetic_aug, inter_image_comm )
+    call mp_sum( delta_g_rmc, inter_image_comm)
+    call mp_sum( delta_g_rmc_gipaw, inter_image_comm)
+    call mp_sum( delta_g_so_dia, inter_image_comm )
+    call mp_sum( delta_g_so_para, inter_image_comm )
+    call mp_sum( delta_g_so_para_us, inter_image_comm )
+    call mp_sum( delta_g_so_para_aug, inter_image_comm )
   endif
-#endif
   call stop_clock('susc:mp_sum')
+#endif
+
   
   !====================================================================
   ! print out results
@@ -858,13 +860,14 @@ CONTAINS
     INTEGER :: iunrec
     CHARACTER(80) :: job_
 
+    ik0_ = 0
+    iq0_ = 0
+
     if (restart_mode == 'from_scratch') then
        write(stdout, '(5X,''Starting from scratch'')')
        return
     endif
 
-    ik0_ = 0
-    iq0_ = 0
     iunrec = find_free_unit()
     CALL seqopn (iunrec, 'gipaw_recover', 'unformatted', exst)
     ! 
