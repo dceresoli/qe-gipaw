@@ -171,7 +171,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   else
     call init_us_2(npw, igk, xk(1,ik), vkb)
   endif
-  !it was: call ccalbec (nkb, npwx, npw, nbnd, becp, vkb, psi)
+
 #ifdef __BANDS
   call calbec_bands (npw, vkb, psi, becp%k, nbnd, ibnd_start, ibnd_end)
 #else

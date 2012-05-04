@@ -124,7 +124,6 @@ subroutine ch_psi_all (n, h, ah, e, ik, m)
   !
   !    And apply S again
   !
-  !it was: call ccalbec (nkb, npwx, n, m, becp, vkb, hpsi)
 #ifdef __BANDS
   call calbec_bands(n, vkb, hpsi, becp%k, m, ibnd_start, ibnd_end)
   call s_psi_bands (npwx, n, m, hpsi, spsi, ibnd_start, ibnd_end)

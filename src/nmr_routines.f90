@@ -274,9 +274,9 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   vkb = (0.d0,0.d0)
   call init_us_2 (npw, igk, xk(:,ik), vkb)
 #ifdef __BANDS
-  call calbec_bands (npwx, vkb, evc, becp2, nbnd, ibnd_start, ibnd_end)
+  call calbec_bands (npw, vkb, evc, becp2, nbnd, ibnd_start, ibnd_end)
 #else
-  call calbec (npwx, vkb, evc, becp2, nbnd)
+  call calbec (npw, vkb, evc, becp2, nbnd)
 #endif
 
   ps(:,:) = (0.d0, 0.d0)
@@ -378,10 +378,10 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
  call stop_clock('para:gf')
      g_LQ_evc(:,:,kpol) = aux2(:,:)
 #ifdef __BANDS
-     call calbec_bands (npwx, paw_vkb , aux2 ,paw_becp_gLQ, nbnd,ibnd_start, ibnd_end)
+     call calbec_bands (npw, paw_vkb , aux2 ,paw_becp_gLQ, nbnd,ibnd_start, ibnd_end)
      do ibnd = ibnd_start, ibnd_end
 #else
-     call calbec (npwx, paw_vkb , aux2 ,paw_becp_gLQ)
+     call calbec (npw, paw_vkb , aux2 ,paw_becp_gLQ)
      do ibnd = 1, nbnd
 #endif
         ijkb0 = 0

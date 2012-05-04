@@ -62,7 +62,6 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   call start_clock ('h_psiq')
   call start_clock ('init')
 
-  !it was: call ccalbec (nkb, npwx, n, m, becp, vkb, psi)
 #ifdef __BANDS
   call calbec_bands (n, vkb, psi, becp%k, m, ibnd_start, ibnd_end)
 #else

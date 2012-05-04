@@ -322,7 +322,8 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
   call gk_sort(xk(1,ik), ngm, g, ecutwfc/tpiba2, npw, igk, g2kin)
   vkb = (0.d0,0.d0)
   call init_us_2 (npw, igk, xk(:,ik), vkb)
-  call calbec (npwx, vkb, evc, becp2, nbnd)
+  ! TODO: calbec_bands
+  call calbec (npw, vkb, evc, becp2, nbnd)
   ps(:,:) = (0.d0, 0.d0)
 
   ijkb0 = 0 
@@ -406,7 +407,8 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
      aux1(:,:) = LQ(:,:,kpol)!coz it changes in gf
      call greenfunction(ik, aux1, aux2, (/0.d0, 0.d0, 0.d0/))
      g_LQ_evc(:,:,kpol) = aux2(:,:)
-     call calbec (npwx, paw_vkb , aux2 ,paw_becp_gLQ)
+     ! TODO: calbec_bands
+     call calbec (npw, paw_vkb , aux2 ,paw_becp_gLQ)
      do ibnd = 1, nbnd
         ijkb0 = 0
         do nt = 1 , ntyp
