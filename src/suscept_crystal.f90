@@ -470,12 +470,13 @@ SUBROUTINE suscept_crystal
 
   print*, mpime, 'f_sum=', f_sum(1,1)
 #ifdef __BANDS
-  write(*,'(''mpime='',I3,4X,''bands='',2I4,4X,''f_sum_nelec='',F10.4)') mpime, ibnd_start, ibnd_end, f_sum_nelec
   ! reduce over G-vectors
   call mp_sum( f_sum, intra_bgrp_comm )
   call mp_sum( f_sum, inter_bgrp_comm )
+
   call mp_sum( f_sum_occ, intra_bgrp_comm )
   call mp_sum( f_sum_occ, inter_bgrp_comm )
+
   call mp_sum( f_sum_nelec, intra_bgrp_comm )
   call mp_sum( f_sum_nelec, inter_bgrp_comm )
 
@@ -491,10 +492,6 @@ SUBROUTINE suscept_crystal
   call mp_sum( q_vGv, intra_pool_comm )
   call mp_sum( delta_g_rmc, intra_pool_comm)
 #endif
-!  ! reduce over bands
-!  call mp_sum( q_pGv, inter_bgrp_comm )
-!  call mp_sum( q_vGv, inter_bgrp_comm )
-!  call mp_sum( delta_g_rmc, inter_bgrp_comm)
 
   ! reduce over k-point pools
   call mp_sum( f_sum, inter_pool_comm )

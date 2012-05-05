@@ -28,7 +28,6 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   USE ldaU,                        ONLY : lda_plus_u, swfcatom
   USE io_files,                    ONLY : iunsat, nwordatwfc
   USE mp_image_global_module,      ONLY : inter_image_comm, nimage
-  USE mp_global,                   ONLY : mpime
 #ifdef __BANDS
   USE mp_global,                   ONLY : intra_bgrp_comm
 #endif
@@ -50,7 +49,6 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   complex(dp), external :: zdotc
   external ch_psi_all, cg_psi
  
-if (mpime==0) print*, mpime, 'A: psi=', psi(1,1)
   ! start clock
   call start_clock ('greenf')
 
@@ -92,7 +90,7 @@ if (mpime==0) print*, mpime, 'A: psi=', psi(1,1)
   ! g_psi is used as work space to store S|evq>
   ! |psi> = -(|psi> - S|evq><evq|psi>)
 #ifdef __BANDS
-  CALL calbec_bands (npw, vkb, evq, becp%k, nbnd_occ(ik), ibnd_start, ibnd_end)
+  CALL calbec_bands (npwx, npw, nkb, vkb, evq, becp%k, nbnd_occ(ik), ibnd_start, ibnd_end)
   CALL s_psi_bands (npwx, npw, nbnd_occ(ik), evq, g_psi, ibnd_start, ibnd_end)
 #else
   CALL calbec (npw, vkb, evq, becp)
@@ -104,7 +102,6 @@ if (mpime==0) print*, mpime, 'A: psi=', psi(1,1)
   call mp_sum(g_psi, inter_bgrp_comm)
 #endif
 
-if (mpime==0) print*, mpime, 'C: psi=', psi(1,1)
 #ifdef __BANDS
   CALL zgemm( 'N', 'N', npw, ibnd_end-ibnd_start+1, nbnd_occ(ik), &
        (1.d0,0.d0), g_psi(1,1), npwx, ps(1,ibnd_start), nbnd, (-1.d0,0.d0), &
@@ -115,7 +112,6 @@ if (mpime==0) print*, mpime, 'C: psi=', psi(1,1)
        psi(1,1), npwx )
 #endif
 
-if (mpime==0) print*, mpime, 'D: psi=', psi(1,1)
   !! this is the old code for norm-conserving:
   !! |psi> = -(1 - |evq><evq|) |psi>
   !!CALL zgemm('N', 'N', npw, nbnd_occ(ik), nbnd_occ(ik), &
@@ -175,7 +171,7 @@ if (mpime==0) print*, mpime, 'D: psi=', psi(1,1)
   endif
 
 #ifdef __BANDS
-  call calbec_bands (npw, vkb, psi, becp%k, nbnd, ibnd_start, ibnd_end)
+  call calbec_bands (npwx, npw, nkb, vkb, psi, becp%k, nbnd, ibnd_start, ibnd_end)
 #else
   call calbec (npw, vkb, psi, becp, nbnd)
 #endif
@@ -196,14 +192,14 @@ if (mpime==0) print*, mpime, 'D: psi=', psi(1,1)
   call cgsolve_all (ch_psi_all, cg_psi, et(1,ik), psi, g_psi, &
        h_diag, npwx, npw, thresh, ik, lter, conv_root, anorm, &
        nbnd_occ(ik), npol )
-!print*, mpime, 'g_psi=', g_psi(1,1)
+
 #if defined(__MPI) && defined(__BANDS)
   ! replicate wfc
   call mp_sum(g_psi, inter_bgrp_comm)
 #endif
 
   if (iverbosity > 10) &
-    write(stdout, '(5X,''cgsolve_all iterations: '',I3,2X,''anorm='',E12.2)')  lter, anorm
+    write(stdout, '(5X,''cgsolve_all iterations '',I3,4X,''anorm='',E12.2)')  lter, anorm
 
   ! convert to Hartree
   g_psi(:,:) = g_psi(:,:) / ryd_to_hartree

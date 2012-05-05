@@ -22,17 +22,16 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   !     wavefunctions and then with the routines hus_1psi and
   !     s_psi computes for each band the required products
   !
-  USE kinds,                 ONLY : DP
+  USE kinds,                 ONLY : dp
   USE fft_base,              ONLY : dffts
   USE fft_interfaces,        ONLY : fwfft, invfft
   USE gvecs,                 ONLY : nls
   USE lsda_mod,              ONLY : current_spin
   USE wvfct,                 ONLY : igk, g2kin
-  USE uspp,                  ONLY : vkb
+  USE uspp,                  ONLY : vkb, nkb
   USE scf,                   ONLY : vrs
   USE wavefunctions_module,  ONLY : psic
   USE becmod,                ONLY : becp, calbec
-  USE mp_global,             ONLY : mpime
 #ifdef __BANDS
   USE mp,                    ONLY : mp_sum
 #endif
@@ -64,8 +63,7 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   call start_clock ('init')
 
 #ifdef __BANDS
-  !call calbec_bands (n, vkb, psi, becp%k, m, ibnd_start, ibnd_end)
-  call calbec (n, vkb, psi, becp, m)
+  call calbec_bands (lda, n, nkb, vkb, psi, becp%k, m, ibnd_start, ibnd_end)
 #else
   call calbec (n, vkb, psi, becp, m)
 #endif
@@ -115,17 +113,15 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   !
   !  Here the product with the non local potential V_NL psi
   !
-if (mpime==0) print*, 'H1: hpsi=', hpsi(1,1)
 #ifdef __BANDS
-  !call add_vuspsi_bands (lda, n, m, hpsi, ibnd_start, ibnd_end)
-  call add_vuspsi (lda, n, m, hpsi)
+  call add_vuspsi_bands (lda, n, m, hpsi, ibnd_start, ibnd_end)
   call s_psi_bands (lda, n, m, psi, spsi, ibnd_start, ibnd_end)
 #else
   call add_vuspsi (lda, n, m, hpsi)
   call s_psi (lda, n, m, psi, spsi)
 #endif
-if (mpime==0) print*, 'H2: hpsi=', hpsi(1,1)
 
   call stop_clock ('h_psiq')
   return
+
 end subroutine

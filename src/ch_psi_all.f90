@@ -17,13 +17,12 @@ subroutine ch_psi_all (n, h, ah, e, ik, m)
   ! This routine applies the operator ( H - \epsilon S + alpha_pv P_v)
   ! to a vector h. The result is given in Ah.
   !
-
+  USE kinds,        ONLY : dp
   USE wvfct,        ONLY : npwx, nbnd
-  USE uspp,         ONLY : vkb
+  USE uspp,         ONLY : vkb, nkb
   USE becmod,       ONLY : becp, calbec
-  USE kinds,        ONLY : DP
   USE gipaw_module, ONLY : nbnd_occ, alpha_pv, evq
-  USE mp_global,    ONLY : intra_pool_comm, mpime
+  USE mp_global,    ONLY : intra_pool_comm
   USE mp,           ONLY : mp_sum
 #ifdef __BANDS
   USE mp_global,    ONLY : intra_bgrp_comm
@@ -65,14 +64,11 @@ subroutine ch_psi_all (n, h, ah, e, ik, m)
   !
   !   compute the product of the hamiltonian with the h vector
   !
-if (mpime==0) print*, 'CH1: h=', h(1,1)
 #ifdef __BANDS
   call h_psiq_bands (npwx, n, m, h, hpsi, spsi, ibnd_start, ibnd_end)
 #else
   call h_psiq (npwx, n, m, h, hpsi, spsi)
 #endif
-if (mpime==0) print*, 'CH1.1: hpsi=', hpsi(1,1)
-if (mpime==0) print*, 'CH1.2: spsi=', spsi(1,1)
   call start_clock ('last')
   !
   !   then we compute the operator H-epsilon S
@@ -87,15 +83,10 @@ if (mpime==0) print*, 'CH1.2: spsi=', spsi(1,1)
         ah (ig, ibnd) = hpsi (ig, ibnd) - e (ibnd) * spsi (ig, ibnd)
      enddo
   enddo
-if (mpime==0) print*, 'CH2: ah=', ah(1,1)
   !
   !   Here we compute the projector in the valence band
   !
-  !!!if (lgamma) then
-     ikq = ik
-  !!!else
-  !!!   ikq = 2 * ik
-  !!!endif
+  ikq = ik
   ps (:,:) = (0.d0, 0.d0)
 #ifdef __BANDS
   call zgemm ('C', 'N', nbnd_occ (ikq) , ibnd_end-ibnd_start+1, n, (1.d0, 0.d0) , evq, &
@@ -125,20 +116,16 @@ if (mpime==0) print*, 'CH2: ah=', ah(1,1)
        npwx, ps, nbnd, (1.d0, 0.d0) , hpsi, npwx)
   spsi(:,:) = hpsi(:,:)
 #endif
-if (mpime==0) print*, 'CH3.1: hpsi=', hpsi(1,1)
-if (mpime==0) print*, 'CH3.2: spsi=', spsi(1,1)
   !
   !    And apply S again
   !
 #ifdef __BANDS
-  call calbec_bands(n, vkb, hpsi, becp%k, m, ibnd_start, ibnd_end)
+  call calbec_bands(npwx, n, nkb, vkb, hpsi, becp%k, m, ibnd_start, ibnd_end)
   call s_psi_bands (npwx, n, m, hpsi, spsi, ibnd_start, ibnd_end)
 #else
   call calbec(n, vkb, hpsi, becp, m)
   call s_psi (npwx, n, m, hpsi, spsi)
 #endif
-if (mpime==0) print*, 'CH4.1: hpsi=', hpsi(1,1)
-if (mpime==0) print*, 'CH4.2: spsi=', spsi(1,1)
 
 #ifdef __BANDS
   do ibnd = ibnd_start, ibnd_end 
@@ -149,7 +136,6 @@ if (mpime==0) print*, 'CH4.2: spsi=', spsi(1,1)
         ah (ig, ibnd) = ah (ig, ibnd) + spsi (ig, ibnd)
      enddo
   enddo
-if (mpime==0) print*, 'CH5: ah=', ah(1,1)
 
   deallocate (spsi)
   deallocate (hpsi)

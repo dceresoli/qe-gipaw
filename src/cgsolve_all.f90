@@ -56,7 +56,7 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
   !   revised (to reduce memory) 29 May 2004 by S. de Gironcoli
   !
   USE kinds, only : DP
-  USE mp_global, ONLY: intra_pool_comm, me_pool, mpime
+  USE mp_global, ONLY: intra_pool_comm, me_pool
   USE mp,        ONLY: mp_sum
 #ifdef __BANDS
   USE mp_global, ONLY: intra_bgrp_comm, me_bgrp
@@ -174,9 +174,13 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
            rho(lbnd) = zdotc (ndmx*npol, h(1,ibnd), 1, g(1,ibnd), 1)
         endif
      enddo
-if (mpime==0) print*, 'CG1: lbnd=', lbnd, rho(lbnd)
-! modificare nel caso delle bande
+
+#ifdef __BANDS
+     kter_eff = kter_eff + DBLE (lbnd-ibnd_start+1) / DBLE (ibnd_end-ibnd_start+1)
+#else
      kter_eff = kter_eff + DBLE (lbnd) / DBLE (nbnd)
+#endif
+
 #ifdef __MPI
 #  ifdef __BANDS
      call mp_sum(  rho(ibnd_start:lbnd), intra_bgrp_comm )
@@ -194,11 +198,10 @@ if (mpime==0) print*, 'CG1: lbnd=', lbnd, rho(lbnd)
            rho(ibnd)=rho(lbnd)
            lbnd = lbnd - 1
            anorm = sqrt (rho (ibnd) )
-!           write(6,*) ibnd, anorm
            if (anorm.lt.ethr) conv (ibnd) = 1
         endif
      enddo
-!
+
      conv_root = .true.
 #ifdef __BANDS
      do ibnd = ibnd_start, ibnd_end
@@ -237,7 +240,6 @@ if (mpime==0) print*, 'CG1: lbnd=', lbnd, rho(lbnd)
            eu (lbnd) = e (ibnd)
         endif
      enddo
-if (mpime==0) print*, 'CG2: lbnd=', lbnd, eu(lbnd)
      !
      !        compute t = A*h
      !
@@ -246,8 +248,6 @@ if (mpime==0) print*, 'CG2: lbnd=', lbnd, eu(lbnd)
 #else
      call h_psi (ndim, hold, t, eu, ik, lbnd)
 #endif
-if (mpime==0) print*, 'CG2.1: hold=', hold(1,1)
-if (mpime==0) print*, 'CG2.2: t=', t(1,1)
      !
      !        compute the coefficients a and c for the line minimization
      !        compute step length lambda
@@ -264,7 +264,6 @@ if (mpime==0) print*, 'CG2.2: t=', t(1,1)
            c(lbnd) = zdotc (ndmx*npol, h(1,ibnd), 1, t(1,lbnd), 1)
         end if
      end do
-if (mpime==0) print*, 'CG3: lbnd=', lbnd, a(lbnd), c(lbnd)
 #ifdef __MPI
 #  ifdef __BANDS
      call mp_sum(  a(ibnd_start:lbnd), intra_bgrp_comm )
@@ -301,7 +300,6 @@ if (mpime==0) print*, 'CG3: lbnd=', lbnd, a(lbnd), c(lbnd)
            rhoold (ibnd) = rho (ibnd)
         endif
      enddo
-if (mpime==0) print*, 'CG4: lbnd=', lbnd
   enddo
 100 continue
 

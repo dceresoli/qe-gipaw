@@ -20,7 +20,7 @@ SUBROUTINE compute_u_kq(ik, q)
   USE mp,                   ONLY : mp_sum
   USE mp_global,            ONLY : inter_pool_comm, intra_pool_comm, me_pool
 #ifdef __BANDS
-  USE mp_global,            ONLY : me_bgrp, mpime, inter_bgrp_comm
+  USE mp_global,            ONLY : me_bgrp, inter_bgrp_comm
 #endif
   USE klist,                ONLY : nkstot, nks, xk, ngk
   USE uspp,                 ONLY : vkb, nkb
