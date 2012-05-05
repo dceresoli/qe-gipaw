@@ -202,8 +202,9 @@ SUBROUTINE suscept_crystal
   call start_clock('susc:IO')
     call get_buffer (evc, nwordwfc, iunwfc, ik)
 #ifdef __BANDS
-    ! replicate wavefunction over band groups
-    call mp_sum(evc, inter_bgrp_comm)
+    ! replicate wavefunction over band groups (not needed anymore???)
+    !!call mp_sum(evc, inter_bgrp_comm)
+    print*, 'EVC:', mpime, evc(1,1)
 #endif
   call stop_clock('susc:IO')
   call start_clock('susc:calbec')
@@ -468,21 +469,22 @@ SUBROUTINE suscept_crystal
 #ifdef __MPI
   call start_clock('susc:mp_sum')
 
-  print*, mpime, 'f_sum=', f_sum(1,1)
 #ifdef __BANDS
+  write(*,'(''mpime='',I3,4X,''bands='',2I4,4X,''f_sum_nelec='',F10.4)') mpime, ibnd_start, ibnd_end, f_sum_nelec
   ! reduce over G-vectors
   call mp_sum( f_sum, intra_bgrp_comm )
-  call mp_sum( f_sum, inter_bgrp_comm )
-
   call mp_sum( f_sum_occ, intra_bgrp_comm )
-  call mp_sum( f_sum_occ, inter_bgrp_comm )
-
   call mp_sum( f_sum_nelec, intra_bgrp_comm )
-  call mp_sum( f_sum_nelec, inter_bgrp_comm )
-
   call mp_sum( q_pGv, intra_bgrp_comm )
   call mp_sum( q_vGv, intra_bgrp_comm )
   call mp_sum( delta_g_rmc, intra_bgrp_comm)
+  ! reduce over band groups
+  call mp_sum( f_sum, inter_bgrp_comm )
+  call mp_sum( f_sum_occ, inter_bgrp_comm )
+  call mp_sum( f_sum_nelec, inter_bgrp_comm )
+  call mp_sum( q_pGv, inter_bgrp_comm )
+  call mp_sum( q_vGv, inter_bgrp_comm )
+  call mp_sum( delta_g_rmc, inter_bgrp_comm) ! TODO: check this
 #else
   ! reduce over G-vectors
   call mp_sum( f_sum, intra_pool_comm )

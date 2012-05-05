@@ -66,16 +66,6 @@ SUBROUTINE calbec_bands (npwx, npw, nkb, beta, psi, betapsi, nbnd, ibnd_start, i
 
   if (nkb == 0) return
 
-  !npwx = size(beta,1)
-  !if (npwx /= size(psi,1)) call errore('calbec_bands', 'size mismatch', 1)
-  !if (npwx < npw) call errore('calbec_bands', 'size mismatch', 2)
-  !if (nkb /= size(betapsi,1) .or. nbnd > size(betapsi,2)) &
-  !  call errore ('calbec_bands', 'size mismatch', 3)
-!#ifdef DEBUG
-!  write(*,*) 'calbec_bands'
-!  write(*,*) nkb,  size(betapsi,1), nbnd,  size(betapsi,2)
-!#endif
-
   call start_clock( 'calbec' )
 
   call ZGEMM('C', 'N', nkb, ibnd_end-ibnd_start+1, npw, (1.d0,0.d0), &

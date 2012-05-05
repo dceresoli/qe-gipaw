@@ -98,7 +98,8 @@ SUBROUTINE compute_u_kq(ik, q)
   ! read in wavefunctions from the previous iteration
   CALL get_buffer( evc, nwordwfc, iunwfc, ik)
 #ifdef __BANDS
-  call mp_sum(evc, inter_bgrp_comm)
+  ! not needed anymore??
+  !!call mp_sum(evc, inter_bgrp_comm)
 #endif
 
   ! randomize a little bit
@@ -154,7 +155,8 @@ SUBROUTINE compute_u_kq(ik, q)
   evq = evc
   CALL get_buffer(evc, nwordwfc, iunwfc, ik)
 #ifdef __BANDS
-  call mp_sum(evc, inter_bgrp_comm)
+  ! not needed anymore??
+  !!call mp_sum(evc, inter_bgrp_comm)
 #endif
 
   CALL stop_clock( 'c_bands' )  
