@@ -14,6 +14,8 @@ SUBROUTINE init_parallel_over_band(comm, nbnd)
   ! ... Setup band indexes for band parallelization
   !
   USE gipaw_module, ONLY : ibnd_start, ibnd_end
+  USE io_global,    ONLY : stdout
+  USE mp_global,    ONLY : nbgrp
   IMPLICIT NONE
   INTEGER, INTENT(IN) :: comm, nbnd 
 
@@ -37,13 +39,17 @@ SUBROUTINE init_parallel_over_band(comm, nbnd)
      ibnd_end = nbnd
   endif   
 
+  write(stdout,'(5X,''============================================================'')')
+  write(stdout,'(5X,''  EXPERIMENTAL BAND PARALLELIZATION OVER '',I2,'' GROUPS'')') nbgrp
+  write(stdout,'(5X,''============================================================'')')
+  write(stdout,*)
 END SUBROUTINE init_parallel_over_band
 #endif
 
 
 #ifdef __BANDS
 !-----------------------------------------------------------------------
-SUBROUTINE calbec_bands (npw, beta, psi, betapsi, nbnd, ibnd_start, ibnd_end)
+SUBROUTINE calbec_bands (npwx, npw, nkb, beta, psi, betapsi, nbnd, ibnd_start, ibnd_end)
   !-----------------------------------------------------------------------
   !
   ! ... matrix times matrix with summation index (k=1,npw) running on
@@ -53,24 +59,22 @@ SUBROUTINE calbec_bands (npw, beta, psi, betapsi, nbnd, ibnd_start, ibnd_end)
   USE mp_global,             only : intra_bgrp_comm
   USE mp,                    only : mp_sum
   IMPLICIT NONE
-  integer, intent(in) :: npw
-  complex(dp), intent(in) :: beta(:,:), psi(:,:)
-  complex(dp), intent(out) :: betapsi(:,:)
+  integer, intent(in) :: npwx, npw, nkb
+  complex(dp), intent(in) :: beta(npwx,nkb), psi(npwx,nbnd)
+  complex(dp), intent(out) :: betapsi(nkb,nbnd)
   integer, intent(in) :: nbnd, ibnd_start, ibnd_end
-  integer :: nkb, npwx
 
-  nkb = size(beta,2)
   if (nkb == 0) return
 
-  npwx = size(beta,1)
-  if (npwx /= size(psi,1)) call errore('calbec_bands', 'size mismatch', 1)
-  if (npwx < npw) call errore('calbec_bands', 'size mismatch', 2)
-  if (nkb /= size(betapsi,1) .or. nbnd > size(betapsi,2)) &
-    call errore ('calbec_bands', 'size mismatch', 3)
-#ifdef DEBUG
-  write(*,*) 'calbec_bands'
-  write(*,*) nkb,  size(betapsi,1), nbnd,  size(betapsi, 2)
-#endif
+  !npwx = size(beta,1)
+  !if (npwx /= size(psi,1)) call errore('calbec_bands', 'size mismatch', 1)
+  !if (npwx < npw) call errore('calbec_bands', 'size mismatch', 2)
+  !if (nkb /= size(betapsi,1) .or. nbnd > size(betapsi,2)) &
+  !  call errore ('calbec_bands', 'size mismatch', 3)
+!#ifdef DEBUG
+!  write(*,*) 'calbec_bands'
+!  write(*,*) nkb,  size(betapsi,1), nbnd,  size(betapsi,2)
+!#endif
 
   call start_clock( 'calbec' )
 
