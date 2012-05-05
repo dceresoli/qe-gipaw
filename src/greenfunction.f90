@@ -50,12 +50,13 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   complex(dp), external :: zdotc
   external ch_psi_all, cg_psi
  
+if (mpime==0) print*, mpime, 'A: psi=', psi(1,1)
   ! start clock
   call start_clock ('greenf')
 
   ! allocate memory
   allocate (work(npwx), ps(nbnd,nbnd), h_diag(npwx,nbnd), eprec(nbnd))
-  call allocate_bec_type ( nkb, nbnd, becp)
+  call allocate_bec_type(nkb, nbnd, becp)
 
   ! check if |q| is zero
   q_is_zero = .false.
@@ -90,7 +91,6 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   ! this is the case with overlap (ultrasoft)
   ! g_psi is used as work space to store S|evq>
   ! |psi> = -(|psi> - S|evq><evq|psi>)
-if (mpime==0) print*, mpime, 'A: g_psi=', g_psi(1,1)
 #ifdef __BANDS
   CALL calbec_bands (npw, vkb, evq, becp%k, nbnd_occ(ik), ibnd_start, ibnd_end)
   CALL s_psi_bands (npwx, npw, nbnd_occ(ik), evq, g_psi, ibnd_start, ibnd_end)
@@ -98,7 +98,6 @@ if (mpime==0) print*, mpime, 'A: g_psi=', g_psi(1,1)
   CALL calbec (npw, vkb, evq, becp)
   CALL s_psi (npwx, npw, nbnd_occ(ik), evq, g_psi)
 #endif
-if (mpime==0) print*, mpime, 'B: g_psi=', g_psi(1,1)
 
 #if defined(__MPI) && defined(__BANDS)
   ! replicate wfc

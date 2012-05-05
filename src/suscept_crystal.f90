@@ -468,6 +468,7 @@ SUBROUTINE suscept_crystal
 #ifdef __MPI
   call start_clock('susc:mp_sum')
 
+  print*, mpime, 'f_sum=', f_sum(1,1)
 #ifdef __BANDS
   write(*,'(''mpime='',I3,4X,''bands='',2I4,4X,''f_sum_nelec='',F10.4)') mpime, ibnd_start, ibnd_end, f_sum_nelec
   ! reduce over G-vectors

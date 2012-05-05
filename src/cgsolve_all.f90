@@ -56,7 +56,7 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
   !   revised (to reduce memory) 29 May 2004 by S. de Gironcoli
   !
   USE kinds, only : DP
-  USE mp_global, ONLY: intra_pool_comm, me_pool
+  USE mp_global, ONLY: intra_pool_comm, me_pool, mpime
   USE mp,        ONLY: mp_sum
 #ifdef __BANDS
   USE mp_global, ONLY: intra_bgrp_comm, me_bgrp
@@ -174,6 +174,8 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
            rho(lbnd) = zdotc (ndmx*npol, h(1,ibnd), 1, g(1,ibnd), 1)
         endif
      enddo
+if (mpime==0) print*, 'CG1: lbnd=', lbnd, rho(lbnd)
+! modificare nel caso delle bande
      kter_eff = kter_eff + DBLE (lbnd) / DBLE (nbnd)
 #ifdef __MPI
 #  ifdef __BANDS
@@ -190,7 +192,7 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
 #endif
         if (conv(ibnd).eq.0) then
            rho(ibnd)=rho(lbnd)
-           lbnd = lbnd -1
+           lbnd = lbnd - 1
            anorm = sqrt (rho (ibnd) )
 !           write(6,*) ibnd, anorm
            if (anorm.lt.ethr) conv (ibnd) = 1
@@ -203,7 +205,7 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
 #else
      do ibnd = 1, nbnd
 #endif
-        conv_root = conv_root.and. (conv (ibnd) .eq.1)
+        conv_root = conv_root .and. (conv(ibnd) .eq.1)
      enddo
      if (conv_root) goto 100
      !
@@ -235,14 +237,17 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
            eu (lbnd) = e (ibnd)
         endif
      enddo
+if (mpime==0) print*, 'CG2: lbnd=', lbnd, eu(lbnd)
      !
      !        compute t = A*h
      !
 #ifdef __BANDS
-     call h_psi (ndim, hold, t, eu, ik, lbnd, ibnd_start, lbnd)
+     call h_psi (ndim, hold, t, eu, ik, nbnd, ibnd_start, lbnd)
 #else
      call h_psi (ndim, hold, t, eu, ik, lbnd)
 #endif
+if (mpime==0) print*, 'CG2.1: hold=', hold(1,1)
+if (mpime==0) print*, 'CG2.2: t=', t(1,1)
      !
      !        compute the coefficients a and c for the line minimization
      !        compute step length lambda
@@ -259,6 +264,7 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
            c(lbnd) = zdotc (ndmx*npol, h(1,ibnd), 1, t(1,lbnd), 1)
         end if
      end do
+if (mpime==0) print*, 'CG3: lbnd=', lbnd, a(lbnd), c(lbnd)
 #ifdef __MPI
 #  ifdef __BANDS
      call mp_sum(  a(ibnd_start:lbnd), intra_bgrp_comm )
@@ -295,6 +301,7 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
            rhoold (ibnd) = rho (ibnd)
         endif
      enddo
+if (mpime==0) print*, 'CG4: lbnd=', lbnd
   enddo
 100 continue
 

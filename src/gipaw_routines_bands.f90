@@ -92,7 +92,7 @@ SUBROUTINE s_psi_bands (lda, n, m, psi, spsi, ibnd_start, ibnd_end)
   !-----------------------------------------------------------------------
   USE kinds,                 only : dp
   USE becmod,                only : becp
-  USE uspp,                  only : qq, vkb, nkb
+  USE uspp,                  only : qq, vkb, nkb, okvan
   USE uspp_param,            only : upf, nhm, nh
   USE ions_base,             only : nat, ityp, ntyp => nsp
   IMPLICIT NONE
@@ -104,6 +104,12 @@ SUBROUTINE s_psi_bands (lda, n, m, psi, spsi, ibnd_start, ibnd_end)
   ! -- local variables ---------------------------------------------------
   integer :: ikb, jkb, ih, jh, na, nt, ijkb0, ibnd
   complex(dp), allocatable :: ps(:,:)
+
+  ! apply identity
+  spsi = (0.d0,0.d0) 
+  spsi(1:lda, ibnd_start:ibnd_end) = psi(1:lda,ibnd_start:ibnd_end)
+
+  if (nkb == 0 .or. .not. okvan) return
 
   allocate( ps(nkb,m) )
   ps(:,:) = (0.d0,0.d0) 

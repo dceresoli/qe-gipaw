@@ -14,7 +14,7 @@
 !
 ! Finally, the apply_vel subroutine is a driver that applies the velocity operator
 !
-
+#undef __BANDS
 !-----------------------------------------------------------------------
 SUBROUTINE apply_p(psi, p_psi, ik, ipol, q)
   !-----------------------------------------------------------------------
@@ -87,7 +87,7 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   INTEGER, INTENT(IN) :: ipol       ! cartesian direction (1..3)
   INTEGER, INTENT(IN) :: ik         ! k-point
   COMPLEX(DP), INTENT(IN) :: psi(npwx,nbnd)
-  COMPLEX(DP), INTENT(OUT) :: vel_psi(npwx,nbnd)
+  COMPLEX(DP), INTENT(INOUT) :: vel_psi(npwx,nbnd)
   REAL(DP), INTENT(IN) :: q(3)
 
   !-- local variables ----------------------------------------------------
@@ -198,6 +198,7 @@ SUBROUTINE apply_vel(psi, vel_psi, ik, ipol, q)
   USE wvfct,                ONLY : nbnd, npwx, npw, igk, et 
   USE uspp,                 ONLY : nkb, vkb, okvan
   USE gipaw_module,         ONLY : nbnd_occ
+  USE mp_global,            ONLY : mpime
 #ifdef __BANDS
   USE gipaw_module,         ONLY : ibnd_start, ibnd_end
 #endif
@@ -232,6 +233,7 @@ SUBROUTINE apply_vel(psi, vel_psi, ik, ipol, q)
 
   call apply_p(psi, vel_psi, ik, ipol, q)
 
+if (mpime==0) print*, mpime, 'V1: vel_psi=', vel_psi(1,1)
   call stop_clock('apply_vel')
 
 END SUBROUTINE apply_vel

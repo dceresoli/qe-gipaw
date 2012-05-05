@@ -10,7 +10,7 @@
 !
 !-----------------------------------------------------------------------
 #ifdef __BANDS
-subroutine h_psiq (lda, n, m, psi, hpsi, spsi, ibnd_start, ibnd_end)
+subroutine h_psiq_bands (lda, n, m, psi, hpsi, spsi, ibnd_start, ibnd_end)
 #else
 subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
 #endif
@@ -32,6 +32,7 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   USE scf,                   ONLY : vrs
   USE wavefunctions_module,  ONLY : psic
   USE becmod,                ONLY : becp, calbec
+  USE mp_global,             ONLY : mpime
 #ifdef __BANDS
   USE mp,                    ONLY : mp_sum
 #endif
@@ -63,13 +64,15 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   call start_clock ('init')
 
 #ifdef __BANDS
-  call calbec_bands (n, vkb, psi, becp%k, m, ibnd_start, ibnd_end)
+  !call calbec_bands (n, vkb, psi, becp%k, m, ibnd_start, ibnd_end)
+  call calbec (n, vkb, psi, becp, m)
 #else
   call calbec (n, vkb, psi, becp, m)
 #endif
   !
   ! Here we apply the kinetic energy (k+G)^2 psi
   !
+  hpsi(:,:) = (0.d0,0.d0)
 #ifdef __BANDS
   do ibnd = ibnd_start, ibnd_end
 #else
@@ -112,14 +115,17 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   !
   !  Here the product with the non local potential V_NL psi
   !
+if (mpime==0) print*, 'H1: hpsi=', hpsi(1,1)
 #ifdef __BANDS
-  call add_vuspsi_bands (lda, n, m, hpsi, ibnd_start, ibnd_end)
+  !call add_vuspsi_bands (lda, n, m, hpsi, ibnd_start, ibnd_end)
+  call add_vuspsi (lda, n, m, hpsi)
   call s_psi_bands (lda, n, m, psi, spsi, ibnd_start, ibnd_end)
 #else
   call add_vuspsi (lda, n, m, hpsi)
   call s_psi (lda, n, m, psi, spsi)
 #endif
+if (mpime==0) print*, 'H2: hpsi=', hpsi(1,1)
 
   call stop_clock ('h_psiq')
   return
-end subroutine h_psiq
+end subroutine
