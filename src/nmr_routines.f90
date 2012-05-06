@@ -442,7 +442,11 @@ SUBROUTINE compute_sigma_bare(B_ind, chi_bare, sigma_bare)
   USE pwcom,                ONLY : pi, tpi
   USE gipaw_module,         ONLY : use_nmr_macroscopic_shape, &
                                    nmr_macroscopic_shape
+#ifdef __BANDS
+  USE mp_global,            ONLY : intra_bgrp_comm
+#else
   USE mp_global,            ONLY : intra_pool_comm
+#endif
   USE lsda_mod,             ONLY : nspin
   USE mp,                   ONLY : mp_sum
   !-- parameters --------------------------------------------------------
@@ -476,7 +480,11 @@ SUBROUTINE compute_sigma_bare(B_ind, chi_bare, sigma_bare)
     sigma_bare(:,:,na) = real(tmp_sigma(:,:), dp)
   enddo
 #ifdef __MPI
+#ifdef __BANDS
+  call mp_sum( sigma_bare, intra_bgrp_comm )
+#else
   call mp_sum( sigma_bare, intra_pool_comm )
+#endif
 #endif
 END SUBROUTINE compute_sigma_bare
 

@@ -42,7 +42,6 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   INTEGER :: ig, ipol, ibnd
 #ifdef __BANDS
   REAL(DP), allocatable :: jaux(:,:) 
-  INTEGER :: ierr
 #endif
 
   call start_clock('j_para')
@@ -51,7 +50,7 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   allocate(p_psic(dffts%nnr), psic(dffts%nnr), aux(npwx))
 #ifdef __BANDS
   allocate(jaux(dffts%nnr,3))
-  jaux = 0.0d0  
+  jaux(:,:) = 0.0d0  
 #endif
 
   ! loop over cartesian components
@@ -111,13 +110,10 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
                             aimag(conjg(psic(1:dffts%nnr)) * p_psic(1:dffts%nnr))
 #endif
     enddo ! ibnd
-
-#if defined(__MPI) && defined(__BANDS) 
-    call mp_sum(jaux(1:dffts%nnr,ipol),inter_bgrp_comm)
-#endif
   enddo ! ipol
 
-#ifdef __BANDS
+#if defined(__MPI) && defined(__BANDS) 
+  call mp_sum(jaux(1:dffts%nnr,1:3), inter_bgrp_comm)
   j(:,:) = j(:,:) + jaux(:,:)
 #endif
 
@@ -131,4 +127,3 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
 
 END SUBROUTINE j_para
 
- 
