@@ -126,12 +126,12 @@ SUBROUTINE compute_u_kq(ik, q)
   avg_iter = avg_iter / nkstot
 
   !! debug
-  if (iverbosity > 10) &
+  if (iverbosity > 20) &
     write(stdout,'(5X,"ethr = ",1PE9.2,",  avg # of iterations =",0PF5.1)') &
          ethr, avg_iter
 
   ! check if diagonalization was ok
-  if (iverbosity > 10) then
+  if (iverbosity > 20) then
     write(stdout,'(5X,''eigenvalues at k:'')')
     write(stdout,'(8F9.4)') et_old(1:nbnd,ik)*RytoeV
     write(stdout,'(5X,''eigenvalues at k+q:'')')

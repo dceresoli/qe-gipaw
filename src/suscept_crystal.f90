@@ -204,7 +204,6 @@ SUBROUTINE suscept_crystal
 #ifdef __BANDS
     ! replicate wavefunction over band groups (not needed anymore???)
     !!call mp_sum(evc, inter_bgrp_comm)
-    print*, 'EVC:', mpime, evc(1,1)
 #endif
   call stop_clock('susc:IO')
   call start_clock('susc:calbec')
@@ -470,7 +469,6 @@ SUBROUTINE suscept_crystal
   call start_clock('susc:mp_sum')
 
 #ifdef __BANDS
-  write(*,'(''mpime='',I3,4X,''bands='',2I4,4X,''f_sum_nelec='',F10.4)') mpime, ibnd_start, ibnd_end, f_sum_nelec
   ! reduce over G-vectors
   call mp_sum( f_sum, intra_bgrp_comm )
   call mp_sum( f_sum_occ, intra_bgrp_comm )

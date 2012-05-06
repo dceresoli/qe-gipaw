@@ -198,7 +198,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   call mp_sum(g_psi, inter_bgrp_comm)
 #endif
 
-  if (iverbosity > 10) &
+  if (iverbosity > 20) &
     write(stdout, '(5X,''cgsolve_all iterations '',I3,4X,''anorm='',E12.2)')  lter, anorm
 
   ! convert to Hartree
