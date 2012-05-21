@@ -1,5 +1,5 @@
 # Autoconf template for ce-gipaw
-AC_INIT(ce-gipaw, 4.99svn, dceresoli@gmail.com, ce-gipaw)
+AC_INIT(ce-gipaw, 5.0svn, dceresoli@gmail.com, ce-gipaw)
 
 # Option: Quantum-Espresso source directory (QE_SOURCE)
 AC_ARG_WITH(qe-source,
@@ -27,6 +27,7 @@ AC_MSG_RESULT([$version])
 
 case $version in
   4.99* ) ;;
+  5.0* ) ;;
   *) AC_MSG_ERROR([Cannot compile against this version of quantum-Espresso]) ;;
 esac
 
@@ -37,7 +38,8 @@ if test $BAND_PARALLEL = yes ; then
 fi
 
 # export settings to generated files
-AC_SUBST(qe_source dflags_gipaw)
+AC_SUBST(qe_source)
+AC_SUBST(dflags_gipaw)
 AC_OUTPUT([makedeps.sh src/Makefile], [chmod +x makedeps.sh])
 
 # default commands
