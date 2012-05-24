@@ -594,6 +594,7 @@ SUBROUTINE print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnet
     tr_sigma = tr_sigma / 3.d0
     write(stdout,'(5X,''Atom'',I3,2X,A3,'' pos: ('',3(F10.6),'')  Total sigma: '',F14.2)') &
         na, atm(ityp(na)), tau(:,na), tr_sigma*1.0d6
+    if (iverbosity > 0) write(stdout,tens_fmt) sigma_tot(:,:,na) * 1.0d6
 
     call principal_axis_simpson(sigma_tot(:,:,na), v, axis)
     aniso = v(3) - tr_sigma
