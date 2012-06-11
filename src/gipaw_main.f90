@@ -34,7 +34,7 @@ PROGRAM gipaw_main
   USE cell_base,       ONLY : tpiba
   USE cellmd,          ONLY : cell_factor
   USE gipaw_module,    ONLY : job, q_gipaw
-  USE control_flags,   ONLY : io_level, gamma_only, use_para_diag
+  USE control_flags,   ONLY : io_level, gamma_only, use_para_diag, twfcollect
   USE mp_global,       ONLY : mp_startup, my_image_id,  mpime, nproc, root
   USE check_stop,      ONLY : check_stop_init
   USE environment,     ONLY : environment_start
@@ -92,7 +92,11 @@ PROGRAM gipaw_main
   call gipaw_openfil
   
   if ( gamma_only ) call errore ('gipaw_main', 'Cannot run GIPAW with gamma_only == .true. ', 1)
-  
+#ifdef __BANDS
+  if (nbgrp > 1 .and. twfcollect == .false.) &
+    call errore('gipaw_main', 'Cannot use band-parallelization without wf_collect in SCF', 1)
+#endif
+
   CALL gipaw_allocate()
   CALL gipaw_setup()
   CALL gipaw_summary()
