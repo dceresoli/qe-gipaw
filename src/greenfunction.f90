@@ -138,7 +138,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
 #ifdef __BANDS
   do ibnd = ibnd_start, ibnd_end
 #else
-  do ibnd = 1, nbnd_occ (ik)
+  do ibnd = 1, nbnd
 #endif
      do ig = 1, npw
         work (ig) = g2kin (ig) * evq (ig, ibnd)
@@ -147,16 +147,16 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   enddo
 #ifdef __MPI
 #ifdef __BANDS
-  call mp_sum ( eprec( 1:nbnd_occ(ik) ), intra_bgrp_comm )
+  call mp_sum ( eprec, intra_bgrp_comm )
 #else
-  call mp_sum ( eprec( 1:nbnd_occ(ik) ), intra_pool_comm )
+  call mp_sum ( eprec, intra_pool_comm )
 #endif
 #endif
   h_diag = 0.d0
 #ifdef __BANDS
   do ibnd = ibnd_start, ibnd_end
 #else
-  do ibnd = 1, nbnd_occ (ik)
+  do ibnd = 1, nbnd
 #endif
      do ig = 1, npw
         h_diag (ig, ibnd) = 1.d0 / max (1.0d0, g2kin (ig) / eprec (ibnd) )

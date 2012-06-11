@@ -218,13 +218,12 @@ SUBROUTINE apply_vel(psi, vel_psi, ik, ipol, q)
   if (okvan) then
       call apply_vel_NL('S', psi, vel_psi, ik, ipol, q)
 #ifdef __BANDS
-      do ibnd = 1, ibnd_start, ibnd_end
+      do ibnd = ibnd_start, ibnd_end
 #else
       do ibnd = 1, nbnd_occ(ik)
 #endif
           vel_psi(1:npwx,ibnd) = -et(ibnd,ik) * ryd_to_hartree * vel_psi(1:npwx,ibnd)
       enddo
-      ! mp_sum inter_bgrp_comm? oppure, farlo su tutte le bande
   endif
 
   call apply_vel_NL('V', psi, vel_psi, ik, ipol, q)
