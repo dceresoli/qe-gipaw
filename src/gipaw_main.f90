@@ -56,7 +56,7 @@ PROGRAM gipaw_main
   IMPLICIT NONE
   CHARACTER (LEN=9)   :: code = 'GIPAW'
   CHARACTER (LEN=10)  :: dirname = 'dummy'
-  INTEGER             :: i, gipaw_comm
+  INTEGER             :: gipaw_comm
   !------------------------------------------------------------------------
 
   ! ... and begin with the initialization part
@@ -93,7 +93,7 @@ PROGRAM gipaw_main
   
   if ( gamma_only ) call errore ('gipaw_main', 'Cannot run GIPAW with gamma_only == .true. ', 1)
 #ifdef __BANDS
-  if (nbgrp > 1 .and. twfcollect == .false.) &
+  if (nbgrp > 1 .and. (twfcollect .eqv. .false.)) &
     call errore('gipaw_main', 'Cannot use band-parallelization without wf_collect in SCF', 1)
 #endif
 

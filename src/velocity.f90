@@ -148,7 +148,8 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
           !! Hubbard? any other term here?
 #ifdef __BANDS
           call add_vuspsi_bands(npwx, npw, nbnd_occ(ik), aux, ibnd_start, ibnd_end)
-          aux2(:,ibnd_start:ibnd_end) = aux2(:,ibnd_start:ibnd_end) + dble(isign) * ryd_to_hartree * aux(:,ibnd_start:ibnd_end)/(2.d0*dk*tpiba)
+          aux2(:,ibnd_start:ibnd_end) = aux2(:,ibnd_start:ibnd_end) + dble(isign) * ryd_to_hartree * &
+                                        aux(:,ibnd_start:ibnd_end)/(2.d0*dk*tpiba)
 #else
           call add_vuspsi(npwx, npw, nbnd_occ(ik), aux)
           !! Hubbard? any other term here?

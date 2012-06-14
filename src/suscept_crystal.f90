@@ -109,7 +109,7 @@ SUBROUTINE suscept_crystal
   real(dp) :: paramagnetic_corr_tensor_us_so(3,3)
 
   integer :: ik, iq, ik0, iq0
-  integer :: ipol, jpol, i, ibnd, jbnd, isign, ispin, iend, isignend, inew, isignnew
+  integer :: ipol, jpol, i, ibnd, isign, ispin
   real(dp) :: tmp(3,3), q(3), k_plus_q(3), braket
   integer :: s_min, s_maj, s_weight
   complex(dp), external :: zdotc

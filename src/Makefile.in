@@ -29,7 +29,7 @@ gipaw.x: $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS) $(NEBOBJS)
 	(cd ../bin; ln -sf ../src/gipaw.x .)
 
 clean:
-	-/bin/rm -f gipaw.x *.o *.F90 *.d *.mod *.i *.L
+	-/bin/rm -f gipaw.x *.o *.F90 *__genmod.f90 *.d *.mod *.i *.L
 
 distclean: clean
 	-/bin/rm -f Makefile make.depend

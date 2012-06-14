@@ -59,7 +59,7 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
   USE mp_global, ONLY: intra_pool_comm, me_pool
   USE mp,        ONLY: mp_sum
 #ifdef __BANDS
-  USE mp_global, ONLY: intra_bgrp_comm, me_bgrp
+  USE mp_global, ONLY: intra_bgrp_comm, inter_bgrp_comm, me_bgrp
   USE gipaw_module, ONLY: ibnd_start, ibnd_end
 #endif
 
@@ -176,7 +176,7 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
      enddo
 
 #ifdef __BANDS
-     kter_eff = kter_eff + DBLE (lbnd-ibnd_start+1) / DBLE (ibnd_end-ibnd_start+1)
+     kter_eff = kter_eff + DBLE (lbnd-ibnd_start+1) / DBLE (nbnd)
 #else
      kter_eff = kter_eff + DBLE (lbnd) / DBLE (nbnd)
 #endif
@@ -203,13 +203,16 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
      enddo
 
      conv_root = .true.
+     anorm = 0.d0
 #ifdef __BANDS
      do ibnd = ibnd_start, ibnd_end
 #else
      do ibnd = 1, nbnd
 #endif
         conv_root = conv_root .and. (conv(ibnd) .eq.1)
+        anorm = anorm + sqrt(rho(ibnd)) / dble(nbnd)
      enddo
+
      if (conv_root) goto 100
      !
      !        compute the step direction h. Conjugate it to previous step
@@ -310,9 +313,13 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
    do ibnd = 1, nbnd
      if (conv(ibnd) == 0 .and. me_pool == 0) &
 #endif
-       write(*,'(5x,"ik",i4," ibnd",i4,4x,"cgsolve_all: root not converged ",e10.3)') ik, ibnd, anorm
+       write(*,'(5x,"ik",i4," ibnd",i4,4x,"cgsolve_all: root not converged")') ik, ibnd
    enddo
 
+#ifdef __BANDS
+  call mp_sum(kter_eff, inter_bgrp_comm)
+  call mp_sum(anorm, inter_bgrp_comm)
+#endif
   kter = kter_eff
   deallocate (eu)
   deallocate (rho, rhoold)
