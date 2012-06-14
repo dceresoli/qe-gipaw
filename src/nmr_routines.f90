@@ -36,7 +36,7 @@ SUBROUTINE paramagnetic_correction (paramagnetic_tensor, paramagnetic_tensor_us,
   real(dp), intent(inout) :: paramagnetic_tensor_us(3,3,nat)
   complex(dp), intent(in) :: g_vel_evc(npwx,nbnd,3)
   complex(dp), intent(in) :: u_svel_evc(npwx,nbnd,3)
-  real(dp), intent(in) :: ipol ! cartesian index of u_i
+  integer, intent(in) :: ipol ! cartesian index of u_i
 
   !-- local variables ----------------------------------------------------
   complex(dp) :: para_corr(3,nat), para_corr_us(3,nat)
