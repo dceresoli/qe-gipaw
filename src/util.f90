@@ -127,7 +127,8 @@ END SUBROUTINE trace
 SUBROUTINE radial_kinetic_energy (np, l, rdata, ydata, kin_ydata)
   USE kinds
   USE splinelib
-  integer, intent(in) :: l
+  implicit none
+  integer, intent(in) :: np, l
   real(dp), intent(in) :: rdata(np), ydata(np)
   real(dp), intent(out) :: kin_ydata(np)
   real(dp) :: d1
@@ -141,6 +142,8 @@ END SUBROUTINE radial_kinetic_energy
 SUBROUTINE radial_derivative (np, rdata, ydata, dydata_dr)
   USE kinds
   USE splinelib
+  implicit none
+  integer, intent(in) :: np
   real(dp), intent(in) :: rdata(np), ydata (np)   ! ydata passed as y * r
   real(dp), intent(out) :: dydata_dr(np)
   integer :: j

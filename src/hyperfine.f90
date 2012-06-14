@@ -41,7 +41,7 @@ SUBROUTINE hyperfine
   real(dp), parameter :: common_factor = mu0_by_fpi * mu_n / Bohr_radius ** 3
 
   !-- local variables ----------------------------------------------------
-  complex(dp), allocatable :: spin_den(:), rho_s(:,:)
+  real(dp), allocatable :: spin_den(:), rho_s(:,:)
   real(dp), allocatable :: hfi_dip_bare(:,:,:), hfi_dip_gipaw(:,:,:)
   real(dp), allocatable :: hfi_dip_tot(:,:,:)
   real(dp), allocatable :: hfi_fc_bare(:), hfi_fc_bare_zora(:)
@@ -239,18 +239,21 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
-  complex(dp), intent(in) :: rho_s(dffts%nnr)
+  real(dp), intent(in) :: rho_s(dffts%nnr)
   real(dp), intent(out) :: hfi_bare(nat), hfi_bare_zora(nat)  
   !-- local variables ----------------------------------------------------
 #ifdef ZORA
   real(dp) ::  delta_Th(ngm, ntypx)
 #endif
+  complex(dp), allocatable :: rhoaux(:)
   integer :: ig, na
   real(dp) :: arg
   complex(dp) :: phase
 
   ! transform to reciprocal space
-  CALL fwfft('Smooth', rho_s, dffts)
+  allocate(rhoaux(dffts%nnr))
+  rhoaux(:) = cmplx(rho_s(:), kind=dp)
+  CALL fwfft('Smooth', rhoaux, dffts)
 
 #ifdef ZORA
   ! Fourier transform of Thomson's delta function
@@ -264,16 +267,17 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
       do ig = gstart, ngms
           arg = sum(tau(1:3,na) * g(1:3,ig)) * tpi
           phase = cmplx(cos(arg),sin(arg), kind=dp)
-          hfi_bare(na) = hfi_bare(na) + real(rho_s(nls(ig)) * phase, kind=dp)
+          hfi_bare(na) = hfi_bare(na) + real(rhoaux(nls(ig)) * phase, kind=dp)
 #ifdef ZORA
           hfi_bare_zora(na) = hfi_bare_zora(na) + &
-              real(delta_Th(ig,ityp(na)) * rho_s(nls(ig)) * phase, kind=dp)
+              real(delta_Th(ig,ityp(na)) * rhoaux(nls(ig)) * phase, kind=dp)
 #endif
       enddo
   enddo
   call mp_sum(hfi_bare, intra_pool_comm)
   call mp_sum(hfi_bare_zora, intra_pool_comm)
 
+  deallocate(rhoaux)
   return
 END SUBROUTINE hfi_fc_bare_el
 

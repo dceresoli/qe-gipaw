@@ -26,7 +26,8 @@ SUBROUTINE efg
 
   !-- local variables ----------------------------------------------------
   IMPLICIT NONE
-  complex(dp), allocatable:: aux(:), rho_s(:,:), tmp(:,:,:)
+  complex(dp), allocatable:: tmp(:,:,:)
+  real(dp), allocatable:: aux(:), rho_s(:,:)
   real(dp), allocatable :: efg_bare(:,:,:), efg_ion(:,:,:)
   real(dp), allocatable :: zion(:), efg_gipaw(:,:,:), efg_tot(:,:,:)
   integer :: alpha, beta, na
@@ -169,7 +170,7 @@ SUBROUTINE get_smooth_density(rho)
   USE gipaw_module,           ONLY : job
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
-  complex(dp), intent(out) :: rho(dffts%nnr,nspin)
+  real(dp), intent(out) :: rho(dffts%nnr,nspin)
   !-- local variables ----------------------------------------------------
   complex(dp) :: psic(dffts%nnr)
   integer :: ibnd, ik, is
@@ -232,10 +233,10 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
-  complex(dp), intent(in) :: rho(dffts%nnr)
+  real(dp), intent(in) :: rho(dffts%nnr)
   real(dp), intent(out) :: efg_bare(3,3,nat)  
   !-- local variables ----------------------------------------------------
-  complex(dp), allocatable :: efg_g(:,:,:)
+  complex(dp), allocatable :: efg_g(:,:,:), rhoaux(:)
   integer :: alpha, beta, ig, na
   real(dp) :: arg, fac, e2, trace
   complex(dp) :: phase
@@ -243,11 +244,12 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
   e2 = 1.0_dp  ! hartree
   fac = fpi * e2
   
-  allocate( efg_g(ngms,3,3) )
+  allocate( efg_g(ngms,3,3), rhoaux(dffts%nnr) )
   efg_g(:,:,:) = (0.d0,0.d0)
+  rhoaux(:) = cmplx(rho(:), kind=dp)
 
   ! transform to reciprocal space
-  CALL fwfft ('Smooth', rho, dffts)
+  CALL fwfft ('Smooth', rhoaux, dffts)
   
   ! electric field gradient in the G-space
   do ig = gstart, ngms
@@ -256,7 +258,7 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
         efg_g(ig,alpha,alpha) = -trace
         do beta = 1, 3
            efg_g(ig,alpha,beta) = ( efg_g(ig,alpha,beta) + &
-                       g(alpha,ig)*g(beta,ig)) * fac * rho(nls(ig)) / gg(ig)
+                       g(alpha,ig)*g(beta,ig)) * fac * rhoaux(nls(ig)) / gg(ig)
         enddo
      enddo
   enddo
@@ -282,7 +284,7 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
   ! opposite sign for hyperfine
   if (job == 'hyperfine') efg_bare(:,:,:) = -efg_bare(:,:,:)
 
-  deallocate( efg_g )
+  deallocate( efg_g, rhoaux )
   return
 END SUBROUTINE efg_bare_el
 
