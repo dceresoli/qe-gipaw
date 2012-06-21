@@ -1,12 +1,12 @@
 
-     Program GIPAW v.4.3        starts on 28Apr2011 at 16:16: 8 
+     Program GIPAW v.5.0        starts on 21Jun2012 at 10: 2: 1 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
          "P. Giannozzi et al., J. Phys.:Condens. Matter 21 395502 (2009);
           URL http://www.quantum-espresso.org", 
      in publications or presentations arising from this work. More details at
-     http://www.quantum-espresso.org/wiki/index.php/Citing_Quantum-ESPRESSO
+     http://www.quantum-espresso.org/quote.php
 
      Parallel version (MPI), running on     4 processors
      K-points division:     npool     =    2
@@ -15,19 +15,25 @@
    Info: using nr1, nr2, nr3 values from input
 
    Info: using nr1s, nr2s, nr3s values from input
-Setting by parts:  SLA  PW   PBX  PBC
-Setting by parts:  SLA  PW   PBX  PBC
-Setting by parts:  SLA  PW   PBX  PBC
-Setting by parts:  SLA  PW   PBX  PBC
+
+     IMPORTANT: XC functional enforced from input :
+     Exchange-correlation      =  SLA  PW   PBX  PBC ( 1 4 3 4 0)
+     EXX-fraction              =        0.00
+     Any further DFT definition will be discarded
+     Please, verify this is what you really want
+
  
-   Stick Mesh
-   ----------
-   nst =  1189,  nstw =   151, nsts =   475
-               n.st   n.stw   n.sts    n.g    n.gw   n.gs
-   min         594      75     237   18148     815    4599
-   max         595      76     238   18149     816    4604
-       1189     151     475   36297    1631    9203
+     Parallelization info
+     --------------------
+     sticks:   dense  smooth     PW     G-vecs:    dense   smooth      PW
+     Min         594     237     75                18148     4599     815
+     Max         595     238     76                18149     4604     816
+     Sum        1189     475    151                36297     9203    1631
  
+
+     Subspace diagonalization in iterative solution of the eigenvalue problem:
+     a serial algorithm will be used
+
      init_paw_1: ntyp= 1  rc=    2.0000  rs=    1.3333
      init_paw_1: ntyp= 1  rc=    2.0000  rs=    1.3333
      init_paw_1: ntyp= 1  rc=    2.0000  rs=    1.3333
@@ -46,83 +52,93 @@ Setting by parts:  SLA  PW   PBX  PBC
      init_gipaw_1: projectors nearly linearly dependent:
      ntyp =  2, l/n1/n2 =  1 2 1  0.99505596
 
-DIA (NMR) :  1      0  0          0.2849
-PARA (NMR):  1      0  0       1164.7749
-RMC (SO)  :  1      0  0          9.0936
-DIA (SO)  :  1      0  0          8.8704
-PARA (SO) :  1      0  0      32779.1427
-DIA (NMR) :  1      0  0         -0.2197
-PARA (NMR):  1      0  0      -1178.9850
-RMC (SO)  :  1      0  0         -9.3049
-DIA (SO)  :  1      0  0         -8.7375
-PARA (SO) :  1      0  0     -33241.7838
-DIA (NMR) :  1      0  0          0.1211
-PARA (NMR):  1      0  0       1191.5214
-RMC (SO)  :  1      0  0          9.4067
-DIA (SO)  :  1      0  0          8.5843
-PARA (SO) :  1      0  0      33710.8925
-DIA (NMR) :  1      1  1          0.3232
-PARA (NMR):  1      1  1         13.9304
-RMC (SO)  :  1      1  1          7.8398
-DIA (SO)  :  1      1  1          8.8839
-PARA (SO) :  1      1  1        359.5633
-DIA (NMR) :  1      1  1          0.3109
-PARA (NMR):  1      1  1         14.0367
-RMC (SO)  :  1      1  1          7.8802
-DIA (SO)  :  1      1  1          8.8181
-PARA (SO) :  1      1  1        363.2878
-DIA (NMR) :  1      1  1          0.2976
-PARA (NMR):  1      1  1         14.1406
-RMC (SO)  :  1      1  1          7.9121
-DIA (SO)  :  1      1  1          8.7595
-PARA (SO) :  1      1  1        367.0650
-DIA (NMR) :  1      2  2          0.0188
-PARA (NMR):  1      2  2          0.1290
-RMC (SO)  :  1      2  2          0.1957
-DIA (SO)  :  1      2  2          0.3892
-PARA (SO) :  1      2  2          4.0412
-DIA (NMR) :  1      2  2          0.0195
-PARA (NMR):  1      2  2          0.1313
-RMC (SO)  :  1      2  2          0.2010
-DIA (SO)  :  1      2  2          0.3999
-PARA (SO) :  1      2  2          4.1040
-DIA (NMR) :  1      2  2          0.0202
-PARA (NMR):  1      2  2          0.1336
-RMC (SO)  :  1      2  2          0.2065
-DIA (SO)  :  1      2  2          0.4110
-PARA (SO) :  1      2  2          4.1676
-DIA (NMR) :  2      0  0         -0.3164
-PARA (NMR):  2      0  0        814.4952
-RMC (SO)  :  2      0  0          6.4914
-DIA (SO)  :  2      0  0          7.0816
-PARA (SO) :  2      0  0      13982.0310
-DIA (NMR) :  2      0  0         -0.3710
-PARA (NMR):  2      0  0        901.2823
-RMC (SO)  :  2      0  0          7.0331
-DIA (SO)  :  2      0  0          8.1055
-PARA (SO) :  2      0  0      15549.0035
-DIA (NMR) :  2      0  0         -0.4378
-PARA (NMR):  2      0  0        996.9232
-RMC (SO)  :  2      0  0          7.6237
-DIA (SO)  :  2      0  0          9.2353
-PARA (SO) :  2      0  0      17291.6072
-DIA (NMR) :  2      1  1          0.8862
-PARA (NMR):  2      1  1         10.2924
-RMC (SO)  :  2      1  1          5.9461
-DIA (SO)  :  2      1  1         14.0535
-PARA (SO) :  2      1  1        174.8050
-DIA (NMR) :  2      1  1          1.0389
-PARA (NMR):  2      1  1         12.2214
-RMC (SO)  :  2      1  1          7.2906
-DIA (SO)  :  2      1  1         16.4774
-PARA (SO) :  2      1  1        206.5709
-DIA (NMR) :  2      1  1          1.2158
-PARA (NMR):  2      1  1         14.5078
-RMC (SO)  :  2      1  1          8.9358
-DIA (SO)  :  2      1  1         19.2846
-PARA (SO) :  2      1  1        244.0893
-     GIPAW        :     0.81s CPU         1.93s WALL
+     GIPAW integrals: --------------------------------------------------------
+     Specie  Si     il1= 1  il2= 1      NMR PARA:     1164.7749
+     Specie  Si     il1= 1  il2= 1      NMR DIA :        0.2849
+     Specie  Si     il1= 1  il2= 1      SO RMC  :        9.0936
+     Specie  Si     il1= 1  il2= 1      SO PARA :    32779.1427
+     Specie  Si     il1= 1  il2= 1      SO DIA  :        8.8704
+     Specie  Si     il1= 2  il2= 1      NMR PARA:    -1178.9850
+     Specie  Si     il1= 2  il2= 1      NMR DIA :       -0.2197
+     Specie  Si     il1= 2  il2= 1      SO RMC  :       -9.3049
+     Specie  Si     il1= 2  il2= 1      SO PARA :   -33241.7838
+     Specie  Si     il1= 2  il2= 1      SO DIA  :       -8.7375
+     Specie  Si     il1= 2  il2= 2      NMR PARA:     1191.5214
+     Specie  Si     il1= 2  il2= 2      NMR DIA :        0.1211
+     Specie  Si     il1= 2  il2= 2      SO RMC  :        9.4067
+     Specie  Si     il1= 2  il2= 2      SO PARA :    33710.8925
+     Specie  Si     il1= 2  il2= 2      SO DIA  :        8.5843
+     Specie  Si     il1= 3  il2= 3      NMR PARA:       13.9304
+     Specie  Si     il1= 3  il2= 3      NMR DIA :        0.3232
+     Specie  Si     il1= 3  il2= 3      SO RMC  :        7.8398
+     Specie  Si     il1= 3  il2= 3      SO PARA :      359.5633
+     Specie  Si     il1= 3  il2= 3      SO DIA  :        8.8839
+     Specie  Si     il1= 4  il2= 3      NMR PARA:       14.0367
+     Specie  Si     il1= 4  il2= 3      NMR DIA :        0.3109
+     Specie  Si     il1= 4  il2= 3      SO RMC  :        7.8802
+     Specie  Si     il1= 4  il2= 3      SO PARA :      363.2878
+     Specie  Si     il1= 4  il2= 3      SO DIA  :        8.8181
+     Specie  Si     il1= 4  il2= 4      NMR PARA:       14.1406
+     Specie  Si     il1= 4  il2= 4      NMR DIA :        0.2976
+     Specie  Si     il1= 4  il2= 4      SO RMC  :        7.9121
+     Specie  Si     il1= 4  il2= 4      SO PARA :      367.0650
+     Specie  Si     il1= 4  il2= 4      SO DIA  :        8.7595
+     Specie  Si     il1= 5  il2= 5      NMR PARA:        0.1290
+     Specie  Si     il1= 5  il2= 5      NMR DIA :        0.0188
+     Specie  Si     il1= 5  il2= 5      SO RMC  :        0.1957
+     Specie  Si     il1= 5  il2= 5      SO PARA :        4.0412
+     Specie  Si     il1= 5  il2= 5      SO DIA  :        0.3892
+     Specie  Si     il1= 6  il2= 5      NMR PARA:        0.1313
+     Specie  Si     il1= 6  il2= 5      NMR DIA :        0.0195
+     Specie  Si     il1= 6  il2= 5      SO RMC  :        0.2010
+     Specie  Si     il1= 6  il2= 5      SO PARA :        4.1040
+     Specie  Si     il1= 6  il2= 5      SO DIA  :        0.3999
+     Specie  Si     il1= 6  il2= 6      NMR PARA:        0.1336
+     Specie  Si     il1= 6  il2= 6      NMR DIA :        0.0202
+     Specie  Si     il1= 6  il2= 6      SO RMC  :        0.2065
+     Specie  Si     il1= 6  il2= 6      SO PARA :        4.1676
+     Specie  Si     il1= 6  il2= 6      SO DIA  :        0.4110
+     Specie  O      il1= 1  il2= 1      NMR PARA:      814.4952
+     Specie  O      il1= 1  il2= 1      NMR DIA :       -0.3164
+     Specie  O      il1= 1  il2= 1      SO RMC  :        6.4914
+     Specie  O      il1= 1  il2= 1      SO PARA :    13982.0310
+     Specie  O      il1= 1  il2= 1      SO DIA  :        7.0816
+     Specie  O      il1= 2  il2= 1      NMR PARA:      901.2823
+     Specie  O      il1= 2  il2= 1      NMR DIA :       -0.3710
+     Specie  O      il1= 2  il2= 1      SO RMC  :        7.0331
+     Specie  O      il1= 2  il2= 1      SO PARA :    15549.0035
+     Specie  O      il1= 2  il2= 1      SO DIA  :        8.1055
+     Specie  O      il1= 2  il2= 2      NMR PARA:      996.9232
+     Specie  O      il1= 2  il2= 2      NMR DIA :       -0.4378
+     Specie  O      il1= 2  il2= 2      SO RMC  :        7.6237
+     Specie  O      il1= 2  il2= 2      SO PARA :    17291.6072
+     Specie  O      il1= 2  il2= 2      SO DIA  :        9.2353
+     Specie  O      il1= 3  il2= 3      NMR PARA:       10.2924
+     Specie  O      il1= 3  il2= 3      NMR DIA :        0.8862
+     Specie  O      il1= 3  il2= 3      SO RMC  :        5.9461
+     Specie  O      il1= 3  il2= 3      SO PARA :      174.8050
+     Specie  O      il1= 3  il2= 3      SO DIA  :       14.0535
+     Specie  O      il1= 4  il2= 3      NMR PARA:       12.2214
+     Specie  O      il1= 4  il2= 3      NMR DIA :        1.0389
+     Specie  O      il1= 4  il2= 3      SO RMC  :        7.2906
+     Specie  O      il1= 4  il2= 3      SO PARA :      206.5709
+     Specie  O      il1= 4  il2= 3      SO DIA  :       16.4774
+     Specie  O      il1= 4  il2= 4      NMR PARA:       14.5078
+     Specie  O      il1= 4  il2= 4      NMR DIA :        1.2158
+     Specie  O      il1= 4  il2= 4      SO RMC  :        8.9358
+     Specie  O      il1= 4  il2= 4      SO PARA :      244.0893
+     Specie  O      il1= 4  il2= 4      SO DIA  :       19.2846
+     -------------------------------------------------------------------------
+ 
+ 
+     GIPAW job: efg                                                                             
+ 
+     GIPAW        :     1.00s CPU         1.03s WALL
 
+     ============================================================
+       EXPERIMENTAL BAND PARALLELIZATION OVER  1 GROUPS
+     ============================================================
+ 
  
      ELECTRIC FIELD GRADIENTS TENSORS IN Hartree/bohrradius:
  
@@ -201,7 +217,7 @@ PARA (SO) :  2      1  1        244.0893
      O    9        0.138569        0.414510        0.006553
  
      ----- GIPAW term -----
-     Si   1       -0.030267       -0.064915        0.016003
+     Si   1       -0.030266       -0.064915        0.016003
      Si   1       -0.064915        0.047651        0.002935
      Si   1        0.016003        0.002935       -0.017384
  
@@ -213,12 +229,12 @@ PARA (SO) :  2      1  1        244.0893
      Si   3       -0.001715       -0.067720       -0.014861
      Si   3       -0.005131       -0.014861       -0.017620
  
-     O    4       -0.072710        0.156509       -0.183772
+     O    4       -0.072710        0.156509       -0.183771
      O    4        0.156509        0.076131       -0.199487
-     O    4       -0.183772       -0.199487       -0.003421
+     O    4       -0.183771       -0.199487       -0.003421
  
-     O    5        0.172080       -0.015689        0.265628
-     O    5       -0.015689       -0.168452       -0.059160
+     O    5        0.172080       -0.015688        0.265628
+     O    5       -0.015688       -0.168452       -0.059160
      O    5        0.265628       -0.059160       -0.003628
  
      O    6       -0.099994       -0.139744       -0.081365
@@ -233,20 +249,20 @@ PARA (SO) :  2      1  1        244.0893
      O    8        0.010245       -0.175423       -0.064970
      O    8       -0.267134       -0.064970        0.001048
  
-     O    9       -0.100964        0.148928        0.077007
+     O    9       -0.100964        0.148928        0.077006
      O    9        0.148928        0.098804        0.264905
-     O    9        0.077007        0.264905        0.002160
+     O    9        0.077006        0.264905        0.002160
  
      ----- total EFG -----
      Si   1       -0.034771       -0.075519        0.016937
-     Si   1       -0.075519        0.055043        0.003671
-     Si   1        0.016937        0.003671       -0.020272
+     Si   1       -0.075519        0.055043        0.003672
+     Si   1        0.016937        0.003672       -0.020272
  
      Si   2       -0.032249        0.077606       -0.011038
-     Si   2        0.077606        0.053902        0.012699
-     Si   2       -0.011038        0.012699       -0.021653
+     Si   2        0.077606        0.053902        0.012700
+     Si   2       -0.011038        0.012700       -0.021653
  
-     Si   3        0.099071       -0.001726       -0.005110
+     Si   3        0.099070       -0.001726       -0.005110
      Si   3       -0.001726       -0.078412       -0.016051
      Si   3       -0.005110       -0.016051       -0.020659
  
@@ -255,86 +271,86 @@ PARA (SO) :  2      1  1        244.0893
      O    4       -0.307228       -0.333736       -0.003554
  
      O    5        0.291350       -0.024827        0.444799
-     O    5       -0.024827       -0.287596       -0.099370
-     O    5        0.444799       -0.099370       -0.003754
+     O    5       -0.024827       -0.287596       -0.099369
+     O    5        0.444799       -0.099369       -0.003754
  
-     O    6       -0.167393       -0.238112       -0.135738
+     O    6       -0.167394       -0.238112       -0.135738
      O    6       -0.238112        0.171651        0.432944
      O    6       -0.135738        0.432944       -0.004257
  
-     O    7       -0.139196       -0.266653        0.318378
-     O    7       -0.266653        0.135554       -0.333804
-     O    7        0.318378       -0.333804        0.003643
+     O    7       -0.139196       -0.266652        0.318378
+     O    7       -0.266652        0.135554       -0.333803
+     O    7        0.318378       -0.333803        0.003642
  
      O    8        0.294027        0.016468       -0.446383
      O    8        0.016468       -0.297270       -0.107726
      O    8       -0.446383       -0.107726        0.003243
  
-     O    9       -0.168320        0.251042        0.130010
-     O    9        0.251042        0.163727        0.442168
+     O    9       -0.168320        0.251041        0.130010
+     O    9        0.251041        0.163727        0.442168
      O    9        0.130010        0.442168        0.004593
  
      ----- total EFG (symmetrized) -----
-     Si   1       -0.033510       -0.076563        0.013987
-     Si   1       -0.076563        0.054472        0.008185
-     Si   1        0.013987        0.008185       -0.020962
+     Si   1       -0.033510       -0.076562        0.013988
+     Si   1       -0.076562        0.054472        0.008186
+     Si   1        0.013988        0.008186       -0.020962
  
-     Si   2       -0.033510        0.076563       -0.013987
-     Si   2        0.076563        0.054472        0.008185
-     Si   2       -0.013987        0.008185       -0.020962
+     Si   2       -0.033510        0.076562       -0.013988
+     Si   2        0.076562        0.054472        0.008186
+     Si   2       -0.013988        0.008186       -0.020962
  
-     Si   3        0.099071        0.000000        0.000000
+     Si   3        0.099070        0.000000        0.000000
      Si   3        0.000000       -0.078412       -0.016051
      Si   3        0.000000       -0.016051       -0.020659
  
-     O    4       -0.131928        0.265475       -0.312803
-     O    4        0.265475        0.131884       -0.333770
+     O    4       -0.131927        0.265475       -0.312803
+     O    4        0.265475        0.131883       -0.333770
      O    4       -0.312803       -0.333770        0.000044
  
-     O    5        0.292688       -0.020648        0.445591
-     O    5       -0.020648       -0.292433       -0.103548
+     O    5        0.292688       -0.020647        0.445591
+     O    5       -0.020647       -0.292433       -0.103548
      O    5        0.445591       -0.103548       -0.000255
  
-     O    6       -0.167856       -0.244577       -0.132874
+     O    6       -0.167857       -0.244577       -0.132874
      O    6       -0.244577        0.167689        0.437556
      O    6       -0.132874        0.437556        0.000168
  
-     O    7       -0.131928       -0.265475        0.312803
-     O    7       -0.265475        0.131884       -0.333770
+     O    7       -0.131927       -0.265475        0.312803
+     O    7       -0.265475        0.131883       -0.333770
      O    7        0.312803       -0.333770        0.000044
  
-     O    8        0.292688        0.020648       -0.445591
-     O    8        0.020648       -0.292433       -0.103548
+     O    8        0.292688        0.020647       -0.445591
+     O    8        0.020647       -0.292433       -0.103548
      O    8       -0.445591       -0.103548       -0.000255
  
-     O    9       -0.167856        0.244577        0.132874
+     O    9       -0.167857        0.244577        0.132874
      O    9        0.244577        0.167689        0.437556
      O    9        0.132874        0.437556        0.000168
  
  
      NQR/NMR SPECTROSCOPIC PARAMETERS:
-     Si   1    Vxx=   -0.0167    axis=(  0.222045  0.127751  0.966631)
-     Si   1    Vyy=   -0.0821    axis=(  0.836568  0.484283 -0.256171)
-     Si   1    Vzz=    0.0988    axis=( -0.500849  0.865535  0.000660)
+     Si   1    Vxx=   -0.0167    axis=(  0.222050  0.127752  0.966630)
+     Si   1    Vyy=   -0.0821    axis=(  0.836567  0.484283 -0.256176)
+     Si   1    Vzz=    0.0988    axis=( -0.500849  0.865534  0.000662)
      Si   1    Q= 1.00 1e-30 m^2    Cq=   0.2321 MHz    eta= 0.66254
  
-     Si   2    Vxx=   -0.0167    axis=( -0.222045  0.127751  0.966631)
-     Si   2    Vyy=   -0.0821    axis=( -0.836568  0.484283 -0.256171)
-     Si   2    Vzz=    0.0988    axis=( -0.500849 -0.865535 -0.000660)
+     Si   2    Vxx=   -0.0167    axis=( -0.222050  0.127752  0.966630)
+     Si   2    Vyy=   -0.0821    axis=( -0.836567  0.484283 -0.256176)
+     Si   2    Vzz=    0.0988    axis=( -0.500849 -0.865534 -0.000662)
      Si   2    Q= 1.00 1e-30 m^2    Cq=   0.2321 MHz    eta= 0.66254
  
-     Si   3    Vxx=   -0.0165    axis=(  0.000000  0.250954 -0.967999)
-     Si   3    Vyy=   -0.0826    axis=(  0.000000 -0.967999 -0.250954)
+     Si   3    Vxx=   -0.0165    axis=(  0.000000  0.250953 -0.967999)
+     Si   3    Vyy=   -0.0826    axis=(  0.000000 -0.967999 -0.250953)
      Si   3    Vzz=    0.0991    axis=(  1.000000  0.000000  0.000000)
      Si   3    Q= 1.00 1e-30 m^2    Cq=   0.2328 MHz    eta= 0.66696
  
      O    4    Vxx=   -0.2379    axis=(  0.428795 -0.755256 -0.495706)
-     O    4    Vyy=   -0.3857    axis=(  0.769173  0.017422  0.638804)
-     O    4    Vzz=    0.6236    axis=(  0.473824  0.655199 -0.588393)
+     O    4    Vyy=   -0.3857    axis=(  0.769172  0.017422  0.638804)
+     O    4    Vzz=    0.6236    axis=(  0.473824  0.655199 -0.588392)
      O    4    Q= 2.55 1e-30 m^2    Cq=   3.7363 MHz    eta= 0.23700
  
      O    5    Vxx=   -0.2384    axis=(  0.434811  0.759999 -0.483054)
-     O    5    Vyy=   -0.3834    axis=( -0.407001  0.644354  0.647424)
+     O    5    Vyy=   -0.3834    axis=( -0.407001  0.644355  0.647424)
      O    5    Vzz=    0.6219    axis=( -0.803299  0.084903 -0.589493)
      O    5    Q= 2.55 1e-30 m^2    Cq=   3.7259 MHz    eta= 0.23317
  
@@ -344,12 +360,12 @@ PARA (SO) :  2      1  1        244.0893
      O    6    Q= 2.55 1e-30 m^2    Cq=   3.7387 MHz    eta= 0.22749
  
      O    7    Vxx=   -0.2379    axis=(  0.428795  0.755256  0.495706)
-     O    7    Vyy=   -0.3857    axis=(  0.769173 -0.017422 -0.638804)
-     O    7    Vzz=    0.6236    axis=(  0.473824 -0.655199  0.588393)
+     O    7    Vyy=   -0.3857    axis=(  0.769172 -0.017422 -0.638804)
+     O    7    Vzz=    0.6236    axis=(  0.473824 -0.655199  0.588392)
      O    7    Q= 2.55 1e-30 m^2    Cq=   3.7363 MHz    eta= 0.23700
  
      O    8    Vxx=   -0.2384    axis=(  0.434811 -0.759999  0.483054)
-     O    8    Vyy=   -0.3834    axis=( -0.407001 -0.644354 -0.647424)
+     O    8    Vyy=   -0.3834    axis=( -0.407001 -0.644355 -0.647424)
      O    8    Vzz=    0.6219    axis=( -0.803299 -0.084903  0.589493)
      O    8    Q= 2.55 1e-30 m^2    Cq=   3.7259 MHz    eta= 0.23317
  
@@ -359,10 +375,10 @@ PARA (SO) :  2      1  1        244.0893
      O    9    Q= 2.55 1e-30 m^2    Cq=   3.7387 MHz    eta= 0.22749
  
  
-     GIPAW        :     0.98s CPU         2.32s WALL
+     GIPAW        :     1.18s CPU         1.21s WALL
 
      INITIALIZATION:
-     gipaw_setup  :      0.19s CPU      0.43s WALL (       1 calls)
+     gipaw_setup  :      0.27s CPU      0.28s WALL (       1 calls)
  
      Linear response
  
@@ -371,15 +387,14 @@ PARA (SO) :  2      1  1        244.0893
      Induced current
  
      Other routines
-     efg          :      0.17s CPU      0.39s WALL (       1 calls)
+     efg          :      0.17s CPU      0.18s WALL (       1 calls)
  
      General routines
-     calbec       :      0.03s CPU      0.05s WALL (      10 calls)
-     fft          :      0.06s CPU      0.12s WALL (      15 calls)
-     ffts         :      0.00s CPU      0.01s WALL (       2 calls)
-     fftw         :      0.10s CPU      0.20s WALL (     240 calls)
+     calbec       :      0.01s CPU      0.02s WALL (      10 calls)
+     fft          :      0.04s CPU      0.04s WALL (      15 calls)
+     ffts         :      0.00s CPU      0.00s WALL (       2 calls)
+     fftw         :      0.09s CPU      0.09s WALL (     240 calls)
      davcio       :      0.00s CPU      0.00s WALL (      20 calls)
  
      Parallel routines
- 
- ----- PRACE -----
+     fft_scatter  :      0.02s CPU      0.02s WALL (     257 calls)
