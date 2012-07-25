@@ -48,7 +48,10 @@ SUBROUTINE gipaw_readin()
   filcurr = ''
   filfield = ''
   use_nmr_macroscopic_shape = .true.
-  nmr_macroscopic_shape = 2.d0 / 3.d0
+  nmr_macroscopic_shape(:,:) = 0.d0
+  nmr_macroscopic_shape(1,1) = 2.d0 / 3.d0
+  nmr_macroscopic_shape(2,2) = 2.d0 / 3.d0
+  nmr_macroscopic_shape(3,3) = 2.d0 / 3.d0
   spline_ps = .true.
   isolve = 0
   core_relax_method = 1

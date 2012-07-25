@@ -435,7 +435,7 @@ END SUBROUTINE paramagnetic_correction_aug
 ! Compute the bare contribution to the chemical shift by evaluating
 ! the induced magnetic field at the nuclei
 !====================================================================
-SUBROUTINE compute_sigma_bare(B_ind, chi_bare, sigma_bare)
+SUBROUTINE compute_sigma_bare(B_ind, chi_bare, sigma_bare, sigma_shape)
   USE kinds,                ONLY : dp
   USE gvect,                ONLY : ngm, gstart, nl, nlm, g
   USE ions_base,            ONLY : nat, tau, atm, ityp
@@ -453,7 +453,7 @@ SUBROUTINE compute_sigma_bare(B_ind, chi_bare, sigma_bare)
   IMPLICIT NONE
   complex(dp), intent(in) :: B_ind(ngm,3,3,nspin)
   real(dp), intent(in) :: chi_bare(3,3)
-  real(dp), intent(out) :: sigma_bare(3,3,nat)
+  real(dp), intent(out) :: sigma_bare(3,3,nat), sigma_shape(3,3)
   !-- local variables ---------------------------------------------------
   integer :: na, ig, ispin
   real(dp) :: arg
@@ -468,15 +468,7 @@ SUBROUTINE compute_sigma_bare(B_ind, chi_bare, sigma_bare)
         tmp_sigma(:,:) = tmp_sigma(:,:) + B_ind(ig,:,:,ispin) * cmplx(cos(arg),sin(arg), dp)
       enddo
     enddo
-    
-    if (use_nmr_macroscopic_shape) then
-       ! this is the G = 0 term
-       if (gstart == 2) then
-          tmp_sigma(:,:) = tmp_sigma(:,:) &
-               - (4.0_dp*pi) * nmr_macroscopic_shape(:,:) * chi_bare(:,:)
-       end if
-    end if
-    
+   
     sigma_bare(:,:,na) = real(tmp_sigma(:,:), dp)
   enddo
 #ifdef __MPI
@@ -486,6 +478,13 @@ SUBROUTINE compute_sigma_bare(B_ind, chi_bare, sigma_bare)
   call mp_sum( sigma_bare, intra_pool_comm )
 #endif
 #endif
+
+  if (use_nmr_macroscopic_shape) then
+    sigma_shape(:,:) = -4.d0*pi * nmr_macroscopic_shape(:,:) * chi_bare(:,:)
+  else
+    sigma_shape(:,:) = 0.d0
+  end if
+
 END SUBROUTINE compute_sigma_bare
 
 
@@ -493,7 +492,7 @@ END SUBROUTINE compute_sigma_bare
 !====================================================================
 ! Print the contributions to the chemical shift and the total sigma
 !====================================================================
-SUBROUTINE print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnetic, &
+SUBROUTINE print_chemical_shifts(sigma_shape, sigma_bare, sigma_diamagnetic, sigma_paramagnetic, &
                                  sigma_paramagnetic_us, sigma_paramagnetic_aug)
   USE kinds,                ONLY : dp
   USE ions_base,            ONLY : nat, tau, atm, ityp, ntyp => nsp
@@ -503,7 +502,7 @@ SUBROUTINE print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnet
   USE gipaw_module,         ONLY : tens_fmt, iverbosity, nmr_shift_core
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
-  real(dp), intent(in) :: sigma_bare(3,3,nat)
+  real(dp), intent(in) :: sigma_shape(3,3), sigma_bare(3,3,nat)
   real(dp), intent(inout) :: sigma_diamagnetic(3,3,nat)
   real(dp), intent(inout) :: sigma_paramagnetic(3,3,nat)
   real(dp), intent(inout) :: sigma_paramagnetic_us(3,3,nat)
@@ -515,10 +514,16 @@ SUBROUTINE print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnet
   write(stdout,'(5X,''Contributions to the NMR chemical shifts: -------------------------------'')')
   write(stdout,*)
 
+  call trace(3, sigma_shape, tr_sigma)
+  tr_sigma = tr_sigma / 3.d0
+  write(stdout,'(5X,''Macroscopic shape contribution in ppm:'',10X,F14.2)') tr_sigma*1.0d6
+  if (iverbosity > 0) write(stdout,tens_fmt) sigma_shape(:,:) * 1.0d6
+  write(stdout,*)
+
   write(stdout,'(5X,''Core contribution in ppm:'')')
   write(stdout,*)
   do na = 1, nat
-    write(stdout,'(5X,''Atom'',I3,2X,A3,'' pos: ('',3(F10.6),'') core sigma: '',F14.2)') &
+    write(stdout,'(5X,''Atom'',I3,2X,A3,'' pos: ('',3(F10.6),'')  core sigma: '',F14.2)') &
           na, atm(ityp(na)), tau(:,na), nmr_shift_core(ityp(na))*1.0d6
   enddo
   write(stdout,*)
@@ -589,6 +594,7 @@ SUBROUTINE print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnet
     sigma_tot(1,1,na) = sigma_tot(1,1,na) + nmr_shift_core(ityp(na))
     sigma_tot(2,2,na) = sigma_tot(2,2,na) + nmr_shift_core(ityp(na))
     sigma_tot(3,3,na) = sigma_tot(3,3,na) + nmr_shift_core(ityp(na))
+    sigma_tot(:,:,na) = sigma_tot(:,:,na) + sigma_shape
 
     call trace(3, sigma_tot(1,1,na), tr_sigma)
     tr_sigma = tr_sigma / 3.d0

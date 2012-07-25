@@ -91,6 +91,7 @@ SUBROUTINE suscept_crystal
   real(dp) :: paramagnetic_corr_tensor_aug(3,3,nat)  ! Eq.(30) of [2] (L_R Q_R term)
 
   ! Contributions to NMR chemical shift
+  real(dp) :: sigma_shape(3,3)
   real(dp) :: sigma_bare(3,3,nat)
   real(dp) :: sigma_diamagnetic(3,3,nat)
   real(dp) :: sigma_paramagnetic(3,3,nat)
@@ -142,6 +143,7 @@ SUBROUTINE suscept_crystal
   j_bare_s(:,:,:,:) = (0.d0,0.d0)
   
   ! zero the chemical shift
+  sigma_shape = 0.d0
   sigma_bare = 0.d0
   sigma_diamagnetic = 0.d0
   sigma_paramagnetic = 0.d0
@@ -642,8 +644,8 @@ SUBROUTINE suscept_crystal
   !--------------------------------------------------------------------
   if (job == 'nmr') then
     ! compute bare chemical shift and print all results
-    call compute_sigma_bare( B_ind, chi_bare_pGv, sigma_bare )
-    call print_chemical_shifts(sigma_bare, sigma_diamagnetic, sigma_paramagnetic, &
+    call compute_sigma_bare(B_ind, chi_bare_pGv, sigma_bare, sigma_shape)
+    call print_chemical_shifts(sigma_shape, sigma_bare, sigma_diamagnetic, sigma_paramagnetic, &
                                sigma_paramagnetic_us, sigma_paramagnetic_aug)
   elseif (job == 'g_tensor') then
     call compute_delta_g_so(j_bare, s_maj, s_min, delta_g_so)
