@@ -8,7 +8,7 @@ build:
 
 clean:
 	@echo "Cleaning qe-gipaw..."
-	$(MAKE) -C src clean
+	if test -s src/Makefile ; then ( $(MAKE) -C src clean ); fi
 	-/bin/rm -f bin/gipaw.x
 
 distclean:
