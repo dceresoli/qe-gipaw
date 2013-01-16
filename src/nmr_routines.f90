@@ -240,7 +240,6 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   USE io_global,              ONLY : stdout, ionode
 #ifdef __BANDS
   USE gipaw_module,           ONLY : ibnd_start, ibnd_end
-  USE mp_image_global_module, ONLY : inter_image_comm
   USE mp,                     ONLY : mp_sum
   USE mp_global,              ONLY : inter_bgrp_comm, mpime
 #endif
