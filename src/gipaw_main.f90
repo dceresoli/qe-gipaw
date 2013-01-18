@@ -27,25 +27,22 @@ PROGRAM gipaw_main
   ! ... C. J. Pickard and F. Mauri, Phys. Rev. Lett. 88, 086403 (2002)
   ! ...
   USE kinds,           ONLY : DP
-  USE io_global,       ONLY : stdout, ionode, ionode_id, meta_ionode, meta_ionode_id
-  USE io_files,        ONLY : prefix, tmp_dir, nd_nmbr
+  USE io_files,        ONLY : prefix, tmp_dir
   USE klist,           ONLY : nks
   USE mp,              ONLY : mp_bcast
   USE cell_base,       ONLY : tpiba
   USE cellmd,          ONLY : cell_factor
   USE gipaw_module,    ONLY : job, q_gipaw
   USE control_flags,   ONLY : io_level, gamma_only, use_para_diag, twfcollect
-  USE mp_global,       ONLY : mp_startup, my_image_id,  mpime, nproc, root
+  USE mp_global,       ONLY : mp_startup, nimage, my_image_id,  mpime, nproc
+  USE mp_global,       ONLY : inter_bgrp_comm, nbgrp
   USE check_stop,      ONLY : check_stop_init
+  USE image_io_routines, ONLY : io_image_start
   USE environment,     ONLY : environment_start
   USE lsda_mod,        ONLY : nspin
   USE wvfct,           ONLY : nbnd
   USE uspp,            ONLY : okvan
-  USE wvfct,                ONLY : nbnd, npw 
-  USE mp_image_global_module, ONLY : mp_image_startup, world_comm
-  USE mp_image_global_module, ONLY : me_image, nimage, inter_image_comm, intra_image_comm
-  USE mp_global,             ONLY : mp_start, mpime, nproc, root, inter_bgrp_comm, nbgrp
-  USE image_io_routines, ONLY : io_image_start
+  USE wvfct,           ONLY : nbnd, npw 
   USE iotk_module  
   USE xml_io_base
 
@@ -56,24 +53,19 @@ PROGRAM gipaw_main
   IMPLICIT NONE
   CHARACTER (LEN=9)   :: code = 'GIPAW'
   CHARACTER (LEN=10)  :: dirname = 'dummy'
-  INTEGER             :: gipaw_comm
   !------------------------------------------------------------------------
 
   ! ... and begin with the initialization part
 #ifdef __MPI
-  CALL mp_start (nproc, mpime, gipaw_comm)
-  CALL mp_image_startup(root, gipaw_comm)
-  CALL engine_mp_start()
-  !CALL mp_startup()
+  CALL mp_startup ( start_images=.true. )
+  IF ( nimage > 1 ) CALL io_image_start( )
 #endif
-
   CALL environment_start ( code )
 #ifndef __BANDS
   if (nbgrp > 1) &
     call errore('gipaw_main', 'configure and recompile GIPAW with --enable-band-parallel', 1)
 #endif
 
-  CALL io_image_start()
   CALL gipaw_readin()
   CALL check_stop_init()
 
