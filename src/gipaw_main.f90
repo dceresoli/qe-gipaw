@@ -34,7 +34,7 @@ PROGRAM gipaw_main
   USE cellmd,          ONLY : cell_factor
   USE gipaw_module,    ONLY : job, q_gipaw
   USE control_flags,   ONLY : io_level, gamma_only, use_para_diag, twfcollect
-  USE mp_global,       ONLY : mp_startup, nimage, my_image_id,  mpime, nproc
+  USE mp_global,       ONLY : mp_startup, nimage, my_image_id
   USE mp_global,       ONLY : inter_bgrp_comm, nbgrp
   USE check_stop,      ONLY : check_stop_init
   USE image_io_routines, ONLY : io_image_start

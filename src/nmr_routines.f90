@@ -241,7 +241,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
 #ifdef __BANDS
   USE gipaw_module,           ONLY : ibnd_start, ibnd_end
   USE mp,                     ONLY : mp_sum
-  USE mp_global,              ONLY : inter_bgrp_comm, mpime
+  USE mp_global,              ONLY : inter_bgrp_comm
 #endif
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE

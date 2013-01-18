@@ -47,7 +47,7 @@ SUBROUTINE suscept_crystal
   USE ions_base,              ONLY : nat
   USE buffers,                ONLY : get_buffer
   USE mp_global,              ONLY : my_pool_id, me_pool, root_pool,  &
-                                     inter_pool_comm, intra_pool_comm, mpime, &
+                                     inter_pool_comm, intra_pool_comm, &
                                      my_image_id, inter_image_comm, nimage
   USE mp,                     ONLY : mp_sum
 #ifdef __BANDS
