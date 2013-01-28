@@ -853,11 +853,12 @@ CONTAINS
   !--------------------------------------------------------
   SUBROUTINE check_for_restart_info(ik0_, iq0_)
     !
-    USE io_files, ONLY: find_free_unit, seqopn
+    USE io_files, ONLY: seqopn
     IMPLICIT NONE
     INTEGER, INTENT (OUT) :: ik0_, iq0_
     LOGICAL :: exst
     INTEGER :: iunrec
+    INTEGER, EXTERNAL :: find_free_unit 
     CHARACTER(80) :: job_
 
     ik0_ = 0
@@ -900,11 +901,12 @@ CONTAINS
   !--------------------------------------------------------
   SUBROUTINE save_info_for_restart(ik0_, iq0_)
     !
-    USE io_files, ONLY: find_free_unit, seqopn
+    USE io_files, ONLY: seqopn
     USE check_stop, ONLY : check_stop_now
     IMPLICIT NONE
     INTEGER, INTENT (IN) :: ik0_, iq0_
     INTEGER :: iunrec
+    INTEGER, EXTERNAL :: find_free_unit 
     LOGICAL :: exst
     !
     iunrec = find_free_unit()
@@ -937,9 +939,10 @@ CONTAINS
   !--------------------------------------------------------
   SUBROUTINE restart_cleanup ( )
     !
-    USE io_files, ONLY: find_free_unit, seqopn
+    USE io_files, ONLY: seqopn
     IMPLICIT NONE
     INTEGER :: iunrec
+    INTEGER, EXTERNAL :: find_free_unit 
     LOGICAL :: exst
     !
     iunrec = find_free_unit()
