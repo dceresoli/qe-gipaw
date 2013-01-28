@@ -24,12 +24,11 @@ else
   QEMODS = $(QE_SOURCE)/Environ/src/libenviron.a $(QE_SOURCE)/Modules/libqemod.a
 endif
 PWOBJS  = $(QE_SOURCE)/PW/src/libpw.a
-NEBOBJS = $(QE_SOURCE)/NEB/src/libneb.a
 
 all: gipaw.x
 
-gipaw.x: $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS) $(NEBOBJS)
-	$(LD) $(LDFLAGS) -o $@ $(GIPAW_OBJS) $(PWOBJS) $(NEBOBJS) $(QEMODS) $(LIBOBJS) $(LIBS)
+gipaw.x: $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS) 
+	$(LD) $(LDFLAGS) -o $@ $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS) $(LIBS)
 	(cd ../bin; ln -sf ../src/gipaw.x .)
 
 clean:
