@@ -107,7 +107,6 @@ gipaw_main.o : ../../Modules/cell_base.o
 gipaw_main.o : ../../Modules/check_stop.o
 gipaw_main.o : ../../Modules/control_flags.o
 gipaw_main.o : ../../Modules/environment.o
-gipaw_main.o : ../../Modules/image_io_routines.o
 gipaw_main.o : ../../Modules/io_files.o
 gipaw_main.o : ../../Modules/kind.o
 gipaw_main.o : ../../Modules/mp.o

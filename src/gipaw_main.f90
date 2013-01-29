@@ -37,7 +37,6 @@ PROGRAM gipaw_main
   USE mp_global,       ONLY : mp_startup, nimage, my_image_id
   USE mp_global,       ONLY : inter_bgrp_comm, nbgrp
   USE check_stop,      ONLY : check_stop_init
-  USE image_io_routines, ONLY : io_image_start
   USE environment,     ONLY : environment_start
   USE lsda_mod,        ONLY : nspin
   USE wvfct,           ONLY : nbnd
