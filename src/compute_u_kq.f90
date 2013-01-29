@@ -15,8 +15,7 @@ SUBROUTINE compute_u_kq(ik, q)
   USE kinds,                ONLY : DP
   USE constants,            ONLY : RytoeV, tpi
   USE io_global,            ONLY : stdout
-  USE io_files,             ONLY : iunigk, nwordatwfc, iunsat, iunwfc, &
-                                   nwordwfc
+  USE io_files,             ONLY : nwordatwfc, iunsat, iunwfc, nwordwfc
   USE mp,                   ONLY : mp_sum
   USE mp_global,            ONLY : inter_pool_comm, intra_pool_comm, me_pool
 #ifdef __BANDS

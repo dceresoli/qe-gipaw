@@ -192,7 +192,7 @@ SUBROUTINE gipaw_openfil
   USE wvfct,            ONLY : nbnd, npwx
   USE ldaU,             ONLY : lda_plus_U  
   USE klist,            ONLY : nks
-  USE io_files,         ONLY : prefix, iunat, iunsat, iunwfc, iunigk, &
+  USE io_files,         ONLY : prefix, iunat, iunsat, iunwfc, &
                                nwordwfc, nwordatwfc, tmp_dir, wfc_dir
   USE noncollin_module, ONLY : npol
   USE mp_global,        ONLY : kunit
@@ -227,10 +227,6 @@ SUBROUTINE gipaw_openfil
      call diropn( iunsat, 'satwfc', nwordatwfc, exst )
   end if
 
-  ! ... iunigk contains the number of PW and the indices igk
-  ! ... Note that unit 15 is reserved for error messages 
-  call seqopn( iunigk, 'igk', 'unformatted', exst )
-
 END SUBROUTINE gipaw_openfil
 
 
@@ -244,7 +240,7 @@ SUBROUTINE gipaw_closefil
   USE gipaw_module
   USE io_global,        ONLY : stdout
   USE ldaU,             ONLY : lda_plus_U  
-  USE io_files,         ONLY : prefix, iunat, iunsat, iunwfc, iunigk
+  USE io_files,         ONLY : prefix, iunat, iunsat, iunwfc
   USE buffers,          ONLY : close_buffer
   USE control_flags,    ONLY : io_level    
   IMPLICIT NONE  
@@ -265,12 +261,6 @@ SUBROUTINE gipaw_closefil
      close( unit = iunat, status = 'keep' )
      close( unit = iunsat, status = 'keep' )
   end if
-
-  !
-  ! ... iunigk is kept open during the execution - close and remove
-  !
-  inquire( unit = iunigk, opened = opnd )
-  if ( opnd ) close( unit = iunigk, status = 'delete' )
 
 END SUBROUTINE gipaw_closefil
 
