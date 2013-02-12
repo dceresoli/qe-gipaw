@@ -57,7 +57,6 @@ PROGRAM gipaw_main
   ! ... and begin with the initialization part
 #ifdef __MPI
   CALL mp_startup ( start_images=.true. )
-  IF ( nimage > 1 ) CALL io_image_start( )
 #endif
   CALL environment_start ( code )
 #ifndef __BANDS
