@@ -193,7 +193,7 @@ SUBROUTINE gipaw_openfil
   USE ldaU,             ONLY : lda_plus_U  
   USE klist,            ONLY : nks
   USE io_files,         ONLY : prefix, iunat, iunsat, iunwfc, &
-                               nwordwfc, nwordatwfc, tmp_dir, wfc_dir
+                               nwordwfc, nwordatwfc, tmp_dir
   USE noncollin_module, ONLY : npol
   USE mp_global,        ONLY : kunit
   USE buffers,          ONLY : open_buffer
