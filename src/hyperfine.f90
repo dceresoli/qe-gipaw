@@ -357,7 +357,7 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
   USE becmod,                ONLY : calbec
   USE constants,             ONLY : pi, fpi
-  USE mp_global,             ONLY : intra_pool_comm
+  USE mp_global,             ONLY : intra_pool_comm, inter_pool_comm
   USE mp,                    ONLY : mp_sum
   USE buffers,               ONLY : get_buffer
   USE io_files,              ONLY : nwordwfc, iunwfc
@@ -492,6 +492,9 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
      enddo
      
   enddo
+
+  call mp_sum( fc_gipaw, inter_pool_comm )
+  call mp_sum( fc_gipaw_zora, inter_pool_comm )
   
 END SUBROUTINE hfi_fc_gipaw_correction
 
