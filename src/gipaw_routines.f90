@@ -202,19 +202,13 @@ SUBROUTINE gipaw_openfil
 
   logical :: exst
 
+  !
   ! ... nwordwfc is the record length (IN COMPLEX WORDS)
   ! ... for the direct-access file containing wavefunctions
+  ! ... io_level > 0 : open a file; io_level <= 0 : open a buffer
+  !
   nwordwfc = nbnd*npwx*npol
-
-  ! ... iunwfc= 10: read/write wfc from/to file
-  ! ... iunwfc=-10: copy wfc to/from RAM 
-  if ( io_level > 0 ) then
-    iunwfc = 10
-  else
-    iunwfc =-10
-  end if
-
-  call open_buffer( iunwfc, 'wfc', nwordwfc, nks, exst )
+  CALL open_buffer( iunwfc, 'wfc', nwordwfc, io_level, exst )
 
   ! ... Needed for LDA+U
   ! ... iunat  contains the (orthogonalized) atomic wfcs 
@@ -247,11 +241,6 @@ SUBROUTINE gipaw_closefil
 
   logical :: opnd
 
-  if ( io_level > 0 ) then
-    iunwfc = 10   ! ... iunwfc= 10: read/write wfc from/to file
-  else
-    iunwfc =-10   ! ... iunwfc=-10: copy wfc to/from ram 
-  end if
   call close_buffer( iunwfc, 'keep' )
 
   ! ... needed for lda+u
