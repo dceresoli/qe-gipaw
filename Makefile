@@ -13,6 +13,6 @@ clean:
 
 distclean:
 	$(MAKE) -C src distclean
-	-/bin/rm -f config.log config.status configure makedeps.sh
+	-/bin/rm -f config.log config.status makedeps.sh
 	-/bin/rm -Rf autom4te.cache
 

@@ -58,6 +58,7 @@ PROGRAM gipaw_main
 #ifdef __MPI
   CALL mp_startup ( start_images=.true. )
 #endif
+  CALL mp_startup ( start_images=.false.)
   CALL environment_start ( code )
 #ifndef __BANDS
   if (nbgrp > 1) &
