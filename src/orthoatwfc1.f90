@@ -17,7 +17,7 @@ SUBROUTINE orthoatwfc1(ik)
   USE ions_base,        ONLY : nat
   USE basis,            ONLY : natomwfc
   USE klist,            ONLY : nks, xk, ngk
-  USE ldaU,             ONLY : swfcatom, U_projection
+  USE ldaU,             ONLY : swfcatom, U_projection, wfcU, nwfcU, copy_U_wfc
   USE wvfct,            ONLY : npwx, npw, igk
   USE uspp,             ONLY : nkb, vkb
   USE becmod,           ONLY : allocate_bec_type, deallocate_bec_type, &
@@ -38,8 +38,6 @@ SUBROUTINE orthoatwfc1(ik)
   integer :: i, j, k
 
   allocate(wfcatom(npwx,natomwfc))    
-  allocate(overlap(natomwfc,natomwfc), work(natomwfc,natomwfc))    
-  allocate(e(natomwfc))    
 
   if (U_projection == "file") &
     call errore('orthoatwfc1', 'U_projection == file cannot be used', 1)
@@ -51,6 +49,8 @@ SUBROUTINE orthoatwfc1(ik)
   if (U_projection=="atomic") goto 200
 
   ! orthogonalize
+  allocate(overlap(natomwfc,natomwfc), work(natomwfc,natomwfc))    
+  allocate(e(natomwfc))    
   overlap(:,:) = (0.d0,0.d0)
   work(:,:) = (0.d0,0.d0)
 
@@ -94,8 +94,12 @@ SUBROUTINE orthoatwfc1(ik)
                 natomwfc, swfcatom (i,1), npwx, (0.d0,0.d0), work, 1)
     call zcopy(natomwfc, work, 1, swfcatom (i,1), npwx)
   enddo
+  deallocate(overlap, work, e)
         
 200 continue
+  !!!
+  CALL copy_U_wfc ()
+  !!!
   deallocate(overlap, work, e, wfcatom)
 
 END SUBROUTINE orthoatwfc1

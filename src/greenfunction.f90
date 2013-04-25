@@ -25,8 +25,9 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   USE gipaw_module
   USE mp_global,                   ONLY : inter_bgrp_comm, intra_pool_comm, inter_pool_comm
   USE mp,                          ONLY : mp_sum
-  USE ldaU,                        ONLY : lda_plus_u, swfcatom
-  USE io_files,                    ONLY : iunsat, nwordatwfc
+  USE ldaU,                        ONLY : lda_plus_u, wfcU
+  USE io_files,                    ONLY : iunhub, nwordwfcU
+  USE buffers,                     ONLY : get_buffer
 #ifdef __BANDS
   USE mp_global,                   ONLY : intra_bgrp_comm
 #endif
@@ -177,7 +178,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
 
   if (lda_plus_u) then
     if (q_is_zero) then
-      call davcio(swfcatom, nwordatwfc, iunsat, ik, -1)
+      call get_buffer(wfcU, nwordwfcU, iunhub, ik)
     else
       call orthoatwfc1(ik)
     endif

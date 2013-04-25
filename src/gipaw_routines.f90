@@ -187,13 +187,11 @@ SUBROUTINE gipaw_openfil
   !
   USE gipaw_module
   USE io_global,        ONLY : stdout
-  USE io_files,         ONLY : diropn, seqopn
-  USE basis,            ONLY : natomwfc, starting_wfc
   USE wvfct,            ONLY : nbnd, npwx
-  USE ldaU,             ONLY : lda_plus_U  
+  USE ldaU,             ONLY : lda_plus_U, nwfcU
   USE klist,            ONLY : nks
-  USE io_files,         ONLY : prefix, iunat, iunsat, iunwfc, &
-                               nwordwfc, nwordatwfc, tmp_dir
+  USE io_files,         ONLY : prefix, iunhub, iunwfc, &
+                               nwordwfcU, nwordwfc, nwordatwfc, seqopn
   USE noncollin_module, ONLY : npol
   USE mp_global,        ONLY : kunit
   USE buffers,          ONLY : open_buffer
@@ -203,7 +201,7 @@ SUBROUTINE gipaw_openfil
   logical :: exst
 
   !
-  ! ... nwordwfc is the record length (IN COMPLEX WORDS)
+  ! ... nwordwfc is the record length (IN REAL WORDS)
   ! ... for the direct-access file containing wavefunctions
   ! ... io_level > 0 : open a file; io_level <= 0 : open a buffer
   !
@@ -211,19 +209,13 @@ SUBROUTINE gipaw_openfil
   CALL open_buffer( iunwfc, 'wfc', nwordwfc, io_level, exst )
 
   ! ... Needed for LDA+U
-  ! ... iunat  contains the (orthogonalized) atomic wfcs 
-  ! ... iunsat contains the (orthogonalized) atomic wfcs * S
-  ! ... iunocc contains the atomic occupations computed in new_ns
-  ! ... it is opened and closed for each reading-writing operation  
-  nwordatwfc = 2*npwx*natomwfc*npol
-  if ( lda_plus_u ) then
-     call diropn( iunat,  'atwfc',  nwordatwfc, exst )
-     call diropn( iunsat, 'satwfc', nwordatwfc, exst )
-  end if
+  ! ... iunhub contains the (orthogonalized) atomic wfcs * S
+  
+  nwordwfcU = npwx*nwfcU*npol
+  IF ( lda_plus_u ) &
+     CALL open_buffer( iunhub, 'hub', nwordwfcU, io_level, exst )
 
 END SUBROUTINE gipaw_openfil
-
-
 
 !-----------------------------------------------------------------------
 SUBROUTINE gipaw_closefil
@@ -231,25 +223,12 @@ SUBROUTINE gipaw_closefil
   !
   ! ... Close files opened by GIPAW
   !
-  USE gipaw_module
-  USE io_global,        ONLY : stdout
   USE ldaU,             ONLY : lda_plus_U  
-  USE io_files,         ONLY : prefix, iunat, iunsat, iunwfc
+  USE io_files,         ONLY : prefix, iunhub, iunwfc
   USE buffers,          ONLY : close_buffer
-  USE control_flags,    ONLY : io_level    
-  IMPLICIT NONE  
-
-  logical :: opnd
 
   call close_buffer( iunwfc, 'keep' )
-
-  ! ... needed for lda+u
-  ! ... iunat  contains the (orthogonalized) atomic wfcs 
-  ! ... iunsat contains the (orthogonalized) atomic wfcs * s
-  if ( lda_plus_u ) then
-     close( unit = iunat, status = 'keep' )
-     close( unit = iunsat, status = 'keep' )
-  end if
+  if ( lda_plus_u ) call close_buffer ( iunhub, status = 'keep' )
 
 END SUBROUTINE gipaw_closefil
 

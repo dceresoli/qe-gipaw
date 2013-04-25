@@ -15,7 +15,7 @@ SUBROUTINE compute_u_kq(ik, q)
   USE kinds,                ONLY : DP
   USE constants,            ONLY : RytoeV, tpi
   USE io_global,            ONLY : stdout
-  USE io_files,             ONLY : nwordatwfc, iunsat, iunwfc, nwordwfc
+  USE io_files,             ONLY : nwordwfcU, iunhub, iunwfc, nwordwfc
   USE mp,                   ONLY : mp_sum
   USE mp_global,            ONLY : inter_pool_comm, intra_pool_comm, me_pool
 #ifdef __BANDS
@@ -27,7 +27,7 @@ SUBROUTINE compute_u_kq(ik, q)
                                    current_k, nbndx, btype, ecutwfc
   USE control_flags,        ONLY : ethr, io_level, lscf, istep, max_cg_iter
   USE control_flags,        ONLY : cntrl_isolve => isolve
-  USE ldaU,                 ONLY : lda_plus_u, swfcatom
+  USE ldaU,                 ONLY : lda_plus_u, wfcU
   USE lsda_mod,             ONLY : current_spin, lsda, isk
   USE noncollin_module,     ONLY : noncolin, npol
   USE wavefunctions_module, ONLY : evc  
@@ -116,7 +116,7 @@ SUBROUTINE compute_u_kq(ik, q)
   enddo
 
   ! Needed for LDA+U
-  IF ( lda_plus_u ) CALL davcio( swfcatom, nwordatwfc, iunsat, ik, -1 )
+  IF ( lda_plus_u ) CALL get_buffer( wfcU, nwordwfcU, iunhub, ik )
 
   ! diagonalization of bands for k-point ik
   call diag_bands ( iter, ik, avg_iter )
