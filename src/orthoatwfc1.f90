@@ -15,9 +15,9 @@ SUBROUTINE orthoatwfc1(ik)
   !
   USE kinds,            ONLY : DP
   USE ions_base,        ONLY : nat
-  USE basis,            ONLY : natomwfc
+  USE basis,            ONLY : natomwfc, swfcatom
   USE klist,            ONLY : nks, xk, ngk
-  USE ldaU,             ONLY : swfcatom, U_projection, wfcU, nwfcU, copy_U_wfc
+  USE ldaU,             ONLY : U_projection, wfcU, nwfcU, copy_U_wfc
   USE wvfct,            ONLY : npwx, npw, igk
   USE uspp,             ONLY : nkb, vkb
   USE becmod,           ONLY : allocate_bec_type, deallocate_bec_type, &
@@ -51,7 +51,7 @@ SUBROUTINE orthoatwfc1(ik)
   !
 200 continue
   !
-  CALL copy_U_wfc ()
+  CALL copy_U_wfc (swfcatom)
   !
   deallocate(wfcatom)
 
