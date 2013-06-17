@@ -24,12 +24,20 @@ AC_CHECK_FILE(${qe_source}/Modules/version.f90, [], [AC_MSG_ERROR([Cannot find v
 AC_MSG_CHECKING([Quantum-Espresso version])
 version=`grep version_number ${qe_source}/Modules/version.f90 | cut -d\' -f2`
 AC_MSG_RESULT([$version])
-
 case $version in
-  4.99* ) ;;
-  5.0* ) ;;
-  *) AC_MSG_ERROR([Cannot compile against this version of quantum-Espresso]) ;;
+  5.0.2 ) ;;
+  *) AC_MSG_ERROR([Cannot compile against this version of Quantum-Espresso]) ;;
 esac
+
+# Extract svn revision
+AC_MSG_CHECKING([Quantum-Espresso SVN revision])
+revision=`grep svn_revision ${qe_source}/Modules/version.f90 | cut -d\' -f2`
+AC_MSG_RESULT([$revision])
+good_revision=10320
+if test $revision -lt ${good_revision}
+then
+  AC_MSG_ERROR([Cannot compile against this SVN revision of Quantum-Espresso. Please checkout revision >$good_revision])
+fi
 
 # process options
 dflags_gipaw=''
