@@ -147,6 +147,7 @@ SUBROUTINE compute_u_kq(ik, q)
 
   ! restore the k-point and eigenvalues
   xk(:,ik) = xkold(:)
+  etq(:,ik) = et_old(:,ik)
   et = et_old
   deallocate(et_old)
 

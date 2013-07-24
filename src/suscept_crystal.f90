@@ -29,7 +29,7 @@ SUBROUTINE suscept_crystal
   USE wavefunctions_module,   ONLY : evc
   USE klist,                  ONLY : nks, nkstot, wk, xk, nelec
   USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
-                                     current_k, ecutwfc
+                                     current_k, ecutwfc, et
   USE lsda_mod,               ONLY : current_spin, lsda, isk
   USE becmod,                 ONLY : becp, calbec
   USE symme,                  ONLY : symmatrix
@@ -42,7 +42,7 @@ SUBROUTINE suscept_crystal
   USE gipaw_module,           ONLY : tens_fmt, q_gipaw, iverbosity, alpha, evq, &
                                      avogadro, g_e, gprime, filcurr, filfield, &
                                      nbnd_occ, a0_to_cm, isolve, &
-                                     conv_threshold, job, restart_mode
+                                     conv_threshold, job, restart_mode, etq
   USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
   USE ions_base,              ONLY : nat
   USE buffers,                ONLY : get_buffer
@@ -223,7 +223,11 @@ SUBROUTINE suscept_crystal
 
     if(my_image_id.eq.0)then
 
-    if (job /= 'f-sum') call compute_u_kq(ik, q)
+    if (job /= 'f-sum') then
+       call compute_u_kq(ik, q)
+    else
+       etq(:,ik) = et(:,ik)
+    endif
 
     ! compute the terms that do not depend on 'q':
     ! 1. the diamagnetic contribution to the field: Eq.(58) of [1]/Eq.(9) of [4]

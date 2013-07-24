@@ -9,7 +9,9 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   !-----------------------------------------------------------------------
   !
   ! ... Apply the Green function operator
-  ! ... (formula here)
+  ! ...
+  ! ... [H^(0) - alpha P_i - E_i^(0)] |Gpsi_i> = - Q_i H^(1)|psi_i^(0)>
+  ! ...
   ! ... We use Hartree atomic units; since G is the inverse of an
   ! ... energy: G => G / ryd_to_hartree
   !
@@ -19,15 +21,19 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
                                           allocate_bec_type, deallocate_bec_type
   USE wavefunctions_module,        ONLY : evc
   USE noncollin_module,            ONLY : npol
-  USE pwcom
+  USE pwcom,                       ONLY : ef
+  USE wvfct,                       ONLY : nbnd, et, wg, npw, npwx, igk, g2kin
+  USE gvect,                       ONLY : g
   USE uspp,                        ONLY : nkb, vkb
   USE io_files,                    ONLY : nwordwfc, iunwfc
-  USE gipaw_module
   USE mp_global,                   ONLY : inter_bgrp_comm, intra_pool_comm, inter_pool_comm
   USE mp,                          ONLY : mp_sum
   USE ldaU,                        ONLY : lda_plus_u, wfcU
   USE io_files,                    ONLY : iunhub, nwordwfcU
   USE buffers,                     ONLY : get_buffer
+  USE cell_base,                   ONLY : tpiba
+  USE klist,                       ONLY : lgauss, xk, degauss, ngauss
+  USE gipaw_module
 #ifdef __BANDS
   USE mp_global,                   ONLY : intra_bgrp_comm
 #endif
@@ -35,7 +41,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   !-- parameters ---------------------------------------------------------
   IMPLICIT none
   INTEGER, INTENT(IN) :: ik
-  COMPLEX(DP), INTENT(INOUT) :: psi(npwx,nbnd)  ! psi is changed on output!!!
+  COMPLEX(DP), INTENT(INOUT) :: psi(npwx,nbnd)  ! psi is H1*psi and is changed on output!!!
   COMPLEX(DP), INTENT(OUT) :: g_psi(npwx,nbnd)
   REAL(DP) :: q(3)
 
@@ -44,9 +50,11 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   complex(dp), allocatable :: ps(:,:), work (:)
   real(dp), allocatable :: h_diag (:,:), eprec (:)
   real(dp) :: anorm, thresh, gk(3), dxk(3)
-  integer :: ibnd, ig, lter
+  integer :: ibnd, jbnd, ig, lter
   logical :: conv_root, q_is_zero
   complex(dp), external :: zdotc
+  real(dp), external :: wgauss, w0gauss
+  real(dp) :: wg1, w0g, wgp, wwg, deltae, theta
   external ch_psi_all, cg_psi
  
   ! start clock
@@ -85,6 +93,30 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   call mp_sum(ps, intra_pool_comm)
 #endif
 #endif
+
+  ! in the metallic case
+  if (lgauss) then
+     do ibnd = 1, nbnd_occ(ik)
+        wg1 = wgauss ((ef-et(ibnd,ik)) / degauss, ngauss)
+        w0g = w0gauss((ef-et(ibnd,ik)) / degauss, ngauss) / degauss
+        do jbnd = 1, nbnd
+           wgp = wgauss ( (ef - etq(jbnd,ik)) / degauss, ngauss)
+           deltae = etq(jbnd,ik) - et(ibnd,ik)
+           theta = wgauss (deltae / degauss, 0)
+           wwg = wg1 * (1.d0 - theta) + wgp * theta
+           if (jbnd <= nbnd_occ(ik)) then
+              if (abs (deltae) > 1d-5) then
+                 wwg = wwg + alpha_pv * theta * (wgp - wg1) / deltae
+              else
+                 ! if the two energies are too close takes the limit of the 0/0 ratio
+                 wwg = wwg - alpha_pv * theta * w0g
+              endif
+           endif
+           ps(jbnd,ibnd) = wwg * ps(jbnd,ibnd)
+        enddo
+        call zscal(npw, wg1, psi(1,ibnd), 1)
+     enddo
+  endif
 
   ! this is the case with overlap (ultrasoft)
   ! g_psi is used as work space to store S|evq>

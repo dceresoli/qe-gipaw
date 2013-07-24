@@ -23,16 +23,19 @@ SUBROUTINE gipaw_setup
   USE gvect,         ONLY : ngm
   USE fft_base,      ONLY : dfftp
   USE gvecs,         ONLY : doublegrid
-  USE klist,         ONLY : xk, degauss, ngauss, nks, nelec
+  USE klist,         ONLY : xk, degauss, ngauss, nks, nelec, lgauss, two_fermi_energies
+  USE ktetra,        ONLY : ltetra
+  USE noncollin_module,  ONLY : noncolin
   USE constants,     ONLY : degspin, pi
   USE symm_base,     ONLY : nsym, s
   USE mp_global,     ONLY : inter_pool_comm 
   USE mp,            ONLY : mp_max, mp_min 
-  USE dfunct,        only : newd
+  USE dfunct,        ONLY : newd
+  USE pwcom,         ONLY : ef
 
   implicit none
-  integer :: ik, ibnd
-  real(dp) :: emin, emax
+  integer :: ik, ibnd, ipol
+  real(dp) :: emin, emax, xmax, small, fac, target
     
   call start_clock ('gipaw_setup')
     
@@ -54,19 +57,53 @@ SUBROUTINE gipaw_setup
   ! compute the D for the pseudopotentials
   call newd
     
-  !! set non linear core correction stuff
+  !! set non linear core correction stuff (IS THIS REALLY NEEDED?)
   !! nlcc_any = ANY ( upf(1:ntyp)%nlcc )
   !!if (nlcc_any) allocate (drc( ngm, ntyp))
   !! setup all gradient correction stuff
   !!call setup_dgc
-    
+
+  ! some pre-conditions
+  if (ltetra) call errore('gipaw_setup','GIPAW + tetrahedra not implemented', 1)
+  if (noncolin) call errore('gipaw_setup','GIPAW + non-collinear not implemented', 1)
+  if (two_fermi_energies) &
+     call errore('gipaw_setup','GIPAW + two Fermi energies not implemented', 1)
+
   ! computes the number of occupied bands for each k point
   nbnd_occ (:) = 0
-  do ik = 1, nks
-    do ibnd = 1, nbnd
-      if ( wg(ibnd,ik) > 1e-6 ) nbnd_occ(ik) = ibnd
-    end do
-  end do
+  if (lgauss) then
+     ! discard conduction bands such that w0gauss(x,n) < small
+     ! hint:
+     !   small = 1.0333492677046d-2  ! corresponds to 2 gaussian sigma
+     !   small = 6.9626525973374d-5  ! corresponds to 3 gaussian sigma
+     !   small = 6.3491173359333d-8  ! corresponds to 4 gaussian sigma
+     small = 6.3491173359333d-8
+
+     ! appropriate limit for gaussian broadening (used for all ngauss)
+     xmax = sqrt(-log(sqrt(pi)*small))
+
+     ! appropriate limit for Fermi-Dirac
+     if (ngauss == -99) then
+        fac = 1.d0 / sqrt(small)
+        xmax = 2.d0 * log(0.5d0*(fac + sqrt(fac*fac-4.d0)))
+     endif
+     target = ef + xmax * degauss
+     do ik = 1, nks
+        do ibnd = 1, nbnd
+           if (et(ibnd,ik) < target) nbnd_occ(ik) = ibnd
+        enddo
+        if (nbnd_occ (ik) .eq. nbnd) &
+           write(stdout,'(5x,/,"Possibly too few bands at point ", i4,3f10.5)') &
+                ik, (xk(ipol,ik), ipol=1,3)
+     enddo
+  else 
+    ! general case
+     do ik = 1, nks
+       do ibnd = 1, nbnd
+         if ( wg(ibnd,ik) > 1e-6 ) nbnd_occ(ik) = ibnd
+       end do
+     end do
+  end if
     
   ! computes alpha_pv
   emin = et (1, 1)
@@ -80,26 +117,28 @@ SUBROUTINE gipaw_setup
   call mp_min( emin, inter_pool_comm )
 #endif
 
-  if (degauss /= 0.d0) then
-    call infomsg('gipaw_setup', '***** implemented only for insulators *****')
+  if (lgauss) then
+     ! metal
+     emax = target
+     alpha_pv = emax - emin
   else
-    emax = et (1, 1)
-    do ik = 1, nks
-      do ibnd = 1, nbnd
-        emax = max (emax, et (ibnd, ik) )
-      enddo
-    enddo
+     ! insulator
+     emax = et(1,1)
+     do ik = 1, nks
+        do ibnd = 1, nbnd_occ(ik)
+           emax = max(emax, et(ibnd,ik))
+        enddo
+     enddo
 #ifdef __MPI
-    ! find the maximum across pools
-    call mp_max( emax, inter_pool_comm )
+     ! find the maximum across pools
+     call mp_max( emax, inter_pool_comm )
 #endif
-
-    alpha_pv = 2.0_dp * (emax - emin)
+     alpha_pv = 2.d0 * (emax - emin)
   endif
 
   ! avoid zero value for alpha_pv
   alpha_pv = max (alpha_pv, 1.0d-2)
-    
+
   call stop_clock('gipaw_setup')
     
 END SUBROUTINE gipaw_setup

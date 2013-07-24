@@ -139,6 +139,9 @@ SUBROUTINE gipaw_allocate
   ! wavefunction at k+q  
   allocate(evq(npwx,nbnd))
 
+  ! eigenvalues
+  allocate(etq(nbnd,nkstot))
+
   ! GIPAW projectors
   if (.not. allocated(paw_recon)) allocate(paw_recon(ntyp))
     

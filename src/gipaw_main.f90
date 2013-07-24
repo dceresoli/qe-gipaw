@@ -114,6 +114,9 @@ PROGRAM gipaw_main
      if (nspin /= 2) call errore('gipaw_main', 'g_tensor is only for spin-polarized', 1)
      if (okvan) call errore('gipaw_main', 'g_tensor not available with ultrasoft', 1) 
      call suscept_crystal
+
+  case ( 'knight' )
+     call knight_shift
      
   case ( 'f-sum' )
      call suscept_crystal

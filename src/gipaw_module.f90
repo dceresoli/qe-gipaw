@@ -41,6 +41,7 @@ MODULE gipaw_module
   REAL(DP) :: alpha_pv
   
   ! eigenvalues and eigenfunctions at k+q
+  REAL(DP), ALLOCATABLE :: etq(:,:)
   COMPLEX(DP), ALLOCATABLE :: evq(:,:)
 
   ! convergence threshold for diagonalizationa and greenfunction

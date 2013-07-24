@@ -498,6 +498,7 @@ SUBROUTINE print_chemical_shifts(sigma_shape, sigma_bare, sigma_diamagnetic, sig
   USE io_global,            ONLY : stdout
   USE symme,                ONLY : symtensor
   USE uspp,                 ONLY : okvan
+  USE pwcom,                ONLY : lgauss
   USE gipaw_module,         ONLY : tens_fmt, iverbosity, nmr_shift_core
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
@@ -615,6 +616,9 @@ SUBROUTINE print_chemical_shifts(sigma_shape, sigma_bare, sigma_diamagnetic, sig
     write(stdout,1001) atm(ityp(na)), na, 'sigma_33=', v(3)*1.0d6, 'axis=(', axis(1:3,3), ')'
     write(stdout,*)
   enddo
+
+  if (lgauss) &
+    write(stdout,'(5X,''*** ATTENTION: system is metallic, Knight shift not included ***'')')
 
 1000 FORMAT(5X,A,I3,4X,A,F10.2,4X,A,F10.4)
 1001 FORMAT(5X,A,I3,4X,A,F10.4,4X,A,3F10.6,A)
