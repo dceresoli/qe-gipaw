@@ -12,7 +12,6 @@ SUBROUTINE gipaw_setup
   !
   ! ... GIPAW setup
   !
-  USE gipaw_module
   USE kinds,         ONLY : dp
   USE io_global,     ONLY : stdout, ionode
   USE ions_base,     ONLY : tau, nat, ntyp => nsp, atm
@@ -32,6 +31,8 @@ SUBROUTINE gipaw_setup
   USE mp,            ONLY : mp_max, mp_min 
   USE dfunct,        ONLY : newd
   USE pwcom,         ONLY : ef
+  USE constants,     ONLY : rytoev
+  USE gipaw_module
 
   implicit none
   integer :: ik, ibnd, ipol
@@ -72,6 +73,9 @@ SUBROUTINE gipaw_setup
   ! computes the number of occupied bands for each k point
   nbnd_occ (:) = 0
   if (lgauss) then
+     write(stdout,*)
+     write(stdout,'(5X,''smearing ngauss='',I4,2X,''degauss='',F8.4,'' Ry'')') &
+          ngauss, degauss
      ! discard conduction bands such that w0gauss(x,n) < small
      ! hint:
      !   small = 1.0333492677046d-2  ! corresponds to 2 gaussian sigma
@@ -93,8 +97,7 @@ SUBROUTINE gipaw_setup
            if (et(ibnd,ik) < target) nbnd_occ(ik) = ibnd
         enddo
         if (nbnd_occ (ik) .eq. nbnd) &
-           write(stdout,'(5x,/,"Possibly too few bands at point ", i4,3f10.5)') &
-                ik, (xk(ipol,ik), ipol=1,3)
+           write(stdout,'(5X,''Possibly too few bands at k-point:'',I6)') ik
      enddo
   else 
     ! general case
@@ -137,7 +140,17 @@ SUBROUTINE gipaw_setup
   endif
 
   ! avoid zero value for alpha_pv
-  alpha_pv = max (alpha_pv, 1.0d-2)
+  alpha_pv = max(alpha_pv, 1.0d-2)
+  write(stdout,'(5X,''alpha_pv='',F12.4,'' eV'')') alpha_pv*rytoev
+
+  if (iverbosity > 10) then
+     write(stdout,*)
+     write(stdout,'(5X,''Number of occupied bands for each k-point:'')')
+     do ik = 1, nks
+        write(stdout,'(5X,''k-point:'',I6,4X,''nbnd_occ='',I4)') ik, nbnd_occ(ik)
+     enddo
+     write(stdout,*)
+  endif
 
   call stop_clock('gipaw_setup')
     
