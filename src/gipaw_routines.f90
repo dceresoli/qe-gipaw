@@ -25,7 +25,7 @@ SUBROUTINE gipaw_readin()
   integer :: ios
   character(len=256), external :: trimcheck
   namelist /inputgipaw/ job, prefix, tmp_dir, conv_threshold, restart_mode, &
-                        q_gipaw, iverbosity, filcurr, filfield, pawproj, &
+                        q_gipaw, iverbosity, filcurr, filfield, filnics, pawproj, &
                         use_nmr_macroscopic_shape, nmr_macroscopic_shape, &
                         spline_ps, isolve, q_efg, max_seconds, r_rand, &
                         hfi_output_unit, hfi_nuclear_g_factor, &
@@ -47,6 +47,7 @@ SUBROUTINE gipaw_readin()
   iverbosity = 0
   filcurr = ''
   filfield = ''
+  filnics = ''
   use_nmr_macroscopic_shape = .true.
   nmr_macroscopic_shape(:,:) = 0.d0
   nmr_macroscopic_shape(1,1) = 2.d0 / 3.d0

@@ -40,7 +40,7 @@ SUBROUTINE suscept_crystal
   USE uspp,                   ONLY : vkb, okvan
   USE lsda_mod,               ONLY : nspin
   USE gipaw_module,           ONLY : tens_fmt, q_gipaw, iverbosity, alpha, evq, &
-                                     avogadro, g_e, gprime, filcurr, filfield, &
+                                     avogadro, g_e, gprime, filcurr, filfield, filnics, &
                                      nbnd_occ, a0_to_cm, isolve, &
                                      conv_threshold, job, restart_mode, etq
   USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
@@ -642,6 +642,7 @@ SUBROUTINE suscept_crystal
     if (trim(filcurr) /= '') call write_tensor_field(filcurr, i, j_bare(1,1,1,i))
     if (trim(filfield) /= '') call write_tensor_field(filfield, i, B_ind_r(1,1,1,i))
   enddo
+  if (trim(filnics) /= '') call write_nics(filnics, B_ind_r(1,1,1,1))
 
   !--------------------------------------------------------------------
   ! calculate the chemical shifts

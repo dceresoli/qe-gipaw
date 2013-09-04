@@ -72,8 +72,8 @@ MODULE gipaw_module
   CHARACTER(*), PARAMETER :: tens_fmt = '(3(5X,3(F14.4,2X)/))'
   
   ! for plotting the induced current and induced field
-  CHARACTER(80) :: filcurr, filfield
-  
+  CHARACTER(80) :: filcurr, filfield, filnics
+
   ! macroscopic shape for the NMR
   LOGICAL :: use_nmr_macroscopic_shape
   REAL(DP) :: nmr_macroscopic_shape(3,3)
@@ -85,7 +85,7 @@ MODULE gipaw_module
   CHARACTER(10) :: hfi_input_unit
   CHARACTER(10) :: hfi_output_unit
   REAL(dp) :: hfi_nuclear_g_factor(ntypx)
-  
+ 
   REAL(dp) :: rc(ntypx,0:lmaxx)
   COMPLEX(dp), ALLOCATABLE :: paw_becp2(:,:), paw_becp3(:,:)
   REAL(dp), ALLOCATABLE, DIMENSION (:,:) :: lx, ly, lz

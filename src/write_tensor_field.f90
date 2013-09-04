@@ -131,3 +131,56 @@ subroutine vtk_vector_3d(vin, nr1, nr2, nr3, at, alat, ounit)
 
 end subroutine vtk_vector_3d
 
+
+!-----------------------------------------------------------------------
+SUBROUTINE write_nics(filename, field)
+  !-----------------------------------------------------------------------
+  !
+  ! ... write the NICS in PP postproc format
+  !
+  USE kinds,           ONLY : dp
+  USE io_global,       ONLY : stdout, ionode
+  USE fft_base,        ONLY : dfftp, grid_gather
+  USE gvect,           ONLY : gcutm
+  USE cell_base,       ONLY : at, alat, tpiba2, omega, ibrav, celldm
+  USE ions_base,       ONLY : zv, ntyp => nsp, nat, ityp, atm, tau
+  USE wvfct,           ONLY : ecutwfc
+  USE pwcom
+  USE gipaw_module
+  !--------------------------------------------------------------------
+  implicit none
+  character*(*) filename
+  real(dp) :: field(dfftp%nnr,3,3,nspin)
+  !-- local variables ----------------------------------------------------
+  character(75), parameter :: title = 'NICS'
+  real(dp), allocatable :: nics(:), aux(:)
+  integer :: ispin
+
+  allocate(nics(dfftp%nnr))
+  nics = 0.d0
+  do ispin = 1,nspin
+    nics(:) = nics(:) + (field(:,1,1,ispin) + field(:,2,2,ispin) + &
+                         field(:,3,3,ispin))/3.d0
+  enddo
+  nics = nics * 1d6
+
+  ! gather the data 
+  allocate(aux(dfftp%nr1x*dfftp%nr2x*dfftp%nr3x))
+#ifdef __MPI
+  call grid_gather(nics, aux)
+#else
+  aux = field
+#endif
+
+  if (ionode) then
+      write(stdout, '(5X,''writings NICS to: '',A40)') trim(filename)
+      call plot_io(filename, title, dfftp%nr1x, dfftp%nr2x, dfftp%nr3x, &
+                   dfftp%nr1, dfftp%nr2, dfftp%nr3, nat, ntyp, ibrav, &
+                   celldm, at, gcutm, dual, ecutwfc, 100, atm, ityp, zv, &
+                   tau, aux, 1)
+  endif
+
+  deallocate(aux, nics)
+
+end subroutine write_nics
+
