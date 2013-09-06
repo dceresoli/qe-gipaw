@@ -42,6 +42,8 @@ PROGRAM gipaw_main
   USE wvfct,           ONLY : nbnd
   USE uspp,            ONLY : okvan
   USE wvfct,           ONLY : nbnd, npw 
+  USE io_global,       ONLY : stdout
+  USE gipaw_version
   USE iotk_module  
   USE xml_io_base
 
@@ -50,7 +52,7 @@ PROGRAM gipaw_main
 
   !------------------------------------------------------------------------
   IMPLICIT NONE
-  CHARACTER (LEN=9)   :: code = 'GIPAW'
+  CHARACTER (LEN=9)   :: code = 'QE'
   CHARACTER (LEN=10)  :: dirname = 'dummy'
   !------------------------------------------------------------------------
 
@@ -66,6 +68,9 @@ PROGRAM gipaw_main
     call errore('gipaw_main', 'configure and recompile GIPAW with --enable-band-parallel', 1)
 #endif
 
+  write(stdout,*)
+  write(stdout,'(5X,''*** This is GIPAW svn revision'',A6,'' ***'')') gipaw_svn_revision
+  write(stdout,*)
   CALL gipaw_readin()
   CALL check_stop_init()
 
