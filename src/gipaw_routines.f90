@@ -19,6 +19,7 @@ SUBROUTINE gipaw_readin()
   USE io_global,        ONLY : ionode
   USE us,               ONLY : spline_ps
   USE input_parameters, ONLY : max_seconds
+  USE mp_images,        ONLY : my_image_id
 
   ! -- local variables ---------------------------------------------------
   implicit none
@@ -31,7 +32,7 @@ SUBROUTINE gipaw_readin()
                         hfi_output_unit, hfi_nuclear_g_factor, &
                         core_relax_method
 
-  if ( .not. ionode ) goto 400
+  if (.not. ionode .or. my_image_id > 0) goto 400
     
   call input_from_file()
     

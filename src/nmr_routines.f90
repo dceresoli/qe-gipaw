@@ -23,7 +23,8 @@ SUBROUTINE paramagnetic_correction (paramagnetic_tensor, paramagnetic_tensor_us,
                                     g_vel_evc, u_svel_evc, ipol)
   USE kinds,                  ONLY : dp
   USE ions_base,              ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, current_k
+  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, g2kin, current_k
+  USE klist,                  ONLY : wk
   USE becmod,                 ONLY : calbec  
   USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
   USE gipaw_module,           ONLY : lx, ly, lz, paw_becp2, paw_becp3, alpha, &
@@ -75,7 +76,8 @@ SUBROUTINE paramagnetic_correction (paramagnetic_tensor, paramagnetic_tensor_us,
                        bec_product = conjg(paw_becp(ikb,ibnd)) * paw_becp2(jkb,ibnd)
 
                        cc = bec_product * radial_integral_paramagnetic(nbs1,nbs2,nt) &
-                            * wg(ibnd,current_k) * alpha**2
+                            !WAS: * wg(ibnd,current_k) * alpha**2
+                            * wk(current_k) * alpha**2
                        para_corr(1,na) = para_corr(1,na) + cc * lx(lm1,lm2)
                        para_corr(2,na) = para_corr(2,na) + cc * ly(lm1,lm2)
                        para_corr(3,na) = para_corr(3,na) + cc * lz(lm1,lm2)
@@ -83,7 +85,8 @@ SUBROUTINE paramagnetic_correction (paramagnetic_tensor, paramagnetic_tensor_us,
                        if (okvan) then
                          bec_product = conjg(paw_becp(ikb,ibnd)) * paw_becp3(jkb,ibnd)
                          cc = bec_product * radial_integral_paramagnetic(nbs1,nbs2,nt) &
-                              * wg (ibnd,current_k) * alpha ** 2
+                              !WAS:* wg (ibnd,current_k) * alpha ** 2
+                              * wk(current_k) * alpha ** 2
                          para_corr_us(1,na) = para_corr_us(1,na) + cc * lx(lm1,lm2)
                          para_corr_us(2,na) = para_corr_us(2,na) + cc * ly(lm1,lm2)
                          para_corr_us(3,na) = para_corr_us(3,na) + cc * lz(lm1,lm2)
@@ -215,6 +218,7 @@ END SUBROUTINE diamagnetic_correction
 !====================================================================
 ! Ultrasoft augmentation (L_R Q_R) contribution to the bare and
 ! paramagnetic current
+! TODO: modify for metals
 !====================================================================
 SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   USE kinds,                  ONLY : dp

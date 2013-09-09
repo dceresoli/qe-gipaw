@@ -22,7 +22,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   USE wavefunctions_module,        ONLY : evc
   USE noncollin_module,            ONLY : npol
   USE pwcom,                       ONLY : ef
-  USE wvfct,                       ONLY : nbnd, et, wg, npw, npwx, igk, g2kin
+  USE wvfct,                       ONLY : nbnd, et, npw, npwx, igk, g2kin
   USE gvect,                       ONLY : g
   USE uspp,                        ONLY : nkb, vkb
   USE io_files,                    ONLY : nwordwfc, iunwfc
@@ -76,26 +76,18 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   !====================================================================
   ! project on <evq|: ps(i,j) = <evq(i)|psi(j)>
   ps = (0.d0,0.d0)
-#ifdef __BANDS
-  CALL zgemm('C', 'N', nbnd_occ (ik), ibnd_end-ibnd_start+1, npw, &
-             (1.d0,0.d0), evq(1,1), npwx, psi(1,ibnd_start), npwx, (0.d0,0.d0), &
-             ps(1,ibnd_start), nbnd)
-#else
-  CALL zgemm('C', 'N', nbnd_occ (ik), nbnd_occ (ik), npw, &
-             (1.d0,0.d0), evq(1,1), npwx, psi(1,1), npwx, (0.d0,0.d0), &
-             ps(1,1), nbnd)
-#endif   
 
-#ifdef __MPI
-#ifdef __BANDS
-  call mp_sum(ps, intra_bgrp_comm)
-#else
-  call mp_sum(ps, intra_pool_comm)
-#endif
-#endif
-
-  ! in the metallic case
   if (lgauss) then
+     ! metallic case
+#ifdef __BANDS
+     CALL zgemm('C', 'N', nbnd, ibnd_end-ibnd_start+1, npw, &
+                 (1.d0,0.d0), evq(1,1), npwx, psi(1,ibnd_start), npwx, (0.d0,0.d0), &
+                 ps(1,ibnd_start), nbnd)
+#else
+     CALL zgemm('C', 'N', nbnd, nbnd_occ (ik), npw, &
+                (1.d0,0.d0), evq(1,1), npwx, psi(1,1), npwx, (0.d0,0.d0), &
+                ps(1,1), nbnd)
+#endif   
      do ibnd = 1, nbnd_occ(ik)
         wg1 = wgauss ((ef-et(ibnd,ik)) / degauss, ngauss)
         w0g = w0gauss((ef-et(ibnd,ik)) / degauss, ngauss) / degauss
@@ -114,9 +106,30 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
            endif
            ps(jbnd,ibnd) = wwg * ps(jbnd,ibnd)
         enddo
-        call zscal(npw, wg1, psi(1,ibnd), 1)
+        call dscal(2*npw, wg1, psi(1,ibnd), 1)
      enddo
+
+  else
+     ! insulators
+#ifdef __BANDS
+     CALL zgemm('C', 'N', nbnd_occ (ik), ibnd_end-ibnd_start+1, npw, &
+                (1.d0,0.d0), evq(1,1), npwx, psi(1,ibnd_start), npwx, (0.d0,0.d0), &
+                ps(1,ibnd_start), nbnd)
+#else
+     CALL zgemm('C', 'N', nbnd_occ (ik), nbnd_occ (ik), npw, &
+                (1.d0,0.d0), evq(1,1), npwx, psi(1,1), npwx, (0.d0,0.d0), &
+                ps(1,1), nbnd)
+#endif   
   endif
+
+#ifdef __MPI
+#ifdef __BANDS
+  call mp_sum(ps, intra_bgrp_comm)
+#else
+  call mp_sum(ps, intra_pool_comm)
+#endif
+#endif
+
 
   ! this is the case with overlap (ultrasoft)
   ! g_psi is used as work space to store S|evq>
@@ -126,7 +139,11 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   CALL s_psi_bands (npwx, npw, nbnd_occ(ik), evq, g_psi, ibnd_start, ibnd_end)
 #else
   CALL calbec (npw, vkb, evq, becp)
-  CALL s_psi (npwx, npw, nbnd_occ(ik), evq, g_psi)
+  if (lgauss) then 
+     CALL s_psi (npwx, npw, nbnd, evq, g_psi)
+  else
+     CALL s_psi (npwx, npw, nbnd_occ(ik), evq, g_psi)
+  endif
 #endif
 
 #if defined(__MPI) && defined(__BANDS)
@@ -134,15 +151,30 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   call mp_sum(g_psi, inter_bgrp_comm)
 #endif
 
+  if (lgauss) then
+     ! metallic case
 #ifdef __BANDS
-  CALL zgemm( 'N', 'N', npw, ibnd_end-ibnd_start+1, nbnd_occ(ik), &
-       (1.d0,0.d0), g_psi(1,1), npwx, ps(1,ibnd_start), nbnd, (-1.d0,0.d0), &
-       psi(1,ibnd_start), npwx )
+     CALL zgemm( 'N', 'N', npw, ibnd_end-ibnd_start+1, nbnd, &
+          (1.d0,0.d0), g_psi(1,1), npwx, ps(1,ibnd_start), nbnd, (-1.d0,0.d0), &
+          psi(1,ibnd_start), npwx )
 #else
-  CALL zgemm( 'N', 'N', npw, nbnd_occ(ik), nbnd_occ(ik), &
-       (1.d0,0.d0), g_psi(1,1), npwx, ps(1,1), nbnd, (-1.d0,0.d0), &
-       psi(1,1), npwx )
+     CALL zgemm( 'N', 'N', npw, nbnd_occ(ik), nbnd, &
+          (1.d0,0.d0), g_psi(1,1), npwx, ps(1,1), nbnd, (-1.d0,0.d0), &
+          psi(1,1), npwx )
 #endif
+
+  else
+     ! insulators
+#ifdef __BANDS
+     CALL zgemm( 'N', 'N', npw, ibnd_end-ibnd_start+1, nbnd_occ(ik), &
+          (1.d0,0.d0), g_psi(1,1), npwx, ps(1,ibnd_start), nbnd, (-1.d0,0.d0), &
+          psi(1,ibnd_start), npwx )
+#else
+     CALL zgemm( 'N', 'N', npw, nbnd_occ(ik), nbnd_occ(ik), &
+          (1.d0,0.d0), g_psi(1,1), npwx, ps(1,1), nbnd, (-1.d0,0.d0), &
+          psi(1,1), npwx )
+#endif
+endif
 
   !! this is the old code for norm-conserving:
   !! |psi> = -(1 - |evq><evq|) |psi>

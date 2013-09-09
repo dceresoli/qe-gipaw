@@ -22,7 +22,7 @@ SUBROUTINE gipaw_setup
   USE gvect,         ONLY : ngm
   USE fft_base,      ONLY : dfftp
   USE gvecs,         ONLY : doublegrid
-  USE klist,         ONLY : xk, degauss, ngauss, nks, nelec, lgauss, two_fermi_energies
+  USE klist,         ONLY : xk, degauss, ngauss, nks, nelec, lgauss, wk, two_fermi_energies
   USE ktetra,        ONLY : ltetra
   USE noncollin_module,  ONLY : noncolin
   USE constants,     ONLY : degspin, pi
@@ -94,16 +94,19 @@ SUBROUTINE gipaw_setup
      target = ef + xmax * degauss
      do ik = 1, nks
         do ibnd = 1, nbnd
+!DEBUG           if (ionode) write(70,*) et(ibnd,ik), wg(ibnd,ik)/wk(ik)
            if (et(ibnd,ik) < target) nbnd_occ(ik) = ibnd
         enddo
-        if (nbnd_occ (ik) .eq. nbnd) &
+        if (nbnd_occ (ik) == nbnd) &
            write(stdout,'(5X,''Possibly too few bands at k-point:'',I6)') ik
      enddo
   else 
     ! general case
      do ik = 1, nks
        do ibnd = 1, nbnd
-         if ( wg(ibnd,ik) > 1e-6 ) nbnd_occ(ik) = ibnd
+         if (wk(ik) > 0.d0) then
+           if (wg(ibnd,ik)/wk(ik) > 1d-4 ) nbnd_occ(ik) = ibnd
+          endif
        end do
      end do
   end if

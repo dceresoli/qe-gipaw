@@ -1,5 +1,5 @@
 !
-! Copyright (C) 2001-2005 Quantum ESPRESSO group
+! Copyright (C) 2001-2013 Quantum ESPRESSO group
 ! This file is distributed under the terms of the
 ! GNU General Public License. See the file `License'
 ! in the root directory of the present distribution,
@@ -50,6 +50,7 @@ SUBROUTINE suscept_crystal
                                      inter_pool_comm, intra_pool_comm, &
                                      my_image_id, inter_image_comm, nimage
   USE mp,                     ONLY : mp_sum
+  USE pwcom,                  ONLY : ef
 #ifdef __BANDS
   USE gipaw_module,           ONLY : ibnd_start, ibnd_end
   USE mp_global,              ONLY : intra_bgrp_comm, inter_bgrp_comm
@@ -165,19 +166,18 @@ SUBROUTINE suscept_crystal
   if (job == 'g_tensor') call select_spin(s_min, s_maj)
 
   write(stdout, '(5X,''Computing the magnetic susceptibility'',$)')
-  write(stdout, '(5X,''isolve='',I1,4X,''ethr='',E10.4)') isolve, conv_threshold
-  !
+  write(stdout, '(5X,''isolve='',I1,4X,''ethr='',E12.4)') isolve, conv_threshold
+
   ! check for recover file
-  !
   call check_for_restart_info ( ik0, iq0 )
+
   !====================================================================
   ! loop over k-points
   !====================================================================
   do ik = 1, nks
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! skip if already done in a previous run
     if ( ik < ik0 ) cycle 
-    iq = 0
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 #ifdef __MPI
     if (me_pool == root_pool) &
     write(*, '(5X,''k-point #'',I5,'' of '',I5,6X,''pool #'',I3)') &
@@ -194,286 +194,46 @@ SUBROUTINE suscept_crystal
     endif
 
     ! initialize at k-point k 
-  call start_clock('susc:gk_sort')
     call gk_sort(xk(1,ik), ngm, g, ecutwfc/tpiba2, npw, igk, g2kin)
     g2kin(:) = g2kin(:) * tpiba2
     call init_us_2(npw, igk, xk(1,ik), vkb)
-  call stop_clock('susc:gk_sort')
     
     ! read wfcs from file and compute becp
-  call start_clock('susc:IO')
     call get_buffer (evc, nwordwfc, iunwfc, ik)
 #ifdef __BANDS
     ! replicate wavefunction over band groups (not needed anymore???)
     !!call mp_sum(evc, inter_bgrp_comm)
 #endif
-  call stop_clock('susc:IO')
-  call start_clock('susc:calbec')
     call init_gipaw_2_no_phase (npw, igk, xk (1, ik), paw_vkb)
     call calbec (npw, paw_vkb, evc, paw_becp)
-  call stop_clock('susc:calbec')
-
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    if ( ik == ik0 .AND. iq0 > 0 ) goto 9
-    call save_info_for_restart(ik, iq)
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! this is the case q = 0
+    iq = 0
     q(:) = 0.d0
+    call suscept_crystal_inner_qzero
 
-    if(my_image_id.eq.0)then
+    ! now the star of q-points
+    do iq = 1, 6
+       ! iq=1 => k+qx, iq=2 => k-qx, iq=3 => k+qy, iq=4 => k-qy, iq=5 => k+qz, iq=6 => k-qz 
+       if (mod(iq,2) /= 0) then
+         i = (iq+1)/2
+         isign = 1
+       else
+         i = iq/2
+         isign = -1
+       endif
 
-    if (job /= 'f-sum') then
-       call compute_u_kq(ik, q)
-    else
-       etq(:,ik) = et(:,ik)
-    endif
+       ! set the q vector
+       q(:) = 0.d0
+       q(i) = dble(isign) * q_gipaw
 
-    ! compute the terms that do not depend on 'q':
-    ! 1. the diamagnetic contribution to the field: Eq.(58) of [1]/Eq.(9) of [4]
-  call start_clock('susc:dia')
-    if (job == 'nmr') then
-      diamagnetic_corr_tensor = 0.0d0
-      call diamagnetic_correction (diamagnetic_corr_tensor)
-      sigma_diamagnetic = sigma_diamagnetic + diamagnetic_corr_tensor
-    elseif (job == 'g_tensor') then
-      diamagnetic_corr_tensor_so = 0.0d0
-      call diamagnetic_correction_so (diamagnetic_corr_tensor_so)
-      delta_g_so_dia = delta_g_so_dia + s_weight * diamagnetic_corr_tensor_so
-    endif
-  call stop_clock('susc:dia')
+       call suscept_crystal_inner_q
+    enddo ! iq
 
-    ! 2. the paramagnetic US augmentation: Eq.(30) of [2]
-  call start_clock('susc:para')
-    if (okvan) then
-      if (job == 'nmr') then
-        paramagnetic_corr_tensor_aug = 0.d0
-        call paramagnetic_correction_aug (paramagnetic_corr_tensor_aug, j_bare_s)
-        sigma_paramagnetic_aug = sigma_paramagnetic_aug + paramagnetic_corr_tensor_aug
-      elseif (job == 'g_tensor') then
-        paramagnetic_corr_tensor_aug_so = 0.d0
-        call paramagnetic_correction_aug_so (paramagnetic_corr_tensor_aug_so, j_bare_s)
-        delta_g_so_para_aug = delta_g_so_para_aug + s_weight * paramagnetic_corr_tensor_aug_so
-      endif
-    endif
-  call stop_clock('susc:para')
+  enddo  ! end of loop over k-point
 
-    ! 2. relativistic mass corrections for EPR
-    if (job == 'g_tensor') call rmc(s_weight, delta_g_rmc, delta_g_rmc_gipaw)
-
-    ! compute p_k|evc>, v_{k,k}|evc>, G_k v_{k,k}|evc> and s_{k,k}|evc>
-  call start_clock('susc:apply')
-    call apply_operators
-    if (okvan) then 
-        evq(:,:) = evc(:,:)
-        call apply_occ_occ_us
-    endif
-  call stop_clock('susc:apply')
-
-    !------------------------------------------------------------------
-    ! f-sum rule
-    !------------------------------------------------------------------
-  call start_clock('susc:f-sum')
-    do ipol = 1, 3 
-      do jpol = 1, 3
-#ifdef __BANDS
-        do ibnd = ibnd_start, ibnd_end
-#else
-        do ibnd = 1, nbnd_occ(ik)
-#endif
-          ! count number of electrons
-          if (ipol == 1 .and. jpol == 1) then
-              braket = -real(zdotc(npw, evc(1,ibnd), 1, evc(1,ibnd), 1), dp)
-              f_sum_nelec = f_sum_nelec + wg(ibnd,ik) * braket
-          endif
-
-          ! this is the "p-G-v" term
-          braket = 2.d0*real(zdotc(npw, p_evc(1,ibnd,ipol), 1, G_vel_evc(1,ibnd,jpol), 1), dp)
-          f_sum(ipol,jpol) = f_sum(ipol,jpol) + wg(ibnd,ik) * braket
-
-          ! this is the "occ-occ" term
-          if (okvan) then
-              braket = zdotc(npw, p_evc(1,ibnd,ipol), 1, u_svel_evc(1,ibnd,jpol), 1)
-              f_sum_occ(ipol,jpol) = f_sum_occ(ipol,jpol) + wg(ibnd,ik) * braket
-         endif
-        enddo
-      enddo
-    enddo
-  call stop_clock('susc:f-sum')
-
-    !------------------------------------------------------------------
-    ! pGv and vGv contribution to chi_{bare}
-    !------------------------------------------------------------------
-  call start_clock('susc:add-tensor')
-    if (job /= 'f-sum') then
-      do i = 1, 3
-        call add_to_tensor(i,q_pGv(:,:,0), p_evc, G_vel_evc)
-        call add_to_tensor(i,q_vGv(:,:,0), vel_evc, G_vel_evc)
-      enddo
-    endif
-  call stop_clock('susc:add-tensor')
-
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  9 CONTINUE
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    !------------------------------------------------------------------
-    ! loop over -q and +q
-    !------------------------------------------------------------------
-    if(nimage.eq.1)then
-    do isign = -1, 1, 2
-      if (job == 'f-sum') cycle
-      
-      ! loop over cartesian directions
-      do i = 1, 3
-        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      if (job == 'f-sum') cycle
-
-          iq = iq + 1
-        if (ik == ik0 .and. iq < iq0 ) cycle
-  call start_clock('susc:IO')
-        call save_info_for_restart ( ik, iq )
-  call stop_clock('susc:IO')
-        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-        ! set the q vector
-        q(:) = 0.d0
-        q(i) = dble(isign) * q_gipaw
-        
-        ! compute the wfcs at k+q
-  call start_clock('susc:diagon')
-        call compute_u_kq(ik, q)
-  call stop_clock('susc:diagon')
-        
-        ! compute p_k|evc>, v_k|evc> and G_{k+q} v_{k+q,k}|evc>
-  call start_clock('susc:apply')
-        call apply_operators
-  call stop_clock('susc:apply')
-      
-        k_plus_q(1:3) = xk(1:3,ik) + q(1:3)
-        call init_gipaw_2_no_phase(npw, igk, k_plus_q, paw_vkb)
-
-        ! pGv and vGv contribution to chi_bare
-  call start_clock('susc:add-tensor')
-        call add_to_tensor(i,q_pGv(:,:,isign), p_evc, G_vel_evc)
-        call add_to_tensor(i,q_vGv(:,:,isign), vel_evc, G_vel_evc)
-  call stop_clock('susc:add-tensor')
-        
-        ! now the j_bare term 
-  call start_clock('susc:add-current')
-        call add_to_current(j_bare_s(:,:,:,current_spin), evc, G_vel_evc)
-        if (okvan) then
-          call apply_occ_occ_us
-          call add_to_current(j_bare_s(:,:,:,current_spin), evc, u_svel_evc)
-        endif
-  call stop_clock('susc:add-current')
-
-        ! paramagnetic terms
-  call start_clock('susc:para')
-        if (job == 'nmr') then
-          call paramagnetic_correction(paramagnetic_corr_tensor, paramagnetic_corr_tensor_us, &
-               G_vel_evc, u_svel_evc, i)
-          call add_to_sigma_para(paramagnetic_corr_tensor, sigma_paramagnetic)
-          if (okvan) call add_to_sigma_para(paramagnetic_corr_tensor_us, sigma_paramagnetic_us)
-        elseif (job == 'g_tensor') then
-          call paramagnetic_correction_so(paramagnetic_corr_tensor_so, paramagnetic_corr_tensor_us_so, &
-               G_vel_evc, u_svel_evc, i)
-          paramagnetic_corr_tensor_so = paramagnetic_corr_tensor_so * s_weight
-          paramagnetic_corr_tensor_us_so = paramagnetic_corr_tensor_us_so * s_weight
-          call add_to_sigma_para_so(paramagnetic_corr_tensor_so, delta_g_so_para)
-          if (okvan) call add_to_sigma_para_so(paramagnetic_corr_tensor_us_so, delta_g_so_para_us)
-        endif
-  call stop_clock('susc:para')
-
-      enddo  ! i=x,y,z
-    enddo  ! isign
-
-    endif
-    else
-
-     if(nimage>1)then
-    
-
-          iq = iq + 1 + my_image_id
-        if(my_image_id<4)then
-          isign=-1
-          i=my_image_id 
-        else
-          isign=1
-          i=my_image_id-3
-        endif 
-        if (ik == ik0 .and. iq < iq0 ) cycle
-  call start_clock('susc:IO')
-        call save_info_for_restart ( ik, iq )
-  call stop_clock('susc:IO')
-        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-        ! set the q vector
-        q(:) = 0.d0
-        q(i) = dble(isign) * q_gipaw
-        
-        ! compute the wfcs at k+q
-  call start_clock('susc:diagon')
-        call compute_u_kq(ik, q)
-  call stop_clock('susc:diagon')
-        
-        ! compute p_k|evc>, v_k|evc> and G_{k+q} v_{k+q,k}|evc>
-  call start_clock('susc:apply')
-        call apply_operators
-  call stop_clock('susc:apply')
-      
-        k_plus_q(1:3) = xk(1:3,ik) + q(1:3)
-        call init_gipaw_2_no_phase(npw, igk, k_plus_q, paw_vkb)
-
-        ! pGv and vGv contribution to chi_bare
-  call start_clock('susc:add-tensor')
-        call add_to_tensor(i,q_pGv(:,:,isign), p_evc, G_vel_evc)
-        call add_to_tensor(i,q_vGv(:,:,isign), vel_evc, G_vel_evc)
-  call stop_clock('susc:add-tensor')
-        
-        ! now the j_bare term 
-  call start_clock('susc:add-current')
-        call add_to_current(j_bare_s(:,:,:,current_spin), evc, G_vel_evc)
-        if (okvan) then
-          call apply_occ_occ_us
-          call add_to_current(j_bare_s(:,:,:,current_spin), evc, u_svel_evc)
-        endif
-  call stop_clock('susc:add-current')
-
-        ! paramagnetic terms
-  call start_clock('susc:para')
-        if (job == 'nmr') then
-          call paramagnetic_correction(paramagnetic_corr_tensor, paramagnetic_corr_tensor_us, &
-               G_vel_evc, u_svel_evc, i)
-          call add_to_sigma_para(paramagnetic_corr_tensor, sigma_paramagnetic)
-          if (okvan) call add_to_sigma_para(paramagnetic_corr_tensor_us, sigma_paramagnetic_us)
-        elseif (job == 'g_tensor') then
-          call paramagnetic_correction_so(paramagnetic_corr_tensor_so, paramagnetic_corr_tensor_us_so, &
-               G_vel_evc, u_svel_evc, i)
-          paramagnetic_corr_tensor_so = paramagnetic_corr_tensor_so * s_weight
-          paramagnetic_corr_tensor_us_so = paramagnetic_corr_tensor_us_so * s_weight
-          call add_to_sigma_para_so(paramagnetic_corr_tensor_so, delta_g_so_para)
-          if (okvan) call add_to_sigma_para_so(paramagnetic_corr_tensor_us_so, delta_g_so_para_us)
-        endif
-  call stop_clock('susc:para')
-
- 
-
-    
-
-
-
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  call start_clock('susc:IO')
-    call save_info_for_restart(ik+1, 0)
-  call stop_clock('susc:IO')
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  endif
-  endif
-  enddo  ! ik
-
+  ! Parallel reductions
 #ifdef __MPI
-  call start_clock('susc:mp_sum')
-
 #ifdef __BANDS
   ! reduce over G-vectors
   call mp_sum( f_sum, intra_bgrp_comm )
@@ -537,7 +297,6 @@ SUBROUTINE suscept_crystal
     call mp_sum( delta_g_so_para_us, inter_image_comm )
     call mp_sum( delta_g_so_para_aug, inter_image_comm )
   endif
-  call stop_clock('susc:mp_sum')
 #endif
 
   
@@ -551,7 +310,6 @@ SUBROUTINE suscept_crystal
   deallocate( p_evc, vel_evc, aux, G_vel_evc )
   deallocate( svel_evc, u_svel_evc )
   
-  call start_clock('susc:post')
   ! f-sum rule
   call symmatrix (f_sum)
   call symmatrix (f_sum_occ)
@@ -609,12 +367,10 @@ SUBROUTINE suscept_crystal
   tmp(:,:) = chi_bare_vGv(:,:) * 1e6_dp * a0_to_cm**3.0_dp * avogadro
   write(stdout, '(5X,''chi_bare vGv (VV) in 10^{-6} cm^3/mol:'')')
   write(stdout, tens_fmt) tmp(:,:)
-  call stop_clock('susc:post')
 
   !--------------------------------------------------------------------
   ! now get the current and induced field
   !--------------------------------------------------------------------
-  call start_clock('susc:biot')
   chi_bare_pGv(:,:) = chi_bare_pGv(:,:) / omega
   j_bare_s(:,:,:,:) = j_bare_s(:,:,:,:) * alpha / ( 2.d0 * q_gipaw * tpiba * omega )
 
@@ -635,7 +391,6 @@ SUBROUTINE suscept_crystal
   ! compute induced field
   allocate( B_ind_r(dfftp%nnr,3,3,nspin), B_ind(ngm,3,3,nspin) )
   call biot_savart(j_bare, B_ind, B_ind_r)
-  call stop_clock('susc:biot')
 
   ! write fields to disk
   do i = 1, nspin
@@ -645,7 +400,7 @@ SUBROUTINE suscept_crystal
   if (trim(filnics) /= '') call write_nics(filnics, B_ind_r(1,1,1,1))
 
   !--------------------------------------------------------------------
-  ! calculate the chemical shifts
+  ! calculate the chemical shifts or g-tensor
   !--------------------------------------------------------------------
   if (job == 'nmr') then
     ! compute bare chemical shift and print all results
@@ -670,6 +425,146 @@ SUBROUTINE suscept_crystal
 CONTAINS
 
   !====================================================================
+  ! This routine evaluates the terms at q == 0
+  !====================================================================
+  SUBROUTINE suscept_crystal_inner_qzero
+    IMPLICIT NONE
+
+    ! check if my_image_id has to process this term
+    if (mod(iq,nimage) /= my_image_id) return
+
+    !if (job /= 'f-sum') then
+       call compute_u_kq(ik, q)
+    !else
+    !   etq(:,ik) = et(:,ik)
+    !endif
+
+    if (ik == ik0 .and. iq < iq0 ) return
+    call save_info_for_restart (ik, iq)
+
+    ! 1. the diamagnetic contribution to the field: Eq.(58) of [1]/Eq.(9) of [4]
+    if (job == 'nmr') then
+      diamagnetic_corr_tensor = 0.0d0
+      call diamagnetic_correction (diamagnetic_corr_tensor)
+      sigma_diamagnetic = sigma_diamagnetic + diamagnetic_corr_tensor
+    elseif (job == 'g_tensor') then
+      diamagnetic_corr_tensor_so = 0.0d0
+      call diamagnetic_correction_so (diamagnetic_corr_tensor_so)
+      delta_g_so_dia = delta_g_so_dia + s_weight * diamagnetic_corr_tensor_so
+    endif
+
+    ! 2. the paramagnetic US augmentation: Eq.(30) of [2]
+    if (okvan) then
+      if (job == 'nmr') then
+        paramagnetic_corr_tensor_aug = 0.d0
+        call paramagnetic_correction_aug (paramagnetic_corr_tensor_aug, j_bare_s)
+        sigma_paramagnetic_aug = sigma_paramagnetic_aug + paramagnetic_corr_tensor_aug
+      elseif (job == 'g_tensor') then
+        paramagnetic_corr_tensor_aug_so = 0.d0
+        call paramagnetic_correction_aug_so (paramagnetic_corr_tensor_aug_so, j_bare_s)
+        delta_g_so_para_aug = delta_g_so_para_aug + s_weight * paramagnetic_corr_tensor_aug_so
+      endif
+    endif
+
+    ! 2. relativistic mass corrections for EPR
+    if (job == 'g_tensor') call rmc(s_weight, delta_g_rmc, delta_g_rmc_gipaw)
+
+    ! compute p_k|evc>, v_{k,k}|evc>, G_k v_{k,k}|evc> and s_{k,k}|evc>
+    call apply_operators
+    if (okvan) then 
+        evq(:,:) = evc(:,:)
+        call apply_occ_occ_us
+    endif
+
+    ! 3. f-sum rule
+    do ipol = 1, 3 
+      do jpol = 1, 3
+#ifdef __BANDS
+        do ibnd = ibnd_start, ibnd_end
+#else
+        do ibnd = 1, nbnd_occ(ik)
+#endif
+          ! count number of electrons
+          if (ipol == 1 .and. jpol == 1) then
+              braket = -real(zdotc(npw, evc(1,ibnd), 1, evc(1,ibnd), 1), dp)
+              f_sum_nelec = f_sum_nelec + wg(ibnd,ik) * braket
+          endif
+
+          ! this is the "p-G-v" term
+          braket = 2.d0*real(zdotc(npw, p_evc(1,ibnd,ipol), 1, G_vel_evc(1,ibnd,jpol), 1), dp)
+!DEBUG if (ipol==1 .and. jpol==1) print*, 'AAA:', ibnd, braket*wg(ibnd,ik), ef-et(ibnd,ik)
+          f_sum(ipol,jpol) = f_sum(ipol,jpol) + wk(ik) * braket
+
+          ! this is the "occ-occ" term
+          if (okvan) then
+              braket = zdotc(npw, p_evc(1,ibnd,ipol), 1, u_svel_evc(1,ibnd,jpol), 1)
+              f_sum_occ(ipol,jpol) = f_sum_occ(ipol,jpol) + wk(ik) * braket
+         endif
+        enddo
+      enddo
+    enddo
+
+    ! 5. pGv and vGv contribution to chi_{bare}
+    if (job /= 'f-sum') then
+      do i = 1, 3
+        call add_to_tensor(i,q_pGv(:,:,0), p_evc, G_vel_evc)
+        call add_to_tensor(i,q_vGv(:,:,0), vel_evc, G_vel_evc)
+      enddo
+    endif
+  END SUBROUTINE suscept_crystal_inner_qzero
+
+
+  !====================================================================
+  ! This routine evaluates the terms at q /= 0
+  !====================================================================
+  SUBROUTINE suscept_crystal_inner_q
+    IMPLICIT NONE
+
+    ! check if my_image_id has to process this term
+    if (mod(iq,nimage) /= my_image_id) return
+    if (job == 'f-sum') return
+      
+    if (ik == ik0 .and. iq < iq0) return
+    call save_info_for_restart(ik, iq)
+        
+    ! compute the wfcs at k+q
+    call compute_u_kq(ik, q)
+        
+    ! compute p_k|evc>, v_k|evc> and G_{k+q} v_{k+q,k}|evc>
+    call apply_operators
+      
+    k_plus_q(1:3) = xk(1:3,ik) + q(1:3)
+    call init_gipaw_2_no_phase(npw, igk, k_plus_q, paw_vkb)
+
+    ! pGv and vGv contribution to chi_bare
+    call add_to_tensor(i,q_pGv(:,:,isign), p_evc, G_vel_evc)
+    call add_to_tensor(i,q_vGv(:,:,isign), vel_evc, G_vel_evc)
+        
+    ! now the j_bare term 
+    call add_to_current(j_bare_s(:,:,:,current_spin), evc, G_vel_evc)
+    if (okvan) then
+      call apply_occ_occ_us
+      call add_to_current(j_bare_s(:,:,:,current_spin), evc, u_svel_evc)
+    endif
+
+    ! paramagnetic terms
+    if (job == 'nmr') then
+      call paramagnetic_correction(paramagnetic_corr_tensor, paramagnetic_corr_tensor_us, &
+           G_vel_evc, u_svel_evc, i)
+      call add_to_sigma_para(paramagnetic_corr_tensor, sigma_paramagnetic)
+      if (okvan) call add_to_sigma_para(paramagnetic_corr_tensor_us, sigma_paramagnetic_us)
+    elseif (job == 'g_tensor') then
+      call paramagnetic_correction_so(paramagnetic_corr_tensor_so, paramagnetic_corr_tensor_us_so, &
+           G_vel_evc, u_svel_evc, i)
+      paramagnetic_corr_tensor_so = paramagnetic_corr_tensor_so * s_weight
+      paramagnetic_corr_tensor_us_so = paramagnetic_corr_tensor_us_so * s_weight
+      call add_to_sigma_para_so(paramagnetic_corr_tensor_so, delta_g_so_para)
+      if (okvan) call add_to_sigma_para_so(paramagnetic_corr_tensor_us_so, delta_g_so_para_us)
+    endif
+  END SUBROUTINE suscept_crystal_inner_q
+ 
+
+  !====================================================================
   ! compute p_k|evc>, v_{k+q,k}|evc>, G_{k+q} v_{k+q,k}|evc> and s_{k+q,k}|evc>
   !====================================================================
   SUBROUTINE apply_operators
@@ -681,22 +576,15 @@ CONTAINS
     if(okvan) svel_evc(:,:,:) = (0.d0,0.d0)
     
     do ipol = 1, 3
-  call start_clock('apply:p')
       call apply_p(evc, p_evc(1,1,ipol), ik, ipol, q)
-  call stop_clock('apply:p')
-  call start_clock('apply:vel')
       call apply_vel(evc, vel_evc(1,1,ipol), ik, ipol, q)
-  call stop_clock('apply:vel')
-  call start_clock('apply:vel-NL')
       if (okvan) call apply_vel_NL('S', evc, svel_evc(1,1,ipol), ik, ipol, q)
-  call stop_clock('apply:vel-NL')
       ! necessary because aux is overwritten by subroutine greenfunction
       aux(:,:) = vel_evc(:,:,ipol)
-  call start_clock('apply:gf')
       call greenfunction(ik, aux, G_vel_evc(1,1,ipol), q)
-  call stop_clock('apply:gf')
     enddo
   END SUBROUTINE apply_operators
+
 
   !====================================================================
   ! compute |evq><evq|s_{k+q,k}|evc>
@@ -728,6 +616,7 @@ CONTAINS
     enddo
     deallocate(ps)
   END SUBROUTINE apply_occ_occ_us
+
 
   !====================================================================
   ! add contribution the Q tensors
@@ -761,13 +650,14 @@ CONTAINS
 #endif
           braket = real(zdotc(npw, ul(1,ibnd,comp_ia), 1, &
                                    ur(1,ibnd,comp_ib), 1), dp)
-          qt(ia,ib) = qt(ia,ib) + wg(ibnd,ik) * &
-                      braket * mult(ia,i) * mult(ib,i)
+          !WAS: qt(ia,ib) = qt(ia,ib) + wg(ibnd,ik) * braket * mult(ia,i) * mult(ib,i)
+          qt(ia,ib) = qt(ia,ib) + wk(ik) * braket * mult(ia,i) * mult(ib,i)
         enddo  ! ibnd
 
       enddo  ! ib
     enddo  ! ia
   END SUBROUTINE add_to_tensor
+
 
   !====================================================================
   ! add contribution the the current
@@ -793,6 +683,7 @@ CONTAINS
       call j_para(fact, ul(1,1), ur(1,1,icomp), ik, q, j(1,1,ibdir))
     enddo
   END SUBROUTINE add_to_current
+
 
   !====================================================================
   ! Add contribution to current: Eq.(46) of [1]
@@ -824,6 +715,7 @@ CONTAINS
     enddo
   END SUBROUTINE add_to_sigma_para
 
+
   SUBROUTINE add_to_sigma_para_so(paramagnetic_correction, sigma_paramagnetic)
     IMPLICIT NONE
     real(dp), intent(in) :: paramagnetic_correction(3,3)
@@ -850,24 +742,23 @@ CONTAINS
       end do
     enddo
   END SUBROUTINE add_to_sigma_para_so
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!
-!             RESTART SECTION
-!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  !--------------------------------------------------------
+
+
+  !====================================================================
+  ! Restart and checkpointing section: read restart, if present
+  !====================================================================
   SUBROUTINE check_for_restart_info(ik0_, iq0_)
-    !
     USE io_files, ONLY: seqopn
     IMPLICIT NONE
-    INTEGER, INTENT (OUT) :: ik0_, iq0_
-    LOGICAL :: exst
-    INTEGER :: iunrec
-    INTEGER, EXTERNAL :: find_free_unit 
-    CHARACTER(80) :: job_
+
+    integer, intent (out) :: ik0_, iq0_
+    logical :: exst
+    integer :: iunrec
+    integer, external :: find_free_unit 
+    character(80) :: job_
 
     ik0_ = 0
-    iq0_ = 0
+    iq0_ = -1
 
     if (restart_mode == 'from_scratch') then
        write(stdout, '(5X,''Starting from scratch'')')
@@ -875,90 +766,85 @@ CONTAINS
     endif
 
     iunrec = find_free_unit()
-    CALL seqopn (iunrec, 'gipaw_recover', 'unformatted', exst)
-    ! 
-    IF ( exst ) THEN
-       READ (iunrec) job_
-       IF (job_ /= job) exst = .false.
-    end if
-    !
-    IF ( exst ) THEN
-       WRITE(stdout, '(5X,''Restarting from a previous run'')')
-       !
-       READ (iunrec) ik0_, iq0_
-       READ (iunrec) f_sum(:,:), f_sum_occ(:,:), f_sum_nelec 
-       READ (iunrec) q_pGv(:,:,:), q_vGv(:,:,:)
-       READ (iunrec) j_bare_s(:,:,:,:)
-       READ (iunrec) sigma_bare, sigma_diamagnetic, sigma_paramagnetic, &
+    call seqopn (iunrec, 'gipaw_recover', 'unformatted', exst)
+    if ( exst ) then
+       read(iunrec) job_
+       if (job_ /= job) exst = .false.
+    endif
+
+    if (exst) then
+       write(stdout, '(5X,''Restarting from a previous run'')')
+       read (iunrec) ik0_, iq0_
+       read (iunrec) f_sum(:,:), f_sum_occ(:,:), f_sum_nelec 
+       read (iunrec) q_pgv(:,:,:), q_vgv(:,:,:)
+       read (iunrec) j_bare_s(:,:,:,:)
+       read (iunrec) sigma_bare, sigma_diamagnetic, sigma_paramagnetic, &
                      sigma_paramagnetic_us, sigma_paramagnetic_aug 
-       READ (iunrec) delta_g_rmc, delta_g_rmc_gipaw, delta_g_so, delta_g_soo, &
+       read (iunrec) delta_g_rmc, delta_g_rmc_gipaw, delta_g_so, delta_g_soo, &
                      delta_g_soo2, delta_g_so_para, delta_g_so_para_aug, &
                      delta_g_so_para_us, delta_g_so_dia 
-       WRITE (stdout,'(5X,''Resuming from k-point #'',I5,3X,''and q #'',I3)') ik0_, iq0_
-    END IF
-    CLOSE( UNIT = iunrec, STATUS = 'KEEP' )
-
-    CALL save_info_for_restart(ik0_,iq0_)
-     
-    RETURN
-    !
+       write(stdout,'(5X,''Resuming from k-point #'',I5,3X,''and q #'',I3)') ik0_, iq0_
+    endif
+    close( unit = iunrec, status = 'keep' )
+    call save_info_for_restart(ik0_,iq0_)
+    return
   END SUBROUTINE check_for_restart_info
-  !--------------------------------------------------------
+
+
+  !====================================================================
+  ! Restart and checkpointing section: write restart
+  !====================================================================
   SUBROUTINE save_info_for_restart(ik0_, iq0_)
-    !
-    USE io_files, ONLY: seqopn
+    USE io_files,   ONLY : seqopn
     USE check_stop, ONLY : check_stop_now
     IMPLICIT NONE
-    INTEGER, INTENT (IN) :: ik0_, iq0_
-    INTEGER :: iunrec
-    INTEGER, EXTERNAL :: find_free_unit 
-    LOGICAL :: exst
-    !
+    integer, intent (in) :: ik0_, iq0_
+    integer :: iunrec
+    integer, external :: find_free_unit 
+    logical :: exst
+
     iunrec = find_free_unit()
-    CALL seqopn (iunrec, 'gipaw_recover', 'unformatted', exst)
+    call seqopn(iunrec, 'gipaw_recover', 'unformatted', exst)
 
-    WRITE (iunrec) job
-    WRITE (iunrec) ik0_, iq0_
-    WRITE (iunrec) f_sum(:,:), f_sum_occ(:,:), f_sum_nelec 
-    WRITE (iunrec) q_pGv(:,:,:), q_vGv(:,:,:)
-    WRITE (iunrec) j_bare_s(:,:,:,:)
-    WRITE (iunrec) sigma_bare, sigma_diamagnetic, sigma_paramagnetic, &
-                   sigma_paramagnetic_us, sigma_paramagnetic_aug 
-    WRITE (iunrec) delta_g_rmc, delta_g_rmc_gipaw, delta_g_so, delta_g_soo, &
-                   delta_g_soo2, delta_g_so_para, delta_g_so_para_aug, &
-                   delta_g_so_para_us, delta_g_so_dia 
-
-    CLOSE( UNIT = iunrec, STATUS = 'KEEP' )
+    write(iunrec) job
+    write(iunrec) ik0_, iq0_
+    write(iunrec) f_sum(:,:), f_sum_occ(:,:), f_sum_nelec 
+    write(iunrec) q_pgv(:,:,:), q_vgv(:,:,:)
+    write(iunrec) j_bare_s(:,:,:,:)
+    write(iunrec) sigma_bare, sigma_diamagnetic, sigma_paramagnetic, &
+                  sigma_paramagnetic_us, sigma_paramagnetic_aug 
+    write(iunrec) delta_g_rmc, delta_g_rmc_gipaw, delta_g_so, delta_g_soo, &
+                  delta_g_soo2, delta_g_so_para, delta_g_so_para_aug, &
+                  delta_g_so_para_us, delta_g_so_dia 
+    close( unit = iunrec, status = 'keep' )
 
     IF (check_stop_now()) THEN
-       WRITE (stdout,'(5X,''Stopping at k-point #'',I5,3X,''and q #'',I3)') ik0_, iq0_
+       write(stdout,'(5X,''Stopping at k-point #'',I5,3X,''and q #'',I3)') ik0_, iq0_
        ! close files, print timings and stop the code
-       CALL gipaw_closefil
-       CALL print_clock_gipaw()
-       CALL stop_code( .FALSE. )
-    END IF
-
-    RETURN
-    !
+       call gipaw_closefil
+       call print_clock_gipaw()
+       call stop_code( .false. )
+    end if
+    return
   END SUBROUTINE save_info_for_restart
-  !--------------------------------------------------------
+
+
+  !====================================================================
+  ! Restart and checkpointing section: delete the restart file
+  !====================================================================
   SUBROUTINE restart_cleanup ( )
-    !
     USE io_files, ONLY: seqopn
     IMPLICIT NONE
-    INTEGER :: iunrec
-    INTEGER, EXTERNAL :: find_free_unit 
-    LOGICAL :: exst
-    !
+    integer :: iunrec
+    integer, external :: find_free_unit 
+    logical :: exst
+
     iunrec = find_free_unit()
-    !
-    CALL seqopn( iunrec, 'gipaw_recover', 'UNFORMATTED', exst )
-    !
-    CLOSE( UNIT = iunrec, STATUS = 'DELETE' )
-    !
-    RETURN
-    !
+    call seqopn(iunrec, 'gipaw_recover', 'unformatted', exst)
+    close(unit = iunrec, status = 'delete')
+    return
   END SUBROUTINE restart_cleanup
 
 
 END SUBROUTINE suscept_crystal
+

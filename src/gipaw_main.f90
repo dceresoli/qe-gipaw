@@ -28,6 +28,7 @@ PROGRAM gipaw_main
   ! ...
   USE kinds,           ONLY : DP
   USE io_files,        ONLY : prefix, tmp_dir
+  USE io_global,       ONLY : stdout
   USE klist,           ONLY : nks
   USE mp,              ONLY : mp_bcast
   USE cell_base,       ONLY : tpiba
@@ -35,7 +36,7 @@ PROGRAM gipaw_main
   USE gipaw_module,    ONLY : job, q_gipaw
   USE control_flags,   ONLY : io_level, gamma_only, use_para_diag, twfcollect
   USE mp_global,       ONLY : mp_startup, nimage, my_image_id
-  USE mp_global,       ONLY : inter_bgrp_comm, nbgrp
+  USE mp_global,       ONLY : inter_bgrp_comm, nbgrp, nproc_pool, nproc_pool_file
   USE check_stop,      ONLY : check_stop_init
   USE environment,     ONLY : environment_start
   USE lsda_mod,        ONLY : nspin
@@ -46,23 +47,20 @@ PROGRAM gipaw_main
   USE gipaw_version
   USE iotk_module  
   USE xml_io_base
-
-
-  ! ... and begin with the initialization part
-
   !------------------------------------------------------------------------
   IMPLICIT NONE
   CHARACTER (LEN=9)   :: code = 'QE'
   CHARACTER (LEN=10)  :: dirname = 'dummy'
   !------------------------------------------------------------------------
 
-  ! ... and begin with the initialization part
+  ! begin with the initialization part
 #ifdef __MPI
-  CALL mp_startup ( start_images=.true. )
+  call mp_startup(start_images=.true.)
 #else
-  CALL mp_startup ( start_images=.false.)
+  call mp_startup(start_images=.false.)
 #endif
-  CALL environment_start ( code )
+  call environment_start (code)
+
 #ifndef __BANDS
   if (nbgrp > 1) &
     call errore('gipaw_main', 'configure and recompile GIPAW with --enable-band-parallel', 1)
@@ -71,8 +69,12 @@ PROGRAM gipaw_main
   write(stdout,*)
   write(stdout,'(5X,''*** This is GIPAW svn revision'',A6,'' ***'')') gipaw_svn_revision
   write(stdout,*)
-  CALL gipaw_readin()
-  CALL check_stop_init()
+ 
+  write(stdout,'(5X,''Parallelizing q-star over'',I2,'' images'')') nimage
+  if (nimage > 7) write(stdout,'(5X,''ATTENTION: optimal number of images is 7'')')
+
+  call gipaw_readin()
+  call check_stop_init()
 
   io_level = 1
  
@@ -81,36 +83,42 @@ PROGRAM gipaw_main
   call read_file
 #ifdef __MPI
   use_para_diag = .true.
-  call check_para_diag( nbnd )
+  call check_para_diag(nbnd)
 #else
-  use_para_diag = .FALSE.
+  use_para_diag = .false.
 #endif
 
   call gipaw_openfil
   
   if ( gamma_only ) call errore ('gipaw_main', 'Cannot run GIPAW with gamma_only == .true. ', 1)
+  if ((twfcollect .eqv. .false.)  .and. (nproc_pool_file /= nproc_pool)) &
+    call errore('gipaw_main', 'Different number of CPU/pool. Set wf_collect=.true. in SCF', 1)
+
 #ifdef __BANDS
   if (nbgrp > 1 .and. (twfcollect .eqv. .false.)) &
     call errore('gipaw_main', 'Cannot use band-parallelization without wf_collect in SCF', 1)
 #endif
 
-  CALL gipaw_allocate()
-  CALL gipaw_setup()
-  CALL gipaw_summary()
-  CALL print_clock( 'GIPAW' )
+  call gipaw_allocate()
+  call gipaw_setup()
+  call gipaw_summary()
+  call print_clock( 'GIPAW' )
   
   ! convert q_gipaw into units of tpiba
   q_gipaw = q_gipaw / tpiba
   
- IF( nimage >= 1 ) THEN
-  WRITE( dirname, FMT = '( I5.5 )' ) my_image_id
-  tmp_dir = TRIM( tmp_dir ) // '/' // TRIM( dirname )
-  CALL create_directory( tmp_dir )
-  ENDIF 
-  ! calculation
+  ! image initialization
+  if (nimage >= 1) then
+     write(dirname, fmt='(I5.5)') my_image_id
+     tmp_dir = trim(tmp_dir) // '/' // trim(dirname)
+     call create_directory(tmp_dir)
+  endif 
+
 #ifdef __BANDS
-  CALL init_parallel_over_band(inter_bgrp_comm, nbnd)
+  call init_parallel_over_band(inter_bgrp_comm, nbnd)
 #endif
+
+  ! calculation
   select case ( trim(job) )
   case ( 'nmr' )
      call suscept_crystal   
@@ -128,6 +136,9 @@ PROGRAM gipaw_main
      
   case ( 'efg' )
      call efg
+
+  case ( 'mossbauer' )
+     call mossbauer
      
   case ( 'hyperfine' )
      if (nspin /= 2) call errore('gipaw_main', 'hyperfine is only for spin-polarized', 1)
@@ -145,3 +156,4 @@ PROGRAM gipaw_main
   STOP
   
 END PROGRAM gipaw_main
+

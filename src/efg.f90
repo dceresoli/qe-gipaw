@@ -200,7 +200,7 @@ SUBROUTINE get_smooth_density(rho)
   call mp_sum( rho, inter_pool_comm )
 #endif
 
-  if (job == 'hyperfine') then
+  if (job == 'hyperfine' .or. job == 'mossbauer') then
     do is = 1, nspin
 #ifdef __MPI
       call psymmetrize_rho_s(rho(1,is))

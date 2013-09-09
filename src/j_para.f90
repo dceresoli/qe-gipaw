@@ -15,8 +15,8 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   ! ... In the USPP case, current is computed on the smooth grid.
   !  
   USE kinds,                  ONLY : DP
-  USE klist,                  ONLY : xk
-  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg
+  USE klist,                  ONLY : xk, wk
+  USE wvfct,                  ONLY : nbnd, npwx, npw, igk  !, wg
   USE gvecs,                  ONLY : nls
   USE gvect,                  ONLY : g
   USE cell_base,              ONLY : tpiba
@@ -80,10 +80,12 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
 
       ! add to the current
 #ifdef __BANDS
-      jaux(1:dffts%nnr,ipol) = jaux(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
+      !WAS: jaux(1:dffts%nnr,ipol) = jaux(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
+      jaux(1:dffts%nnr,ipol) = jaux(1:dffts%nnr,ipol) + 0.5d0 * fact * wk(ik) * &
                                aimag(conjg(p_psic(1:dffts%nnr)) * psic(1:dffts%nnr))
 #else
-      j(1:dffts%nnr,ipol) = j(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
+      !WAS: j(1:dffts%nnr,ipol) = j(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
+      j(1:dffts%nnr,ipol) = j(1:dffts%nnr,ipol) + 0.5d0 * fact * wk(ik) * &
                             aimag(conjg(p_psic(1:dffts%nnr)) * psic(1:dffts%nnr))
 #endif
       ! apply p_{k+q} on the right
@@ -103,10 +105,12 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
 
       ! add to the current
 #ifdef __BANDS
-      jaux(1:dffts%nnr,ipol) = jaux(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
+      !WAS: jaux(1:dffts%nnr,ipol) = jaux(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
+      jaux(1:dffts%nnr,ipol) = jaux(1:dffts%nnr,ipol) + 0.5d0 * fact * wk(ik) * &
                                aimag(conjg(psic(1:dffts%nnr)) * p_psic(1:dffts%nnr))
 #else
-      j(1:dffts%nnr,ipol) = j(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
+      !WAS: j(1:dffts%nnr,ipol) = j(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
+      j(1:dffts%nnr,ipol) = j(1:dffts%nnr,ipol) + 0.5d0 * fact * wk(ik) * &
                             aimag(conjg(psic(1:dffts%nnr)) * p_psic(1:dffts%nnr))
 #endif
     enddo ! ibnd
