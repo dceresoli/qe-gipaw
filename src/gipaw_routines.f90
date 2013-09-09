@@ -105,6 +105,7 @@ SUBROUTINE gipaw_bcast_input
   call mp_bcast(iverbosity, root)
   call mp_bcast(filcurr, root)
   call mp_bcast(filfield, root)
+  call mp_bcast(filnics, root)
   call mp_bcast(use_nmr_macroscopic_shape, root)
   call mp_bcast(nmr_macroscopic_shape, root)
   call mp_bcast(spline_ps, root)
