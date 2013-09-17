@@ -67,7 +67,7 @@ PROGRAM gipaw_main
 #endif
 
   write(stdout,*)
-  write(stdout,'(5X,''*** This is GIPAW svn revision'',A6,'' ***'')') gipaw_svn_revision
+  write(stdout,'(5X,''***** This is GIPAW svn revision '',A,'' *****'')') gipaw_svn_revision
   write(stdout,*)
  
   write(stdout,'(5X,''Parallelizing q-star over'',I2,'' images'')') nimage

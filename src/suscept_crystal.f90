@@ -115,7 +115,8 @@ SUBROUTINE suscept_crystal
   real(dp) :: tmp(3,3), q(3), k_plus_q(3), braket
   integer :: s_min, s_maj, s_weight
   complex(dp), external :: zdotc
-  
+  real(dp), external :: get_clock
+ 
   call start_clock('suscept_crystal')
   !-----------------------------------------------------------------------
   ! allocate memory
@@ -185,6 +186,8 @@ SUBROUTINE suscept_crystal
 #else
     write(stdout, '(5X,''k-point #'',I5,'' of '',I5)') ik, nks
 #endif
+    write(stdout,9000) get_clock('GIPAW')
+9000 format(/'     total cpu time spent up to now is ',F10.1,' secs' )
 
     current_k = ik
     current_spin = isk(ik)
