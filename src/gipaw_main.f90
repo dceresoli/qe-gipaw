@@ -73,6 +73,7 @@ PROGRAM gipaw_main
   write(stdout,'(5X,''Parallelizing q-star over'',I2,'' images'')') nimage
   if (nimage > 7) write(stdout,'(5X,''ATTENTION: optimal number of images is 7'')')
 
+  call start_clock('GIPAW')
   call gipaw_readin()
   call check_stop_init()
 
@@ -102,7 +103,7 @@ PROGRAM gipaw_main
   call gipaw_allocate()
   call gipaw_setup()
   call gipaw_summary()
-  call print_clock( 'GIPAW' )
+  call print_clock('GIPAW')
   
   ! convert q_gipaw into units of tpiba
   q_gipaw = q_gipaw / tpiba

@@ -249,9 +249,7 @@ SUBROUTINE print_clock_gipaw
   USE io_global,  ONLY : stdout
   IMPLICIT NONE
 
-  write(stdout,*)
-  call print_clock ('GIPAW') 
-  write(stdout,*) '    INITIALIZATION:'
+  write(stdout,*) '    Initialization:'
   call print_clock ('gipaw_setup')
   write(stdout,*)
   write(stdout,*) '    Linear response'
@@ -291,7 +289,9 @@ SUBROUTINE print_clock_gipaw
   call print_clock ('reduce')  
   call print_clock( 'fft_scatter' )
   call print_clock( 'ALLTOALL' )
+  write(stdout,*)
 #endif
+  call print_clock ('GIPAW') 
 
 END SUBROUTINE print_clock_gipaw
 
