@@ -169,7 +169,7 @@ SUBROUTINE write_nics(filename, field)
 #ifdef __MPI
   call grid_gather(nics, aux)
 #else
-  aux = field
+  aux = nics
 #endif
 
   if (ionode) then
