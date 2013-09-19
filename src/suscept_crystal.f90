@@ -181,13 +181,12 @@ SUBROUTINE suscept_crystal
 
 #ifdef __MPI
     if (me_pool == root_pool) &
-    write(*, '(5X,''k-point #'',I5,'' of '',I5,6X,''pool #'',I3)') &
-      ik, nks, my_pool_id+1
+    write(*, '(5X,''k-point #'',I5,'' of '',I5,6X,''pool #'',I3,4X,''cpu time:'',F10.1)') &
+      ik, nks, my_pool_id+1, get_clock('GIPAW')
 #else
-    write(stdout, '(5X,''k-point #'',I5,'' of '',I5)') ik, nks
+    write(stdout, '(5X,''k-point #'',I5,'' of '',I5,4X,''cpu time:'',F10.1)') &
+      ik, nks, get_clock('GIPAW')
 #endif
-    write(stdout,9000) get_clock('GIPAW')
-9000 format(/'     total cpu time spent up to now is ',F10.1,' secs' )
 
     current_k = ik
     current_spin = isk(ik)

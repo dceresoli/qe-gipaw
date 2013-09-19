@@ -103,7 +103,6 @@ PROGRAM gipaw_main
   call gipaw_allocate()
   call gipaw_setup()
   call gipaw_summary()
-  call print_clock('GIPAW')
   
   ! convert q_gipaw into units of tpiba
   q_gipaw = q_gipaw / tpiba
