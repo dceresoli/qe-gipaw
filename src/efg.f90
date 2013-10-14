@@ -60,7 +60,7 @@ SUBROUTINE efg
   
   ! print results
   write(stdout,*)
-  write(stdout,'(5X,''ELECTRIC FIELD GRADIENTS TENSORS IN Hartree/bohrradius:'')')
+  write(stdout,'(5X,''ELECTRIC FIELD GRADIENTS TENSORS IN Hartree/bohrradius^2:'')')
   write(stdout,*)
 
   if (iverbosity > 0) then  
