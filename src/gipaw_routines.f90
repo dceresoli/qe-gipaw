@@ -90,6 +90,7 @@ SUBROUTINE gipaw_bcast_input
   ! ... Broadcast input data to all processors 
   !
   USE gipaw_module
+  USE mp_world,      ONLY : world_comm
   USE mp,            ONLY : mp_bcast
   USE io_files,      ONLY : prefix, tmp_dir
   USE us,            ONLY : spline_ps
@@ -98,27 +99,27 @@ SUBROUTINE gipaw_bcast_input
   implicit none
   integer :: root = 0
 
-  call mp_bcast(job, root)
-  call mp_bcast(prefix, root)
-  call mp_bcast(tmp_dir, root)
-  call mp_bcast(conv_threshold, root)
-  call mp_bcast(q_gipaw, root)
-  call mp_bcast(iverbosity, root)
-  call mp_bcast(filcurr, root)
-  call mp_bcast(filfield, root)
-  call mp_bcast(filnics, root)
-  call mp_bcast(use_nmr_macroscopic_shape, root)
-  call mp_bcast(nmr_macroscopic_shape, root)
-  call mp_bcast(spline_ps, root)
-  call mp_bcast(isolve, root)
-  call mp_bcast(core_relax_method, root)
-  call mp_bcast(hfi_output_unit, root)
-  call mp_bcast(hfi_nuclear_g_factor, root)
-  call mp_bcast(q_efg, root)
-  call mp_bcast(pawproj, root)
-  call mp_bcast(r_rand, root)
-  call mp_bcast(max_seconds, root)
-  call mp_bcast(restart_mode, root)
+  call mp_bcast(job, root, world_comm)
+  call mp_bcast(prefix, root, world_comm)
+  call mp_bcast(tmp_dir, root, world_comm)
+  call mp_bcast(conv_threshold, root, world_comm)
+  call mp_bcast(q_gipaw, root, world_comm)
+  call mp_bcast(iverbosity, root, world_comm)
+  call mp_bcast(filcurr, root, world_comm)
+  call mp_bcast(filfield, root, world_comm)
+  call mp_bcast(filnics, root, world_comm)
+  call mp_bcast(use_nmr_macroscopic_shape, root, world_comm)
+  call mp_bcast(nmr_macroscopic_shape, root, world_comm)
+  call mp_bcast(spline_ps, root, world_comm)
+  call mp_bcast(isolve, root, world_comm)
+  call mp_bcast(core_relax_method, root, world_comm)
+  call mp_bcast(hfi_output_unit, root, world_comm)
+  call mp_bcast(hfi_nuclear_g_factor, root, world_comm)
+  call mp_bcast(q_efg, root, world_comm)
+  call mp_bcast(pawproj, root, world_comm)
+  call mp_bcast(r_rand, root, world_comm)
+  call mp_bcast(max_seconds, root, world_comm)
+  call mp_bcast(restart_mode, root, world_comm)
 
 END SUBROUTINE gipaw_bcast_input
 #endif
