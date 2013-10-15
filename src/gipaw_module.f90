@@ -85,7 +85,9 @@ MODULE gipaw_module
   CHARACTER(10) :: hfi_input_unit
   CHARACTER(10) :: hfi_output_unit
   REAL(dp) :: hfi_nuclear_g_factor(ntypx)
- 
+  LOGICAL :: hfi_via_reconstruction_only = .false. !UWG: speed up for large systems 
+
+  
   REAL(dp) :: rc(ntypx,0:lmaxx)
   COMPLEX(dp), ALLOCATABLE :: paw_becp2(:,:), paw_becp3(:,:)
   REAL(dp), ALLOCATABLE, DIMENSION (:,:) :: lx, ly, lz

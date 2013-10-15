@@ -31,7 +31,8 @@ SUBROUTINE gipaw_readin()
                         use_nmr_macroscopic_shape, nmr_macroscopic_shape, &
                         spline_ps, isolve, q_efg, max_seconds, r_rand, &
                         hfi_output_unit, hfi_nuclear_g_factor, &
-                        core_relax_method, diagonalization, verbosity
+                        core_relax_method, diagonalization, verbosity, &
+                        hfi_via_reconstruction_only
 
   if (.not. ionode .or. my_image_id > 0) goto 400
     
@@ -60,6 +61,7 @@ SUBROUTINE gipaw_readin()
   isolve = -1
   diagonalization = 'david'
   core_relax_method = 1
+  hfi_via_reconstruction_only = .false.
 
   hfi_output_unit = 'MHz'
   hfi_nuclear_g_factor(:) = 1.0
@@ -141,6 +143,7 @@ SUBROUTINE gipaw_bcast_input
   call mp_bcast(spline_ps, root, world_comm)
   call mp_bcast(isolve, root, world_comm)
   call mp_bcast(core_relax_method, root, world_comm)
+  call mp_bcast(hfi_via_reconstruction_only, root, world_comm)
   call mp_bcast(hfi_output_unit, root, world_comm)
   call mp_bcast(hfi_nuclear_g_factor, root, world_comm)
   call mp_bcast(q_efg, root, world_comm)

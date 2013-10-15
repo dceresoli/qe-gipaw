@@ -101,19 +101,21 @@ SUBROUTINE compute_u_kq(ik, q)
   !!call mp_sum(evc, inter_bgrp_comm)
 #endif
 
-  ! randomize a little bit
+  ! randomize a little bit in case of CG diagonalization
+  if ( isolve == 1 ) then
 #ifdef __BANDS
-  rr = randy(ik+nks*me_bgrp) ! starting from a well defined k-dependent seed
+    rr = randy(ik+nks*me_bgrp) ! starting from a well defined k-dependent seed
 #else
-  rr = randy(ik+nks*me_pool) ! starting from a well defined k-dependent seed
+    rr = randy(ik+nks*me_pool) ! starting from a well defined k-dependent seed
 #endif
-  do i = 1, nbnd
-    do ig = 1, npw
-      rr = r_rand*(2.d0*randy() - 1.d0)
-      arg = tpi * randy()
-      evc(ig,i) = evc(ig,i)*CMPLX(1.d0+rr*cos(arg),rr*sin(arg),kind=DP)
+    do i = 1, nbnd
+      do ig = 1, npw
+        rr = r_rand*(2.d0*randy() - 1.d0)
+        arg = tpi * randy()
+        evc(ig,i) = evc(ig,i)*CMPLX(1.d0+rr*cos(arg),rr*sin(arg),kind=DP)
+      enddo
     enddo
-  enddo
+  endif
 
   ! Needed for LDA+U
   IF ( lda_plus_u ) CALL get_buffer( wfcU, nwordwfcU, iunhub, ik )

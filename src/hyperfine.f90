@@ -29,7 +29,8 @@ SUBROUTINE hyperfine
   USE mp_global,              ONLY : intra_pool_comm
   USE mp,                     ONLY : mp_sum
   USE gipaw_module,           ONLY : hfi_nuclear_g_factor, hfi_output_unit, &
-                                     job, iverbosity, core_relax_method
+                                     job, iverbosity, core_relax_method, &
+                                     hfi_via_reconstruction_only
  
   !-- constants ----------------------------------------------------------
   IMPLICIT NONE
@@ -204,13 +205,15 @@ SUBROUTINE hyperfine
 #ifdef ZORA
   write(stdout,*)
   write(stdout,'(5X,''ISOTROPIC (FERMI-CONTACT) COUPLINGS INCLUDING ZORA:'')')
-  write(stdout,'(5X,''Warning: core-relaxation is an experimental feature'')')
+!  write(stdout,'(5X,''Warning: core-relaxation is an experimental feature'')')
+  write(stdout,'(5X,''Warning: core-relaxation is left out here. For the corrections see above.'')')
   write(stdout,'(5X,8X,''  bare            GIPAW           core-relax      total'')')
   do na = 1, nat
-      hfi_fc_tot(na) = hfi_fc_bare_zora(na) + hfi_fc_gipaw_zora(na) + hfi_fc_core(na)
+      hfi_fc_tot(na) = hfi_fc_bare_zora(na) + hfi_fc_gipaw_zora(na) ! + hfi_fc_core(na)
       fact = 8*pi/3 * output_factor * hfi_nuclear_g_factor(ityp(na))
       write(stdout,1002) atm(ityp(na)), na, fact * hfi_fc_bare_zora(na), &
-          fact * hfi_fc_gipaw_zora(na), fact * hfi_fc_core(na), fact * hfi_fc_tot(na)
+!          fact * hfi_fc_gipaw_zora(na), fact * hfi_fc_core(na), fact * hfi_fc_tot(na)
+          fact * hfi_fc_gipaw_zora(na), fact * 0.d0, fact * hfi_fc_tot(na)
   enddo
 #endif
 
@@ -236,6 +239,7 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   USE ions_base,              ONLY : nat, tau, atm, ityp
   USE fft_base,               ONLY : dffts
   USE fft_interfaces,         ONLY : fwfft
+  USE gipaw_module,           ONLY : hfi_via_reconstruction_only
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
@@ -250,6 +254,10 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   real(dp) :: arg
   complex(dp) :: phase
 
+  hfi_bare(:) = 0.d0
+  hfi_bare_zora(:) = 0.d0
+  IF ( hfi_via_reconstruction_only ) RETURN
+
   ! transform to reciprocal space
   allocate(rhoaux(dffts%nnr))
   rhoaux(:) = cmplx(rho_s(:), kind=dp)
@@ -261,8 +269,6 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
 #endif
   
   ! fourier transform on the atomic position
-  hfi_bare(:) = 0.d0
-  hfi_bare_zora(:) = 0.d0
   do na = 1, nat
       do ig = gstart, ngms
           arg = sum(tau(1:3,na) * g(1:3,ig)) * tpi
@@ -302,12 +308,13 @@ SUBROUTINE delta_thomson_radial_ft(delta_th)
 
   !-- local variables ----------------------------------------------------
   integer :: gv, j, nt
-  real(dp) :: gr, r_Thomson
-  real(dp), allocatable :: f_radial(:), work(:)
+  real(dp) :: gr, r_Thomson, norm_Th(ngm,ntyp) 
+  real(dp), allocatable :: f_radial(:), work(:), work_norm(:)
   integer, external :: atomic_number
   
   do nt = 1, ntyp
       allocate( work(rgrid(nt)%mesh), f_radial(rgrid(nt)%mesh) )
+      allocate( work_norm(rgrid(nt)%mesh) )
      
       ! Thomson's delta function
       r_Thomson = atomic_number(atm(nt)) * alpha ** 2
@@ -320,7 +327,9 @@ SUBROUTINE delta_thomson_radial_ft(delta_th)
      
       do gv = 1, ngm
           work = 0.0_dp
+          work_norm = 0.0_dp
           do j = 1, rgrid(nt)%mesh
+              work_norm(j) = f_radial(j) * fpi
               gr = sqrt(gg(gv)) * tpiba * rgrid(nt)%r(j)
               if ( gr < 1.0d-8 ) then
                   work(j) = f_radial(j)*fpi
@@ -329,7 +338,14 @@ SUBROUTINE delta_thomson_radial_ft(delta_th)
               endif
           enddo
           call simpson(rgrid(nt)%mesh, work, rgrid(nt)%rab(:), delta_th(gv,nt))
+          call simpson(rgrid(nt)%mesh, work_norm, rgrid(nt)%rab(:), norm_th(gv,nt))
      enddo
+!    correction od the norm 
+
+     DO gv = 1, ngm
+        delta_th(gv,nt) = delta_th(gv,nt)/norm_th(gv,nt)
+     END DO
+     deallocate (work_norm)
 
      deallocate (work, f_radial)
   enddo
@@ -365,13 +381,20 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   USE lsda_mod,              ONLY : current_spin, nspin, isk
   USE wvfct,                 ONLY : current_k, wg
   USE io_global,             ONLY : stdout
-  USE gipaw_module,          ONLY : job, nbnd_occ, alpha, iverbosity
+  USE gipaw_module,          ONLY : job, nbnd_occ, alpha, iverbosity, hfi_via_reconstruction_only
+
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
   real(dp), intent(out) :: fc_gipaw(nat), fc_gipaw_zora(nat)
   !-- local variables ----------------------------------------------------
-  real(dp), allocatable :: at_hfi(:,:,:), at_hfi_zora(:,:,:)
+  real(dp), allocatable :: at_hfi(:,:,:), at_hfi_zora(:,:,:), at_hfi_extra(:,:,:)
   real(dp), allocatable :: work(:)
+!
+  REAL ( dp ), ALLOCATABLE :: x_extrapolate(:), y_extrapolate(:)
+  REAL ( dp ) :: x
+  INTEGER :: hfi_extrapolation_npoints = 10000
+  INTEGER :: norder_extrapolate = 3
+!
   integer :: j, nt, ibnd, il1, il2, ik, nbs1, nbs2, kkpsi
   integer :: m1, m2, lm1, lm2, l1, l2, nrc
   integer :: ijkb0, ih, jh, na, ikb, jkb
@@ -382,8 +405,10 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   
   allocate( at_hfi(paw_nkb,paw_nkb,ntyp) )
   allocate( at_hfi_zora(paw_nkb,paw_nkb,ntyp) )
+  allocate( at_hfi_extra(paw_nkb,paw_nkb,ntyp) )
   at_hfi = 0.0_dp
   at_hfi_zora = 0.0_dp
+  at_hfi_extra = 0.0_dp
   
   ! calculate radial integrals: <aephi|aephi> - <psphi|psphi>
   do nt = 1, ntyp
@@ -394,6 +419,17 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
      if ( abs ( rgrid(nt)%r(1) ) < 1d-8 ) r_first = 2
      r_thomson = atomic_number(atm(nt)) * alpha**2
      
+
+     ALLOCATE ( x_extrapolate(hfi_extrapolation_npoints) )
+     ALLOCATE ( y_extrapolate(hfi_extrapolation_npoints) )
+
+     DO j = 1, hfi_extrapolation_npoints
+        x_extrapolate(j) = j / REAL ( hfi_extrapolation_npoints + 1, dp ) &
+             * rgrid(nt)%r(r_first)
+     END DO
+
+
+
      do il1 = 1, paw_recon(nt)%paw_nbeta
         nrc = paw_recon(nt)%psphi(il1)%label%nrc
         l1 = paw_recon(nt)%psphi(il1)%label%l
@@ -404,25 +440,52 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
            if (l2 /= 0) cycle
            
            work = 0.0_dp
-           do j = r_first, nrc
+           IF ( hfi_via_reconstruction_only ) THEN
+              do j = r_first, nrc
+                 work(j) = &
+                      ( paw_recon(nt)%aephi(il1)%psi(j) &
+                      * paw_recon(nt)%aephi(il2)%psi(j) ) &
+                      / rgrid(nt)%r(j) ** 2 / fpi
+              end do
+           ELSE
+              do j = r_first, nrc
                  work(j) = &
                       ( paw_recon(nt)%aephi(il1)%psi(j) &
                       * paw_recon(nt)%aephi(il2)%psi(j) &
                       - paw_recon(nt)%psphi(il1)%psi(j) &
                       * paw_recon(nt)%psphi(il2)%psi(j) ) &
                       / rgrid(nt)%r(j) ** 2 / fpi
-           enddo
+              enddo
+           END IF
            
            ! density at the origin
            at_hfi(il1,il2,nt) = work(r_first)
            
-#ifdef ZORA           
+#ifdef ZORA
+           ! For ZORA (pseudos in scalar-relativistic approximation) we need to extrapolate:
+           x=0.d0
+           at_hfi_extra(il1,il2,nt) &
+                = spline_mirror_extrapolate ( rgrid(nt)%r(:nrc), work(:nrc), x )
+
+           CALL radial_extrapolation ( rgrid(nt)%r(:), work(:nrc), &
+                x_extrapolate, y_extrapolate, norder_extrapolate )
+
+           
            ! multiply with Thomson's delta function
            do j = r_first, nrc
               work(j) = work(j) * 2/(r_thomson * (1+2*rgrid(nt)%r(j)/r_thomson)**2)
            enddo
            
            call simpson(nrc, work, rgrid(nt)%rab(:), at_hfi_zora(il1,il2,nt))
+
+           do j = 1, hfi_extrapolation_npoints
+              y_extrapolate(j) = y_extrapolate(j) &
+                   * 2 / ( r_thomson &
+                   * ( 1 + 2 * x_extrapolate(j) / r_thomson ) ** 2 )
+           end do
+
+           at_hfi_extra(il1,il2,nt) = at_hfi_zora(il1,il2,nt) &
+                   + spline_integration_mirror ( x_extrapolate, y_extrapolate )
 #endif
         enddo
      enddo
@@ -478,7 +541,8 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
                        fc_gipaw(na) = fc_gipaw(na) + s_weight * at_hfi(nbs1,nbs2,nt) &
                             * bec_product * wg(ibnd,ik)
 #ifdef ZORA                       
-                       fc_gipaw_zora(na) = fc_gipaw_zora(na) + s_weight * at_hfi_zora(nbs1,nbs2,nt) &
+!                       fc_gipaw_zora(na) = fc_gipaw_zora(na) + s_weight * at_hfi_zora(nbs1,nbs2,nt) &
+                       fc_gipaw_zora(na) = fc_gipaw_zora(na) + s_weight * at_hfi_extra(nbs1,nbs2,nt) &
                             * bec_product * wg(ibnd,ik)
 #endif                       
                     enddo
@@ -496,6 +560,281 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   call mp_sum( fc_gipaw, inter_pool_comm )
   call mp_sum( fc_gipaw_zora, inter_pool_comm )
   
+  deallocate( at_hfi )
+  deallocate( at_hfi_zora )
+  deallocate( at_hfi_extra )
+
+
+
+
+CONTAINS
+
+  FUNCTION spline_integration_mirror ( xdata, ydata )
+
+    !                                                                                                                                                 
+    ! Like 'spline_integration' but assumes the function to be symmetric                                                                              
+    !    on x axis [i.e. f(-x) = f(x) ]                                                                                                               
+
+    USE splinelib, ONLY : spline
+
+    IMPLICIT NONE
+
+    ! Return type                                                                                                                                     
+    REAL ( dp ) :: spline_integration_mirror
+
+    ! Arguments                                                                                                                                       
+    REAL ( dp ), INTENT ( IN ) :: xdata(:), ydata(:)
+
+    ! Local                                                                                                                                           
+    INTEGER  :: n
+    REAL ( dp ) :: startd, startu
+    REAL ( dp ) :: xdata2(2*SIZE(xdata)), ydata2(2*SIZE(ydata))
+    REAL ( dp ) :: d2y(2*SIZE(xdata))
+
+    !--------------------------------------------------------------------------                                                                       
+
+    IF ( SIZE ( xdata ) /= SIZE ( ydata ) ) &
+         CALL errore ( "spline_interpolation", &
+         "sizes of arguments do not match", 1 )
+
+    xdata2(SIZE ( xdata ):1:-1) = - xdata
+    xdata2(SIZE ( xdata )+1:) = xdata
+
+    ydata2(SIZE ( xdata ):1:-1) = ydata
+    ydata2(SIZE ( xdata )+1:) = ydata
+
+    startu = ( ydata(2) - ydata(1) ) / ( xdata(2) - xdata(1) )
+    startu = 0.0
+    startd = 0.0
+
+    CALL spline ( xdata2, ydata2, startu, startd, d2y )
+
+    spline_integration_mirror = 0.0
+    DO n = 1, SIZE ( xdata2 )
+       spline_integration_mirror = spline_integration_mirror &
+            + splint_integr ( xdata2, ydata2, d2y, xdata2(n) )
+    END DO
+
+    spline_integration_mirror = spline_integration_mirror / 2
+
+  END FUNCTION spline_integration_mirror
+
+
+
+
+
+  FUNCTION spline_mirror_extrapolate ( xdata, ydata, x )
+
+    USE splinelib, ONLY : spline, splint
+
+    IMPLICIT NONE
+
+    ! Return type                                                                                                                                     
+    REAL ( dp ) :: spline_mirror_extrapolate
+
+    ! Arguments                                                                                                                                       
+    REAL ( dp ), INTENT ( IN ) :: xdata(:), ydata(:), x
+
+    ! Local                                                                                                                                           
+    INTEGER  :: n
+    REAL ( dp ) :: startd, startu
+    REAL ( dp ) :: xdata2(2*SIZE(xdata)), ydata2(2*SIZE(ydata))
+    REAL ( dp ) :: d2y(2*SIZE(xdata))
+
+    !--------------------------------------------------------------------------                                   
+
+    IF ( SIZE ( xdata ) /= SIZE ( ydata ) ) &
+         CALL errore ( "spline_mirror_extrapolate", &
+         "sizes of arguments do not match", 1 )
+
+    n = SIZE ( xdata )
+
+    xdata2(n:1:-1) = - xdata
+    xdata2(n+1:) = xdata
+
+    ydata2(n:1:-1) = ydata
+    ydata2(n+1:) = ydata
+
+    startu = 0.0
+    startd = 0.0
+
+    CALL spline ( xdata2, ydata2, startu, startd, d2y )
+
+    spline_mirror_extrapolate = splint ( xdata2, ydata2, d2y, x )
+
+  END FUNCTION spline_mirror_extrapolate
+
+
+
+  !****************************************************************************                                                                        
+
+  FUNCTION splint_integr ( xdata, ydata, d2y, x )
+
+    USE splinelib, ONLY : spline
+
+    IMPLICIT NONE
+
+    ! Return type                                                                                                                                      
+    REAL ( dp ) :: splint_integr
+
+    ! Arguments                                                                                                                                        
+    REAL ( dp ), INTENT ( IN ) :: xdata(:), ydata(:), d2y(:), x
+
+    ! Local                                                                                                                                            
+    INTEGER  :: khi, klo, xdim
+    REAL ( dp ) :: a, b, da, db, h
+
+    !--------------------------------------------------------------------------                                                                        
+
+    xdim = SIZE( xdata )
+
+    klo = 1
+    khi = xdim
+
+    klo = MAX( MIN( locate( xdata, x ), ( xdim - 1 ) ), 1 )
+
+    khi = klo + 1
+
+    h = xdata(khi) - xdata(klo)
+
+    a = ( xdata(khi) - x ) / h
+    b = ( x - xdata(klo) ) / h
+    da = -1 / h
+    db =  1 / h
+
+    splint_integr = -0.5 * ydata(klo) / da + 0.5 * ydata(khi) / db &
+         + (  0.25 / da * d2y(klo) &
+         + ( -0.25 / db * d2y(khi) ) ) &
+         * ( h**2 ) / 6.D0
+
+  END FUNCTION splint_integr
+
+
+
+         !-------------------------------------------------------------------                                                                          
+         FUNCTION locate( xx, x )
+           !-------------------------------------------------------------------                                                                        
+           !                                                                                                                                           
+           IMPLICIT NONE
+           !                                                                                                                                           
+           REAL(DP), INTENT(IN) :: xx(:)
+           REAL(DP), INTENT(IN) :: x
+           !                                                                                                                                           
+           INTEGER :: locate
+           INTEGER :: n, jl, jm, ju
+           LOGICAL :: ascnd
+           !                                                                                                                                           
+           !                                                                                                                                           
+           n     = SIZE( xx )
+           ascnd = ( xx(n) >= xx(1) )
+           jl    = 0
+           ju    = n + 1
+           !                                                                                                                                           
+           main_loop: DO
+              !                                                                                                                                        
+              IF ( ( ju - jl ) <= 1 ) EXIT main_loop
+              !                                                                                                                                        
+              jm = ( ju + jl ) / 2
+              !                                                                                                                                        
+              IF ( ascnd .EQV. ( x >= xx(jm) ) ) THEN
+                 !                                                                                                                                     
+                 jl = jm
+                 !                                                                                                                                     
+              ELSE
+                 !                                                                                                                                     
+                 ju = jm
+                 !                                                                                                                                     
+              END IF
+              !                                                                                                                                        
+           END DO main_loop
+           !                                                                                                                                           
+           IF ( x == xx(1) ) THEN
+              !                                                                                                                                        
+              locate = 1
+              !                                                                                                                                        
+           ELSE IF ( x == xx(n) ) THEN
+              !                                                                                                                                        
+              locate = n - 1
+              !                                                                                                                                        
+           ELSE
+              !                                                                                                                                        
+              locate = jl
+              !                                                                                                                                        
+           END IF
+           !                                                                                                                                           
+         END FUNCTION locate
+
+  !****************************************************************************                                                                        
+
+  SUBROUTINE radial_extrapolation ( x, y, x_extrapolate, y_extrapolate, &
+       norders )
+
+    IMPLICIT NONE
+
+    ! Arguments                                                                                                                                        
+    REAL ( dp ), INTENT ( IN ) :: x(:), y(:)
+    REAL ( dp ), INTENT ( IN ) :: x_extrapolate(:)
+    REAL ( dp ), INTENT ( OUT ) :: y_extrapolate(:)
+    INTEGER, INTENT ( IN ) :: norders
+
+    ! Local                                                                                                                                            
+    INTEGER :: n, i, j
+
+    REAL ( dp ) :: a(0:norders,0:norders), b(0:norders), c(0:norders)
+
+    !--------------------------------------------------------------------------                                                                        
+
+    ! Dirac delta function                                                                                                                             
+    do j = 0, norders
+       a(0:norders,j) = x(1:norders+1) ** j
+       b(0:norders) = y(1:norders+1)
+    END DO
+
+    CALL invert ( a, norders + 1 )
+
+    c = MATMUL ( a, b )
+
+    y_extrapolate = 0.0
+    DO i = 1, SIZE ( x_extrapolate )
+       DO j = 0, norders
+          y_extrapolate(i) = y_extrapolate(i) + c(j) * x_extrapolate(i) ** j
+       END DO
+    END DO
+
+  END SUBROUTINE radial_extrapolation
+
+  !****************************************************************************                                         
+
+
+  SUBROUTINE invert ( a, n )
+
+    IMPLICIT NONE
+
+    ! Arguments                                                                                                                                        
+    INTEGER, INTENT ( IN ) :: n
+    REAL ( dp ), INTENT ( INOUT ) :: a(n,n)
+
+    ! Local                                                                                                                                            
+    INTEGER :: ipvt(n)
+    INTEGER :: info
+    REAL ( dp ) :: cwork(n)
+
+    !--------------------------------------------------------------------------                                                                        
+
+    CALL dgetrf ( n, n, a, n, ipvt, info )
+    IF ( info /= 0 ) &
+         CALL errore ( "invert_in_hypefile", "dgetrf failed", ABS ( info ) )
+
+    CALL dgetri ( n, a, n, ipvt, cwork, n, info )
+    IF ( info /= 0 ) &
+         CALL errore ( "invert_in_hypefile", "dgetri failed", ABS ( info ) )
+
+  END SUBROUTINE invert
+
+  
 END SUBROUTINE hfi_fc_gipaw_correction
+
+
+
 
 
