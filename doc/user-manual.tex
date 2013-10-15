@@ -69,10 +69,9 @@ For further information and to report bugs, please contact:
 %===================================================================================================
 \section{Quick build instructions}
 %===================================================================================================
-Thank to Layla Martin Samos, QE-GIPAW can be configured and compiled automatically
-once you download Quantum-Espresso version 4.3 and above.
+QE-GIPAW can be configured and compiled automatically once you download Quantum-Espresso.
 \begin{enumerate}
-\item Configure Quantum-Espresso (QE) version $>$4.3. If you have problems, read the
+\item Configure Quantum-Espresso (QE). If you have problems, read the
 QE user's guide at \url{http://www.quantum-espresso.org/user_guide/user_guide.html}
 \item Type:
 \begin{verbatim}
@@ -88,15 +87,15 @@ and it will compile it.
 If you don't have a direct Internet connection on your machine, or if you want
 to build a different version of the code, or even the SVN version:
 \begin{enumerate}
-\item Configure and compile quantum-Espresso in the usual way. The
-supported version are $>$4.99 and the SVN version. You must compile
-both PW and NEB.
+\item Configure and compile Quantum-Espresso in the usual way. According
+to QE-GIPAW version, only newer versions of QE are supported.
+You must compile both PW and NEB.
 \item Download QE-GIPAW from tarball or from SVN. QE-GIPAW can be
 downloaded and built outside the Quantum-Espresso folder:\\
 From tarball:
 \begin{verbatim}
-    tar zxfv qe-gipaw-4.3.2.tar.gz
-    cd qe-gipaw-4.3.2
+    tar zxfv qe-gipaw-5.0.3.tar.gz
+    cd qe-gipaw-5.0.3
 \end{verbatim}
 From SVN:
 \begin{verbatim}
@@ -106,7 +105,7 @@ From SVN:
 \item Configure and build QE-GIPAW:
 \begin{verbatim}
     ./configure --with-qe-source=quantum espresso folder containing make.sys
-    (for example: ./configure --with-qe-source=$HOME/Codes/espresso-4.3.2)
+    (for example: ./configure --with-qe-source=$HOME/Codes/espresso-5.0.3)
     make
 \end{verbatim}
 \end{enumerate}
@@ -167,13 +166,19 @@ interrupted run. If \texttt{'from\_scratch'}, discard any restart information
 \item[conv\_threshold] (type: real, default: 10$^{-14}$, units: Ry$^2$)\\
 Description: convergence threshold for the diagonalization and for the Green's function solver
 
-\item[isolve] (type: integer, default: 0)\\
+\item[diagonalization] (type: string, default: \texttt{'david'})\\
+Description: diagonalization method (allowed values: \texttt{'david'} or \texttt{'cg'})
+
+\item[isolve] (type: integer, default: 0, OBSOLETE, use diagonalization instead)\\
 Description: diagonalization method (Davidson = 0, CG = 1)
 
 \item[q\_gipaw] (type: real, default: 0.01, units: bohrradius$^{-1}$)\\
 Description: the small wave-vector for linear response
 
-\item[iverbosity] (type: integer, default: 0)\\
+\item[verbosity] (type: string default: \texttt{'low'}i)\\
+Description: verbosity level (allowed values: \texttt{'low'}, \texttt{'medium'}, \texttt{'high'})
+
+\item[iverbosity] (type: integer, default: 0, OBSOLETE, use verbosity instead)\\
 Description: if iverbosity {\textgreater} 0 print debug information in output
 
 \item[filcurr] (type: character, default: \texttt{''})\\
@@ -219,7 +224,7 @@ to the isotropic hyperfine (Fermi contact). The possible values are:\\
 There a number of obsolete or development variables that can be removed at any
 time from the code: \textbf{radial\_integral\_splines,
 hfi\_via\_reconstruction\_only, hfi\_extrapolation\_npoints, pawproj(1..ntyp),
-read\_recon\_in\_paratec\_fmt, file\_reconstruction(1..ntyp)}.
+read\_recon\_in\_paratec\_fmt, file\_reconstruction(1..ntyp), isolve, iverbosity}.
 
 
 %===================================================================================================
@@ -240,7 +245,8 @@ to detect 120$^\circ$ rotations.
 \item Websites: \url{http://qe-forge.org/projects/qe-gipaw}, \url{http://www.gipaw.net/}
 \item NMR periodic table: \url{http://www.pascal-man.com/periodic-table/periodictable.html}
 \item Tutorials: \url{http://www.gipaw.net/work_zurich09.html},
-                 \url{http://sites.google.com/site/cecamspectra2010/program} (day 2)
+                 \url{http://sites.google.com/site/cecamspectra2010/program} (day 2),
+                 \url{http://www.cecam.org/workshop-868.html}
 \end{itemize}
 
 

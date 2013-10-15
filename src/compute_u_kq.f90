@@ -55,9 +55,9 @@ SUBROUTINE compute_u_kq(ik, q)
   elseif (isolve == 0) then
     nbndx = 4*nbnd ! Davidson
   else
-    call errore('compute_u_kq', &
-                'Don''t even try to use this isolve!', abs(isolve))
+    call errore('compute_u_kq', 'wrong isolve', 1)
   endif
+
   cntrl_isolve = isolve
   max_cg_iter = 200
   iter = 2

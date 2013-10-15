@@ -25,12 +25,13 @@ SUBROUTINE gipaw_readin()
   implicit none
   integer :: ios
   character(len=256), external :: trimcheck
+  character(len=80) :: diagonalization, verbosity
   namelist /inputgipaw/ job, prefix, tmp_dir, conv_threshold, restart_mode, &
                         q_gipaw, iverbosity, filcurr, filfield, filnics, pawproj, &
                         use_nmr_macroscopic_shape, nmr_macroscopic_shape, &
                         spline_ps, isolve, q_efg, max_seconds, r_rand, &
                         hfi_output_unit, hfi_nuclear_g_factor, &
-                        core_relax_method
+                        core_relax_method, diagonalization, verbosity
 
   if (.not. ionode .or. my_image_id > 0) goto 400
     
@@ -45,7 +46,8 @@ SUBROUTINE gipaw_readin()
   restart_mode = 'restart'
   conv_threshold = 1d-14
   q_gipaw = 0.01d0
-  iverbosity = 0
+  iverbosity = -1
+  verbosity = 'low'
   filcurr = ''
   filfield = ''
   filnics = ''
@@ -55,7 +57,8 @@ SUBROUTINE gipaw_readin()
   nmr_macroscopic_shape(2,2) = 2.d0 / 3.d0
   nmr_macroscopic_shape(3,3) = 2.d0 / 3.d0
   spline_ps = .true.
-  isolve = 0
+  isolve = -1
+  diagonalization = 'david'
   core_relax_method = 1
 
   hfi_output_unit = 'MHz'
@@ -70,8 +73,33 @@ SUBROUTINE gipaw_readin()
     
   ! check input
   if (max_seconds < 0.1d0) call errore ('gipaw_readin', ' wrong max_seconds', 1)
-200 call errore( 'gipaw_readin', 'reading inputgipaw namelist', abs( ios ) )
-    
+200 call errore('gipaw_readin', 'reading inputgipaw namelist', abs(ios))
+
+  ! further checks
+  if (isolve /= -1) &
+     call infomsg('gipaw_readin', 'isolve is obsolete, use diagonalization instead')
+  if (iverbosity /= -1) &
+     call infomsg('gipaw_readin', 'iverbosity is obsolete, use verbosity instead')
+
+  select case (diagonalization)
+     case('david')
+       isolve = 1
+     case('cg')
+       isolve = 0
+     case default
+       call errore('gipaw_readin', 'diagonalization can be ''david'' or ''cg''', 1)
+  end select
+
+  select case (verbosity)
+     case('low')
+       iverbosity = 1
+     case('medium')
+       iverbosity = 11
+     case('high')
+       iverbosity = 21
+     case default
+       call errore('gipaw_readin', 'verbosity can be ''low'', ''medium'' or ''high''', 1)
+  end select
 400 continue
  
 #ifdef __MPI
