@@ -51,6 +51,7 @@ PROGRAM gipaw_main
   IMPLICIT NONE
   CHARACTER (LEN=9)   :: code = 'QE'
   CHARACTER (LEN=10)  :: dirname = 'dummy'
+  LOGICAL, EXTERNAL  :: check_para_diag
   !------------------------------------------------------------------------
 
   ! begin with the initialization part
@@ -83,8 +84,7 @@ PROGRAM gipaw_main
   cell_factor = 1.1d0
   call read_file
 #ifdef __MPI
-  use_para_diag = .true.
-  call check_para_diag(nbnd)
+  use_para_diag = check_para_diag(nbnd)
 #else
   use_para_diag = .false.
 #endif
