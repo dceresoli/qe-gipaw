@@ -342,30 +342,31 @@ SUBROUTINE gipaw_setup_integrals
 
   ! print integrals
   if (iverbosity > 10) then
-    write(stdout,'(5X,''GIPAW integrals: --------------------------------------------------------'')')
+    write(stdout,'(5X,''GIPAW integrals: -------------------------------------------'')')
+    write(stdout,'(5X,''Atom  i/j   nmr_para   nmr_dia   epr_rmc  epr_para   epr_dia'')')
     do nt = 1, ntyp
       do il1 = 1, paw_recon(nt)%paw_nbeta
         l1 = paw_recon(nt)%psphi(il1)%label%l
         do il2 = 1, paw_recon(nt)%paw_nbeta
           l2 = paw_recon(nt)%psphi(il2)%label%l
 
-          if ( l1 /= l2 ) cycle
+          if (l1 /= l2) cycle
           if (il1 < il2) cycle
 
-          write(stdout,1000) atm(nt), il1, il2, 'NMR PARA:', radial_integral_paramagnetic(il1,il2,nt)
-          write(stdout,1000) atm(nt), il1, il2, 'NMR DIA :', radial_integral_diamagnetic(il1,il2,nt)
-          if ( .not. paw_recon(nt)%vloc_present ) cycle
-          write(stdout,1000) atm(nt), il1, il2, 'SO RMC  :', radial_integral_rmc(il1,il2,nt)
-          write(stdout,1000) atm(nt), il1, il2, 'SO PARA :', radial_integral_paramagnetic_so(il1,il2,nt)
-          write(stdout,1000) atm(nt), il1, il2, 'SO DIA  :', radial_integral_diamagnetic_so(il1,il2,nt)
+          write(stdout,1000) atm(nt), il1, il2, &
+             radial_integral_paramagnetic(il1,il2,nt), &
+             radial_integral_diamagnetic(il1,il2,nt), &
+             radial_integral_rmc(il1,il2,nt), &
+             radial_integral_paramagnetic_so(il1,il2,nt), &
+             radial_integral_diamagnetic_so(il1,il2,nt)
 
         enddo
       enddo
     enddo
-    write(stdout,'(5X,''-------------------------------------------------------------------------'')')
+    write(stdout,'(5X,''------------------------------------------------------------'')')
     write(stdout,*)
   endif
-1000 format(5X,'Specie  ',A3,4X,'il1=',I2,2X,'il2=',I2,6X,A,F14.4)      
+1000 format(5X,A5,1X,I1,1X,I1,1X,5F10.2)
 
 END SUBROUTINE gipaw_setup_integrals
 

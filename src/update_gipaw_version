@@ -5,7 +5,8 @@ svn info 2> /dev/null > /dev/null
 
 if [ $? = 0 ] ; then 
 # svn info available: get svn revision
-   svn_rev=$(svnversion -n)
+   #svn_rev=$(svnversion -n)
+   svn_rev=$(svn info |grep "Revision:" | cut -d' ' -f2)
 else
 # svn info available: revert to no info
    svn_rev=unknown
@@ -19,6 +20,9 @@ cat >gipaw_version.f90 <<EOF
 ! in the root directory of the present distribution,
 ! or http://www.gnu.org/copyleft/gpl.txt .
 !
+
+! NOTE: this file is automatically created
+
 !----------------------------------------------------------------------------
 MODULE gipaw_version
   !

@@ -344,7 +344,7 @@ SUBROUTINE gipaw_memory_report
   integer, parameter :: Mb=1024*1024, complex_size=16, real_size=8
 
   ! the conversions to double prevent integer overflow in very large run
-  write(stdout,'(/5x,"Largest allocated arrays",5x,"est. size (Mb)",5x,"dimensions")')
+  write(stdout,'(5x,"Largest allocated arrays",5x,"est. size (Mb)",5x,"dimensions")')
 
   write(stdout,'(8x,"KS wavefunctions at k     ",f10.2," Mb",5x,"(",i8,",",i5,")")') &
      complex_size*nbnd*npol*DBLE(npwx)/Mb, npwx*npol,nbnd

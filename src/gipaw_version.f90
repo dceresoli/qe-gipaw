@@ -5,6 +5,9 @@
 ! in the root directory of the present distribution,
 ! or http://www.gnu.org/copyleft/gpl.txt .
 !
+
+! NOTE: this file is automatically created
+
 !----------------------------------------------------------------------------
 MODULE gipaw_version
   !
@@ -12,7 +15,6 @@ MODULE gipaw_version
   !
   SAVE
   !
-  !CHARACTER (LEN=12) :: gipaw_svn_revision = "372M"
-  CHARACTER (LEN=12) :: gipaw_svn_revision = "$Revision$"
+  CHARACTER (LEN=12) :: gipaw_svn_revision = "372"
   !
 END MODULE gipaw_version
