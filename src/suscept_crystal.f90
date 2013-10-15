@@ -163,6 +163,9 @@ SUBROUTINE suscept_crystal
   delta_g_so_para_us = 0.d0
   delta_g_so_dia = 0.d0
 
+  ! print memory estimate
+  call gipaw_memory_report
+
   ! EPR: select minority and majority spins
   if (job == 'g_tensor') call select_spin(s_min, s_maj)
 

@@ -79,9 +79,9 @@ SUBROUTINE gipaw_readin()
 
   ! further checks
   if (isolve /= -1) &
-     call infomsg('gipaw_readin', 'isolve is obsolete, use diagonalization instead')
+     call infomsg('gipaw_readin', '*** isolve is obsolete, use diagonalization instead ***')
   if (iverbosity /= -1) &
-     call infomsg('gipaw_readin', 'iverbosity is obsolete, use verbosity instead')
+     call infomsg('gipaw_readin', '*** iverbosity is obsolete, use verbosity instead ***')
 
   select case (diagonalization)
      case('david')
@@ -326,4 +326,49 @@ SUBROUTINE print_clock_gipaw
   call print_clock ('GIPAW') 
 
 END SUBROUTINE print_clock_gipaw
+
+
+!-----------------------------------------------------------------------
+SUBROUTINE gipaw_memory_report
+  !-----------------------------------------------------------------------
+  !
+  ! ... Print clocks
+  !
+  USE io_global,                 ONLY : stdout
+  USE noncollin_module,          ONLY : npol
+  USE uspp,                      ONLY : okvan, nkb
+  USE fft_base,                  ONLY : dffts
+  USE paw_gipaw,                 ONLY : paw_nkb
+  USE pwcom
+  IMPLICIT NONE
+  integer, parameter :: Mb=1024*1024, complex_size=16, real_size=8
+
+  ! the conversions to double prevent integer overflow in very large run
+  write(stdout,'(/5x,"Largest allocated arrays",5x,"est. size (Mb)",5x,"dimensions")')
+
+  write(stdout,'(8x,"KS wavefunctions at k     ",f10.2," Mb",5x,"(",i8,",",i5,")")') &
+     complex_size*nbnd*npol*DBLE(npwx)/Mb, npwx*npol,nbnd
+  write(stdout,'(8x,"KS wavefunctions at k+q   ",f10.2," Mb",5x,"(",i8,",",i5,")")') &
+     complex_size*nbnd*npol*DBLE(npwx)/Mb, npwx*npol,nbnd
+  write(stdout,'(8x,"First-order wavefunctions ",f10.2," Mb",5x,"(",i8,",",i5,",",i3")")') &
+     complex_size*nbnd*npol*DBLE(npwx)*10/Mb, npwx*npol,nbnd,10
+  if (okvan) &
+  write(stdout,'(8x,"First-order wavefunct (US)",f10.2," Mb",5x,"(",i8,",",i5,",",i3")")') &
+     complex_size*nbnd*npol*DBLE(npwx)*6/Mb, npwx*npol,nbnd,6
+
+  write(stdout,'(8x,"Charge/spin density       ",f10.2," Mb",5x,"(",i8,",",i5,")")') &
+     real_size*dble(dffts%nnr)*nspin/Mb, dffts%nnr, nspin
+  write(stdout,'(8x,"Induced current           ",f10.2," Mb",5x,"(",i8,",",i5,",",i1,",",i1")")') &
+     real_size*dble(dffts%nnr)*9*nspin/Mb, dffts%nnr,3,3,nspin
+  write(stdout,'(8x,"Induced magnetic field    ",f10.2," Mb",5x,"(",i8,",",i5,",",i1,",",i1")")') &
+     real_size*dble(dffts%nnr)*9*nspin/Mb, dffts%nnr,3,3,nspin
+  
+  write(stdout,'(8x,"NL pseudopotentials       ",f10.2," Mb",5x,"(",i8,",",i5,")")') &
+     complex_size*nkb*DBLE(npwx)/Mb, npwx, nkb
+  write(stdout,'(8x,"GIPAW NL terms            ",f10.2," Mb",5x,"(",i8,",",i5,")")') &
+     complex_size*paw_nkb*DBLE(npwx)/Mb, npwx, paw_nkb
+  write(stdout,*)
+
+END SUBROUTINE gipaw_memory_report
+
 
