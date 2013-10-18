@@ -496,7 +496,7 @@ END SUBROUTINE compute_sigma_bare
 ! Print the contributions to the chemical shift and the total sigma
 !====================================================================
 SUBROUTINE print_chemical_shifts(sigma_shape, sigma_bare, sigma_diamagnetic, sigma_paramagnetic, &
-                                 sigma_paramagnetic_us, sigma_paramagnetic_aug)
+                                 sigma_paramagnetic_us, sigma_paramagnetic_aug, sigma_tot)
   USE kinds,                ONLY : dp
   USE ions_base,            ONLY : nat, tau, atm, ityp, ntyp => nsp
   USE io_global,            ONLY : stdout
@@ -511,8 +511,9 @@ SUBROUTINE print_chemical_shifts(sigma_shape, sigma_bare, sigma_diamagnetic, sig
   real(dp), intent(inout) :: sigma_paramagnetic(3,3,nat)
   real(dp), intent(inout) :: sigma_paramagnetic_us(3,3,nat)
   real(dp), intent(inout) :: sigma_paramagnetic_aug(3,3,nat)
+  real(dp), intent(out) :: sigma_tot(3,3,nat)
   !-- local variables ---------------------------------------------------
-  real(dp) :: tr_sigma, sigma_tot(3,3,nat), axis(3,3), v(3), aniso, eta
+  real(dp) :: tr_sigma, axis(3,3), v(3), aniso, eta
   integer :: na
   
   write(stdout,'(5X,''Contributions to the NMR chemical shifts: -------------------------------'')')

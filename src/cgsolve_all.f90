@@ -165,9 +165,7 @@ SUBROUTINE cgsolve_all(h_psi, cg_psi, e, d0psi, dpsi, h_diag, ndmx, ndim, &
         endif
         conv_root = conv_root .and. (conv(ibnd) == 1)
         anorm = anorm + sqrt(rho(ibnd)) / dble(ibnd_end-ibnd_start+1)
-PRINT*, ibnd, conv(ibnd), sqrt(rho(ibnd))
      enddo
-PRINT*, '--'
      if (conv_root) goto 100
 
      ! compute the step direction h, conjugate it to previous step
@@ -453,9 +451,7 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
            anorm = sqrt(rho(ibnd))
            if (anorm.lt.ethr) conv (ibnd) = 1
         endif
-PRINT*, ibnd, conv(ibnd), sqrt(rho(ibnd))
      enddo
-PRINT*, '--'
 
      conv_root = .true.
      anorm = 0.d0
@@ -560,10 +556,6 @@ PRINT*, '--'
      enddo
   enddo
 100 continue
-
-PRINT*, anorm, ethr
-PRINT*, sqrt(rho(1:nbnd))
-PRINT*, conv(1:nbnd)
 
 #ifdef __BANDS
    do ibnd = ibnd_start, ibnd_end

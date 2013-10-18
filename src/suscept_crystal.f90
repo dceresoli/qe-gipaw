@@ -23,7 +23,7 @@ SUBROUTINE suscept_crystal
   !   E. Kucukbenli                      Ultrasoft and PAW
   !
   USE kinds,                  ONLY : dp
-  USE io_global,              ONLY : stdout
+  USE io_global,              ONLY : stdout, ionode
   USE io_files,               ONLY : nwordwfc, iunwfc
   USE cell_base,              ONLY : at, bg, omega, tpiba, tpiba2
   USE wavefunctions_module,   ONLY : evc
@@ -98,6 +98,7 @@ SUBROUTINE suscept_crystal
   real(dp) :: sigma_paramagnetic(3,3,nat)
   real(dp) :: sigma_paramagnetic_us(3,3,nat)
   real(dp) :: sigma_paramagnetic_aug(3,3,nat)
+  real(dp) :: sigma_tot(3,3,nat)
 
   ! Contributions to EPR g-tensor
   real(dp) :: delta_g_rmc, delta_g_rmc_gipaw         ! relativistic mass correction
@@ -411,7 +412,12 @@ SUBROUTINE suscept_crystal
     ! compute bare chemical shift and print all results
     call compute_sigma_bare(B_ind, chi_bare_pGv, sigma_bare, sigma_shape)
     call print_chemical_shifts(sigma_shape, sigma_bare, sigma_diamagnetic, sigma_paramagnetic, &
-                               sigma_paramagnetic_us, sigma_paramagnetic_aug)
+                               sigma_paramagnetic_us, sigma_paramagnetic_aug, sigma_tot)
+    if (ionode) then
+       call output_magres_begin('nmr')
+       call output_magres_nmr(chi_bare_pGv, chi_bare_vGv, sigma_tot)
+       call output_magres_end
+    endif
   elseif (job == 'g_tensor') then
     call compute_delta_g_so(j_bare, s_maj, s_min, delta_g_so)
     call compute_delta_g_soo(j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delta_g_soo2)
