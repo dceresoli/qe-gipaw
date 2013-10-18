@@ -44,6 +44,7 @@ PROGRAM gipaw_main
   USE uspp,            ONLY : okvan
   USE wvfct,           ONLY : nbnd, npw 
   USE io_global,       ONLY : stdout
+  USE fft_base,        ONLY : dffts
   USE gipaw_version
   USE iotk_module  
   USE xml_io_base
@@ -99,6 +100,8 @@ PROGRAM gipaw_main
   if (nbgrp > 1 .and. (twfcollect .eqv. .false.)) &
     call errore('gipaw_main', 'Cannot use band-parallelization without wf_collect in SCF', 1)
 #endif
+
+  if (dffts%have_task_groups) call errore('gipaw_main', 'task groups not supported yet', 1)
 
   call gipaw_allocate()
   call gipaw_setup()
