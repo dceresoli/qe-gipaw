@@ -15,6 +15,6 @@ MODULE gipaw_version
   !
   SAVE
   !
-  CHARACTER (LEN=12) :: gipaw_svn_revision = "372"
+  CHARACTER (LEN=12) :: gipaw_svn_revision = "380"
   !
 END MODULE gipaw_version

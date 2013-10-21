@@ -43,6 +43,7 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
 #ifdef __BANDS
   REAL(DP), allocatable :: jaux(:,:) 
 #endif
+  LOGICAL :: save_tg
 
   call start_clock('j_para')
 
@@ -52,6 +53,10 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   allocate(jaux(dffts%nnr,3))
   jaux(:,:) = 0.0d0  
 #endif
+
+  ! disable task groups for time being
+  save_tg = dffts%have_task_groups
+  dffts%have_task_groups = .false.
 
   ! loop over cartesian components
   do ipol = 1, 3
@@ -126,6 +131,9 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
 #ifdef __BANDS
   deallocate(jaux)
 #endif
+
+  ! reset task group state
+  dffts%have_task_groups = save_tg
 
   call stop_clock('j_para')
 
