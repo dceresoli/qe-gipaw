@@ -114,7 +114,10 @@ SUBROUTINE efg
   enddo
 1000 FORMAT(5X,A,I3,2X,3(F14.6,2X))
 
-
+  ! output in magres format
+  call output_magres_begin('efg')
+  call output_magres_efg(efg_tot)
+  call output_magres_end
   
   ! calculate principal axis and spectroscopic parameters
   write(stdout,*)

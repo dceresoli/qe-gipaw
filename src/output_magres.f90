@@ -92,6 +92,35 @@ SUBROUTINE output_magres_nmr(chi_bare_pGv, chi_bare_vGv, sigma_tot)
 END SUBROUTINE output_magres_nmr
 
 
+!-----------------------------------------------------------------------
+SUBROUTINE output_magres_efg(efg_tot)
+  !-----------------------------------------------------------------------
+  !
+  ! ... Output <magres> block
+  !  
+  USE kinds,                  ONLY : dp
+  USE io_files,               ONLY : prefix
+  USE io_global,              ONLY : ionode
+  USE gipaw_module,           ONLY : iumagres, avogadro, a0_to_cm
+  USE ions_base,              ONLY : nat, atm, ityp, tau
+  USE gipaw_version
+  IMPLICIT NONE  
+  real(dp), intent(in) :: efg_tot(3,3,nat)
+  integer :: na
+
+  if (.not. ionode) return
+
+  write(iumagres,'(''<magres>'')')
+  write(iumagres,'(''  units efg au'')')
+  do na = 1, nat
+    write(iumagres,'(''  efg '',A5,1X,I4,2X,9(F12.4))') atm(ityp(na)), na, &
+          efg_tot(:,:,na)
+  enddo
+  write(iumagres,'(''</magres>'')')
+  write(iumagres,*)
+
+END SUBROUTINE output_magres_efg
+
 
 !-----------------------------------------------------------------------
 SUBROUTINE output_magres_end
