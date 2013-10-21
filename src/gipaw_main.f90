@@ -45,6 +45,7 @@ PROGRAM gipaw_main
   USE wvfct,           ONLY : nbnd, npw 
   USE io_global,       ONLY : stdout
   USE fft_base,        ONLY : dffts
+  USE noncollin_module,ONLY : noncolin
   USE gipaw_version
   USE iotk_module  
   USE xml_io_base
@@ -92,7 +93,7 @@ PROGRAM gipaw_main
 
   call gipaw_openfil
   
-  if ( gamma_only ) call errore ('gipaw_main', 'Cannot run GIPAW with gamma_only == .true. ', 1)
+  if (gamma_only) call errore ('gipaw_main', 'Cannot run GIPAW with gamma_only == .true. ', 1)
   if ((twfcollect .eqv. .false.)  .and. (nproc_pool_file /= nproc_pool)) &
     call errore('gipaw_main', 'Different number of CPU/pool. Set wf_collect=.true. in SCF', 1)
 
@@ -101,7 +102,8 @@ PROGRAM gipaw_main
     call errore('gipaw_main', 'Cannot use band-parallelization without wf_collect in SCF', 1)
 #endif
 
-  if (dffts%have_task_groups) call errore('gipaw_main', 'task groups not supported yet', 1)
+  !!if (dffts%have_task_groups) call errore('gipaw_main', 'task groups not supported yet', 1)
+  if (noncolin) call errore('gipaw_main', 'non-collinear not supported yet', 1)
 
   call gipaw_allocate()
   call gipaw_setup()

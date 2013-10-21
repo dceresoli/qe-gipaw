@@ -1,5 +1,5 @@
 !
-! Copyright (C) 2001 PWSCF group
+! Copyright (C) 2001-2013 Quantum-Espresso Group
 ! This file is distributed under the terms of the
 ! GNU General Public License. See the file `License'
 ! in the root directory of the present distribution,
@@ -7,6 +7,8 @@
 !
 !
 ! see also gipaw_routines_bands.f90 for s_spi_bands and add_vuspsi_bands
+!
+! TODO: Oct 21 2013 (DC): the band parallelization has to tested again
 !
 !-----------------------------------------------------------------------
 #ifdef __BANDS
@@ -23,105 +25,69 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   !     s_psi computes for each band the required products
   !
   USE kinds,                 ONLY : dp
-  USE fft_base,              ONLY : dffts
-  USE fft_interfaces,        ONLY : fwfft, invfft
-  USE gvecs,                 ONLY : nls
-  USE lsda_mod,              ONLY : current_spin
-  USE wvfct,                 ONLY : igk, g2kin
-  USE uspp,                  ONLY : vkb, nkb
-  USE scf,                   ONLY : vrs
-  USE wavefunctions_module,  ONLY : psic
   USE becmod,                ONLY : becp, calbec
+  USE uspp,                  ONLY : vkb, nkb
 #ifdef __BANDS
   USE mp,                    ONLY : mp_sum
+  USE lsda_mod,              ONLY : current_spin
+  USE wvfct,                 ONLY : g2kin
+  USE scf,                   ONLY : vrs
+  USE noncollin_module,      ONLY : npol, noncolin
 #endif
-  implicit none
-  !
-  !     Here the local variables
-  !
+  !--------------------------------------------------------------------
+  IMPLICIT NONE
+  integer, intent(in) :: lda     ! the leading dimension of the array psi (npwx)
+  integer, intent(in) :: n       ! the real dimension of psi (npw)
+  integer, intent(in) :: m       ! the number of psi to compute (nbnd)
 #ifdef __BANDS
-  integer :: ibnd_start, ibnd_end, ibnd
-#else
+  integer, intent(in) :: ibnd_start, ibnd_end
   integer :: ibnd
 #endif
-  ! counter on bands
-
-  integer :: lda, n, m
-  ! input: the leading dimension of the array psi
-  ! input: the real dimension of psi
-  ! input: the number of psi to compute
-  integer :: j
-  ! do loop index
-
-  complex(DP) :: psi (lda, m), hpsi (lda, m), spsi (lda, m)
-  ! input: the functions where to apply H and S
-  ! output: H times psi
-  ! output: S times psi (Us PP's only)
-
+  complex(dp), intent(in) :: psi(lda,m)
+  complex(dp), intent(out) :: hpsi(lda,m), spsi(lda,m)
 
   call start_clock ('h_psiq')
-  call start_clock ('init')
 
-#ifdef __BANDS
-  call calbec_bands (lda, n, nkb, vkb, psi, becp%k, m, ibnd_start, ibnd_end)
-#else
-  call calbec (n, vkb, psi, becp, m)
-#endif
-  !
-  ! Here we apply the kinetic energy (k+G)^2 psi
-  !
   hpsi(:,:) = (0.d0,0.d0)
-#ifdef __BANDS
-  do ibnd = ibnd_start, ibnd_end
-#else
-  do ibnd = 1, m
-#endif
-     do j = 1, n
-        hpsi (j, ibnd) = g2kin (j) * psi (j, ibnd)
-     enddo
-  enddo
-  call stop_clock ('init')
-  !
-  ! the local potential V_Loc psi. First the psi in real space
-  !
 
 #ifdef __BANDS
+
+  ! Here we apply the kinetic energy (k+G)^2 psi
   do ibnd = ibnd_start, ibnd_end
-#else
-  do ibnd = 1, m
-#endif
-     call start_clock ('firstfft')
-     psic(:) = (0.d0, 0.d0)
-     psic (nls(igk(1:n))) = psi(1:n, ibnd)
-     CALL invfft ('Wave', psic, dffts)
-     call stop_clock ('firstfft')
-     !
-     !   and then the product with the potential vrs = (vltot+vr) on the smoo
-     !
-     psic (1:dffts%nnr) = psic (1:dffts%nnr) * vrs (1:dffts%nnr, current_spin)
-     !
-     !   back to reciprocal space
-     !
-     call start_clock ('secondfft')
-     CALL fwfft ('Wave', psic, dffts)
-     !
-     !   addition to the total product
-     !
-     hpsi (1:n, ibnd) = hpsi (1:n, ibnd) + psic (nls(igk(1:n)))
-     call stop_clock ('secondfft')
+     hpsi (1:n, ibnd) = g2kin (1:n) * psi (1:n, ibnd)
+     hpsi (n+1:lda,ibnd) = (0.0_dp, 0.0_dp)
+     if (noncolin) then
+        hpsi(lda+1:lda+n, ibnd) = g2kin(1:n) * psi(lda+1:lda+n, ibnd)
+        hpsi(lda+n+1:lda*npol, ibnd) = (0.0_dp, 0.0_dp)
+     endif
   enddo
-  !
-  !  Here the product with the non local potential V_NL psi
-  !
-#ifdef __BANDS
+  ! Here we add the Hubbard potential times psi
+  if (lda_plus_u .and. U_projection  /= "pseudo" ) then
+     if (noncolin) then
+        call vhpsi_nc(lda, n, ibnd_end-ibnd_start+1, psi(1,ibnd_start), hpsi(1,ibnd_start) )
+     else
+        call vhpsi(lda, n, ibnd_end-ibnd_start+1, psi(1,ibnd_start), hpsi(1,ibnd_start) )
+     endif
+  endif
+  ! Here we add the local potential
+  call vloc_psi_k(lda, n, ibnd_end-ibnd_start+1, psi(1,ibnd_start), &
+                  vrs(1,current_spin), hpsi(1,ibnd_start) )
+  ! Here we add the NL potential
+  call calbec_bands(lda, n, nkb, vkb, psi, becp%k, m, ibnd_start, ibnd_end)
   call add_vuspsi_bands (lda, n, m, hpsi, ibnd_start, ibnd_end)
-  call s_psi_bands (lda, n, m, psi, spsi, ibnd_start, ibnd_end)
+  ! Here we apply the overlap
+  call s_psi_bands(lda, n, m, psi, spsi, ibnd_start, ibnd_end)
+
 #else
-  call add_vuspsi (lda, n, m, hpsi)
-  call s_psi (lda, n, m, psi, spsi)
+
+  call h_psi(lda, n, m, psi, hpsi)
+  call calbec(n, vkb, psi, becp, m)
+  call s_psi(lda, n, m, psi, spsi)
+
 #endif
 
   call stop_clock ('h_psiq')
   return
 
 end subroutine
+

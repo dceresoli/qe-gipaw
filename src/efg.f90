@@ -156,7 +156,7 @@ SUBROUTINE get_smooth_density(rho)
   !  
   USE kinds,                  ONLY : dp 
   USE mp,                     ONLY : mp_sum
-  USE mp_global,              ONLY : inter_pool_comm
+  USE mp_global,              ONLY : inter_pool_comm, me_bgrp
   USE ions_base,              ONLY : nat, tau
   USE lsda_mod,               ONLY : current_spin, isk, nspin
   USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
@@ -171,17 +171,38 @@ SUBROUTINE get_smooth_density(rho)
   USE fft_base,               ONLY : dffts
   USE fft_interfaces,         ONLY : invfft
   USE gipaw_module,           ONLY : job
+  USE funct,                  ONLY : dft_is_meta
+  USE control_flags,          ONLY : lxdm
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
   real(dp), intent(out) :: rho(dffts%nnr,nspin)
   !-- local variables ----------------------------------------------------
   complex(dp) :: psic(dffts%nnr)
   integer :: ibnd, ik, is
+  integer :: idx, ioff, incr, v_siz, j, ir
+  complex(dp), allocatable :: tg_psi(:)
+  real(dp),    allocatable :: tg_rho(:)
+  logical :: use_tg
+  real(dp) :: w1
 
   rho = (0.d0,0.d0)
 
+  ! check if can use task groups
+  use_tg = dffts%have_task_groups
+  dffts%have_task_groups = (dffts%have_task_groups) .and. (nbnd >= dffts%nogrp) &
+                           .and. (.not. (dft_is_meta() .or. lxdm) )
+
+  incr = 1
+  if (dffts%have_task_groups) then
+     v_siz = dffts%tg_nnr * dffts%nogrp
+     ! TODO: non-collinear case
+     allocate (tg_psi(v_siz), tg_rho(v_siz))
+     incr  = dffts%nogrp
+  endif
+
   ! loop over k-points
   do ik = 1, nks
+     if (dffts%have_task_groups) tg_rho = 0.d0
       current_k = ik
       current_spin = isk(ik)
     
@@ -190,18 +211,70 @@ SUBROUTINE get_smooth_density(rho)
       call get_buffer (evc, nwordwfc, iunwfc, ik)
 
       ! loop over bands
-      do ibnd = 1, nbnd
-          psic(:) = (0.d0,0.d0)
-          psic(nls(igk(1:npw))) = evc(1:npw,ibnd)
-          call invfft ('Wave', psic, dffts)
-          rho(:,current_spin) = rho(:,current_spin) + wg(ibnd,ik) * &
-              (dble(psic(:))**2 + aimag(psic(:))**2) / omega
-      enddo
+      do ibnd = 1, nbnd, incr
+
+         if (dffts%have_task_groups) then
+            do j = 1, size(tg_psi)
+                tg_psi(j) = (0.d0, 0.d0)
+            enddo
+            ioff = 0
+            do idx = 1, dffts%nogrp
+               ! dffts%nogrp ffts at the same time
+               if (idx+ibnd-1 <= nbnd) then
+                  do j = 1, npw
+                     tg_psi(nls(igk(j)) + ioff) = evc(j,idx+ibnd-1)
+                  enddo
+               endif
+               ioff = ioff + dffts%tg_nnr
+            enddo
+            call invfft('Wave', tg_psi, dffts)
+            ! Now the first proc of the group holds the first band
+            ! of the dffts%nogrp bands that we are processing at the same time,
+            ! the second proc. holds the second and so on
+            ! Compute the proper factor for each band
+            do idx = 1, dffts%nogrp
+               if (dffts%nolist(idx) == me_bgrp) exit
+            enddo
+            if (idx+ibnd-1 <= nbnd) then
+               w1 = wg(idx+ibnd-1,ik) / omega
+            else
+               w1 = 0.0d0
+            endif
+            call get_rho(tg_rho, dffts%tg_npp(me_bgrp+1)*dffts%nr1x*dffts%nr2x, w1, tg_psi)
+
+         else ! no task-groups
+            psic(:) = (0.d0,0.d0)
+            psic(nls(igk(1:npw))) = evc(1:npw,ibnd)
+            call invfft ('Wave', psic, dffts)
+            !!rho(:,current_spin) = rho(:,current_spin) + wg(ibnd,ik) * &
+            !!                      (dble(psic(:))**2 + aimag(psic(:))**2) / omega
+            w1 = wg(ibnd,ik) / omega
+            call get_rho(rho(:,current_spin), dffts%nnr, w1, psic)
+         endif
+      enddo         
+
+      ! reduce over task groups
+      if (dffts%have_task_groups) then
+         call mp_sum(tg_rho, gid=dffts%ogrp_comm)
+         ioff = 0
+         do idx = 1, dffts%nogrp
+             if (me_bgrp == dffts%nolist(idx)) exit
+             ioff = ioff + dffts%nr1x * dffts%nr2x * dffts%npp(dffts%nolist(idx)+1)
+         enddo
+         ! copy the charge back to the proper processor location
+         do ir = 1, dffts%nnr
+             rho(ir,current_spin) = rho(ir,current_spin) + tg_rho(ir+ioff)
+         enddo
+     endif
   enddo
 #ifdef __MPI
   ! reduce over k-points
   call mp_sum( rho, inter_pool_comm )
 #endif
+
+  ! deallocate memory
+  if (dffts%have_task_groups) deallocate(tg_psi, tg_rho)
+  dffts%have_task_groups = use_tg
 
   if (job == 'hyperfine' .or. job == 'mossbauer') then
     do is = 1, nspin
@@ -212,6 +285,22 @@ SUBROUTINE get_smooth_density(rho)
 #endif
     enddo
   endif
+
+  CONTAINS
+     SUBROUTINE get_rho(rho_loc, nrxxs_loc, w1_loc, psic_loc)
+        implicit none
+        integer :: nrxxs_loc
+        real(dp) :: rho_loc(nrxxs_loc)
+        real(dp) :: w1_loc
+        complex(dp) :: psic_loc(nrxxs_loc)
+        integer :: ir
+!$omp parallel do
+        do ir = 1, nrxxs_loc
+           rho_loc(ir) = rho_loc(ir) + w1_loc * (dble(psic_loc(ir))**2 + &
+                                                 aimag(psic_loc(ir))**2)
+        enddo
+!$omp end parallel do
+     END SUBROUTINE get_rho
 
 END SUBROUTINE get_smooth_density
 
