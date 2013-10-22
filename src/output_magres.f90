@@ -39,11 +39,11 @@ SUBROUTINE output_magres_begin(what)
   write(iumagres,*)
 
   write(iumagres,'(''<atoms>'')')
-  write(iumagres,'(''  units lattice Angstroms'')')
+  write(iumagres,'(''  units lattice Angstrom'')')
   lattice = alat*at * BOHR_RADIUS_ANGS
   write(iumagres,'(''  lattice '',9(F12.6))') lattice(:,1), lattice(:,2), lattice(:,3)
   write(iumagres,*)
-  write(iumagres,'(''  units atom Angstroms'')')
+  write(iumagres,'(''  units atom Angstrom'')')
   do na = 1, nat
     atom = atm(ityp(na))
     pos = tau(:,na)*alat

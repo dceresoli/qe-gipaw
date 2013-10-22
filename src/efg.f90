@@ -156,7 +156,7 @@ SUBROUTINE get_smooth_density(rho)
   !  
   USE kinds,                  ONLY : dp 
   USE mp,                     ONLY : mp_sum
-  USE mp_global,              ONLY : inter_pool_comm, me_bgrp
+  USE mp_global,              ONLY : inter_pool_comm
   USE ions_base,              ONLY : nat, tau
   USE lsda_mod,               ONLY : current_spin, isk, nspin
   USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
