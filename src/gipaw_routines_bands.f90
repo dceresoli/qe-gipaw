@@ -15,7 +15,7 @@ SUBROUTINE init_parallel_over_band(comm, nbnd)
   !
   USE gipaw_module, ONLY : ibnd_start, ibnd_end
   USE io_global,    ONLY : stdout
-  USE mp_global,    ONLY : nbgrp
+  USE mp_bands,     ONLY : nbgrp
   IMPLICIT NONE
   INTEGER, INTENT(IN) :: comm, nbnd 
 
@@ -56,7 +56,7 @@ SUBROUTINE calbec_bands (npwx, npw, nkb, beta, psi, betapsi, nbnd, ibnd_start, i
   ! ... G-vectors or PWs : betapsi(i,j) = \sum_k beta^*(i,k) psi(k,j)
   !
   USE kinds,                 only : dp
-  USE mp_global,             only : intra_bgrp_comm
+  USE mp_bands,              only : intra_bgrp_comm
   USE mp,                    only : mp_sum
   IMPLICIT NONE
   integer, intent(in) :: npwx, npw, nkb

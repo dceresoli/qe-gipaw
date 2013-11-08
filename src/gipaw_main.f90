@@ -35,8 +35,10 @@ PROGRAM gipaw_main
   USE cellmd,          ONLY : cell_factor
   USE gipaw_module,    ONLY : job, q_gipaw
   USE control_flags,   ONLY : io_level, gamma_only, use_para_diag, twfcollect
-  USE mp_global,       ONLY : mp_startup, nimage, my_image_id
-  USE mp_global,       ONLY : inter_bgrp_comm, nbgrp, nproc_pool, nproc_pool_file
+  USE mp_global,       ONLY : mp_startup, nproc_pool_file
+  USE mp_images,       ONLY : nimage, my_image_id
+  USE mp_bands,        ONLY : inter_bgrp_comm, nbgrp
+  USE mp_pools,        ONLY : nproc_pool
   USE check_stop,      ONLY : check_stop_init
   USE environment,     ONLY : environment_start
   USE lsda_mod,        ONLY : nspin

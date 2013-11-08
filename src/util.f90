@@ -76,9 +76,9 @@ SUBROUTINE select_spin(s_min, s_maj)
   USE scf,          ONLY : rho
   USE lsda_mod,     ONLY : nspin
 #ifdef __BANDS
-  USE mp_global,    ONLY : intra_bgrp_comm
+  USE mp_bands,     ONLY : intra_bgrp_comm
 #endif
-  USE mp_global,    ONLY : intra_pool_comm
+  USE mp_pools,     ONLY : intra_pool_comm
   USE mp,           ONLY : mp_sum
   IMPLICIT NONE
   integer, intent(out) :: s_min, s_maj

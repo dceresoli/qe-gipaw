@@ -245,7 +245,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
 #ifdef __BANDS
   USE gipaw_module,           ONLY : ibnd_start, ibnd_end
   USE mp,                     ONLY : mp_sum
-  USE mp_global,              ONLY : inter_bgrp_comm
+  USE mp_bands,               ONLY : inter_bgrp_comm
 #endif
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
@@ -446,9 +446,9 @@ SUBROUTINE compute_sigma_bare(B_ind, chi_bare, sigma_bare, sigma_shape)
   USE gipaw_module,         ONLY : use_nmr_macroscopic_shape, &
                                    nmr_macroscopic_shape
 #ifdef __BANDS
-  USE mp_global,            ONLY : intra_bgrp_comm
+  USE mp_bands,             ONLY : intra_bgrp_comm
 #else
-  USE mp_global,            ONLY : intra_pool_comm
+  USE mp_pools,             ONLY : intra_pool_comm
 #endif
   USE lsda_mod,             ONLY : nspin
   USE mp,                   ONLY : mp_sum

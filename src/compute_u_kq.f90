@@ -17,9 +17,9 @@ SUBROUTINE compute_u_kq(ik, q)
   USE io_global,            ONLY : stdout
   USE io_files,             ONLY : nwordwfcU, iunhub, iunwfc, nwordwfc
   USE mp,                   ONLY : mp_sum
-  USE mp_global,            ONLY : inter_pool_comm, intra_pool_comm, me_pool
+  USE mp_pools,             ONLY : inter_pool_comm, intra_pool_comm, me_pool
 #ifdef __BANDS
-  USE mp_global,            ONLY : me_bgrp, inter_bgrp_comm
+  USE mp_bands,             ONLY : me_bgrp, inter_bgrp_comm
 #endif
   USE klist,                ONLY : nkstot, nks, xk, ngk
   USE uspp,                 ONLY : vkb, nkb

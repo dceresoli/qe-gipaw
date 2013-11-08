@@ -26,7 +26,7 @@ SUBROUTINE hyperfine
   USE wvfct,                  ONLY : current_k
   USE ions_base,              ONLY : nat, tau, atm, ityp
   use constants,              ONLY : bohr_radius_si
-  USE mp_global,              ONLY : intra_pool_comm
+  USE mp_pools,               ONLY : intra_pool_comm
   USE mp,                     ONLY : mp_sum
   USE gipaw_module,           ONLY : hfi_nuclear_g_factor, hfi_output_unit, &
                                      job, iverbosity, core_relax_method, &
@@ -231,7 +231,7 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   !  
   USE kinds,                  ONLY : dp 
   USE mp,                     ONLY : mp_sum
-  USE mp_global,              ONLY : intra_pool_comm
+  USE mp_pools,               ONLY : intra_pool_comm
   USE constants,              ONLY : tpi, fpi
   USE gvecs,                  ONLY : nls, ngms
   USE gvect,                  ONLY : g, gg, gstart
@@ -373,7 +373,7 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
   USE becmod,                ONLY : calbec
   USE constants,             ONLY : pi, fpi
-  USE mp_global,             ONLY : intra_pool_comm, inter_pool_comm
+  USE mp_pools,              ONLY : intra_pool_comm, inter_pool_comm
   USE mp,                    ONLY : mp_sum
   USE buffers,               ONLY : get_buffer
   USE io_files,              ONLY : nwordwfc, iunwfc

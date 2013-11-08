@@ -22,10 +22,10 @@ subroutine ch_psi_all (n, h, ah, e, ik, m)
   USE uspp,         ONLY : vkb, nkb
   USE becmod,       ONLY : becp, calbec
   USE gipaw_module, ONLY : nbnd_occ, alpha_pv, evq
-  USE mp_global,    ONLY : intra_pool_comm
+  USE mp_pools,     ONLY : intra_pool_comm
   USE mp,           ONLY : mp_sum
 #ifdef __BANDS
-  USE mp_global,    ONLY : intra_bgrp_comm
+  USE mp_bands,     ONLY : intra_bgrp_comm
 #endif
   implicit none
 

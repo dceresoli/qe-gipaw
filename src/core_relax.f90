@@ -35,7 +35,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   USE wavefunctions_module,  ONLY : evc
   USE io_global,             ONLY : stdout
   USE io_files,              ONLY : nwordwfc, iunwfc
-  USE mp_global,             ONLY : intra_pool_comm, inter_pool_comm
+  USE mp_pools,              ONLY : intra_pool_comm, inter_pool_comm
   USE mp,                    ONLY : mp_sum
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
   USE funct,                 ONLY : xc, xc_spin

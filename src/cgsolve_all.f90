@@ -60,10 +60,10 @@ SUBROUTINE cgsolve_all(h_psi, cg_psi, e, d0psi, dpsi, h_diag, ndmx, ndim, &
   !   revised (to reduce memory) 29 May 2004 by S. de Gironcoli
   !
   USE kinds,          ONLY: dp
-  USE mp_global,      ONLY: intra_pool_comm, me_pool
+  USE mp_pools,       ONLY: intra_pool_comm, me_pool
   USE mp,             ONLY: mp_sum
 #ifdef __BANDS
-  USE mp_global,      ONLY: intra_bgrp_comm, inter_bgrp_comm, me_bgrp
+  USE mp_bands,       ONLY: intra_bgrp_comm, inter_bgrp_comm, me_bgrp
   USE gipaw_module,   ONLY: ibnd_start, ibnd_end
 #endif
   !-- parameters ------------------------------------------------------
@@ -307,10 +307,10 @@ subroutine cgsolve_all (h_psi, cg_psi, e, d0psi, dpsi, h_diag, &
   !   revised (to reduce memory) 29 May 2004 by S. de Gironcoli
   !
   USE kinds, only : DP
-  USE mp_global, ONLY: intra_pool_comm, me_pool
+  USE mp_pools,  ONLY: intra_pool_comm, me_pool
   USE mp,        ONLY: mp_sum
 #ifdef __BANDS
-  USE mp_global, ONLY: intra_bgrp_comm, inter_bgrp_comm, me_bgrp
+  USE mp_bands,  ONLY: intra_bgrp_comm, inter_bgrp_comm, me_bgrp
   USE gipaw_module, ONLY: ibnd_start, ibnd_end
 #endif
 

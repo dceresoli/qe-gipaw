@@ -27,7 +27,7 @@ SUBROUTINE gipaw_setup
   USE noncollin_module,  ONLY : noncolin
   USE constants,     ONLY : degspin, pi
   USE symm_base,     ONLY : nsym, s
-  USE mp_global,     ONLY : inter_pool_comm 
+  USE mp_pools,      ONLY : inter_pool_comm 
   USE mp,            ONLY : mp_max, mp_min 
   USE dfunct,        ONLY : newd
   USE pwcom,         ONLY : ef
@@ -175,7 +175,7 @@ SUBROUTINE gipaw_setup_integrals
   USE atom,          ONLY : rgrid
   USE paw_gipaw,     ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp, set_paw_upf
   USE uspp_param,    ONLY : upf
-  USE mp_global,     ONLY : inter_pool_comm 
+  USE mp_pools,      ONLY : inter_pool_comm 
   USE wvfct,         ONLY : nbnd, npwx
 
   implicit none

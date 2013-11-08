@@ -71,7 +71,7 @@ SUBROUTINE moss_bare_el(rho_s, moss_bare)
   !  
   USE kinds,                  ONLY : dp 
   USE mp,                     ONLY : mp_sum
-  USE mp_global,              ONLY : intra_pool_comm
+  USE mp_pools,               ONLY : intra_pool_comm
   USE constants,              ONLY : tpi, fpi
   USE gvecs,                  ONLY : nls, ngms
   USE gvect,                  ONLY : g, gg, gstart
@@ -131,7 +131,7 @@ SUBROUTINE moss_gipaw_correction(moss_gipaw)
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
   USE becmod,                ONLY : calbec
   USE constants,             ONLY : pi, fpi
-  USE mp_global,             ONLY : intra_pool_comm, inter_pool_comm
+  USE mp_pools,              ONLY : intra_pool_comm, inter_pool_comm
   USE mp,                    ONLY : mp_sum
   USE buffers,               ONLY : get_buffer
   USE io_files,              ONLY : nwordwfc, iunwfc

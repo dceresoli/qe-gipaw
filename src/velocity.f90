@@ -27,7 +27,7 @@ SUBROUTINE apply_p(psi, p_psi, ik, ipol, q)
   USE pwcom
   USE gipaw_module,         ONLY : nbnd_occ
 #ifdef __BANDS
-  USE mp_global,            ONLY : inter_bgrp_comm
+  USE mp_bands,             ONLY : inter_bgrp_comm
   USE mp,                   ONLY : mp_sum
   USE gipaw_module,         ONLY : ibnd_start, ibnd_end
 #endif
@@ -76,7 +76,7 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   USE cell_base,            ONLY : tpiba
   USE gipaw_module,         ONLY : q_gipaw, nbnd_occ
 #ifdef __BANDS
-  USE mp_global,            ONLY : inter_bgrp_comm
+  USE mp_bands,             ONLY : inter_bgrp_comm
   USE mp,                   ONLY : mp_sum
   USE gipaw_module,         ONLY : ibnd_start, ibnd_end
 #endif

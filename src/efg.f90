@@ -20,7 +20,7 @@ SUBROUTINE efg
   USE ions_base,              ONLY : nat, atm, ityp, zv
   USE symme,                  ONLY : symtensor
   USE lsda_mod,               ONLY : nspin
-  USE mp_global,              ONLY : intra_pool_comm
+  USE mp_pools,               ONLY : intra_pool_comm
   USE mp,                     ONLY : mp_sum
   USE gipaw_module,           ONLY : q_efg, iverbosity
 
@@ -156,7 +156,7 @@ SUBROUTINE get_smooth_density(rho)
   !  
   USE kinds,                  ONLY : dp 
   USE mp,                     ONLY : mp_sum
-  USE mp_global,              ONLY : inter_pool_comm
+  USE mp_pools,               ONLY : inter_pool_comm
   USE ions_base,              ONLY : nat, tau
   USE lsda_mod,               ONLY : current_spin, isk, nspin
   USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
@@ -232,7 +232,7 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
   !  
   USE kinds,                  ONLY : dp 
   USE mp,                     ONLY : mp_sum
-  USE mp_global,              ONLY : intra_pool_comm
+  USE mp_pools,               ONLY : intra_pool_comm
   USE constants,              ONLY : tpi, fpi
   USE gvecs,                  ONLY : nls, ngms
   USE fft_base,               ONLY : dffts
@@ -326,7 +326,7 @@ SUBROUTINE efg_correction(efg_corr_tens)
   USE scf,                   ONLY : rho
   USE io_global,             ONLY : stdout
   USE gipaw_module,          ONLY : job, nbnd_occ, radial_integral_diamagnetic
-  USE mp_global,             ONLY : intra_pool_comm, inter_pool_comm
+  USE mp_pools,              ONLY : intra_pool_comm, inter_pool_comm
   USE mp,                    ONLY : mp_sum
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE

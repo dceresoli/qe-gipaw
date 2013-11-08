@@ -28,9 +28,9 @@ SUBROUTINE init_gipaw_1
   USE atom,        ONLY : rgrid, msh
   USE io_global,   ONLY : stdout
 #ifdef __BANDS
-  USE mp_global,   ONLY : intra_bgrp_comm, inter_bgrp_comm
+  USE mp_bands,    ONLY : intra_bgrp_comm, inter_bgrp_comm
 #endif
-  USE mp_global,   ONLY : intra_pool_comm
+  USE mp_pools,    ONLY : intra_pool_comm
   USE mp,          ONLY : mp_sum
   USE uspp_param,  ONLY : upf  
   !--------------------------------------------------------------------

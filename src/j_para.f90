@@ -25,7 +25,7 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   USE fft_interfaces,         ONLY : invfft
 #ifdef __BANDS
   USE mp,                          ONLY : mp_sum 
-  USE mp_global,                   ONLY : inter_bgrp_comm
+  USE mp_bands,                    ONLY : inter_bgrp_comm
   USE gipaw_module,                ONLY : ibnd_start, ibnd_end
 #endif  
   !-- parameters ---------------------------------------------------------
