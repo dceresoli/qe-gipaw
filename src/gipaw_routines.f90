@@ -72,7 +72,7 @@ SUBROUTINE gipaw_readin()
 
   ! read input    
   read( 5, inputgipaw, err = 200, iostat = ios )
-    
+
   ! check input
   if (max_seconds < 0.1d0) call errore ('gipaw_readin', ' wrong max_seconds', 1)
 200 call errore('gipaw_readin', 'reading inputgipaw namelist', abs(ios))
@@ -103,12 +103,12 @@ SUBROUTINE gipaw_readin()
        call errore('gipaw_readin', 'verbosity can be ''low'', ''medium'' or ''high''', 1)
   end select
 400 continue
- 
+
 #ifdef __MPI
   ! broadcast input variables  
   call gipaw_bcast_input
 #endif
-    
+
 END SUBROUTINE gipaw_readin
 
 
@@ -332,7 +332,7 @@ END SUBROUTINE print_clock_gipaw
 SUBROUTINE gipaw_memory_report
   !-----------------------------------------------------------------------
   !
-  ! ... Print clocks
+  ! ... Print estimated memory usage
   !
   USE io_global,                 ONLY : stdout
   USE noncollin_module,          ONLY : npol
