@@ -1758,6 +1758,7 @@ version=`grep version_number ${qe_source}/Modules/version.f90 | cut -d\' -f2`
 $as_echo "$version" >&6; }
 case $version in
   5.0.2 ) ;;
+  5.0.99 ) ;;
   *) as_fn_error $? "Cannot compile against this version of Quantum-Espresso" "$LINENO" 5 ;;
 esac
 
