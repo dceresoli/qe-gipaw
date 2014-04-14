@@ -1690,6 +1690,9 @@ else
 fi
 
 
+# make path absolute
+abspath=`readlink -f ${qe_source} 2>/dev/null` && qe_source=$abspath
+
 # Option: enable band parallelization
 # Check whether --enable-band-parallel was given.
 if test "${enable_band_parallel+set}" = set; then :
