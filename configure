@@ -1762,6 +1762,7 @@ $as_echo "$version" >&6; }
 case $version in
   5.0.2 ) ;;
   5.0.99 ) ;;
+  5.1rc2 ) ;;
   *) as_fn_error $? "Cannot compile against this version of Quantum-Espresso" "$LINENO" 5 ;;
 esac
 
