@@ -1762,7 +1762,7 @@ $as_echo "$version" >&6; }
 case $version in
   5.0.2 ) ;;
   5.0.3 ) ;;
-  5.1*  ) ;;
+  5.1* ) ;;
   *) as_fn_error $? "Cannot compile against this version of Quantum-Espresso" "$LINENO" 5 ;;
 esac
 
@@ -1773,9 +1773,10 @@ revision=`grep svn_revision ${qe_source}/Modules/version.f90 | cut -d\' -f2`
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $revision" >&5
 $as_echo "$revision" >&6; }
 good_revision=10590
-if test $revision -lt ${good_revision}
-then
-  as_fn_error $? "Cannot compile against this SVN revision of Quantum-Espresso. Please checkout revision >$good_revision" "$LINENO" 5
+if test $revision != "unknown" ; then
+  if test $revision -lt ${good_revision} ; then
+    as_fn_error $? "Cannot compile against this SVN revision of Quantum-Espresso. Please checkout revision >$good_revision" "$LINENO" 5
+  fi
 fi
 
 # process options

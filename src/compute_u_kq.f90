@@ -1,4 +1,4 @@
-
+!
 ! Copyright (C) 2001-2007 Quantum ESPRESSO group
 ! This file is distributed under the terms of the
 ! GNU General Public License. See the file `License'
@@ -53,7 +53,7 @@ SUBROUTINE compute_u_kq(ik, q)
   if (isolve == 1) then
     nbndx = nbnd ! CG
   elseif (isolve == 0) then
-    nbndx = 4*nbnd ! Davidson
+    nbndx = 4*nbnd ! Davidson TODO: check if 4 times!!!!
   else
     call errore('compute_u_kq', 'wrong isolve', 1)
   endif
@@ -101,6 +101,9 @@ SUBROUTINE compute_u_kq(ik, q)
   !!call mp_sum(evc, inter_bgrp_comm)
 #endif
 
+  ! Needed for LDA+U
+  IF ( lda_plus_u ) CALL get_buffer( wfcU, nwordwfcU, iunhub, ik )
+
   ! randomize a little bit in case of CG diagonalization
   if ( isolve == 1 ) then
 #ifdef __BANDS
@@ -117,8 +120,6 @@ SUBROUTINE compute_u_kq(ik, q)
     enddo
   endif
 
-  ! Needed for LDA+U
-  IF ( lda_plus_u ) CALL get_buffer( wfcU, nwordwfcU, iunhub, ik )
 
   ! diagonalization of bands for k-point ik
   call diag_bands ( iter, ik, avg_iter )

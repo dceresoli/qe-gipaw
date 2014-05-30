@@ -39,9 +39,10 @@ AC_MSG_CHECKING([Quantum-Espresso SVN revision])
 revision=`grep svn_revision ${qe_source}/Modules/version.f90 | cut -d\' -f2`
 AC_MSG_RESULT([$revision])
 good_revision=10590
-if test $revision -lt ${good_revision}
-then
-  AC_MSG_ERROR([Cannot compile against this SVN revision of Quantum-Espresso. Please checkout revision >$good_revision])
+if test $revision != "unknown" ; then
+  if test $revision -lt ${good_revision} ; then
+    AC_MSG_ERROR([Cannot compile against this SVN revision of Quantum-Espresso. Please checkout revision >$good_revision])
+  fi
 fi
 
 # process options
