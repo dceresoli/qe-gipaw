@@ -409,6 +409,9 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   at_hfi = 0.0_dp
   at_hfi_zora = 0.0_dp
   at_hfi_extra = 0.0_dp
+
+  ALLOCATE ( x_extrapolate(hfi_extrapolation_npoints) )
+  ALLOCATE ( y_extrapolate(hfi_extrapolation_npoints) )
   
   ! calculate radial integrals: <aephi|aephi> - <psphi|psphi>
   do nt = 1, ntyp
@@ -420,8 +423,6 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
      r_thomson = atomic_number(atm(nt)) * alpha**2
      
 
-     ALLOCATE ( x_extrapolate(hfi_extrapolation_npoints) )
-     ALLOCATE ( y_extrapolate(hfi_extrapolation_npoints) )
 
      DO j = 1, hfi_extrapolation_npoints
         x_extrapolate(j) = j / REAL ( hfi_extrapolation_npoints + 1, dp ) &
