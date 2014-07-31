@@ -18,9 +18,11 @@ SUBROUTINE mossbauer
   USE fft_base,               ONLY : dffts, dfftp
   USE scf,                    ONLY : rho
   USE ions_base,              ONLY : nat, tau, atm, ityp
+  USE lsda_mod,               ONLY : nspin
   USE gipaw_module,           ONLY : job
  
   !-- local variables ----------------------------------------------------
+  implicit none
   real(dp), allocatable :: rho_s(:,:), rho_tot(:)
   real(dp), allocatable :: moss_bare(:), moss_gipaw(:), moss_tot(:)
   integer :: na

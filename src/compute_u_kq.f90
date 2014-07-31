@@ -80,6 +80,7 @@ SUBROUTINE compute_u_kq(ik, q)
 
   current_k = ik
   IF ( lsda ) current_spin = isk(ik)
+  npw = ngk(ik)
 
   ! same sorting of G-vector at k+q
   call gk_sort(xk(1,ik),ngm,g,ecutwfc/tpiba2,npw,igk,g2kin)

@@ -366,7 +366,7 @@ SUBROUTINE gipaw_setup_integrals
     write(stdout,'(5X,''------------------------------------------------------------'')')
     write(stdout,*)
   endif
-1000 format(5X,A5,1X,I1,1X,I1,1X,5F10.2)
+1000 format(5X,A5,1X,I1,1X,I1,1X,5E10.2)
 
 END SUBROUTINE gipaw_setup_integrals
 
