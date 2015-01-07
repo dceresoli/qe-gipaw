@@ -67,7 +67,7 @@ SUBROUTINE gipaw_setup
   ! some pre-conditions
   if (ltetra) call errore('gipaw_setup','GIPAW + tetrahedra not implemented', 1)
   if (noncolin) call errore('gipaw_setup','GIPAW + non-collinear not implemented', 1)
-  if (two_fermi_energies) &
+  if (two_fermi_energies .and. lgauss) &
      call errore('gipaw_setup','GIPAW + two Fermi energies not implemented', 1)
 
   ! computes the number of occupied bands for each k point

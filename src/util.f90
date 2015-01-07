@@ -91,10 +91,11 @@ SUBROUTINE select_spin(s_min, s_maj)
 #else
   call mp_sum(rho_diff, intra_pool_comm)
 #endif
-  if ( nspin > 1 .and. abs(rho_diff) < 1.0d-3 ) &
+  if ( nspin > 1 .and. abs(rho_diff) < 1.0d-3 ) then
      call errore("select_spin", "warning, rho_diff is small", -1)
-
-  if ( rho_diff >=  0.0d0 ) then
+     s_maj = 1
+     s_min = nspin
+  else if ( rho_diff >=  0.0d0 ) then
      s_maj = 1
      s_min = nspin
   else if ( rho_diff < 0.0d0 ) then
