@@ -107,7 +107,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
           !!call ascheq(nn, 0, eigenvalue(nn,nt), rgrid(nt)%mesh, rgrid(nt), &
           !!            vpot, 2.d0*zz, 1d-12, ae_orb(1,nn,nt), nstop)
           mode = 2                ! non-relativistic
-          if (zz >= 20) mode = 1  ! scalar-relativistic
+          !!if (zz >= 20) mode = 1  ! scalar-relativistic
           eigenvalue(nn,nt) = -(dble(zz)/dble(nn))**2.0
           nin = 0
           call lschps(mode, 2.d0*zz, 1d-12, rgrid(nt), nin, nn, 0, &
