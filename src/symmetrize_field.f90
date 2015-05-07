@@ -64,10 +64,9 @@ SUBROUTINE psymmetrize_field(field, iflag)
   !     iflag = 1  => pseudo-tensor  (e.g. induced current)
   !
   USE kinds,            ONLY : DP
-  USE fft_base,         ONLY : grid_gather, grid_scatter
+  USE fft_base,         ONLY : dfftp, gather_grid, scatter_grid
   USE mp_global,        ONLY : me_pool
   USE symm_base,        ONLY : s, nsym
-  USE fft_base,         ONLY : dfftp
   USE gipaw_module
 
   !-- parameters ------------------------------------------------------
@@ -85,7 +84,7 @@ SUBROUTINE psymmetrize_field(field, iflag)
   allocate( aux(dfftp%nr1x*dfftp%nr2x*dfftp%nr3x,3,3) )
   do i = 1, 3
     do j = 1, 3
-      call grid_gather(field(:,i,j), aux(:,i,j))
+      call gather_grid(dfftp, field(:,i,j), aux(:,i,j))
     enddo
   enddo
 
@@ -93,7 +92,7 @@ SUBROUTINE psymmetrize_field(field, iflag)
 
   do i = 1, 3
     do j = 1, 3
-      call grid_scatter(aux(:,i,j), field(:,i,j))
+      call scatter_grid(dfftp, aux(:,i,j), field(:,i,j))
     enddo
   enddo
 

@@ -73,8 +73,7 @@ SUBROUTINE psymmetrize_rho_s (rho)
   USE kinds,            ONLY : dp  
   USE symm_base,        ONLY : nsym
   USE mp_global,        ONLY : me_pool
-  USE fft_base,         ONLY : dffts
-  USE fft_base,         ONLY : gather_smooth, scatter_smooth
+  USE fft_base,         ONLY : dffts, gather_grid, scatter_grid
   !-- parameters ------------------------------------------------------
   implicit none
   real(dp), intent(inout) :: rho(dffts%nnr)
@@ -86,9 +85,9 @@ SUBROUTINE psymmetrize_rho_s (rho)
   if (nsym <= 1) return
 
   allocate( aux(dffts%nr1x*dffts%nr2x*dffts%nr3x) )
-  call gather_smooth(rho, aux)
+  call gather_grid(dffts, rho, aux)
   if ( me_pool == 0 ) call symmetrize_rho_s(aux)
-  call scatter_smooth(aux, rho)
+  call scatter_grid(dffts, aux, rho)
 
   deallocate(aux)
   return

@@ -16,7 +16,7 @@ SUBROUTINE write_tensor_field(name, ispin, field)
   USE io_global,                   ONLY : stdout, ionode
   USE cell_base,                   ONLY : at, alat
   USE ions_base,                   ONLY : nat, tau, atm, ityp
-  USE fft_base,                    ONLY : dfftp, grid_gather
+  USE fft_base,                    ONLY : dfftp, gather_grid
   USE pwcom
   USE gipaw_module
   !--------------------------------------------------------------------
@@ -40,7 +40,7 @@ SUBROUTINE write_tensor_field(name, ispin, field)
  ! gather the data 
   do i = 1, 3
     do j = 1, 3
-      call grid_gather(field(:,i,j), aux(:,i,j))
+      call gather_grid(dfftp, field(:,i,j), aux(:,i,j))
     enddo
   enddo
 #else
@@ -140,7 +140,7 @@ SUBROUTINE write_nics(filename, field)
   !
   USE kinds,           ONLY : dp
   USE io_global,       ONLY : stdout, ionode
-  USE fft_base,        ONLY : dfftp, grid_gather
+  USE fft_base,        ONLY : dfftp, gather_grid
   USE gvect,           ONLY : gcutm
   USE cell_base,       ONLY : at, alat, tpiba2, omega, ibrav, celldm
   USE ions_base,       ONLY : zv, ntyp => nsp, nat, ityp, atm, tau
@@ -167,7 +167,7 @@ SUBROUTINE write_nics(filename, field)
   ! gather the data 
   allocate(aux(dfftp%nr1x*dfftp%nr2x*dfftp%nr3x))
 #ifdef __MPI
-  call grid_gather(nics, aux)
+  call gather_grid(dfftp, nics, aux)
 #else
   aux = nics
 #endif
