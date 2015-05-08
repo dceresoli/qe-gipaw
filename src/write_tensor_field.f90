@@ -167,7 +167,7 @@ SUBROUTINE write_nics(filename, field)
   ! gather the data 
   allocate(aux(dfftp%nr1x*dfftp%nr2x*dfftp%nr3x))
 #ifdef __MPI
-  call gather_grid(dfftp, nics, aux)
+  call gather_grid (dfftp, nics, aux)
 #else
   aux = nics
 #endif
