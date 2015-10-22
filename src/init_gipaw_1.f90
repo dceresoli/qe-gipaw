@@ -146,11 +146,11 @@ SUBROUTINE init_gipaw_1
                  if (ih < jh) then
                     if ( abs(abs(s(ih,jh)) - 1d0) < 1d-5 ) then
                        write(stdout,1000) l, ih, jh, s(ih,jh)
-                       call flush_unit(stdout)
+                       FLUSH(stdout)
                        call errore("init_gipaw_1", "two projectors are linearly dependent", 1)
                     elseif ( abs(abs(s(ih,jh)) - 1d0) < 1d-2) then
                        write(stdout,1001) l, ih, jh, s(ih,jh)
-                       call flush_unit(stdout)
+                       FLUSH(stdout)
                     endif
                  endif
 

@@ -269,7 +269,7 @@ endif
   ! convert to Hartree
   g_psi(:,:) = g_psi(:,:) / ryd_to_hartree
 
-  call flush_unit( stdout )
+  FLUSH(stdout) 
   call stop_clock('greenf')
  
   ! free memory

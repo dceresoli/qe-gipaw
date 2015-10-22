@@ -39,7 +39,7 @@ SUBROUTINE gipaw_readin()
   call input_from_file()
     
   ! define input default values
-  call get_env( 'ESPRESSO_TMPDIR', tmp_dir ) 
+  call get_environment_variable( 'ESPRESSO_TMPDIR', tmp_dir ) 
   if (trim(tmp_dir) == ' ') tmp_dir = './scratch/'
   tmp_dir = trimcheck(tmp_dir)
   job = ''
@@ -211,7 +211,7 @@ SUBROUTINE gipaw_summary
 
   write(stdout,*)
 
-  call flush_unit( stdout )
+  FLUSH(stdout)
 
 END SUBROUTINE gipaw_summary
   
