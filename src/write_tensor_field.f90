@@ -16,7 +16,8 @@ SUBROUTINE write_tensor_field(name, ispin, field)
   USE io_global,                   ONLY : stdout, ionode
   USE cell_base,                   ONLY : at, alat
   USE ions_base,                   ONLY : nat, tau, atm, ityp
-  USE fft_base,                    ONLY : dfftp, gather_grid
+  USE fft_base,                    ONLY : dfftp
+  USE scatter_mod,                 ONLY : gather_grid
   USE pwcom
   USE gipaw_module
   !--------------------------------------------------------------------
@@ -140,7 +141,8 @@ SUBROUTINE write_nics(filename, field)
   !
   USE kinds,           ONLY : dp
   USE io_global,       ONLY : stdout, ionode
-  USE fft_base,        ONLY : dfftp, gather_grid
+  USE fft_base,        ONLY : dfftp
+  USE scatter_mod,     ONLY : gather_grid
   USE gvect,           ONLY : gcutm
   USE cell_base,       ONLY : at, alat, tpiba2, omega, ibrav, celldm
   USE ions_base,       ONLY : zv, ntyp => nsp, nat, ityp, atm, tau

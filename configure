@@ -1770,7 +1770,7 @@ $as_echo_n "checking Quantum-Espresso SVN revision... " >&6; }
 revision=`grep svn_revision ${qe_source}/Modules/version.f90 | cut -d\' -f2`
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $revision" >&5
 $as_echo "$revision" >&6; }
-good_revision=11797
+good_revision=11875
 if test $revision != "unknown" ; then
   if test $revision -lt ${good_revision} ; then
     as_fn_error $? "Cannot compile against this SVN revision of Quantum-Espresso. Please checkout revision >$good_revision" "$LINENO" 5

@@ -73,7 +73,8 @@ SUBROUTINE psymmetrize_rho_s (rho)
   USE kinds,            ONLY : dp  
   USE symm_base,        ONLY : nsym
   USE mp_global,        ONLY : me_pool
-  USE fft_base,         ONLY : dffts, gather_grid, scatter_grid
+  USE fft_base,         ONLY : dffts
+  USE scatter_mod,      ONLY : gather_grid, scatter_grid
   !-- parameters ------------------------------------------------------
   implicit none
   real(dp), intent(inout) :: rho(dffts%nnr)

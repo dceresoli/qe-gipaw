@@ -6,7 +6,9 @@ DFLAGS += @dflags_gipaw@
 
 # location of needed modules
 MODFLAGS = $(MOD_FLAG)$(QE_SOURCE)/iotk/src $(MOD_FLAG)$(QE_SOURCE)/Modules \
-           $(MOD_FLAG)$(QE_SOURCE)/PW/src $(MOD_FLAG).
+           $(MOD_FLAG)$(QE_SOURCE)/FFTXlib \
+           $(MOD_FLAG)$(QE_SOURCE)/PW/src \
+           $(MOD_FLAG).
 
 GIPAW_OBJS = gipaw_module.o gipaw_main.o paw_gipaw.o stop_code.o gipaw_setup.o \
 	     gipaw_routines.o gipaw_routines_bands.o greenfunction.o orthoatwfc1.o \
@@ -18,12 +20,8 @@ GIPAW_OBJS = gipaw_module.o gipaw_main.o paw_gipaw.o stop_code.o gipaw_setup.o \
 
 LIBOBJS = $(QE_SOURCE)/flib/ptools.a $(QE_SOURCE)/flib/flib.a $(QE_SOURCE)/clib/clib.a \
  	  $(QE_SOURCE)/iotk/src/libiotk.a
-ifeq ($(wildcard $(QE_SOURCE)/Environ),)
-  QEMODS = $(QE_SOURCE)/Modules/libqemod.a
-else
-  QEMODS = $(QE_SOURCE)/Environ/src/libenviron.a $(QE_SOURCE)/Modules/libqemod.a
-endif
-PWOBJS  = $(QE_SOURCE)/PW/src/libpw.a
+QEMODS = $(QE_SOURCE)/Modules/libqemod.a $(QE_SOURCE)/FFTXlib/libqefft.a
+PWOBJS = $(QE_SOURCE)/PW/src/libpw.a
 
 all: version gipaw.x
 

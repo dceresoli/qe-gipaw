@@ -64,7 +64,8 @@ SUBROUTINE psymmetrize_field(field, iflag)
   !     iflag = 1  => pseudo-tensor  (e.g. induced current)
   !
   USE kinds,            ONLY : DP
-  USE fft_base,         ONLY : dfftp, gather_grid, scatter_grid
+  USE fft_base,         ONLY : dfftp
+  USE scatter_mod,      ONLY : gather_grid, scatter_grid
   USE mp_global,        ONLY : me_pool
   USE symm_base,        ONLY : s, nsym
   USE gipaw_module
