@@ -15,7 +15,7 @@ Contact:
 Build instructions:
 ===================
 1) Configure and compile Quantum-Espresso in the usual way. Supported
-   version are '5.0.2' and the current SVN version.
+   version are '5.3.0' and the current SVN version.
 
 2) Download from SVN. You can build QE-GIPAW outside the Quantum-Espresso folder.
    svn checkout svn://cvs.qe-forge.org/scmrepos/svn/qe-gipaw/trunk qe-gipaw
@@ -23,7 +23,8 @@ Build instructions:
 3) Build QE-GIPAW:
    cd qe-gipaw
    ./configure --with-qe-source=<quantum espresso folder containing make.sys>
-   (for example: ./configure --with-qe-source=$HOME/Codes/espresso-5.0.2)
+   (for example: ./configure --with-qe-source=$HOME/Codes/espresso-5.3.0,
+    or: ./configure --with-qe-source=..)
    make
 
 4) QE-GIPAW will be built according to the options and libraries specified
