@@ -15,7 +15,7 @@ SUBROUTINE gipaw_readin()
   ! ... list of input keywords.
   !
   USE gipaw_module
-  USE io_files,         ONLY : nd_nmbr, prefix, tmp_dir  
+  USE io_files,         ONLY : prefix, tmp_dir  
   USE io_global,        ONLY : ionode
   USE us,               ONLY : spline_ps
   USE input_parameters, ONLY : max_seconds
@@ -164,7 +164,6 @@ SUBROUTINE gipaw_allocate
   ! ... Allocate memory for GIPAW
   !
   USE gipaw_module
-  USE lsda_mod,      ONLY : nspin, lsda
   USE ions_base,     ONLY : ntyp => nsp
   USE paw_gipaw,     ONLY : paw_recon
   USE pwcom
@@ -224,14 +223,11 @@ SUBROUTINE gipaw_openfil
   ! ... Open files needed for GIPAW
   !
   USE gipaw_module
-  USE io_global,        ONLY : stdout
   USE wvfct,            ONLY : nbnd, npwx
   USE ldaU,             ONLY : lda_plus_U, nwfcU
-  USE klist,            ONLY : nks
-  USE io_files,         ONLY : prefix, iunhub, iunwfc, &
-                               nwordwfcU, nwordwfc, nwordatwfc, seqopn
+  USE io_files,         ONLY : iunhub, iunwfc, &
+                               nwordwfcU, nwordwfc, seqopn
   USE noncollin_module, ONLY : npol
-  USE mp_global,        ONLY : kunit
   USE buffers,          ONLY : open_buffer
   USE control_flags,    ONLY : io_level    
   IMPLICIT NONE  
@@ -262,7 +258,7 @@ SUBROUTINE gipaw_closefil
   ! ... Close files opened by GIPAW
   !
   USE ldaU,             ONLY : lda_plus_U  
-  USE io_files,         ONLY : prefix, iunhub, iunwfc
+  USE io_files,         ONLY : iunhub, iunwfc
   USE buffers,          ONLY : close_buffer
 
   call close_buffer( iunwfc, 'keep' )

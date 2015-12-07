@@ -63,10 +63,9 @@ SUBROUTINE output_magres_nmr(chi_bare_pGv, chi_bare_vGv, sigma_tot)
   ! ... Output <magres> block
   !  
   USE kinds,                  ONLY : dp
-  USE io_files,               ONLY : prefix
   USE io_global,              ONLY : ionode
   USE gipaw_module,           ONLY : iumagres, avogadro, a0_to_cm
-  USE ions_base,              ONLY : nat, atm, ityp, tau
+  USE ions_base,              ONLY : nat, atm, ityp
   USE gipaw_version
   IMPLICIT NONE  
   real(dp), intent(in) :: chi_bare_pGv(3,3), chi_bare_vGv(3,3)
@@ -99,10 +98,9 @@ SUBROUTINE output_magres_efg(efg_tot)
   ! ... Output <magres> block
   !  
   USE kinds,                  ONLY : dp
-  USE io_files,               ONLY : prefix
   USE io_global,              ONLY : ionode
   USE gipaw_module,           ONLY : iumagres, avogadro, a0_to_cm
-  USE ions_base,              ONLY : nat, atm, ityp, tau
+  USE ions_base,              ONLY : nat, atm, ityp
   USE gipaw_version
   IMPLICIT NONE  
   real(dp), intent(in) :: efg_tot(3,3,nat)

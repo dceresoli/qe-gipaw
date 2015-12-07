@@ -14,17 +14,11 @@ SUBROUTINE orthoatwfc1(ik)
   ! Is assumes that you have already called gk_sort, init_us_2 and ccalbec
   !
   USE kinds,            ONLY : DP
-  USE ions_base,        ONLY : nat
   USE basis,            ONLY : natomwfc, swfcatom
-  USE klist,            ONLY : nks, xk, ngk
-  USE ldaU,             ONLY : U_projection, wfcU, nwfcU, copy_U_wfc
-  USE wvfct,            ONLY : npwx, npw, igk
-  USE uspp,             ONLY : nkb, vkb
+  USE ldaU,             ONLY : U_projection, copy_U_wfc
+  USE wvfct,            ONLY : npwx, npw
   USE becmod,           ONLY : allocate_bec_type, deallocate_bec_type, &
-                               bec_type, becp, calbec
-  USE control_flags,    ONLY : gamma_only
-  USE noncollin_module, ONLY : noncolin, npol
-  USE io_global,        ONLY : stdout
+                               bec_type, calbec
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE

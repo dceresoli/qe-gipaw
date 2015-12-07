@@ -23,10 +23,10 @@ SUBROUTINE paramagnetic_correction (paramagnetic_tensor, paramagnetic_tensor_us,
                                     g_vel_evc, u_svel_evc, ipol)
   USE kinds,                  ONLY : dp
   USE ions_base,              ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, g2kin, current_k
+  USE wvfct,                  ONLY : nbnd, npwx, npw, current_k
   USE klist,                  ONLY : wk
   USE becmod,                 ONLY : calbec  
-  USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
+  USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_recon
   USE gipaw_module,           ONLY : lx, ly, lz, paw_becp2, paw_becp3, alpha, &
                                      radial_integral_paramagnetic
   USE uspp,                   ONLY : okvan
@@ -113,14 +113,12 @@ END SUBROUTINE paramagnetic_correction
 SUBROUTINE diamagnetic_correction (diamagnetic_tensor)
   USE kinds,                  ONLY : dp
   USE ions_base,              ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, current_k
+  USE wvfct,                  ONLY : nbnd, wg, current_k
   USE becmod,                 ONLY : calbec  
   USE constants,              ONLY : pi
-  USE parameters,             ONLY : lmaxx
   USE uspp,                   ONLY : ap
-  USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
-  USE gipaw_module,           ONLY : lx, ly, lz, paw_becp2, alpha, &
-                                     radial_integral_diamagnetic
+  USE paw_gipaw,              ONLY : paw_becp, paw_recon
+  USE gipaw_module,           ONLY : alpha, radial_integral_diamagnetic
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
   real(dp), intent(inout) :: diamagnetic_tensor(3,3,nat)
@@ -128,7 +126,7 @@ SUBROUTINE diamagnetic_correction (diamagnetic_tensor)
   !-- local variables ----------------------------------------------------
   integer :: l1, m1, lm1, l2, m2, lm2, ih, ikb, nbs1, jh, jkb, nbs2
   integer :: nt, ibnd, na, lm, ijkb0
-  complex(dp) :: dia_corr(lmaxx**2,nat)
+  complex(dp) :: dia_corr(9,nat)
   complex(dp) :: bec_product
   
   dia_corr = 0.0_dp
@@ -229,19 +227,16 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   USE wavefunctions_module,   ONLY : evc
   USE becmod,                 ONLY : calbec, allocate_bec_type, deallocate_bec_type
   USE constants,              ONLY : pi
-  USE parameters,             ONLY : lmaxx
   USE fft_base,               ONLY : dffts
   USE lsda_mod,               ONLY : nspin
-  USE uspp,                   ONLY : ap
   USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
   USE gipaw_module,           ONLY : lx, ly, lz, radial_integral_paramagnetic, &
-                                     q_gipaw, alpha, nbnd_occ, iverbosity
+                                     q_gipaw, alpha, iverbosity
   USE uspp,                   ONLY : qq, vkb, nkb 
   USE uspp_param,             ONLY : nh
-  USE cell_base,              ONLY : tpiba, omega, tpiba2
+  USE cell_base,              ONLY : tpiba, tpiba2
   USE klist,                  ONLY : xk
   USE gvect,                  ONLY : g, ngm
-  USE io_global,              ONLY : stdout, ionode
 #ifdef __BANDS
   USE gipaw_module,           ONLY : ibnd_start, ibnd_end
   USE mp,                     ONLY : mp_sum
@@ -440,8 +435,8 @@ END SUBROUTINE paramagnetic_correction_aug
 !====================================================================
 SUBROUTINE compute_sigma_bare(B_ind, chi_bare, sigma_bare, sigma_shape)
   USE kinds,                ONLY : dp
-  USE gvect,                ONLY : ngm, gstart, nl, nlm, g
-  USE ions_base,            ONLY : nat, tau, atm, ityp
+  USE gvect,                ONLY : ngm, gstart, g
+  USE ions_base,            ONLY : nat, tau
   USE pwcom,                ONLY : pi, tpi
   USE gipaw_module,         ONLY : use_nmr_macroscopic_shape, &
                                    nmr_macroscopic_shape
@@ -498,7 +493,7 @@ END SUBROUTINE compute_sigma_bare
 SUBROUTINE print_chemical_shifts(sigma_shape, sigma_bare, sigma_diamagnetic, sigma_paramagnetic, &
                                  sigma_paramagnetic_us, sigma_paramagnetic_aug, sigma_tot)
   USE kinds,                ONLY : dp
-  USE ions_base,            ONLY : nat, tau, atm, ityp, ntyp => nsp
+  USE ions_base,            ONLY : nat, tau, atm, ityp
   USE io_global,            ONLY : stdout
   USE symme,                ONLY : symtensor
   USE uspp,                 ONLY : okvan

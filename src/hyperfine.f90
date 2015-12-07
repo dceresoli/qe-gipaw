@@ -19,18 +19,13 @@ SUBROUTINE hyperfine
   USE io_global,              ONLY : stdout
   USE parameters,             ONLY : ntypx
   USE constants,              ONLY : pi, tpi, fpi, angstrom_au, rytoev, electronvolt_si, c_si
-  USE fft_base,               ONLY : dffts, dfftp
-  USE scf,                    ONLY : rho
+  USE fft_base,               ONLY : dffts
   USE symme,                  ONLY : symtensor
-  USE lsda_mod,               ONLY : current_spin, nspin
-  USE wvfct,                  ONLY : current_k
-  USE ions_base,              ONLY : nat, tau, atm, ityp
+  USE ions_base,              ONLY : nat, atm, ityp
   use constants,              ONLY : bohr_radius_si
-  USE mp_pools,               ONLY : intra_pool_comm
   USE mp,                     ONLY : mp_sum
   USE gipaw_module,           ONLY : hfi_nuclear_g_factor, hfi_output_unit, &
-                                     job, iverbosity, core_relax_method, &
-                                     hfi_via_reconstruction_only
+                                     iverbosity, core_relax_method
  
   !-- constants ----------------------------------------------------------
   IMPLICIT NONE
@@ -234,9 +229,9 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   USE mp_pools,               ONLY : intra_pool_comm
   USE constants,              ONLY : tpi, fpi
   USE gvecs,                  ONLY : nls, ngms
-  USE gvect,                  ONLY : g, gg, gstart
+  USE gvect,                  ONLY : g, gstart
   USE parameters,             ONLY : ntypx
-  USE ions_base,              ONLY : nat, tau, atm, ityp
+  USE ions_base,              ONLY : nat, tau
   USE fft_base,               ONLY : dffts
   USE fft_interfaces,         ONLY : fwfft
   USE gipaw_module,           ONLY : hfi_via_reconstruction_only
@@ -301,7 +296,7 @@ SUBROUTINE delta_thomson_radial_ft(delta_th)
   USE ions_base,             ONLY : ntyp => nsp, atm
   USE constants,             ONLY : pi, fpi
   USE cell_base,             ONLY : tpiba
-  USE gipaw_module,          ONLY : alpha, iverbosity
+  USE gipaw_module,          ONLY : alpha
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
   real(dp), intent(out) :: delta_th(ngm, ntyp)
@@ -361,27 +356,24 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   ! ... Calculate the GIPAW contribution to the Fermi-contact
   !  
   USE kinds,                 ONLY : dp
-  USE uspp,                  ONLY : ap
-  USE parameters,            ONLY : lmaxx, ntypx
+  USE parameters,            ONLY : ntypx
   USE atom,                  ONLY : rgrid
-  USE gvect,                 ONLY : g, ngm, gg
-  USE klist,                 ONLY : nks, xk, wk
+  USE gvect,                 ONLY : g, ngm
+  USE klist,                 ONLY : nks, xk
   USE cell_base,             ONLY : tpiba2
   USE ions_base,             ONLY : nat, ityp, ntyp => nsp, atm
-  USE wvfct,                 ONLY : npwx, nbnd, npw, igk, g2kin, ecutwfc
+  USE wvfct,                 ONLY : npw, igk, g2kin, ecutwfc
   USE wavefunctions_module,  ONLY : evc
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
   USE becmod,                ONLY : calbec
   USE constants,             ONLY : pi, fpi
-  USE mp_pools,              ONLY : intra_pool_comm, inter_pool_comm
+  USE mp_pools,              ONLY : inter_pool_comm
   USE mp,                    ONLY : mp_sum
   USE buffers,               ONLY : get_buffer
   USE io_files,              ONLY : nwordwfc, iunwfc
-  USE scf,                   ONLY : rho
-  USE lsda_mod,              ONLY : current_spin, nspin, isk
+  USE lsda_mod,              ONLY : current_spin, isk
   USE wvfct,                 ONLY : current_k, wg
-  USE io_global,             ONLY : stdout
-  USE gipaw_module,          ONLY : job, nbnd_occ, alpha, iverbosity, hfi_via_reconstruction_only
+  USE gipaw_module,          ONLY : nbnd_occ, alpha, hfi_via_reconstruction_only
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
@@ -391,9 +383,8 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   real(dp), allocatable :: work(:)
 !
   REAL ( dp ), ALLOCATABLE :: x_extrapolate(:), y_extrapolate(:)
-  REAL ( dp ) :: x
   INTEGER :: hfi_extrapolation_npoints = 10000
-  INTEGER :: norder_extrapolate = 3
+  !!INTEGER :: norder_extrapolate = 3
 !
   integer :: j, nt, ibnd, il1, il2, ik, nbs1, nbs2, kkpsi
   integer :: m1, m2, lm1, lm2, l1, l2, nrc
@@ -779,7 +770,7 @@ CONTAINS
     INTEGER, INTENT ( IN ) :: norders
 
     ! Local                                                                                                                                            
-    INTEGER :: n, i, j
+    INTEGER :: i, j
 
     REAL ( dp ) :: a(0:norders,0:norders), b(0:norders), c(0:norders)
 

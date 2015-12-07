@@ -16,28 +16,27 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   !
   USE kinds,                 ONLY : dp
   USE constants,             ONLY : pi, tpi, fpi, e2
-  USE cell_base,             ONLY : tpiba, tpiba2
+  USE cell_base,             ONLY : tpiba2
   USE parameters,            ONLY : ntypx
-  USE ions_base,             ONLY : ntyp => nsp, atm, nat, tau, ityp, zv
+  USE ions_base,             ONLY : ntyp => nsp, atm, nat, tau, ityp
   USE atom,                  ONLY : rgrid
   USE radial_grids,          ONLY : ndmx
-  USE paw_gipaw,             ONLY : paw_recon
   USE scf,                   ONLY : rho
-  USE gvect,                 ONLY : g, nl, gstart, ngm
+  USE gvect,                 ONLY : g, nl, ngm
   USE fft_base,              ONLY : dfftp
   USE fft_interfaces,        ONLY : fwfft
   USE lsda_mod,              ONLY : nspin, isk, current_spin
   USE buffers,               ONLY : get_buffer
   USE gipaw_module,          ONLY : iverbosity
-  USE klist,                 ONLY : nks, xk, wk
-  USE wvfct,                 ONLY : npwx, nbnd, npw, igk, g2kin, wg, current_k, ecutwfc
+  USE klist,                 ONLY : nks, xk
+  USE wvfct,                 ONLY : nbnd, npw, igk, g2kin, wg, current_k, ecutwfc
   USE becmod,                ONLY : calbec
   USE wavefunctions_module,  ONLY : evc
   USE io_global,             ONLY : stdout
   USE io_files,              ONLY : nwordwfc, iunwfc
   USE mp_pools,              ONLY : intra_pool_comm, inter_pool_comm
   USE mp,                    ONLY : mp_sum
-  USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
+  USE paw_gipaw,             ONLY : paw_recon, paw_vkb, paw_becp
   USE funct,                 ONLY : xc, xc_spin
   USE gipaw_module,          ONLY : nbrx
 

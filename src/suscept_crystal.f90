@@ -25,15 +25,14 @@ SUBROUTINE suscept_crystal
   USE kinds,                  ONLY : dp
   USE io_global,              ONLY : stdout, ionode
   USE io_files,               ONLY : nwordwfc, iunwfc
-  USE cell_base,              ONLY : at, bg, omega, tpiba, tpiba2
+  USE cell_base,              ONLY : omega, tpiba, tpiba2
   USE wavefunctions_module,   ONLY : evc
-  USE klist,                  ONLY : nks, nkstot, wk, xk, nelec
+  USE klist,                  ONLY : nks, wk, xk
   USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
-                                     current_k, ecutwfc, et
-  USE lsda_mod,               ONLY : current_spin, lsda, isk
-  USE becmod,                 ONLY : becp, calbec
+                                     current_k, ecutwfc
+  USE lsda_mod,               ONLY : current_spin, isk
+  USE becmod,                 ONLY : calbec
   USE symme,                  ONLY : symmatrix
-  USE parameters,             ONLY : lmaxx
   USE constants,              ONLY : pi
   USE gvect,                  ONLY : ngm, g
   USE fft_base,               ONLY : dfftp, dffts
@@ -42,15 +41,14 @@ SUBROUTINE suscept_crystal
   USE gipaw_module,           ONLY : tens_fmt, q_gipaw, iverbosity, alpha, evq, &
                                      avogadro, g_e, gprime, filcurr, filfield, filnics, &
                                      nbnd_occ, a0_to_cm, isolve, &
-                                     conv_threshold, job, restart_mode, etq
-  USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
+                                     conv_threshold, job, restart_mode
+  USE paw_gipaw,              ONLY : paw_vkb, paw_becp
   USE ions_base,              ONLY : nat
   USE buffers,                ONLY : get_buffer
   USE mp_pools,               ONLY : my_pool_id, me_pool, root_pool,  &
                                      inter_pool_comm, intra_pool_comm
   USE mp_images,              ONLY : my_image_id, inter_image_comm, nimage
   USE mp,                     ONLY : mp_sum
-  USE pwcom,                  ONLY : ef
 #ifdef __BANDS
   USE gipaw_module,           ONLY : ibnd_start, ibnd_end
   USE mp_bands,               ONLY : intra_bgrp_comm, inter_bgrp_comm

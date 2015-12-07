@@ -43,11 +43,10 @@ SUBROUTINE biot_savart(j_bare, B_ind, B_ind_r)
   ! ... because it's compatible with the symmetry operators
   USE kinds,                ONLY : DP
   USE constants,            ONLY : fpi
-  USE wvfct,                ONLY : nbnd, npwx, npw, igk
   USE cell_base,            ONLY : tpiba
   USE gipaw_module,         ONLY : alpha
   USE lsda_mod,             ONLY : nspin
-  USE gvect,                ONLY : ngm, gstart, g, gg, nl, nlm
+  USE gvect,                ONLY : ngm, gstart, g, gg, nl
   USE fft_base,             ONLY : dfftp
   USE fft_interfaces,       ONLY : fwfft, invfft 
   !-- parameters ---------------------------------------------------------
@@ -117,11 +116,10 @@ SUBROUTINE biot_savart_sic(j_bare, B_ind, B_ind_r)
   ! ... because it's compatible with the symmetry operators
   USE kinds,                ONLY : DP
   USE constants,            ONLY : fpi
-  USE wvfct,                ONLY : nbnd, npwx, npw, igk
   USE cell_base,            ONLY : tpiba
   USE gipaw_module,         ONLY : alpha
   USE lsda_mod,             ONLY : nspin
-  USE gvect,                ONLY : ngm, gstart, g, gg, nl, nlm
+  USE gvect,                ONLY : ngm, gstart, g, gg, nl
   USE fft_base,             ONLY : dfftp
   USE fft_interfaces,       ONLY : fwfft, invfft 
   !-- parameters ---------------------------------------------------------

@@ -19,7 +19,7 @@ subroutine ch_psi_all (n, h, ah, e, ik, m)
   !
   USE kinds,        ONLY : dp
   USE wvfct,        ONLY : npwx, nbnd
-  USE uspp,         ONLY : vkb, nkb
+  USE uspp,         ONLY : vkb
   USE becmod,       ONLY : becp, calbec
   USE gipaw_module, ONLY : nbnd_occ, alpha_pv, evq
   USE mp_pools,     ONLY : intra_pool_comm

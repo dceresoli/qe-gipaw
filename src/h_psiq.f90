@@ -26,7 +26,7 @@ subroutine h_psiq (lda, n, m, psi, hpsi, spsi)
   !
   USE kinds,                 ONLY : dp
   USE becmod,                ONLY : becp, calbec
-  USE uspp,                  ONLY : vkb, nkb
+  USE uspp,                  ONLY : vkb
 #ifdef __BANDS
   USE mp,                    ONLY : mp_sum
   USE lsda_mod,              ONLY : current_spin

@@ -25,9 +25,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   USE wvfct,                       ONLY : nbnd, et, npw, npwx, igk, g2kin
   USE gvect,                       ONLY : g
   USE uspp,                        ONLY : nkb, vkb
-  USE io_files,                    ONLY : nwordwfc, iunwfc
-  USE mp_pools,                    ONLY : intra_pool_comm, inter_pool_comm
-  USE mp_bands,                    ONLY : inter_bgrp_comm
+  USE mp_pools,                    ONLY : intra_pool_comm
   USE mp,                          ONLY : mp_sum
   USE ldaU,                        ONLY : lda_plus_u, wfcU
   USE io_files,                    ONLY : iunhub, nwordwfcU

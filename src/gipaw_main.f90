@@ -27,9 +27,8 @@ PROGRAM gipaw_main
   ! ... C. J. Pickard and F. Mauri, Phys. Rev. Lett. 88, 086403 (2002)
   ! ...
   USE kinds,           ONLY : DP
-  USE io_files,        ONLY : prefix, tmp_dir
+  USE io_files,        ONLY : tmp_dir
   USE io_global,       ONLY : stdout
-  USE klist,           ONLY : nks
   USE mp,              ONLY : mp_bcast
   USE cell_base,       ONLY : tpiba
   USE cellmd,          ONLY : cell_factor
@@ -37,16 +36,18 @@ PROGRAM gipaw_main
   USE control_flags,   ONLY : io_level, gamma_only, use_para_diag, twfcollect
   USE mp_global,       ONLY : mp_startup, nproc_pool_file
   USE mp_images,       ONLY : nimage, my_image_id
+#ifdef __BANDS
   USE mp_bands,        ONLY : inter_bgrp_comm, nbgrp
+#endif
+  USE mp_bands,        ONLY : nbgrp
   USE mp_pools,        ONLY : nproc_pool
   USE check_stop,      ONLY : check_stop_init
   USE environment,     ONLY : environment_start
   USE lsda_mod,        ONLY : nspin
   USE wvfct,           ONLY : nbnd
   USE uspp,            ONLY : okvan
-  USE wvfct,           ONLY : nbnd, npw 
+  USE wvfct,           ONLY : nbnd
   USE io_global,       ONLY : stdout
-  USE fft_base,        ONLY : dffts
   USE noncollin_module,ONLY : noncolin
   USE gipaw_version
   USE iotk_module  

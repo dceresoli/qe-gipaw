@@ -14,14 +14,14 @@ subroutine init_us_2_no_phase (npw_, igk_, q_, vkb_)
   !   structure factor, for all atoms, in reciprocal space
   !
   USE kinds,      ONLY : DP
-  USE ions_base,  ONLY : nat, ntyp => nsp, ityp, tau
+  USE ions_base,  ONLY : nat, ntyp => nsp, ityp
   USE cell_base,  ONLY : tpiba
   USE constants,  ONLY : tpi
   USE gvect,      ONLY : eigts1, eigts2, eigts3, mill, g
-  USE wvfct,      ONLY : npw, npwx, igk
+  USE wvfct,      ONLY : npwx
   USE us,         ONLY : nqx, dq, tab, tab_d2y, spline_ps
   USE splinelib
-  USE uspp,       ONLY : nkb, vkb, nhtol, nhtolm, indv
+  USE uspp,       ONLY : nkb, nhtol, nhtolm, indv
   USE uspp_param, ONLY : upf, lmaxkb, nhm, nh
   !
   implicit none

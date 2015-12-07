@@ -15,12 +15,10 @@ SUBROUTINE efg
   USE kinds,                  ONLY : dp 
   USE io_global,              ONLY : stdout
   USE constants,              ONLY : pi, tpi, fpi, angstrom_au, rytoev, electronvolt_si
-  USE scf,                    ONLY : rho
   USE fft_base,               ONLY : dffts
   USE ions_base,              ONLY : nat, atm, ityp, zv
   USE symme,                  ONLY : symtensor
   USE lsda_mod,               ONLY : nspin
-  USE mp_pools,               ONLY : intra_pool_comm
   USE mp,                     ONLY : mp_sum
   USE gipaw_module,           ONLY : q_efg, iverbosity
 
@@ -157,9 +155,8 @@ SUBROUTINE get_smooth_density(rho)
   USE kinds,                  ONLY : dp 
   USE mp,                     ONLY : mp_sum
   USE mp_pools,               ONLY : inter_pool_comm
-  USE ions_base,              ONLY : nat, tau
   USE lsda_mod,               ONLY : current_spin, isk, nspin
-  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
+  USE wvfct,                  ONLY : nbnd, npw, igk, wg, g2kin, &
                                      current_k, ecutwfc
   USE klist,                  ONLY : nks, xk
   USE gvect,                  ONLY : ngm, g
@@ -309,24 +306,22 @@ SUBROUTINE efg_correction(efg_corr_tens)
   USE io_files,              ONLY : nwordwfc, iunwfc
   USE kinds,                 ONLY : dp
   USE uspp,                  ONLY : ap
-  USE parameters,            ONLY : lmaxx, ntypx
+  USE parameters,            ONLY : ntypx
   USE atom,                  ONLY : rgrid
   USE gvect,                 ONLY : g, ngm
-  USE klist,                 ONLY : nks, xk, wk
+  USE klist,                 ONLY : nks, xk
   USE cell_base,             ONLY : tpiba2
   USE ions_base,             ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                 ONLY : npwx, nbnd, npw, igk, g2kin, ecutwfc, &
+  USE wvfct,                 ONLY : npw, igk, g2kin, ecutwfc, &
                                     current_k, wg
-  USE lsda_mod,              ONLY : current_spin, nspin, isk
+  USE lsda_mod,              ONLY : current_spin, isk
   USE wavefunctions_module,  ONLY : evc
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
   USE becmod,                ONLY : calbec
   USE constants,             ONLY : pi, fpi
   USE buffers
-  USE scf,                   ONLY : rho
-  USE io_global,             ONLY : stdout
-  USE gipaw_module,          ONLY : job, nbnd_occ, radial_integral_diamagnetic
-  USE mp_pools,              ONLY : intra_pool_comm, inter_pool_comm
+  USE gipaw_module,          ONLY : job, nbnd_occ
+  USE mp_pools,              ONLY : inter_pool_comm
   USE mp,                    ONLY : mp_sum
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
@@ -340,7 +335,7 @@ SUBROUTINE efg_correction(efg_corr_tens)
   real(dp), allocatable :: at_efg(:,:,:), work(:)
   complex(dp), allocatable :: efg_corr(:,:)
   
-  allocate( efg_corr(lmaxx**2,nat) )
+  allocate( efg_corr(9,nat) )
   efg_corr = 0.0_dp
 
   allocate ( at_efg(paw_nkb,paw_nkb,ntypx) ) 

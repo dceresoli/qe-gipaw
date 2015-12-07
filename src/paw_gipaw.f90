@@ -226,7 +226,6 @@ CONTAINS
     !
     
     use upf_module, only: scan_begin, scan_end
-    USE ions_base,          ONLY : ntyp => nsp
     use atom, only: msh, rgrid
     use kinds, only: DP
     use parameters, only : ntypx

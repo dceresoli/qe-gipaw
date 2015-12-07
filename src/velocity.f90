@@ -67,7 +67,6 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   ! ...   (1/i)[r,S] => dS_{k+q,k}/dk
   !-----------------------------------------------------------------------
   USE kinds,                ONLY : DP
-  USE ions_base,            ONLY : nat, ityp, ntyp => nsp
   USE klist,                ONLY : xk
   USE wvfct,                ONLY : nbnd, npwx, npw, igk  
   USE becmod,               ONLY : bec_type, becp, calbec, &
@@ -195,8 +194,8 @@ SUBROUTINE apply_vel(psi, vel_psi, ik, ipol, q)
   ! ... Apply the velocity operator
   !-----------------------------------------------------------------------
   USE kinds,                ONLY : DP
-  USE wvfct,                ONLY : nbnd, npwx, npw, igk, et 
-  USE uspp,                 ONLY : nkb, vkb, okvan
+  USE wvfct,                ONLY : nbnd, npwx, et 
+  USE uspp,                 ONLY : okvan
   USE gipaw_module,         ONLY : nbnd_occ
 #ifdef __BANDS
   USE gipaw_module,         ONLY : ibnd_start, ibnd_end

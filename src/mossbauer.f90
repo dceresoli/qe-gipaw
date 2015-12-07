@@ -15,11 +15,9 @@ SUBROUTINE mossbauer
   USE kinds,                  ONLY : dp 
   USE io_global,              ONLY : stdout
   USE parameters,             ONLY : ntypx
-  USE fft_base,               ONLY : dffts, dfftp
-  USE scf,                    ONLY : rho
-  USE ions_base,              ONLY : nat, tau, atm, ityp
+  USE fft_base,               ONLY : dffts
+  USE ions_base,              ONLY : nat, atm, ityp
   USE lsda_mod,               ONLY : nspin
-  USE gipaw_module,           ONLY : job
  
   !-- local variables ----------------------------------------------------
   implicit none
@@ -76,9 +74,9 @@ SUBROUTINE moss_bare_el(rho_s, moss_bare)
   USE mp_pools,               ONLY : intra_pool_comm
   USE constants,              ONLY : tpi, fpi
   USE gvecs,                  ONLY : nls, ngms
-  USE gvect,                  ONLY : g, gg, gstart
+  USE gvect,                  ONLY : g, gstart
   USE parameters,             ONLY : ntypx
-  USE ions_base,              ONLY : nat, tau, atm, ityp
+  USE ions_base,              ONLY : nat, tau
   USE fft_base,               ONLY : dffts
   USE fft_interfaces,         ONLY : fwfft
 
@@ -121,27 +119,24 @@ SUBROUTINE moss_gipaw_correction(moss_gipaw)
   ! ... For the time being, neglect relativistic and orbital contributions.
   !  
   USE kinds,                 ONLY : dp
-  USE uspp,                  ONLY : ap
-  USE parameters,            ONLY : lmaxx, ntypx
+  USE parameters,            ONLY : ntypx
   USE atom,                  ONLY : rgrid
-  USE gvect,                 ONLY : g, ngm, gg
-  USE klist,                 ONLY : nks, xk, wk
+  USE gvect,                 ONLY : g, ngm
+  USE klist,                 ONLY : nks, xk
   USE cell_base,             ONLY : tpiba2
-  USE ions_base,             ONLY : nat, ityp, ntyp => nsp, atm
-  USE wvfct,                 ONLY : npwx, nbnd, npw, igk, g2kin, ecutwfc
+  USE ions_base,             ONLY : nat, ityp, ntyp => nsp
+  USE wvfct,                 ONLY : npw, igk, g2kin, ecutwfc
   USE wavefunctions_module,  ONLY : evc
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
   USE becmod,                ONLY : calbec
   USE constants,             ONLY : pi, fpi
-  USE mp_pools,              ONLY : intra_pool_comm, inter_pool_comm
+  USE mp_pools,              ONLY : inter_pool_comm
   USE mp,                    ONLY : mp_sum
   USE buffers,               ONLY : get_buffer
   USE io_files,              ONLY : nwordwfc, iunwfc
-  USE scf,                   ONLY : rho
-  USE lsda_mod,              ONLY : current_spin, nspin, isk
+  USE lsda_mod,              ONLY : current_spin, isk
   USE wvfct,                 ONLY : current_k, wg
-  USE io_global,             ONLY : stdout
-  USE gipaw_module,          ONLY : job, nbnd_occ, alpha, iverbosity
+  USE gipaw_module,          ONLY : nbnd_occ, alpha
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
   real(dp), intent(out) :: moss_gipaw(nat)

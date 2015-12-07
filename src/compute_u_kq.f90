@@ -17,24 +17,21 @@ SUBROUTINE compute_u_kq(ik, q)
   USE io_global,            ONLY : stdout
   USE io_files,             ONLY : nwordwfcU, iunhub, iunwfc, nwordwfc
   USE mp,                   ONLY : mp_sum
-  USE mp_pools,             ONLY : inter_pool_comm, intra_pool_comm, me_pool
+  USE mp_pools,             ONLY : inter_pool_comm, me_pool
 #ifdef __BANDS
   USE mp_bands,             ONLY : me_bgrp, inter_bgrp_comm
 #endif
   USE klist,                ONLY : nkstot, nks, xk, ngk
   USE uspp,                 ONLY : vkb, nkb
-  USE wvfct,                ONLY : et, nbnd, npwx, igk, npw, g2kin, &
+  USE wvfct,                ONLY : et, nbnd, igk, npw, g2kin, &
                                    current_k, nbndx, btype, ecutwfc
-  USE control_flags,        ONLY : ethr, io_level, lscf, istep, max_cg_iter
+  USE control_flags,        ONLY : ethr, lscf, istep, max_cg_iter
   USE control_flags,        ONLY : cntrl_isolve => isolve
   USE ldaU,                 ONLY : lda_plus_u, wfcU
   USE lsda_mod,             ONLY : current_spin, lsda, isk
-  USE noncollin_module,     ONLY : noncolin, npol
   USE wavefunctions_module, ONLY : evc  
-  USE gvect,                ONLY : g, ngm, ngl
-  USE cell_base,            ONLY : at, bg, omega, tpiba, tpiba2
-  USE bp,                   ONLY : lelfield
-  USE becmod,               ONLY : becp
+  USE gvect,                ONLY : g, ngm
+  USE cell_base,            ONLY : tpiba2
   USE random_numbers,       ONLY : randy
   USE buffers
   USE gipaw_module

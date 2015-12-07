@@ -13,20 +13,16 @@ SUBROUTINE gipaw_setup
   ! ... GIPAW setup
   !
   USE kinds,         ONLY : dp
-  USE io_global,     ONLY : stdout, ionode
-  USE ions_base,     ONLY : tau, nat, ntyp => nsp, atm
-  USE atom,          ONLY : rgrid
-  USE wvfct,         ONLY : nbnd, et, wg, npwx
-  USE lsda_mod,      ONLY : nspin, lsda
-  USE scf,           ONLY : v, vrs, vltot, rho, rho_core, kedtau
-  USE gvect,         ONLY : ngm
+  USE io_global,     ONLY : stdout
+  USE wvfct,         ONLY : nbnd, et, wg
+  USE lsda_mod,      ONLY : nspin
+  USE scf,           ONLY : v, vrs, vltot, kedtau
   USE fft_base,      ONLY : dfftp
   USE gvecs,         ONLY : doublegrid
-  USE klist,         ONLY : xk, degauss, ngauss, nks, nelec, lgauss, wk, two_fermi_energies
+  USE klist,         ONLY : degauss, ngauss, nks, lgauss, wk, two_fermi_energies
   USE ktetra,        ONLY : ltetra
   USE noncollin_module,  ONLY : noncolin
   USE constants,     ONLY : degspin, pi
-  USE symm_base,     ONLY : nsym, s
   USE mp_pools,      ONLY : inter_pool_comm 
   USE mp,            ONLY : mp_max, mp_min 
   USE dfunct,        ONLY : newd
@@ -35,7 +31,7 @@ SUBROUTINE gipaw_setup
   USE gipaw_module
 
   implicit none
-  integer :: ik, ibnd, ipol
+  integer :: ik, ibnd
   real(dp) :: emin, emax, xmax, small, fac, target
     
   call start_clock ('gipaw_setup')
@@ -170,12 +166,11 @@ SUBROUTINE gipaw_setup_integrals
   !
   USE gipaw_module
   USE kinds,         ONLY : dp
-  USE io_global,     ONLY : stdout, ionode
-  USE ions_base,     ONLY : tau, nat, ntyp => nsp, atm
+  USE ions_base,     ONLY : ntyp => nsp, atm
   USE atom,          ONLY : rgrid
   USE paw_gipaw,     ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp, set_paw_upf
   USE uspp_param,    ONLY : upf
-  USE mp_pools,      ONLY : inter_pool_comm 
+  USE io_global,     ONLY : stdout
   USE wvfct,         ONLY : nbnd, npwx
 
   implicit none
@@ -381,7 +376,9 @@ SUBROUTINE gipaw_setup_l
   USE gipaw_module
   USE kinds,         ONLY : dp
   USE parameters,    ONLY : lmaxx
+#ifdef DEBUG_CUBIC_HARMONIC
   USE io_global,     ONLY : stdout, ionode
+#endif
 
   implicit none
   integer :: lm, l, m, lm1, lm2, m1, m2, abs_m1, abs_m2
@@ -389,18 +386,18 @@ SUBROUTINE gipaw_setup_l
   real(dp) :: alpha_lm, beta_lm
   integer, allocatable :: lm2l(:),lm2m (:)
 #ifdef DEBUG_CUBIC_HARMONIC
-  real(dp) :: mysum1(3,lmaxx)
-  real(dp) :: mysum2(3,1:lmaxx)
+  real(dp) :: mysum1(3,lmaxx+1)
+  real(dp) :: mysum2(3,lmaxx+1)
 #endif
 
   ! L_x, L_y and L_z
-  allocate ( lx(lmaxx**2,lmaxx**2) )
-  allocate ( ly(lmaxx**2,lmaxx**2) )
-  allocate ( lz(lmaxx**2,lmaxx**2) )
-  allocate ( lm2l(lmaxx**2), lm2m(lmaxx**2) )
+  allocate ( lx((lmaxx+1)**2,(lmaxx+1)**2) )
+  allocate ( ly((lmaxx+1)**2,(lmaxx+1)**2) )
+  allocate ( lz((lmaxx+1)**2,(lmaxx+1)**2) )
+  allocate ( lm2l((lmaxx+1)**2), lm2m((lmaxx+1)**2) )
     
   lm = 0
-  do l = 0, lmaxx - 1
+  do l = 0, lmaxx
     do m = 0, l
       lm = lm + 1
       lm2l ( lm ) = l
@@ -416,8 +413,8 @@ SUBROUTINE gipaw_setup_l
   lx = 0.d0
   ly = 0.d0
   lz = 0.d0
-  do lm2 = 1, lmaxx**2
-    do lm1 = 1, lmaxx**2
+  do lm2 = 1, (lmaxx+1)**2
+    do lm1 = 1, (lmaxx+1)**2
       if ( lm2l ( lm1 ) /= lm2l ( lm2 ) ) cycle
           
       l = lm2l ( lm1 )
@@ -475,8 +472,8 @@ SUBROUTINE gipaw_setup_l
   ! checks
   mysum1 = 0
   mysum2 = 0
-  do lm2 = 1, lmaxx**2
-    do lm1 = 1, lmaxx**2
+  do lm2 = 1, (lmaxx+1)**2
+    do lm1 = 1, (lmaxx+1)**2
       if ( lm2l ( lm1 ) /= lm2l ( lm2 ) ) cycle
       l = lm2l ( lm2 )
       mysum1(1,l+1) = mysum1(1,l+1) + lx(lm1,lm2)

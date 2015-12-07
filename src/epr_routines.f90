@@ -19,10 +19,10 @@
 SUBROUTINE rmc(s_weight, delta_g_rmc, delta_g_rmc_gipaw)
   USE kinds,                  ONLY : dp
   USE ions_base,              ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, current_k
+  USE wvfct,                  ONLY : nbnd, npw, wg, g2kin, current_k
   USE wavefunctions_module,   ONLY : evc
   USE becmod,                 ONLY : calbec  
-  USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
+  USE paw_gipaw,              ONLY : paw_becp, paw_recon
   USE gipaw_module,           ONLY : nbnd_occ, radial_integral_rmc
 
   !-- parameters --------------------------------------------------------
@@ -88,9 +88,9 @@ SUBROUTINE paramagnetic_correction_so (paramagnetic_tensor, paramagnetic_tensor_
                                        g_vel_evc, u_svel_evc, ipol)
   USE kinds,                  ONLY : dp
   USE ions_base,              ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, current_k
+  USE wvfct,                  ONLY : nbnd, npwx, npw, wg, current_k
   USE becmod,                 ONLY : calbec  
-  USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
+  USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_recon
   USE gipaw_module,           ONLY : lx, ly, lz, paw_becp2, paw_becp3, alpha, &
                                      radial_integral_paramagnetic_so
   USE uspp,                   ONLY : okvan
@@ -175,14 +175,12 @@ END SUBROUTINE paramagnetic_correction_so
 SUBROUTINE diamagnetic_correction_so (diamagnetic_tensor)
   USE kinds,                  ONLY : dp
   USE ions_base,              ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, current_k
+  USE wvfct,                  ONLY : nbnd, wg, current_k
   USE becmod,                 ONLY : calbec  
   USE constants,              ONLY : pi
-  USE parameters,             ONLY : lmaxx
   USE uspp,                   ONLY : ap
-  USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
-  USE gipaw_module,           ONLY : lx, ly, lz, paw_becp2, alpha, &
-                                     radial_integral_diamagnetic_so
+  USE paw_gipaw,              ONLY : paw_becp, paw_recon
+  USE gipaw_module,           ONLY : alpha, radial_integral_diamagnetic_so
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
   real(dp), intent(inout) :: diamagnetic_tensor(3,3)
@@ -190,7 +188,7 @@ SUBROUTINE diamagnetic_correction_so (diamagnetic_tensor)
   !-- local variables ----------------------------------------------------
   integer :: l1, m1, lm1, l2, m2, lm2, ih, ikb, nbs1, jh, jkb, nbs2
   integer :: nt, ibnd, na, lm, ijkb0
-  complex(dp) :: dia_corr(lmaxx**2)
+  complex(dp) :: dia_corr(9)
   complex(dp) :: bec_product
   
   dia_corr = 0.0_dp
@@ -279,19 +277,16 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
   USE wavefunctions_module,   ONLY : evc
   USE becmod,                 ONLY : calbec, allocate_bec_type, deallocate_bec_type
   USE constants,              ONLY : pi
-  USE parameters,             ONLY : lmaxx
   USE lsda_mod,               ONLY : nspin
-  USE uspp,                   ONLY : ap
-  USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_nkb, paw_recon
+  USE paw_gipaw,              ONLY : paw_vkb, paw_nkb, paw_becp, paw_recon
   USE gipaw_module,           ONLY : lx, ly, lz, radial_integral_paramagnetic_so, &
-                                     q_gipaw, alpha, nbnd_occ, iverbosity
+                                     q_gipaw, alpha
   USE fft_base,               ONLY : dffts
   USE uspp,                   ONLY : qq, vkb, nkb 
   USE uspp_param,             ONLY : nh
-  USE cell_base,              ONLY : tpiba, omega, tpiba2
+  USE cell_base,              ONLY : tpiba, tpiba2
   USE klist,                  ONLY : xk
   USE gvect,                  ONLY : g, ngm
-  USE io_global,              ONLY : stdout, ionode
 
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
@@ -455,17 +450,11 @@ END SUBROUTINE paramagnetic_correction_aug_so
 !====================================================================
 SUBROUTINE compute_delta_g_so (j_bare, s_maj, s_min, delta_g_so)
   USE kinds,                  ONLY : dp
-  USE ions_base,              ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
-                                     current_k, ecutwfc
-  USE lsda_mod,               ONLY : current_spin
   USE constants,              ONLY : pi
-  USE cell_base,              ONLY : tpiba, omega, tpiba2
-  USE klist,                  ONLY : xk
+  USE cell_base,              ONLY : omega
   USE gvect,                  ONLY : g, ngm, nl
   USE fft_base,               ONLY : dfftp
-  USE io_global,              ONLY : stdout, ionode
-  USE scf,                    ONLY : vltot, v, rho
+  USE scf,                    ONLY : vltot, v
   USE lsda_mod,               ONLY : nspin
   USE gipaw_module,           ONLY : ry2ha, alpha, gprime
   USE mp_pools,               ONLY : intra_pool_comm
@@ -524,16 +513,10 @@ END SUBROUTINE compute_delta_g_so
 !====================================================================
 SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delta_g_soo2)
   USE kinds,                  ONLY : dp
-  USE ions_base,              ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
-                                     current_k, ecutwfc
-  USE lsda_mod,               ONLY : current_spin
   USE constants,              ONLY : pi
-  USE cell_base,              ONLY : tpiba, omega, tpiba2
-  USE klist,                  ONLY : xk
+  USE cell_base,              ONLY : omega
   USE gvect,                  ONLY : g, ngm, nl
-  USE scf,                    ONLY : vltot, v, rho
-  USE io_global,              ONLY : stdout, ionode
+  USE scf,                    ONLY : rho
   USE lsda_mod,               ONLY : nspin
   USE gipaw_module,           ONLY : ry2ha, alpha, gprime
   USE fft_base,               ONLY : dfftp
@@ -619,7 +602,6 @@ SUBROUTINE print_g_tensor(delta_g_rmc, delta_g_rmc_gipaw, delta_g_so, &
                           delta_g_so_para_us, delta_g_so_para_aug, &
                           delta_g_so_dia)
   USE kinds,                ONLY : dp
-  USE ions_base,            ONLY : nat, tau, atm, ityp, ntyp => nsp
   USE io_global,            ONLY : stdout
   USE symme,                ONLY : symtensor
   USE uspp,                 ONLY : okvan
