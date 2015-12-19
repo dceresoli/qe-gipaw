@@ -59,7 +59,7 @@ SUBROUTINE gipaw_readin()
   nmr_macroscopic_shape(3,3) = 2.d0 / 3.d0
   spline_ps = .true.
   isolve = -1
-  diagonalization = 'david'
+  diagonalization = 'cg'
   core_relax_method = 1
   hfi_via_reconstruction_only = .false.
 
