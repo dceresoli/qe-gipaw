@@ -1,0 +1,51 @@
+pw.x <H2O-scf.in >H2O-scf.out-vac
+gipaw.x <H2O-nmr.in >H2O-scf.nmr-vac
+
+pw.x -environ <H2O-scf.in >H2O-scf.out-wat
+gipaw.x -environ <H2O-nmr.in >H2O-scf.nmr-wat
+
+
+Gaussian no PCM
+===============
+   Isotropic =   -13.9735   Anisotropy=     0.3501
+      1  O    Isotropic =   307.8212   Anisotropy =    57.0201
+      2  H    Isotropic =    30.2719   Anisotropy =    18.1417
+      3  H    Isotropic =    30.2701   Anisotropy =    18.1395
+   Isotropic =   -13.6484   Anisotropy=     0.2483
+      1  O    Isotropic =   306.2614   Anisotropy =    52.1452
+      2  H    Isotropic =    30.0682   Anisotropy =    18.0839
+      3  H    Isotropic =    30.0664   Anisotropy =    18.0818
+   Isotropic =   -13.6493   Anisotropy=     0.2485
+      1  O    Isotropic =   306.2683   Anisotropy =    52.1559
+      2  H    Isotropic =    30.0682   Anisotropy =    18.0847
+      3  H    Isotropic =    30.0664   Anisotropy =    18.0826
+
+
+Gaussian + PCM
+==============
+   Isotropic =   -14.0748   Anisotropy=     0.2323
+      1  O    Isotropic =   325.6081   Anisotropy =    60.1524     +17.70 ppm
+      2  H    Isotropic =    29.0554   Anisotropy =    20.0075      -1.22 ppm
+      3  H    Isotropic =    29.0530   Anisotropy =    20.0053
+   Isotropic =   -13.7553   Anisotropy=     0.1243
+      1  O    Isotropic =   324.2402   Anisotropy =    55.9336
+      2  H    Isotropic =    28.8985   Anisotropy =    19.9100
+      3  H    Isotropic =    28.8960   Anisotropy =    19.9079
+   Isotropic =   -13.7561   Anisotropy=     0.1245
+      1  O    Isotropic =   324.2459   Anisotropy =    55.9431
+      2  H    Isotropic =    28.8984   Anisotropy =    19.9107
+      3  H    Isotropic =    28.8960   Anisotropy =    19.9087
+
+GIPAW no Environ
+================
+H2O_nmr.out-vac:     Atom  1  O   pos: (  0.589500  0.602500  0.575000)  Total sigma:         319.64
+H2O_nmr.out-vac:     Atom  2  H   pos: (  0.672500  0.561000  0.575000)  Total sigma:          30.33
+H2O_nmr.out-vac:     Atom  3  H   pos: (  0.528000  0.533000  0.575000)  Total sigma:          30.32
+
+
+GIPAW + Environ
+===============
+H2O_nmr.out-wat:     Atom  1  O   pos: (  0.589500  0.602500  0.575000)  Total sigma:         342.53  +22.89 ppm
+H2O_nmr.out-wat:     Atom  2  H   pos: (  0.672500  0.561000  0.575000)  Total sigma:          28.55   -1.78 ppm
+H2O_nmr.out-wat:     Atom  3  H   pos: (  0.528000  0.533000  0.575000)  Total sigma:          28.55
+

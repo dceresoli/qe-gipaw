@@ -210,7 +210,9 @@ SUBROUTINE gipaw_summary
 
   write(stdout,*)
 
-  FLUSH(stdout)
+  call plugin_summary
+
+  flush(stdout)
 
 END SUBROUTINE gipaw_summary
   
@@ -319,6 +321,11 @@ SUBROUTINE print_clock_gipaw
   call print_clock( 'ALLTOALL' )
   write(stdout,*)
 #endif
+
+  write(stdout,*) '    Plugins'
+  call plugin_clock()
+  write(stdout,*)
+
   call print_clock ('GIPAW') 
 
 END SUBROUTINE print_clock_gipaw

@@ -1,0 +1,370 @@
+
+     Program QE v.5.3.0 (svn rev. 11994M) starts on 15Jan2016 at 17:50:29 
+
+     This program is part of the open-source Quantum ESPRESSO suite
+     for quantum simulation of materials; please cite
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 21 395502 (2009);
+          URL http://www.quantum-espresso.org", 
+     in publications or presentations arising from this work. More details at
+     http://www.quantum-espresso.org/quote
+
+     Parallel version (MPI), running on     4 processors
+     R & G space division:  proc/nbgrp/npool/nimage =       4
+
+     ***** This is GIPAW svn revision 405          *****
+
+     Parallelizing q-star over 1 images
+
+     Reading data from directory:
+     /tmp/ceresoli/h2o.save
+
+   Info: using nr1, nr2, nr3 values from input
+
+   Info: using nr1, nr2, nr3 values from input
+
+     IMPORTANT: XC functional enforced from input :
+     Exchange-correlation      =  SLA  PW   PBX  PBC ( 1  4  3  4 0 0)
+     Any further DFT definition will be discarded
+     Please, verify this is what you really want
+
+
+     Parallelization info
+     --------------------
+     sticks:   dense  smooth     PW     G-vecs:    dense   smooth      PW
+     Min        3186    1274    320               270187    68348    8566
+     Max        3187    1275    321               270188    68361    8567
+     Sum       12745    5097   1281              1080751   273425   34265
+
+
+     negative rho (up, down):  3.170E-04 0.000E+00
+
+     Subspace diagonalization in iterative solution of the eigenvalue problem:
+     a serial algorithm will be used
+
+     GIPAW projectors -----------------------------------------------
+     atom=  H    l=0  rc=    0.8000  rs=    0.5333
+     atom=  H    l=0  rc=    0.8000  rs=    0.5333
+     projs nearly linearly dependent: l=0  n1,n2= 1, 2  s=  0.99987400
+
+     atom=  O    l=0  rc=    1.3000  rs=    0.8667
+     atom=  O    l=0  rc=    1.3000  rs=    0.8667
+     atom=  O    l=1  rc=    1.3000  rs=    0.8667
+     atom=  O    l=1  rc=    1.3000  rs=    0.8667
+     projs nearly linearly dependent: l=1  n1,n2= 1, 2  s=  0.99505596
+     -----------------------------------------------------------------
+
+     GIPAW integrals: -------------------------------------------
+     Atom  i/j   nmr_para   nmr_dia   epr_rmc  epr_para   epr_dia
+       H   1 1   0.46E+02  0.15E+00  0.23E+00  0.30E+03  0.16E+01
+       H   2 1   0.48E+02  0.15E+00  0.25E+00  0.31E+03  0.17E+01
+       H   2 2   0.50E+02  0.16E+00  0.27E+00  0.32E+03  0.17E+01
+       O   1 1   0.81E+03 -0.32E+00  0.65E+01  0.14E+05  0.71E+01
+       O   2 1   0.90E+03 -0.37E+00  0.70E+01  0.16E+05  0.81E+01
+       O   2 2   0.10E+04 -0.44E+00  0.76E+01  0.17E+05  0.92E+01
+       O   3 3   0.10E+02  0.89E+00  0.59E+01  0.17E+03  0.14E+02
+       O   4 3   0.12E+02  0.10E+01  0.73E+01  0.21E+03  0.16E+02
+       O   4 4   0.15E+02  0.12E+01  0.89E+01  0.24E+03  0.19E+02
+     ------------------------------------------------------------
+
+     alpha_pv=     35.9355 eV
+
+     Number of occupied bands for each k-point:
+     k-point:     1    nbnd_occ=   4
+
+
+     GIPAW job: nmr                                                                             
+     NMR macroscopic correction: no
+
+     Largest allocated arrays     est. size (Mb)     dimensions
+        KS wavefunctions at k           0.52 Mb     (    8567,    4)
+        KS wavefunctions at k+q         0.52 Mb     (    8567,    4)
+        First-order wavefunctions       5.23 Mb     (    8567,    4, 10)
+        First-order wavefunct (US)      3.14 Mb     (    8567,    4,  6)
+        Charge/spin density             1.05 Mb     (  137781,    1)
+        Induced current                 9.46 Mb     (  137781,    3,3,1)
+        Induced magnetic field          9.46 Mb     (  137781,    3,3,1)
+        NL pseudopotentials             1.57 Mb     (    8567,   12)
+        GIPAW NL terms                  1.57 Mb     (    8567,   12)
+
+     Computing the magnetic susceptibility     isolve=0    ethr=  0.1000E-13
+     Starting from scratch
+     k-point #    1 of     1      pool #  1    cpu time:       2.5
+     compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
+     ethr =  1.00E-14,  avg # of iterations =  5.0
+     eigenvalues at k:
+ -25.0689 -12.8905  -9.1166  -7.1012
+     eigenvalues at k+q:
+ -25.0690 -12.8906  -9.1166  -7.1012
+     cgsolve_all iterations  22    anorm=    0.55E-07
+PARA_AUG  1    -144.3645695        -0.6169971        -0.0000821
+     cgsolve_all iterations  22    anorm=    0.49E-07
+PARA_AUG  2      -0.6169469      -141.2824607         0.0008212
+     cgsolve_all iterations  18    anorm=    0.58E-07
+PARA_AUG  3      -0.0000817         0.0008182      -121.0833882
+     cgsolve_all iterations  21    anorm=    0.44E-07
+     cgsolve_all iterations  21    anorm=    0.59E-07
+     cgsolve_all iterations  24    anorm=    0.55E-07
+     compute_u_kq: q = (    0.0318,    0.0000,    0.0000)
+     ethr =  1.00E-14,  avg # of iterations = 11.0
+     eigenvalues at k:
+ -25.0689 -12.8905  -9.1166  -7.1012
+     eigenvalues at k+q:
+ -25.0690 -12.8906  -9.1166  -7.1012
+     cgsolve_all iterations  21    anorm=    0.46E-07
+     cgsolve_all iterations  21    anorm=    0.59E-07
+     cgsolve_all iterations  24    anorm=    0.57E-07
+     compute_u_kq: q = (   -0.0318,    0.0000,    0.0000)
+     ethr =  1.00E-14,  avg # of iterations = 11.0
+     eigenvalues at k:
+ -25.0689 -12.8905  -9.1166  -7.1012
+     eigenvalues at k+q:
+ -25.0690 -12.8906  -9.1166  -7.1012
+     cgsolve_all iterations  21    anorm=    0.46E-07
+     cgsolve_all iterations  21    anorm=    0.59E-07
+     cgsolve_all iterations  24    anorm=    0.57E-07
+     compute_u_kq: q = (    0.0000,    0.0318,    0.0000)
+     ethr =  1.00E-14,  avg # of iterations = 12.0
+     eigenvalues at k:
+ -25.0689 -12.8905  -9.1166  -7.1012
+     eigenvalues at k+q:
+ -25.0690 -12.8906  -9.1166  -7.1012
+     cgsolve_all iterations  21    anorm=    0.45E-07
+     cgsolve_all iterations  21    anorm=    0.60E-07
+     cgsolve_all iterations  24    anorm=    0.55E-07
+     compute_u_kq: q = (    0.0000,   -0.0318,    0.0000)
+     ethr =  1.00E-14,  avg # of iterations = 12.0
+     eigenvalues at k:
+ -25.0689 -12.8905  -9.1166  -7.1012
+     eigenvalues at k+q:
+ -25.0690 -12.8906  -9.1166  -7.1012
+     cgsolve_all iterations  21    anorm=    0.45E-07
+     cgsolve_all iterations  21    anorm=    0.60E-07
+     cgsolve_all iterations  24    anorm=    0.55E-07
+     compute_u_kq: q = (    0.0000,    0.0000,    0.0318)
+     ethr =  1.00E-14,  avg # of iterations = 12.0
+     eigenvalues at k:
+ -25.0689 -12.8905  -9.1166  -7.1012
+     eigenvalues at k+q:
+ -25.0690 -12.8906  -9.1166  -7.1012
+     cgsolve_all iterations  21    anorm=    0.46E-07
+     cgsolve_all iterations  21    anorm=    0.65E-07
+     cgsolve_all iterations  24    anorm=    0.56E-07
+     compute_u_kq: q = (    0.0000,    0.0000,   -0.0318)
+     ethr =  1.00E-14,  avg # of iterations = 12.0
+     eigenvalues at k:
+ -25.0689 -12.8905  -9.1166  -7.1012
+     eigenvalues at k+q:
+ -25.0690 -12.8906  -9.1166  -7.1012
+     cgsolve_all iterations  21    anorm=    0.46E-07
+     cgsolve_all iterations  21    anorm=    0.65E-07
+     cgsolve_all iterations  24    anorm=    0.56E-07
+     End of magnetic susceptibility calculation
+
+     f-sum rule (1st term):
+            -7.5137         -0.0059         -0.0000
+            -0.0059         -7.4844          0.0000
+            -0.0000          0.0000         -7.4463
+
+     f-sum rule (2nd term):
+            -0.1737          0.0058          0.0000
+             0.0058         -0.2026         -0.0000
+             0.0000         -0.0000         -0.2396
+
+     f-sum rule (should be    -7.6979):
+            -7.6874         -0.0001          0.0000
+            -0.0001         -7.6870         -0.0000
+             0.0000         -0.0000         -7.6859
+
+     chi_bare pGv (HH) in paratec units:
+        -2.490578      0.028852     -0.000103
+         0.028893     -2.523271     -0.000428
+        -0.000182     -0.000458     -2.572556
+
+        -2.490578      0.028852     -0.000103
+         0.028893     -2.523271     -0.000428
+        -0.000182     -0.000458     -2.572556
+
+     chi_bare vGv (VV) in paratec units:
+        -2.793751      0.014266     -0.000070
+         0.014284     -2.859095     -0.000246
+        -0.000106     -0.000293     -2.848678
+
+        -2.793751      0.014266     -0.000070
+         0.014284     -2.859095     -0.000246
+        -0.000106     -0.000293     -2.848678
+
+     chi_bare pGv (HH) in 10^{-6} cm^3/mol:
+           -11.8355          0.1371         -0.0005
+             0.1373        -11.9908         -0.0020
+            -0.0009         -0.0022        -12.2250
+
+     chi_bare vGv (VV) in 10^{-6} cm^3/mol:
+           -13.2762          0.0678         -0.0003
+             0.0679        -13.5867         -0.0012
+            -0.0005         -0.0014        -13.5372
+
+     Contributions to the NMR chemical shifts: -------------------------------
+
+     Macroscopic shape contribution in ppm:                    0.00
+             0.0000          0.0000          0.0000
+             0.0000          0.0000          0.0000
+             0.0000          0.0000          0.0000
+
+
+     Core contribution in ppm:
+
+     Atom  1  O   pos: (  0.589500  0.602500  0.575000)  core sigma:         271.07
+     Atom  2  H   pos: (  0.672500  0.561000  0.575000)  core sigma:           0.00
+     Atom  3  H   pos: (  0.528000  0.533000  0.575000)  core sigma:           0.00
+
+     Bare contribution in ppm:
+
+     Atom  1  O   pos: (  0.589500  0.602500  0.575000)  bare sigma:         100.23
+           110.3164          2.0989          0.0002
+             2.0995         99.9005         -0.0013
+            -0.0000          0.0004         90.4832
+
+     Atom  2  H   pos: (  0.672500  0.561000  0.575000)  bare sigma:          29.84
+            40.5511         -2.6660         -0.0005
+            -6.8495         26.2353          0.0001
+            -0.0001         -0.0000         22.7410
+
+     Atom  3  H   pos: (  0.528000  0.533000  0.575000)  bare sigma:          29.84
+            35.2493          6.2943          0.0004
+            10.4754         31.5292          0.0003
+             0.0000          0.0000         22.7399
+
+     Diamagnetic contribution in ppm:
+
+     Atom  1  O   pos: (  0.589500  0.602500  0.575000)  dia sigma:          16.70
+            17.4963          0.1289          0.0000
+             0.1289         16.8557         -0.0000
+             0.0000         -0.0000         15.7534
+
+     Atom  2  H   pos: (  0.672500  0.561000  0.575000)  dia sigma:           0.48
+             0.4840         -0.0000          0.0000
+            -0.0000          0.4840         -0.0000
+             0.0000         -0.0000          0.4840
+
+     Atom  3  H   pos: (  0.528000  0.533000  0.575000)  dia sigma:           0.48
+             0.4839         -0.0000          0.0000
+            -0.0000          0.4839         -0.0000
+             0.0000         -0.0000          0.4839
+
+     Paramagnetic contribution in ppm:
+
+     Atom  1  O   pos: (  0.589500  0.602500  0.575000)  para sigma:          67.59
+            99.8673          6.5220          0.0004
+             6.5234         67.4695         -0.0036
+            -0.0001          0.0010         35.4387
+
+     Atom  2  H   pos: (  0.672500  0.561000  0.575000)  para sigma:           0.00
+             0.0000          0.0000          0.0000
+             0.0000          0.0000          0.0000
+             0.0000          0.0000          0.0000
+
+     Atom  3  H   pos: (  0.528000  0.533000  0.575000)  para sigma:           0.00
+             0.0000          0.0000          0.0000
+             0.0000          0.0000          0.0000
+             0.0000          0.0000          0.0000
+
+     Paramagnetic US occ-occ contribution in ppm:
+
+     Atom  1  O   pos: (  0.589500  0.602500  0.575000)  para_oo sigma:          -0.39
+            -0.4228         -0.0056         -0.0000
+            -0.0055         -0.3953          0.0000
+            -0.0000          0.0000         -0.3429
+
+     Atom  2  H   pos: (  0.672500  0.561000  0.575000)  para_oo sigma:           0.00
+             0.0000          0.0000          0.0000
+             0.0000          0.0000          0.0000
+             0.0000          0.0000          0.0000
+
+     Atom  3  H   pos: (  0.528000  0.533000  0.575000)  para_oo sigma:           0.00
+             0.0000          0.0000          0.0000
+             0.0000          0.0000          0.0000
+             0.0000          0.0000          0.0000
+
+     Paramagnetic US L_R Q_R contribution in ppm:
+
+     Atom  1  O   pos: (  0.589500  0.602500  0.575000)  para_lq sigma:        -135.58
+          -144.3646         -0.6170         -0.0001
+            -0.6169       -141.2825          0.0008
+            -0.0001          0.0008       -121.0834
+
+     Atom  2  H   pos: (  0.672500  0.561000  0.575000)  para_lq sigma:           0.00
+             0.0000          0.0000          0.0000
+             0.0000          0.0000          0.0000
+             0.0000          0.0000          0.0000
+
+     Atom  3  H   pos: (  0.528000  0.533000  0.575000)  para_lq sigma:           0.00
+             0.0000          0.0000          0.0000
+             0.0000          0.0000          0.0000
+             0.0000          0.0000          0.0000
+
+
+     Total NMR chemical shifts in ppm: ---------------------------------------
+     (adopting the Simpson convention for anisotropy and asymmetry)-----------
+
+     Atom  1  O   pos: (  0.589500  0.602500  0.575000)  Total sigma:         319.64
+           353.9674          8.1272          0.0005
+             8.1293        313.6229         -0.0042
+            -0.0002          0.0021        291.3238
+
+     O    1    anisotropy:     53.86    eta:   -0.5772
+     O    1    sigma_11=  312.0468    axis=( -0.190351  0.981716 -0.000050)
+     O    1    sigma_22=  291.3238    axis=( -0.000009  0.000049  1.000000)
+     O    1    sigma_33=  355.5435    axis=( -0.981716 -0.190351  0.000000)
+
+     Atom  2  H   pos: (  0.672500  0.561000  0.575000)  Total sigma:          30.33
+            41.0351         -2.6660         -0.0005
+            -6.8495         26.7193          0.0001
+            -0.0001         -0.0000         23.2250
+
+     H    2    anisotropy:     18.22    eta:   -0.1694
+     H    2    sigma_11=   25.2823    axis=( -0.289129 -0.957290  0.000016)
+     H    2    sigma_22=   23.2250    axis=(  0.000019  0.000011  1.000000)
+     H    2    sigma_33=   42.4720    axis=(  0.957290 -0.289129 -0.000015)
+
+     Atom  3  H   pos: (  0.528000  0.533000  0.575000)  Total sigma:          30.32
+            35.7332          6.2943          0.0004
+            10.4754         32.0132          0.0003
+             0.0000          0.0000         23.2239
+
+     H    3    anisotropy:     18.21    eta:   -0.1698
+     H    3    sigma_11=   25.2845    axis=(  0.625871 -0.779926  0.000014)
+     H    3    sigma_22=   23.2239    axis=( -0.000021  0.000002  1.000000)
+     H    3    sigma_33=   42.4619    axis=(  0.779926  0.625871  0.000015)
+
+     Initialization:
+     gipaw_setup  :      0.57s CPU      0.62s WALL (       1 calls)
+
+     Linear response
+     greenf       :     22.56s CPU     22.62s WALL (      24 calls)
+     cgsolve      :     22.34s CPU     22.41s WALL (      24 calls)
+     ch_psi       :     21.76s CPU     21.85s WALL (     524 calls)
+     h_psiq       :     20.48s CPU     20.55s WALL (     524 calls)
+
+     Apply operators
+     h_psi        :     22.58s CPU     22.60s WALL (     606 calls)
+     apply_vel    :      1.15s CPU      1.14s WALL (      21 calls)
+
+     Induced current
+     j_para       :      5.51s CPU      5.53s WALL (      27 calls)
+     biot_savart  :      0.76s CPU      0.77s WALL (       1 calls)
+
+     Other routines
+
+     General routines
+     calbec       :      1.04s CPU      1.11s WALL (    1857 calls)
+     fft          :      1.29s CPU      1.32s WALL (      42 calls)
+     ffts         :      0.06s CPU      0.06s WALL (      10 calls)
+     fftw         :     14.94s CPU     15.47s WALL (    6030 calls)
+     davcio       :      0.00s CPU      0.00s WALL (      15 calls)
+
+     Parallel routines
+     fft_scatter  :      5.19s CPU      5.38s WALL (    6082 calls)
+
+     Plugins
+
+     GIPAW        :     36.41s CPU     36.74s WALL (       1 calls)

@@ -29,11 +29,15 @@ SUBROUTINE compute_u_kq(ik, q)
   USE control_flags,        ONLY : ethr, lscf, istep, max_cg_iter
   USE control_flags,        ONLY : cntrl_isolve => isolve
   USE ldaU,                 ONLY : lda_plus_u, wfcU
-  USE lsda_mod,             ONLY : current_spin, lsda, isk
+  USE lsda_mod,             ONLY : current_spin, lsda, isk, nspin
   USE wavefunctions_module, ONLY : evc  
   USE gvect,                ONLY : g, ngm
+  USE gvecs,                ONLY : doublegrid
+  USE dfunct,               ONLY : newd
   USE cell_base,            ONLY : tpiba2
   USE random_numbers,       ONLY : randy
+  USE scf,                  ONLY : v, vrs, vltot, kedtau, rho
+  USE fft_base,             ONLY : dfftp
   USE buffers
   USE gipaw_module
   IMPLICIT NONE
@@ -119,6 +123,13 @@ SUBROUTINE compute_u_kq(ik, q)
     enddo
   endif
 
+  ! re-update potential
+  !call setlocal
+  !call plugin_scf_potential(rho, .false., -1d18)
+  !call set_vrs (vrs, vltot, v%of_r, kedtau, v%kin_r, dfftp%nnr, nspin, doublegrid)
+
+  ! compute the D for the pseudopotentials
+  !call newd
 
   ! diagonalization of bands for k-point ik
   call diag_bands ( iter, ik, avg_iter )

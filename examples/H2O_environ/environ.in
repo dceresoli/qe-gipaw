@@ -1,0 +1,9 @@
+&environ
+   environ_restart = .true.
+   verbose = 1
+   environ_thr = 1e-1
+   environ_type = 'input'  ! 'water', 'vacuum', 'input'
+   tolrhopol = 1e-11
+   mixrhopol = 0.6
+   env_static_permittivity = 80
+/

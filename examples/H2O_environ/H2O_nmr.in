@@ -1,0 +1,12 @@
+&inputgipaw
+        job = 'nmr'
+        restart_mode = 'from_scratch'
+        prefix = 'h2o'
+        tmp_dir = '/tmp/ceresoli/'
+        diagonalization = 'cg'
+        verbosity = 'high'
+        q_gipaw = 0.01
+        spline_ps = .true.
+        use_nmr_macroscopic_shape = .false.
+/
+

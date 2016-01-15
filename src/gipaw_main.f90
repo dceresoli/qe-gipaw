@@ -28,13 +28,14 @@ PROGRAM gipaw_main
   ! ...
   USE kinds,           ONLY : DP
   USE io_files,        ONLY : tmp_dir
-  USE io_global,       ONLY : stdout
+  USE io_global,       ONLY : stdout, meta_ionode, meta_ionode_id
   USE mp,              ONLY : mp_bcast
   USE cell_base,       ONLY : tpiba
   USE cellmd,          ONLY : cell_factor
   USE gipaw_module,    ONLY : job, q_gipaw
   USE control_flags,   ONLY : io_level, gamma_only, use_para_diag, twfcollect
   USE mp_global,       ONLY : mp_startup, nproc_pool_file
+  USE mp_world,        ONLY : world_comm
   USE mp_images,       ONLY : nimage, my_image_id
 #ifdef __BANDS
   USE mp_bands,        ONLY : inter_bgrp_comm, nbgrp
@@ -49,6 +50,13 @@ PROGRAM gipaw_main
   USE wvfct,           ONLY : nbnd
   USE io_global,       ONLY : stdout
   USE noncollin_module,ONLY : noncolin
+  ! for plugininzation
+  USE input_parameters, ONLY : nat_ => nat, ntyp_ => ntyp
+  USE input_parameters, ONLY : assume_isolated_ => assume_isolated, &
+                               ibrav_ => ibrav
+  USE ions_base,        ONLY : nat, ntyp => nsp
+  USE cell_base,        ONLY : ibrav
+  ! end
   USE gipaw_version
   USE iotk_module  
   USE xml_io_base
@@ -66,6 +74,10 @@ PROGRAM gipaw_main
   call mp_startup(start_images=.false.)
 #endif
   call environment_start (code)
+
+  ! read plugin command line arguments, if any
+  if (meta_ionode) call plugin_arguments()
+  call plugin_arguments_bcast( meta_ionode_id, world_comm )
 
 #ifndef __BANDS
   if (nbgrp > 1) &
@@ -105,6 +117,11 @@ PROGRAM gipaw_main
 #endif
   if (noncolin) call errore('gipaw_main', 'non-collinear not supported yet', 1)
 
+  nat_ = nat
+  ntyp_ = ntyp
+  ibrav_ = ibrav
+  assume_isolated_ = 'none'
+  call plugin_read_input()
   call gipaw_allocate()
   call gipaw_setup()
   call gipaw_summary()

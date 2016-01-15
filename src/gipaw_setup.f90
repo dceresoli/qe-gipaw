@@ -16,7 +16,7 @@ SUBROUTINE gipaw_setup
   USE io_global,     ONLY : stdout
   USE wvfct,         ONLY : nbnd, et, wg
   USE lsda_mod,      ONLY : nspin
-  USE scf,           ONLY : v, vrs, vltot, kedtau
+  USE scf,           ONLY : v, vrs, vltot, kedtau, rho
   USE fft_base,      ONLY : dfftp
   USE gvecs,         ONLY : doublegrid
   USE klist,         ONLY : degauss, ngauss, nks, lgauss, wk, two_fermi_energies
@@ -29,13 +29,16 @@ SUBROUTINE gipaw_setup
   USE pwcom,         ONLY : ef
   USE constants,     ONLY : rytoev
   USE gipaw_module
+  USE ions_base, only: tau, ityp
 
   implicit none
   integer :: ik, ibnd
   real(dp) :: emin, emax, xmax, small, fac, target
     
+
   call start_clock ('gipaw_setup')
     
+
   ! TODO: test whether the symmetry operations map the Cartesian axis to each
   ! call test_symmetries ( s, nsym )    
 
@@ -43,12 +46,17 @@ SUBROUTINE gipaw_setup
   call init_us_1
   call init_at_1
 
+  call plugin_initbase()
+  call plugin_init_cell()
+  call plugin_init_ions()
+
   ! setup GIPAW operators
   call gipaw_setup_integrals
   call gipaw_setup_l
 
   ! computes the total local potential (external+scf) on the smooth grid
   call setlocal
+  call plugin_scf_potential(rho, .false., -1d0)
   call set_vrs (vrs, vltot, v%of_r, kedtau, v%kin_r, dfftp%nnr, nspin, doublegrid)
     
   ! compute the D for the pseudopotentials

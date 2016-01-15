@@ -1,0 +1,104 @@
+ Starting from polarization: rhoiter =      0.000000
+ Iteration #          1
+ Linear mixing, mix =      0.600000
+ deltarho =   0.104384E-05 deltaenr =   0.152892E+00 tol =   0.100000E-10
+ Iteration #          2
+ Linear mixing, mix =      0.600000
+ deltarho =   0.642429E-06 deltaenr =   0.450824E-02 tol =   0.100000E-10
+ Iteration #          3
+ Linear mixing, mix =      0.600000
+ deltarho =   0.476485E-06 deltaenr =   0.505199E-01 tol =   0.100000E-10
+ Iteration #          4
+ Linear mixing, mix =      0.600000
+ deltarho =   0.277953E-06 deltaenr =   0.182907E-01 tol =   0.100000E-10
+ Iteration #          5
+ Linear mixing, mix =      0.600000
+ deltarho =   0.217779E-06 deltaenr =   0.165871E-01 tol =   0.100000E-10
+ Iteration #          6
+ Linear mixing, mix =      0.600000
+ deltarho =   0.145051E-06 deltaenr =   0.160753E-01 tol =   0.100000E-10
+ Iteration #          7
+ Linear mixing, mix =      0.600000
+ deltarho =   0.920950E-07 deltaenr =   0.776362E-03 tol =   0.100000E-10
+ Iteration #          8
+ Linear mixing, mix =      0.600000
+ deltarho =   0.740397E-07 deltaenr =   0.791854E-02 tol =   0.100000E-10
+ Iteration #          9
+ Linear mixing, mix =      0.600000
+ deltarho =   0.429671E-07 deltaenr =   0.329448E-02 tol =   0.100000E-10
+ Iteration #         10
+ Linear mixing, mix =      0.600000
+ deltarho =   0.339560E-07 deltaenr =   0.222528E-02 tol =   0.100000E-10
+ Iteration #         11
+ Linear mixing, mix =      0.600000
+ deltarho =   0.229134E-07 deltaenr =   0.251833E-02 tol =   0.100000E-10
+ Iteration #         12
+ Linear mixing, mix =      0.600000
+ deltarho =   0.147718E-07 deltaenr =   0.154217E-03 tol =   0.100000E-10
+ Iteration #         13
+ Linear mixing, mix =      0.600000
+ deltarho =   0.120756E-07 deltaenr =   0.114927E-02 tol =   0.100000E-10
+ Iteration #         14
+ Linear mixing, mix =      0.600000
+ deltarho =   0.702718E-08 deltaenr =   0.516616E-03 tol =   0.100000E-10
+ Iteration #         15
+ Linear mixing, mix =      0.600000
+ deltarho =   0.573168E-08 deltaenr =   0.323886E-03 tol =   0.100000E-10
+ Iteration #         16
+ Linear mixing, mix =      0.600000
+ deltarho =   0.393306E-08 deltaenr =   0.380619E-03 tol =   0.100000E-10
+ Iteration #         17
+ Linear mixing, mix =      0.600000
+ deltarho =   0.250514E-08 deltaenr =   0.151649E-04 tol =   0.100000E-10
+ Iteration #         18
+ Linear mixing, mix =      0.600000
+ deltarho =   0.213513E-08 deltaenr =   0.181843E-03 tol =   0.100000E-10
+ Iteration #         19
+ Linear mixing, mix =      0.600000
+ deltarho =   0.125840E-08 deltaenr =   0.775448E-04 tol =   0.100000E-10
+ Iteration #         20
+ Linear mixing, mix =      0.600000
+ deltarho =   0.100185E-08 deltaenr =   0.577081E-04 tol =   0.100000E-10
+ Iteration #         21
+ Linear mixing, mix =      0.600000
+ deltarho =   0.730320E-09 deltaenr =   0.624695E-04 tol =   0.100000E-10
+ Iteration #         22
+ Linear mixing, mix =      0.600000
+ deltarho =   0.453501E-09 deltaenr =   0.212096E-05 tol =   0.100000E-10
+ Iteration #         23
+ Linear mixing, mix =      0.600000
+ deltarho =   0.384336E-09 deltaenr =   0.327091E-04 tol =   0.100000E-10
+ Iteration #         24
+ Linear mixing, mix =      0.600000
+ deltarho =   0.242618E-09 deltaenr =   0.134231E-04 tol =   0.100000E-10
+ Iteration #         25
+ Linear mixing, mix =      0.600000
+ deltarho =   0.179878E-09 deltaenr =   0.108184E-04 tol =   0.100000E-10
+ Iteration #         26
+ Linear mixing, mix =      0.600000
+ deltarho =   0.135242E-09 deltaenr =   0.117884E-04 tol =   0.100000E-10
+ Iteration #         27
+ Linear mixing, mix =      0.600000
+ deltarho =   0.865626E-10 deltaenr =   0.478029E-06 tol =   0.100000E-10
+ Iteration #         28
+ Linear mixing, mix =      0.600000
+ deltarho =   0.688132E-10 deltaenr =   0.613422E-05 tol =   0.100000E-10
+ Iteration #         29
+ Linear mixing, mix =      0.600000
+ deltarho =   0.455953E-10 deltaenr =   0.280285E-05 tol =   0.100000E-10
+ Iteration #         30
+ Linear mixing, mix =      0.600000
+ deltarho =   0.331713E-10 deltaenr =   0.194408E-05 tol =   0.100000E-10
+ Iteration #         31
+ Linear mixing, mix =      0.600000
+ deltarho =   0.241726E-10 deltaenr =   0.231019E-05 tol =   0.100000E-10
+ Iteration #         32
+ Linear mixing, mix =      0.600000
+ deltarho =   0.160120E-10 deltaenr =   0.244155E-06 tol =   0.100000E-10
+ Iteration #         33
+ Linear mixing, mix =      0.600000
+ deltarho =   0.123983E-10 deltaenr =   0.112931E-05 tol =   0.100000E-10
+ Iteration #         34
+ Linear mixing, mix =      0.600000
+ deltarho =   0.802797E-11 deltaenr =   0.614720E-06 tol =   0.100000E-10
+ Charges are converged, exit!
