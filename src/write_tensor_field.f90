@@ -145,7 +145,7 @@ SUBROUTINE write_nics(filename, field)
   USE gvect,           ONLY : gcutm
   USE cell_base,       ONLY : at, ibrav, celldm
   USE ions_base,       ONLY : zv, ntyp => nsp, nat, ityp, atm, tau
-  USE wvfct,           ONLY : ecutwfc
+  USE gvecw,           ONLY : ecutwfc
   USE pwcom
   USE gipaw_module
   !--------------------------------------------------------------------

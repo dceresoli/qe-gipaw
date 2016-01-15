@@ -362,7 +362,8 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   USE klist,                 ONLY : nks, xk
   USE cell_base,             ONLY : tpiba2
   USE ions_base,             ONLY : nat, ityp, ntyp => nsp, atm
-  USE wvfct,                 ONLY : npw, igk, g2kin, ecutwfc
+  USE wvfct,                 ONLY : npw, igk, g2kin
+  USE gvecw,                 ONLY : gcutw
   USE wavefunctions_module,  ONLY : evc
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
   USE becmod,                ONLY : calbec
@@ -500,7 +501,7 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
         s_weight = +1
      endif
      
-     call gk_sort ( xk(1,ik), ngm, g, ecutwfc / tpiba2, npw, igk, g2kin )
+     call gk_sort ( xk(1,ik), ngm, g, gcutw, npw, igk, g2kin )
      call get_buffer ( evc, nwordwfc, iunwfc, ik)
      
      call init_gipaw_2 ( npw, igk, xk(1,ik), paw_vkb )

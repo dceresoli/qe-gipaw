@@ -24,7 +24,8 @@ SUBROUTINE compute_u_kq(ik, q)
   USE klist,                ONLY : nkstot, nks, xk, ngk
   USE uspp,                 ONLY : vkb, nkb
   USE wvfct,                ONLY : et, nbnd, igk, npw, g2kin, &
-                                   current_k, nbndx, btype, ecutwfc
+                                   current_k, nbndx, btype
+  USE gvecw,                ONLY : gcutw
   USE control_flags,        ONLY : ethr, lscf, istep, max_cg_iter
   USE control_flags,        ONLY : cntrl_isolve => isolve
   USE ldaU,                 ONLY : lda_plus_u, wfcU
@@ -80,7 +81,7 @@ SUBROUTINE compute_u_kq(ik, q)
   npw = ngk(ik)
 
   ! same sorting of G-vector at k+q
-  call gk_sort(xk(1,ik),ngm,g,ecutwfc/tpiba2,npw,igk,g2kin)
+  call gk_sort(xk(1,ik),ngm,g,gcutw,npw,igk,g2kin)
 
   ! set the k-point
   xkold(:) = xk(:,ik)

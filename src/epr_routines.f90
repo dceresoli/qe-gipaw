@@ -272,7 +272,8 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
   USE kinds,                  ONLY : dp
   USE ions_base,              ONLY : nat, ityp, ntyp => nsp
   USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
-                                     current_k, ecutwfc
+                                     current_k
+  USE gvecw,                  ONLY : gcutw
   USE lsda_mod,               ONLY : current_spin
   USE wavefunctions_module,   ONLY : evc
   USE becmod,                 ONLY : calbec, allocate_bec_type, deallocate_bec_type
@@ -314,7 +315,7 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
   allocate( ps( nkb, nbnd ), becp2(nkb,nbnd) )
   ik = current_k
 
-  call gk_sort(xk(1,ik), ngm, g, ecutwfc/tpiba2, npw, igk, g2kin)
+  call gk_sort(xk(1,ik), ngm, g, gcutw, npw, igk, g2kin)
   vkb = (0.d0,0.d0)
   call init_us_2 (npw, igk, xk(:,ik), vkb)
   ! TODO: calbec_bands

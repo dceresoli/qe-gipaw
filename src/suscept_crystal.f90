@@ -29,7 +29,8 @@ SUBROUTINE suscept_crystal
   USE wavefunctions_module,   ONLY : evc
   USE klist,                  ONLY : nks, wk, xk
   USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
-                                     current_k, ecutwfc
+                                     current_k
+  USE gvecw,                  ONLY : gcutw
   USE lsda_mod,               ONLY : current_spin, isk
   USE becmod,                 ONLY : calbec
   USE symme,                  ONLY : symmatrix
@@ -198,7 +199,7 @@ SUBROUTINE suscept_crystal
     endif
 
     ! initialize at k-point k 
-    call gk_sort(xk(1,ik), ngm, g, ecutwfc/tpiba2, npw, igk, g2kin)
+    call gk_sort(xk(1,ik), ngm, g, gcutw, npw, igk, g2kin)
     g2kin(:) = g2kin(:) * tpiba2
     call init_us_2(npw, igk, xk(1,ik), vkb)
     

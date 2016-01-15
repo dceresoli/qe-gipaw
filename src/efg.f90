@@ -157,7 +157,8 @@ SUBROUTINE get_smooth_density(rho)
   USE mp_pools,               ONLY : inter_pool_comm
   USE lsda_mod,               ONLY : current_spin, isk, nspin
   USE wvfct,                  ONLY : nbnd, npw, igk, wg, g2kin, &
-                                     current_k, ecutwfc
+                                     current_k
+  USE gvecw,                  ONLY : gcutw
   USE klist,                  ONLY : nks, xk
   USE gvect,                  ONLY : ngm, g
   USE gvecs,                  ONLY : nls
@@ -188,7 +189,7 @@ SUBROUTINE get_smooth_density(rho)
      current_spin = isk(ik)
     
      ! initialize at k-point k and read wfcs from file
-     call gk_sort(xk(1,ik), ngm, g, ecutwfc/tpiba2, npw, igk, g2kin)
+     call gk_sort(xk(1,ik), ngm, g, gcutw, npw, igk, g2kin)
      call get_buffer (evc, nwordwfc, iunwfc, ik)
 
      ! loop over bands
@@ -312,8 +313,8 @@ SUBROUTINE efg_correction(efg_corr_tens)
   USE klist,                 ONLY : nks, xk
   USE cell_base,             ONLY : tpiba2
   USE ions_base,             ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                 ONLY : npw, igk, g2kin, ecutwfc, &
-                                    current_k, wg
+  USE wvfct,                 ONLY : npw, igk, g2kin, current_k, wg
+  USE gvecw,                 ONLY : gcutw
   USE lsda_mod,              ONLY : current_spin, isk
   USE wavefunctions_module,  ONLY : evc
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
@@ -387,7 +388,7 @@ SUBROUTINE efg_correction(efg_corr_tens)
         s_weight = +1
      endif
      
-     call gk_sort ( xk(1,ik), ngm, g, ecutwfc / tpiba2, npw, igk, g2kin )
+     call gk_sort ( xk(1,ik), ngm, g, gcutw, npw, igk, g2kin )
      call get_buffer ( evc, nwordwfc, iunwfc, ik)
      
      call init_gipaw_2 ( npw, igk, xk(1,ik), paw_vkb )
