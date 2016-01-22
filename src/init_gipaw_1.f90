@@ -30,6 +30,7 @@ SUBROUTINE init_gipaw_1
 #ifdef __BANDS
   USE mp_bands,    ONLY : intra_bgrp_comm, inter_bgrp_comm
 #endif
+  USE matrix_inversion
   USE mp_pools,    ONLY : intra_pool_comm
   USE mp,          ONLY : mp_sum
   USE uspp_param,  ONLY : upf  
