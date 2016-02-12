@@ -18,9 +18,8 @@ GIPAW_OBJS = gipaw_module.o gipaw_main.o paw_gipaw.o stop_code.o gipaw_setup.o \
 	     velocity.o nmr_routines.o epr_routines.o efg.o hyperfine.o core_relax.o \
 	     util.o atomic.o knight_shift.o mossbauer.o gipaw_version.o output_magres.o
 
-LIBOBJS = $(QE_SOURCE)/flib/ptools.a $(QE_SOURCE)/flib/flib.a $(QE_SOURCE)/clib/clib.a \
- 	  $(QE_SOURCE)/iotk/src/libiotk.a
-QEMODS = $(QE_SOURCE)/Modules/libqemod.a $(QE_SOURCE)/FFTXlib/libqefft.a
+LIBOBJS = $(QE_SOURCE)/clib/clib.a $(QE_SOURCE)/iotk/src/libiotk.a
+QEMODS = $(QE_SOURCE)/Modules/libqemod.a $(QE_SOURCE)/FFTXlib/libqefft.a $(QE_SOURCE)/LAXlib/libqela.a
 PWOBJS = $(QE_SOURCE)/PW/src/libpw.a
 
 all: version gipaw.x
