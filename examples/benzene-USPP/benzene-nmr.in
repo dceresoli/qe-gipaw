@@ -2,8 +2,8 @@
         job = 'nmr'
         prefix = 'benzene'
         tmp_dir = '/tmp/ceresoli/'
-        isolve = 0
-        iverbosity = 1
+        diagonalization = 'cg'
+        verbosity = 'low'
         q_gipaw = 0.01
         spline_ps = .true.
         use_nmr_macroscopic_shape = .false.
