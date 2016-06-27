@@ -1704,15 +1704,15 @@ fi
 
 
 # Look for make.sys
-as_ac_File=`$as_echo "ac_cv_file_${qe_source}/make.sys" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ${qe_source}/make.sys" >&5
-$as_echo_n "checking for ${qe_source}/make.sys... " >&6; }
+as_ac_File=`$as_echo "ac_cv_file_${qe_source}/make.inc" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ${qe_source}/make.inc" >&5
+$as_echo_n "checking for ${qe_source}/make.inc... " >&6; }
 if eval \${$as_ac_File+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   test "$cross_compiling" = yes &&
   as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
-if test -r "${qe_source}/make.sys"; then
+if test -r "${qe_source}/make.inc"; then
   eval "$as_ac_File=yes"
 else
   eval "$as_ac_File=no"
@@ -1724,7 +1724,7 @@ $as_echo "$ac_res" >&6; }
 if eval test \"x\$"$as_ac_File"\" = x"yes"; then :
 
 else
-  as_fn_error $? "Cannot find make.sys in ${qe_source}" "$LINENO" 5
+  as_fn_error $? "Cannot find make.inc in ${qe_source}" "$LINENO" 5
 fi
 
 
@@ -1760,7 +1760,6 @@ version=`grep version_number ${qe_source}/Modules/version.f90 | cut -d\' -f2`
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $version" >&5
 $as_echo "$version" >&6; }
 case $version in
-  5.3.* ) ;;
   5.4.* ) ;;
   *) as_fn_error $? "Cannot compile against this version of Quantum-Espresso" "$LINENO" 5 ;;
 esac
@@ -1771,7 +1770,7 @@ $as_echo_n "checking Quantum-Espresso SVN revision... " >&6; }
 revision=`grep svn_revision ${qe_source}/Modules/version.f90 | cut -d\' -f2 | tr -d M`
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $revision" >&5
 $as_echo "$revision" >&6; }
-good_revision=12325
+good_revision=12544
 if test $revision != "unknown" ; then
   if test $revision -lt ${good_revision} ; then
     as_fn_error $? "Cannot compile against this SVN revision of Quantum-Espresso. Please checkout revision >$good_revision" "$LINENO" 5

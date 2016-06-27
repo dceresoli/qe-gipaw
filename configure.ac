@@ -18,7 +18,7 @@ AC_ARG_ENABLE(band-parallel,
 )
 
 # Look for make.sys
-AC_CHECK_FILE(${qe_source}/make.sys, [], [AC_MSG_ERROR([Cannot find make.sys in ${qe_source}])])
+AC_CHECK_FILE(${qe_source}/make.inc, [], [AC_MSG_ERROR([Cannot find make.inc in ${qe_source}])])
 
 # Look for Modules/version.f90
 AC_CHECK_FILE(${qe_source}/Modules/version.f90, [], [AC_MSG_ERROR([Cannot find version.f90 in ${qe_source}/Modules])])
@@ -28,7 +28,6 @@ AC_MSG_CHECKING([Quantum-Espresso version])
 version=`grep version_number ${qe_source}/Modules/version.f90 | cut -d\' -f2`
 AC_MSG_RESULT([$version])
 case $version in
-  5.3.* ) ;;
   5.4.* ) ;;
   *) AC_MSG_ERROR([Cannot compile against this version of Quantum-Espresso]) ;;
 esac
@@ -37,7 +36,7 @@ esac
 AC_MSG_CHECKING([Quantum-Espresso SVN revision])
 revision=`grep svn_revision ${qe_source}/Modules/version.f90 | cut -d\' -f2 | tr -d M`
 AC_MSG_RESULT([$revision])
-good_revision=12325
+good_revision=12544
 if test $revision != "unknown" ; then
   if test $revision -lt ${good_revision} ; then
     AC_MSG_ERROR([Cannot compile against this SVN revision of Quantum-Espresso. Please checkout revision >$good_revision])

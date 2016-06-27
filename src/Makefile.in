@@ -1,7 +1,7 @@
 # Makefile for qe-gipaw
 
 QE_SOURCE=@qe_source@
-include $(QE_SOURCE)/make.sys
+include $(QE_SOURCE)/make.inc
 DFLAGS += @dflags_gipaw@
 
 # location of needed modules
