@@ -27,7 +27,7 @@ SUBROUTINE orthoatwfc1(ik)
   complex(dp), allocatable :: wfcatom(:,:)
   LOGICAL :: normalize_only
 
-  allocate(wfcatom(npwx,natomwfc))    
+  allocate(wfcatom(npwx,natomwfc), swfcatom(npwx,natomwfc))    
 
   if (U_projection == "file") &
     call errore('orthoatwfc1', 'U_projection == file cannot be used', 1)
@@ -47,6 +47,6 @@ SUBROUTINE orthoatwfc1(ik)
   !
   CALL copy_U_wfc (swfcatom)
   !
-  deallocate(wfcatom)
+  deallocate(wfcatom, swfcatom)
 
 END SUBROUTINE orthoatwfc1
