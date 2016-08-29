@@ -1,5 +1,5 @@
 
-     Program QE v.5.4.0 (svn rev. 12544M) starts on 27Jun2016 at 14:39: 7 
+     Program QE v.6.beta (svn rev. 12871M) starts on 29Aug2016 at 11:56:25 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -23,7 +23,7 @@
      Parallel version (MPI), running on     4 processors
      R & G space division:  proc/nbgrp/npool/nimage =       4
  
-     ***** This is GIPAW svn revision 413          *****
+     ***** This is GIPAW svn revision 416          *****
  
      Parallelizing q-star over 1 images
 
@@ -99,11 +99,10 @@
         GIPAW NL terms                  6.18 Mb     (   33761,   12)
  
      Computing the magnetic susceptibility     isolve=0    ethr=  0.1000E-13
-     Restarting from a previous run
-     Resuming from k-point #    1   and q #  0
-     k-point #    1 of     2      pool #  1    cpu time:       2.8
+     k-point #    1 of     2      pool #  1    cpu time:       2.7
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
-     ethr =  1.00E-14,  avg # of iterations =  3.0
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  3.5
      eigenvalues at k:
  -34.4538 -21.4986 -18.1858 -17.5009
      eigenvalues at k+q:
@@ -112,7 +111,8 @@
      cgsolve_all iterations  21    anorm=    0.57E-07
      cgsolve_all iterations  22    anorm=    0.45E-07
      compute_u_kq: q = (    0.0318,    0.0000,    0.0000)
-     ethr =  1.00E-14,  avg # of iterations =  5.5
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  6.0
      eigenvalues at k:
  -34.4538 -21.4986 -18.1858 -17.5009
      eigenvalues at k+q:
@@ -121,7 +121,8 @@
      cgsolve_all iterations  21    anorm=    0.57E-07
      cgsolve_all iterations  22    anorm=    0.48E-07
      compute_u_kq: q = (   -0.0318,    0.0000,    0.0000)
-     ethr =  1.00E-14,  avg # of iterations =  5.5
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  6.0
      eigenvalues at k:
  -34.4538 -21.4986 -18.1858 -17.5009
      eigenvalues at k+q:
@@ -130,7 +131,8 @@
      cgsolve_all iterations  21    anorm=    0.57E-07
      cgsolve_all iterations  22    anorm=    0.48E-07
      compute_u_kq: q = (    0.0000,    0.0318,    0.0000)
-     ethr =  1.00E-14,  avg # of iterations =  6.0
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  6.5
      eigenvalues at k:
  -34.4538 -21.4986 -18.1858 -17.5009
      eigenvalues at k+q:
@@ -139,7 +141,8 @@
      cgsolve_all iterations  21    anorm=    0.59E-07
      cgsolve_all iterations  22    anorm=    0.45E-07
      compute_u_kq: q = (    0.0000,   -0.0318,    0.0000)
-     ethr =  1.00E-14,  avg # of iterations =  6.0
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  6.5
      eigenvalues at k:
  -34.4538 -21.4986 -18.1858 -17.5009
      eigenvalues at k+q:
@@ -148,7 +151,8 @@
      cgsolve_all iterations  21    anorm=    0.59E-07
      cgsolve_all iterations  22    anorm=    0.45E-07
      compute_u_kq: q = (    0.0000,    0.0000,    0.0318)
-     ethr =  1.00E-14,  avg # of iterations =  5.5
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  6.0
      eigenvalues at k:
  -34.4538 -21.4986 -18.1858 -17.5009
      eigenvalues at k+q:
@@ -157,7 +161,8 @@
      cgsolve_all iterations  21    anorm=    0.63E-07
      cgsolve_all iterations  22    anorm=    0.79E-07
      compute_u_kq: q = (    0.0000,    0.0000,   -0.0318)
-     ethr =  1.00E-14,  avg # of iterations =  5.5
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  6.0
      eigenvalues at k:
  -34.4538 -21.4986 -18.1858 -17.5009
      eigenvalues at k+q:
@@ -165,9 +170,10 @@
      cgsolve_all iterations  20    anorm=    0.57E-07
      cgsolve_all iterations  21    anorm=    0.63E-07
      cgsolve_all iterations  22    anorm=    0.79E-07
-     k-point #    2 of     2      pool #  1    cpu time:      90.2
+     k-point #    2 of     2      pool #  1    cpu time:      80.6
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
-     ethr =  1.00E-14,  avg # of iterations =  2.5
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  3.0
      eigenvalues at k:
  -32.7037 -20.9899 -16.8059 -13.7148
      eigenvalues at k+q:
@@ -176,7 +182,8 @@
      cgsolve_all iterations  21    anorm=    0.69E-07
      cgsolve_all iterations  22    anorm=    0.55E-07
      compute_u_kq: q = (    0.0318,    0.0000,    0.0000)
-     ethr =  1.00E-14,  avg # of iterations =  5.5
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  6.0
      eigenvalues at k:
  -32.7037 -20.9899 -16.8059 -13.7148
      eigenvalues at k+q:
@@ -185,7 +192,8 @@
      cgsolve_all iterations  21    anorm=    0.69E-07
      cgsolve_all iterations  22    anorm=    0.47E-07
      compute_u_kq: q = (   -0.0318,    0.0000,    0.0000)
-     ethr =  1.00E-14,  avg # of iterations =  5.5
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  6.0
      eigenvalues at k:
  -32.7037 -20.9899 -16.8059 -13.7148
      eigenvalues at k+q:
@@ -194,25 +202,28 @@
      cgsolve_all iterations  21    anorm=    0.69E-07
      cgsolve_all iterations  22    anorm=    0.47E-07
      compute_u_kq: q = (    0.0000,    0.0318,    0.0000)
-     ethr =  1.00E-14,  avg # of iterations =  6.0
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  6.5
      eigenvalues at k:
  -32.7037 -20.9899 -16.8059 -13.7148
      eigenvalues at k+q:
  -32.7042 -20.9902 -16.8063 -13.7153
-     cgsolve_all iterations  20    anorm=    0.55E-07
+     cgsolve_all iterations  20    anorm=    0.56E-07
      cgsolve_all iterations  21    anorm=    0.69E-07
      cgsolve_all iterations  22    anorm=    0.55E-07
      compute_u_kq: q = (    0.0000,   -0.0318,    0.0000)
+     Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  6.0
      eigenvalues at k:
  -32.7037 -20.9899 -16.8059 -13.7148
      eigenvalues at k+q:
  -32.7042 -20.9902 -16.8063 -13.7153
-     cgsolve_all iterations  20    anorm=    0.55E-07
+     cgsolve_all iterations  20    anorm=    0.56E-07
      cgsolve_all iterations  21    anorm=    0.69E-07
      cgsolve_all iterations  22    anorm=    0.55E-07
      compute_u_kq: q = (    0.0000,    0.0000,    0.0318)
-     ethr =  1.00E-14,  avg # of iterations =  5.5
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  6.0
      eigenvalues at k:
  -32.7037 -20.9899 -16.8059 -13.7148
      eigenvalues at k+q:
@@ -221,7 +232,8 @@
      cgsolve_all iterations  25    anorm=    0.39E-07
      cgsolve_all iterations  24    anorm=    0.76E-07
      compute_u_kq: q = (    0.0000,    0.0000,   -0.0318)
-     ethr =  1.00E-14,  avg # of iterations =  5.5
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  6.0
      eigenvalues at k:
  -32.7037 -20.9899 -16.8059 -13.7148
      eigenvalues at k+q:
@@ -247,32 +259,32 @@
              0.0000          0.0000         -6.9999
 
      chi_bare pGv (HH) in paratec units:
-         2.031825     -0.000171     -0.000385
-        -0.000151     -0.452967     -0.001565
-        -0.000490     -0.001438     -2.401900
+         2.031851     -0.000168     -0.000457
+        -0.000148     -0.452942     -0.001722
+        -0.000583     -0.001599     -2.401858
 
-         2.031825     -0.000171     -0.000385
-        -0.000151     -0.452967     -0.001565
-        -0.000490     -0.001438     -2.401900
+         2.031851     -0.000168     -0.000457
+        -0.000148     -0.452942     -0.001722
+        -0.000583     -0.001599     -2.401858
 
      chi_bare vGv (VV) in paratec units:
-         2.060252      0.000063     -0.000260
-        -0.000107     -0.411029     -0.000971
-        -0.000298     -0.000901     -2.402219
+         2.060260      0.000064     -0.000309
+        -0.000106     -0.411021     -0.001068
+        -0.000355     -0.001000     -2.402202
 
-         2.060252      0.000063     -0.000260
-        -0.000107     -0.411029     -0.000971
-        -0.000298     -0.000901     -2.402219
+         2.060260      0.000064     -0.000309
+        -0.000106     -0.411021     -0.001068
+        -0.000355     -0.001000     -2.402202
 
      chi_bare pGv (HH) in 10^{-6} cm^3/mol:
-             9.6554         -0.0008         -0.0018
-            -0.0007         -2.1525         -0.0074
-            -0.0023         -0.0068        -11.4141
+             9.6555         -0.0008         -0.0022
+            -0.0007         -2.1524         -0.0082
+            -0.0028         -0.0076        -11.4139
 
      chi_bare vGv (VV) in 10^{-6} cm^3/mol:
-             9.7905          0.0003         -0.0012
-            -0.0005         -1.9532         -0.0046
-            -0.0014         -0.0043        -11.4156
+             9.7905          0.0003         -0.0015
+            -0.0005         -1.9532         -0.0051
+            -0.0017         -0.0048        -11.4155
 
      Contributions to the EPR g-tensor (in ppm): -----------------------------
  
@@ -311,44 +323,44 @@
  
      Delta_g total (SOO a la Paratec): ---------------------------------------
          12351.15          0.00         -0.00
-             0.01       4383.39          0.00
+             0.01       4383.39          0.01
             -0.00          0.00       -143.37
 
  
      Delta_g total (SOO as in Eq.(7)): ---------------------------------------
          12640.06          0.00         -0.00
              0.01       4508.85          0.01
-            -0.00          0.00       -128.89
+            -0.00          0.00       -128.90
 
  
      Initialization:
      gipaw_setup  :      0.08s CPU      0.08s WALL (       1 calls)
  
      Linear response
-     greenf       :    113.83s CPU    114.09s WALL (      42 calls)
-     cgsolve      :    113.26s CPU    113.51s WALL (      42 calls)
-     ch_psi       :    107.48s CPU    107.75s WALL (     900 calls)
-     h_psiq       :    100.46s CPU    100.82s WALL (     900 calls)
+     greenf       :    101.42s CPU    101.63s WALL (      42 calls)
+     cgsolve      :    100.88s CPU    101.07s WALL (      42 calls)
+     ch_psi       :     95.25s CPU     95.40s WALL (     900 calls)
+     h_psiq       :     88.13s CPU     88.33s WALL (     900 calls)
  
      Apply operators
-     h_psi        :    116.15s CPU    116.60s WALL (    1061 calls)
-     apply_vel    :      0.99s CPU      1.01s WALL (      42 calls)
+     h_psi        :    103.34s CPU    103.63s WALL (    1074 calls)
+     apply_vel    :      1.00s CPU      1.00s WALL (      42 calls)
  
      Induced current
-     j_para       :     17.44s CPU     17.47s WALL (      24 calls)
-     biot_savart  :      1.19s CPU      1.22s WALL (       1 calls)
+     j_para       :     15.64s CPU     15.66s WALL (      24 calls)
+     biot_savart  :      1.16s CPU      1.20s WALL (       1 calls)
  
      Other routines
  
      General routines
-     calbec       :      2.18s CPU      2.31s WALL (    3055 calls)
-     fft          :      1.68s CPU      1.70s WALL (      65 calls)
-     fftw         :    106.94s CPU    107.06s WALL (    8380 calls)
-     davcio       :      0.00s CPU      0.02s WALL (      30 calls)
+     calbec       :      2.06s CPU      2.12s WALL (    3068 calls)
+     fft          :      1.62s CPU      1.68s WALL (      65 calls)
+     fftw         :     87.82s CPU     88.03s WALL (    8490 calls)
+     davcio       :      0.02s CPU      0.03s WALL (      30 calls)
  
      Parallel routines
-     fft_scatter  :     45.28s CPU     46.70s WALL (    8445 calls)
+     fft_scatter  :     39.70s CPU     39.88s WALL (    8555 calls)
  
      Plugins
  
-     GIPAW        :    156.10s CPU    158.36s WALL (       1 calls)
+     GIPAW        :    141.08s CPU    143.14s WALL (       1 calls)

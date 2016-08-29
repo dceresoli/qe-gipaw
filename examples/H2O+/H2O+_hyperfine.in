@@ -4,7 +4,7 @@
         tmp_dir = '/tmp/ceresoli/'
         spline_ps = .true.
         verbosity = 'high'
-	hfi_output_unit = 'MHz'
+	hfi_output_unit = 'G'
 	hfi_nuclear_g_factor(1) = -0.7575
 	hfi_nuclear_g_factor(2) = 5.585694
 /

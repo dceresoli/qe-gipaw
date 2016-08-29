@@ -1,5 +1,5 @@
 
-     Program QE v.5.4.0 (svn rev. 12544M) starts on 27Jun2016 at 14:16:26 
+     Program QE v.6.beta (svn rev. 12871M) starts on 29Aug2016 at 11:49:32 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -23,7 +23,7 @@
      Parallel version (MPI), running on     4 processors
      R & G space division:  proc/nbgrp/npool/nimage =       4
  
-     ***** This is GIPAW svn revision 413          *****
+     ***** This is GIPAW svn revision 416          *****
  
      Parallelizing q-star over 1 images
 
@@ -43,8 +43,8 @@
      Parallelization info
      --------------------
      sticks:   dense  smooth     PW     G-vecs:    dense   smooth      PW
-     Min         595     238     70                25771     6528    1040
-     Max         596     239     71                25774     6549    1043
+     Min         595     238     70                25771     6540    1040
+     Max         596     239     71                25774     6545    1043
      Sum        2383     955    283               103091    26171    4169
  
 
@@ -163,9 +163,9 @@
      Si   2       -0.040669       -0.033651       -0.006858
      Si   2        0.011879       -0.006858        0.020336
  
-     Si   3       -0.057134       -0.000000       -0.000000
+     Si   3       -0.057134       -0.000000        0.000000
      Si   3       -0.000000        0.036798        0.013714
-     Si   3       -0.000000        0.013714        0.020336
+     Si   3        0.000000        0.013714        0.020336
  
      O    4       -0.141456        0.279815       -0.289692
      O    4        0.279815        0.134902       -0.327260
@@ -226,7 +226,7 @@
  
      O    9       -0.169439        0.245982        0.137640
      O    9        0.245982        0.157201        0.429143
-     O    9        0.137640        0.429143        0.012237
+     O    9        0.137640        0.429143        0.012238
  
      ----- total EFG -----
      Si   1       -0.027420       -0.060785        0.016285
@@ -253,11 +253,11 @@
      O    6       -0.349335        0.239005        0.621428
      O    6       -0.204726        0.621428        0.007241
  
-     O    7       -0.201780       -0.387281        0.446787
+     O    7       -0.201780       -0.387281        0.446788
      O    7       -0.387281        0.185833       -0.488064
-     O    7        0.446787       -0.488064        0.015947
+     O    7        0.446788       -0.488064        0.015947
  
-     O    8        0.423701        0.025385       -0.643168
+     O    8        0.423700        0.025385       -0.643168
      O    8        0.025385       -0.439411       -0.141458
      O    8       -0.643168       -0.141458        0.015710
  
@@ -304,14 +304,14 @@
  
  
      NQR/NMR SPECTROSCOPIC PARAMETERS:
-     Si   1    Vxx=   -0.0121    axis=(  0.258625  0.149149  0.954394)
-     Si   1    Vyy=   -0.0674    axis=(  0.826561  0.477141 -0.298550)
-     Si   1    Vzz=    0.0796    axis=( -0.499909  0.866078  0.000120)
+     Si   1    Vxx=   -0.0121    axis=(  0.258624  0.149150  0.954394)
+     Si   1    Vyy=   -0.0674    axis=(  0.826562  0.477141 -0.298550)
+     Si   1    Vzz=    0.0796    axis=( -0.499909  0.866078  0.000119)
      Si   1  Q=         1.0000 1e-30 m^2  Cq=         0.1870 MHz  eta= 0.69510
  
-     Si   2    Vxx=   -0.0121    axis=( -0.258625  0.149149  0.954394)
-     Si   2    Vyy=   -0.0674    axis=( -0.826561  0.477141 -0.298550)
-     Si   2    Vzz=    0.0796    axis=( -0.499909 -0.866078 -0.000120)
+     Si   2    Vxx=   -0.0121    axis=( -0.258624  0.149150  0.954394)
+     Si   2    Vyy=   -0.0674    axis=( -0.826562  0.477141 -0.298550)
+     Si   2    Vzz=    0.0796    axis=( -0.499909 -0.866078 -0.000119)
      Si   2  Q=         1.0000 1e-30 m^2  Cq=         0.1870 MHz  eta= 0.69510
  
      Si   3    Vxx=   -0.0121    axis=(  0.000000  0.298861 -0.954297)
@@ -324,13 +324,13 @@
      O    4    Vzz=    0.9007    axis=(  0.469455  0.654679 -0.592458)
      O    4  Q=         2.5500 1e-30 m^2  Cq=         5.3964 MHz  eta= 0.20682
  
-     O    5    Vxx=   -0.3572    axis=(  0.449796  0.732772 -0.510616)
+     O    5    Vxx=   -0.3572    axis=(  0.449795  0.732773 -0.510616)
      O    5    Vyy=   -0.5434    axis=( -0.393686  0.675844  0.623094)
      O    5    Vzz=    0.9006    axis=( -0.801683  0.079243 -0.592474)
      O    5  Q=         2.5500 1e-30 m^2  Cq=         5.3962 MHz  eta= 0.20679
  
      O    6    Vxx=   -0.3573    axis=(  0.859416 -0.023279  0.510747)
-     O    6    Vyy=   -0.5434    axis=( -0.388637 -0.678840  0.623007)
+     O    6    Vyy=   -0.5434    axis=( -0.388637 -0.678840  0.623006)
      O    6    Vzz=    0.9007    axis=( -0.332213  0.733917  0.592453)
      O    6  Q=         2.5500 1e-30 m^2  Cq=         5.3965 MHz  eta= 0.20671
  
@@ -339,18 +339,18 @@
      O    7    Vzz=    0.9007    axis=(  0.469455 -0.654679  0.592458)
      O    7  Q=         2.5500 1e-30 m^2  Cq=         5.3964 MHz  eta= 0.20682
  
-     O    8    Vxx=   -0.3572    axis=(  0.449796 -0.732772  0.510616)
+     O    8    Vxx=   -0.3572    axis=(  0.449795 -0.732773  0.510616)
      O    8    Vyy=   -0.5434    axis=( -0.393686 -0.675844 -0.623094)
      O    8    Vzz=    0.9006    axis=( -0.801683 -0.079243  0.592474)
      O    8  Q=         2.5500 1e-30 m^2  Cq=         5.3962 MHz  eta= 0.20679
  
      O    9    Vxx=   -0.3573    axis=(  0.859416  0.023279 -0.510747)
-     O    9    Vyy=   -0.5434    axis=( -0.388637  0.678840 -0.623007)
+     O    9    Vyy=   -0.5434    axis=( -0.388637  0.678840 -0.623006)
      O    9    Vzz=    0.9007    axis=( -0.332213 -0.733917 -0.592453)
      O    9  Q=         2.5500 1e-30 m^2  Cq=         5.3965 MHz  eta= 0.20671
  
      Initialization:
-     gipaw_setup  :      0.08s CPU      0.09s WALL (       1 calls)
+     gipaw_setup  :      0.12s CPU      0.13s WALL (       1 calls)
  
      Linear response
  
@@ -359,18 +359,18 @@
      Induced current
  
      Other routines
-     efg          :      0.14s CPU      0.14s WALL (       1 calls)
+     efg          :      0.22s CPU      0.23s WALL (       1 calls)
  
      General routines
-     calbec       :      0.00s CPU      0.01s WALL (      20 calls)
-     fft          :      0.01s CPU      0.02s WALL (      15 calls)
+     calbec       :      0.01s CPU      0.02s WALL (      20 calls)
+     fft          :      0.08s CPU      0.09s WALL (      15 calls)
      ffts         :      0.00s CPU      0.00s WALL (       2 calls)
-     fftw         :      0.04s CPU      0.06s WALL (     480 calls)
-     davcio       :      0.01s CPU      0.00s WALL (      40 calls)
+     fftw         :      0.11s CPU      0.10s WALL (     480 calls)
+     davcio       :      0.00s CPU      0.00s WALL (      40 calls)
  
      Parallel routines
-     fft_scatter  :      0.02s CPU      0.02s WALL (     497 calls)
+     fft_scatter  :      0.10s CPU      0.11s WALL (     497 calls)
  
      Plugins
  
-     GIPAW        :      0.68s CPU      0.69s WALL (       1 calls)
+     GIPAW        :      0.92s CPU      0.96s WALL (       1 calls)
