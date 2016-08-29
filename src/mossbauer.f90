@@ -122,10 +122,10 @@ SUBROUTINE moss_gipaw_correction(moss_gipaw)
   USE parameters,            ONLY : ntypx
   USE atom,                  ONLY : rgrid
   USE gvect,                 ONLY : g, ngm
-  USE klist,                 ONLY : nks, xk
+  USE klist,                 ONLY : nks, xk, igk_k
   USE cell_base,             ONLY : tpiba2
   USE ions_base,             ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                 ONLY : npw, igk, g2kin
+  USE wvfct,                 ONLY : npw, g2kin
   USE gvecw,                 ONLY : gcutw
   USE wavefunctions_module,  ONLY : evc
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
@@ -197,10 +197,10 @@ SUBROUTINE moss_gipaw_correction(moss_gipaw)
      current_k = ik
      current_spin = isk(ik)
      
-     call gk_sort ( xk(1,ik), ngm, g, gcutw, npw, igk, g2kin )
+     call gk_sort ( xk(1,ik), ngm, g, gcutw, npw, igk_k(1,ik), g2kin )
      call get_buffer ( evc, nwordwfc, iunwfc, ik)
      
-     call init_gipaw_2 ( npw, igk, xk(1,ik), paw_vkb )
+     call init_gipaw_2 ( npw, igk_k(1,ik), xk(1,ik), paw_vkb )
      call calbec ( npw, paw_vkb, evc, paw_becp )
      
      do ibnd = 1, nbnd_occ(ik)

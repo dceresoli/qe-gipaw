@@ -156,10 +156,9 @@ SUBROUTINE get_smooth_density(rho)
   USE mp,                     ONLY : mp_sum
   USE mp_pools,               ONLY : inter_pool_comm
   USE lsda_mod,               ONLY : current_spin, isk, nspin
-  USE wvfct,                  ONLY : nbnd, npw, igk, wg, g2kin, &
-                                     current_k
+  USE wvfct,                  ONLY : nbnd, npw, wg, g2kin, current_k
   USE gvecw,                  ONLY : gcutw
-  USE klist,                  ONLY : nks, xk
+  USE klist,                  ONLY : nks, xk, igk_k
   USE gvect,                  ONLY : ngm, g
   USE gvecs,                  ONLY : nls
   USE wavefunctions_module,   ONLY : evc
@@ -179,9 +178,9 @@ SUBROUTINE get_smooth_density(rho)
 
   rho = (0.d0,0.d0)
 
-  ! disable task groups in this routine, it's not time consuming
-  save_tg = dffts%have_task_groups
-  dffts%have_task_groups = .false.
+  !!!! disable task groups in this routine, it's not time consuming
+  !!!save_tg = dffts%have_task_groups
+  !!!dffts%have_task_groups = .false.
 
   ! loop over k-points
   do ik = 1, nks
@@ -189,13 +188,13 @@ SUBROUTINE get_smooth_density(rho)
      current_spin = isk(ik)
     
      ! initialize at k-point k and read wfcs from file
-     call gk_sort(xk(1,ik), ngm, g, gcutw, npw, igk, g2kin)
+     call gk_sort(xk(1,ik), ngm, g, gcutw, npw, igk_k(1,ik), g2kin)
      call get_buffer (evc, nwordwfc, iunwfc, ik)
 
      ! loop over bands
      do ibnd = 1, nbnd
        psic(:) = (0.d0,0.d0)
-       psic(nls(igk(1:npw))) = evc(1:npw,ibnd)
+       psic(nls(igk_k(1:npw,ik))) = evc(1:npw,ibnd)
        call invfft ('Wave', psic, dffts)
        rho(:,current_spin) = rho(:,current_spin) + wg(ibnd,ik) * &
                              (dble(psic(:))**2 + aimag(psic(:))**2) / omega
@@ -206,7 +205,7 @@ SUBROUTINE get_smooth_density(rho)
   call mp_sum( rho, inter_pool_comm )
 #endif
 
-  dffts%have_task_groups = save_tg
+  !!!dffts%have_task_groups = save_tg
 
   if (job == 'hyperfine' .or. job == 'mossbauer') then
     do is = 1, nspin
@@ -310,10 +309,10 @@ SUBROUTINE efg_correction(efg_corr_tens)
   USE parameters,            ONLY : ntypx
   USE atom,                  ONLY : rgrid
   USE gvect,                 ONLY : g, ngm
-  USE klist,                 ONLY : nks, xk
+  USE klist,                 ONLY : nks, xk, igk_k
   USE cell_base,             ONLY : tpiba2
   USE ions_base,             ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                 ONLY : npw, igk, g2kin, current_k, wg
+  USE wvfct,                 ONLY : npw, g2kin, current_k, wg
   USE gvecw,                 ONLY : gcutw
   USE lsda_mod,              ONLY : current_spin, isk
   USE wavefunctions_module,  ONLY : evc
@@ -388,10 +387,10 @@ SUBROUTINE efg_correction(efg_corr_tens)
         s_weight = +1
      endif
      
-     call gk_sort ( xk(1,ik), ngm, g, gcutw, npw, igk, g2kin )
+     call gk_sort ( xk(1,ik), ngm, g, gcutw, npw, igk_k(1,ik), g2kin )
      call get_buffer ( evc, nwordwfc, iunwfc, ik)
      
-     call init_gipaw_2 ( npw, igk, xk(1,ik), paw_vkb )
+     call init_gipaw_2 ( npw, igk_k(1,ik), xk(1,ik), paw_vkb )
      call calbec ( npw, paw_vkb, evc, paw_becp )
      
      do ibnd = 1, nbnd_occ(ik)

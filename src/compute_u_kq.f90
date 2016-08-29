@@ -18,26 +18,29 @@ SUBROUTINE compute_u_kq(ik, q)
   USE io_files,             ONLY : nwordwfcU, iunhub, iunwfc, nwordwfc
   USE mp,                   ONLY : mp_sum
   USE mp_pools,             ONLY : inter_pool_comm, me_pool
+  USE mp_bands,             ONLY : intra_bgrp_comm
 #ifdef __BANDS
   USE mp_bands,             ONLY : me_bgrp, inter_bgrp_comm
 #endif
-  USE klist,                ONLY : nkstot, nks, xk, ngk
-  USE uspp,                 ONLY : vkb, nkb
-  USE wvfct,                ONLY : et, nbnd, igk, npw, g2kin, &
-                                   current_k, nbndx, btype
+  USE klist,                ONLY : nkstot, nks, xk, ngk, igk_k
+  USE uspp,                 ONLY : vkb, nkb, okvan
+  USE wvfct,                ONLY : et, nbnd, npw, g2kin, &
+                                   current_k, nbndx, btype, npwx
   USE gvecw,                ONLY : gcutw
   USE control_flags,        ONLY : ethr, lscf, istep, max_cg_iter
   USE control_flags,        ONLY : cntrl_isolve => isolve
   USE ldaU,                 ONLY : lda_plus_u, wfcU
   USE lsda_mod,             ONLY : current_spin, lsda, isk, nspin
   USE wavefunctions_module, ONLY : evc  
-  USE gvect,                ONLY : g, ngm
+  USE gvect,                ONLY : g, ngm, gstart
   USE gvecs,                ONLY : doublegrid
   USE dfunct,               ONLY : newd
   USE cell_base,            ONLY : tpiba2
   USE random_numbers,       ONLY : randy
   USE scf,                  ONLY : v, vrs, vltot, kedtau, rho
   USE fft_base,             ONLY : dfftp
+  USE noncollin_module,     ONLY : npol
+  USE becmod,               ONLY : becp, allocate_bec_type, deallocate_bec_type
   USE buffers
   USE gipaw_module
   IMPLICIT NONE
@@ -85,17 +88,17 @@ SUBROUTINE compute_u_kq(ik, q)
   npw = ngk(ik)
 
   ! same sorting of G-vector at k+q
-  call gk_sort(xk(1,ik),ngm,g,gcutw,npw,igk,g2kin)
+  call gk_sort(xk(1,ik),ngm,g,gcutw,npw,igk_k(1,ik),g2kin)
 
   ! set the k-point
   xkold(:) = xk(:,ik)
   xk(:,ik) = xk(:,ik) + q(:)
-  g2kin(1:npw) = ( ( xk(1,ik) + g(1,igk(1:npw)) )**2 + &
-                   ( xk(2,ik) + g(2,igk(1:npw)) )**2 + &
-                   ( xk(3,ik) + g(3,igk(1:npw)) )**2 ) * tpiba2
+  g2kin(1:npw) = ( ( xk(1,ik) + g(1,igk_k(1:npw,ik)) )**2 + &
+                   ( xk(2,ik) + g(2,igk_k(1:npw,ik)) )**2 + &
+                   ( xk(3,ik) + g(3,igk_k(1:npw,ik)) )**2 ) * tpiba2
 
   ! various initializations
-  IF ( nkb > 0 ) CALL init_us_2( npw, igk, xk(1,ik), vkb )
+  IF ( nkb > 0 ) CALL init_us_2( npw, igk_k(1,ik), xk(1,ik), vkb )
 
   ! read in wavefunctions from the previous iteration
   CALL get_buffer( evc, nwordwfc, iunwfc, ik)
@@ -107,6 +110,7 @@ SUBROUTINE compute_u_kq(ik, q)
   ! Needed for LDA+U
   IF ( lda_plus_u ) CALL get_buffer( wfcU, nwordwfcU, iunhub, ik )
 
+#if 0
   ! randomize a little bit in case of CG diagonalization
   if ( isolve == 1 ) then
 #ifdef __BANDS
@@ -122,6 +126,7 @@ SUBROUTINE compute_u_kq(ik, q)
       enddo
     enddo
   endif
+#endif
 
   ! re-update potential
   !call setlocal
@@ -132,6 +137,11 @@ SUBROUTINE compute_u_kq(ik, q)
   !call newd
 
   ! diagonalization of bands for k-point ik
+  CALL allocate_bec_type ( nkb, nbnd, becp, intra_bgrp_comm )
+  write(stdout,'(5X,''Rotating WFCS'')')
+  CALL rotate_wfc ( npwx, npw, nbnd, gstart, nbnd, evc, npol, okvan, evc, et(1,ik) )
+  avg_iter = 1.d0
+  CALL deallocate_bec_type ( becp )
   call diag_bands ( iter, ik, avg_iter )
 
   call mp_sum( avg_iter, inter_pool_comm )

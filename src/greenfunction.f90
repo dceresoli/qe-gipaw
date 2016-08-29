@@ -22,7 +22,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   USE wavefunctions_module,        ONLY : evc
   USE noncollin_module,            ONLY : npol
   USE pwcom,                       ONLY : ef
-  USE wvfct,                       ONLY : nbnd, et, npw, npwx, igk, g2kin
+  USE wvfct,                       ONLY : nbnd, et, npw, npwx, g2kin
   USE gvect,                       ONLY : g
   USE uspp,                        ONLY : nkb, vkb
   USE mp_pools,                    ONLY : intra_pool_comm
@@ -31,7 +31,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   USE io_files,                    ONLY : iunhub, nwordwfcU
   USE buffers,                     ONLY : get_buffer
   USE cell_base,                   ONLY : tpiba
-  USE klist,                       ONLY : lgauss, xk, degauss, ngauss
+  USE klist,                       ONLY : lgauss, xk, degauss, ngauss, igk_k
   USE gipaw_module
 #ifdef __BANDS
   USE mp_bands,                    ONLY : intra_bgrp_comm
@@ -190,9 +190,9 @@ endif
 
   ! use the hamiltonian at k+q
   do ig = 1, npw
-    gk(1) = (xk(1,ik) + g(1,igk(ig)) + q(1)) * tpiba
-    gk(2) = (xk(2,ik) + g(2,igk(ig)) + q(2)) * tpiba
-    gk(3) = (xk(3,ik) + g(3,igk(ig)) + q(3)) * tpiba
+    gk(1) = (xk(1,ik) + g(1,igk_k(ig,ik)) + q(1)) * tpiba
+    gk(2) = (xk(2,ik) + g(2,igk_k(ig,ik)) + q(2)) * tpiba
+    gk(3) = (xk(3,ik) + g(3,igk_k(ig,ik)) + q(3)) * tpiba
     g2kin (ig) = gk(1)**2 + gk(2)**2 + gk(3)**2
   enddo
 
@@ -228,9 +228,9 @@ endif
 
   if (.not. q_is_zero) then
     dxk = xk(:,ik) + q
-    call init_us_2(npw, igk, dxk, vkb)
+    call init_us_2(npw, igk_k(1,ik), dxk, vkb)
   else
-    call init_us_2(npw, igk, xk(1,ik), vkb)
+    call init_us_2(npw, igk_k(1,ik), xk(1,ik), vkb)
   endif
 
 #ifdef __BANDS

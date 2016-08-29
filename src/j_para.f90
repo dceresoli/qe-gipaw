@@ -15,8 +15,8 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   ! ... In the USPP case, current is computed on the smooth grid.
   !  
   USE kinds,                  ONLY : DP
-  USE klist,                  ONLY : xk, wk
-  USE wvfct,                  ONLY : nbnd, npwx, npw, igk  !, wg
+  USE klist,                  ONLY : xk, wk, igk_k
+  USE wvfct,                  ONLY : nbnd, npwx, npw
   USE gvecs,                  ONLY : nls
   USE gvect,                  ONLY : g
   USE cell_base,              ONLY : tpiba
@@ -54,9 +54,9 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   jaux(:,:) = 0.0d0  
 #endif
 
-  ! disable task groups for time being
-  save_tg = dffts%have_task_groups
-  dffts%have_task_groups = .false.
+  !!!! disable task groups for time being
+  !!!save_tg = dffts%have_task_groups
+  !!!dffts%have_task_groups = .false.
 
   ! loop over cartesian components
   do ipol = 1, 3
@@ -70,17 +70,17 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
 
       ! apply p_k on the left
       do ig = 1, npw
-        gk = xk(ipol,ik) + g(ipol,igk(ig))
+        gk = xk(ipol,ik) + g(ipol,igk_k(ig,ik))
         aux(ig) = gk * tpiba * psi_n(ig,ibnd)
       enddo
      
       ! transform to real space
       p_psic(:) = (0.d0,0.d0)
-      p_psic(nls(igk(1:npw))) = aux(1:npw)
+      p_psic(nls(igk_k(1:npw,ik))) = aux(1:npw)
       CALL invfft ('Wave', p_psic, dffts)
 
       psic(:) = (0.d0,0.d0)
-      psic(nls(igk(1:npw))) = psi_m(1:npw,ibnd)
+      psic(nls(igk_k(1:npw,ik))) = psi_m(1:npw,ibnd)
       CALL invfft ('Wave', psic, dffts)
 
       ! add to the current
@@ -95,17 +95,17 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
 #endif
       ! apply p_{k+q} on the right
       do ig = 1, npw
-        gk = xk(ipol,ik) + g(ipol,igk(ig)) + q(ipol)
+        gk = xk(ipol,ik) + g(ipol,igk_k(ig,ik)) + q(ipol)
         aux(ig) = gk * tpiba * psi_m(ig,ibnd)
       enddo
      
       ! transform to real space
       p_psic(:) = (0.d0,0.d0)
-      p_psic(nls(igk(1:npw))) = aux(1:npw)
+      p_psic(nls(igk_k(1:npw,ik))) = aux(1:npw)
       CALL invfft ('Wave', p_psic, dffts)
 
       psic(:) = (0.d0,0.d0)
-      psic(nls(igk(1:npw))) = psi_n(1:npw,ibnd)
+      psic(nls(igk_k(1:npw,ik))) = psi_n(1:npw,ibnd)
       CALL invfft ('Wave', psic, dffts)
 
       ! add to the current
@@ -132,8 +132,8 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   deallocate(jaux)
 #endif
 
-  ! reset task group state
-  dffts%have_task_groups = save_tg
+  !!!! reset task group state
+  !!!dffts%have_task_groups = save_tg
 
   call stop_clock('j_para')
 

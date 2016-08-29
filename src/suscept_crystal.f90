@@ -27,9 +27,8 @@ SUBROUTINE suscept_crystal
   USE io_files,               ONLY : nwordwfc, iunwfc
   USE cell_base,              ONLY : omega, tpiba, tpiba2
   USE wavefunctions_module,   ONLY : evc
-  USE klist,                  ONLY : nks, wk, xk
-  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
-                                     current_k
+  USE klist,                  ONLY : nks, wk, xk, igk_k
+  USE wvfct,                  ONLY : nbnd, npwx, npw, wg, g2kin, current_k
   USE gvecw,                  ONLY : gcutw
   USE lsda_mod,               ONLY : current_spin, isk
   USE becmod,                 ONLY : calbec
@@ -199,9 +198,9 @@ SUBROUTINE suscept_crystal
     endif
 
     ! initialize at k-point k 
-    call gk_sort(xk(1,ik), ngm, g, gcutw, npw, igk, g2kin)
+    call gk_sort(xk(1,ik), ngm, g, gcutw, npw, igk_k(1,ik), g2kin)
     g2kin(:) = g2kin(:) * tpiba2
-    call init_us_2(npw, igk, xk(1,ik), vkb)
+    call init_us_2(npw, igk_k(1,ik), xk(1,ik), vkb)
     
     ! read wfcs from file and compute becp
     call get_buffer (evc, nwordwfc, iunwfc, ik)
@@ -209,7 +208,7 @@ SUBROUTINE suscept_crystal
     ! replicate wavefunction over band groups (not needed anymore???)
     !!call mp_sum(evc, inter_bgrp_comm)
 #endif
-    call init_gipaw_2_no_phase (npw, igk, xk (1, ik), paw_vkb)
+    call init_gipaw_2_no_phase (npw, igk_k(1,ik), xk(1,ik), paw_vkb)
     call calbec (npw, paw_vkb, evc, paw_becp)
 
     ! this is the case q = 0
@@ -544,7 +543,7 @@ CONTAINS
     call apply_operators
       
     k_plus_q(1:3) = xk(1:3,ik) + q(1:3)
-    call init_gipaw_2_no_phase(npw, igk, k_plus_q, paw_vkb)
+    call init_gipaw_2_no_phase(npw, igk_k(1,ik), k_plus_q, paw_vkb)
 
     ! pGv and vGv contribution to chi_bare
     call add_to_tensor(i,q_pGv(:,:,isign), p_evc, G_vel_evc)

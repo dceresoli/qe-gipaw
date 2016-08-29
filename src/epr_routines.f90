@@ -271,8 +271,7 @@ END SUBROUTINE diamagnetic_correction_so
 SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
   USE kinds,                  ONLY : dp
   USE ions_base,              ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                  ONLY : nbnd, npwx, npw, igk, wg, g2kin, &
-                                     current_k
+  USE wvfct,                  ONLY : nbnd, npwx, npw, wg, g2kin, current_k
   USE gvecw,                  ONLY : gcutw
   USE lsda_mod,               ONLY : current_spin
   USE wavefunctions_module,   ONLY : evc
@@ -286,7 +285,7 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
   USE uspp,                   ONLY : qq, vkb, nkb 
   USE uspp_param,             ONLY : nh
   USE cell_base,              ONLY : tpiba, tpiba2
-  USE klist,                  ONLY : xk
+  USE klist,                  ONLY : xk, igk_k
   USE gvect,                  ONLY : g, ngm
 
   !-- parameters --------------------------------------------------------
@@ -315,9 +314,9 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
   allocate( ps( nkb, nbnd ), becp2(nkb,nbnd) )
   ik = current_k
 
-  call gk_sort(xk(1,ik), ngm, g, gcutw, npw, igk, g2kin)
+  call gk_sort(xk(1,ik), ngm, g, gcutw, npw, igk_k(1,ik), g2kin)
   vkb = (0.d0,0.d0)
-  call init_us_2 (npw, igk, xk(:,ik), vkb)
+  call init_us_2 (npw, igk_k(1,ik), xk(:,ik), vkb)
   ! TODO: calbec_bands
   call calbec (npw, vkb, evc, becp2, nbnd)
   ps(:,:) = (0.d0, 0.d0)
@@ -349,7 +348,7 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
   dvkbj(:,:) = (0.d0,0.d0); dvkby(:,:) = (0.d0,0.d0);Lp(:,:,:) = (0.d0,0.d0)
   gk(:,:) = 0.d0; gg(:,:) = 0.d0
   do ig = 1,npw
-     gk(1:3,ig)=(xk(1:3,ik)+g(1:3,igk(ig)))*tpiba
+     gk(1:3,ig)=(xk(1:3,ik)+g(1:3,igk_k(ig,ik)))*tpiba
      g2kin(ig) = SUM (gk(1:3,ig)**2)
      if(g2kin (ig) < 1.0d-10) then
        gg (:, ig) = 0.d0

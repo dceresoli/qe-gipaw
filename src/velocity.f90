@@ -22,8 +22,8 @@ SUBROUTINE apply_p(psi, p_psi, ik, ipol, q)
   ! ... |p_psi> = (G+k+q/2)_{ipol} |psi>
   !  
   USE kinds,                ONLY : DP
-  USE klist,                ONLY : xk
-  USE wvfct,                ONLY : nbnd, npwx, npw, igk  
+  USE klist,                ONLY : xk, igk_k
+  USE wvfct,                ONLY : nbnd, npwx, npw
   USE pwcom
   USE gipaw_module,         ONLY : nbnd_occ
 #ifdef __BANDS
@@ -46,7 +46,7 @@ SUBROUTINE apply_p(psi, p_psi, ik, ipol, q)
 
   do ibnd = 1, nbnd_occ(ik)
     do ig = 1, npw
-      gk = xk(ipol,ik) + g(ipol,igk(ig)) + q(ipol)
+      gk = xk(ipol,ik) + g(ipol,igk_k(ig,ik)) + q(ipol)
       p_psi(ig,ibnd) = p_psi(ig,ibnd) + gk * tpiba * psi(ig,ibnd)
     enddo
   enddo
@@ -67,8 +67,8 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   ! ...   (1/i)[r,S] => dS_{k+q,k}/dk
   !-----------------------------------------------------------------------
   USE kinds,                ONLY : DP
-  USE klist,                ONLY : xk
-  USE wvfct,                ONLY : nbnd, npwx, npw, igk  
+  USE klist,                ONLY : xk, igk_k
+  USE wvfct,                ONLY : nbnd, npwx, npw
   USE becmod,               ONLY : bec_type, becp, calbec, &
                                    allocate_bec_type, deallocate_bec_type
   USE uspp,                 ONLY : nkb, vkb
@@ -128,7 +128,7 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
       dxk(ipol) = dxk(ipol) + isign * dk     ! k \pm dk
 
       ! compute <\beta(k \pm dk)| and project on |psi>
-      call init_us_2_no_phase(npw, igk, dxk, vkb)
+      call init_us_2_no_phase(npw, igk_k(1,ik), dxk, vkb)
 #ifdef __BANDS
       call calbec_bands (npwx, npw, nkb, vkb, psi, becp%k, nbnd_occ(ik), ibnd_start, ibnd_end)
 #else
@@ -138,7 +138,7 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
       ! |q|!=0 => compute |\beta(k \pm dk + q)>
       if (.not. q_is_zero) then
           dxk(:) = dxk(:) + q(:)
-          call init_us_2_no_phase(npw, igk, dxk, vkb)
+          call init_us_2_no_phase(npw, igk_k(1,ik), dxk, vkb)
       endif
 
       aux = (0.d0,0.d0)
