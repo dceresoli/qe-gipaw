@@ -192,10 +192,20 @@ SUBROUTINE gipaw_summary
   USE gipaw_module
   USE io_global,     ONLY : stdout
   USE ldaU,          ONLY : lda_plus_U
+  USE cellmd,        ONLY : cell_factor
+  USE gvecw,         ONLY : ecutwfc
+  USE us,            ONLY : spline_ps
   implicit none
 
-  write(stdout,*)
+  if (.not. spline_ps) then
+      write(stdout,*)
+      call infomsg('gipaw_summary', 'spline_ps is .false., expect some extrapolation errors')
+  endif
 
+  write(stdout,*)
+  write(stdout,"(5X,'q-space interpolation up to ',F8.2,' Rydberg')") ecutwfc*cell_factor
+  write(stdout,*)
+  
   write(stdout,'(5X,''GIPAW job: '',A)') job
   if (job(1:3) == 'nmr') then
     if (use_nmr_macroscopic_shape) then

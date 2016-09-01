@@ -31,7 +31,6 @@ PROGRAM gipaw_main
   USE io_global,       ONLY : stdout, meta_ionode, meta_ionode_id
   USE mp,              ONLY : mp_bcast
   USE cell_base,       ONLY : tpiba
-  USE cellmd,          ONLY : cell_factor
   USE gipaw_module,    ONLY : job, q_gipaw
   USE control_flags,   ONLY : io_level, gamma_only, use_para_diag, twfcollect
   USE mp_global,       ONLY : mp_startup, nproc_pool_file
@@ -98,7 +97,6 @@ PROGRAM gipaw_main
   io_level = 1
  
   ! read ground state wavefunctions
-  cell_factor = 1.1d0
   call read_file
 #ifdef __MPI
   use_para_diag = check_para_diag(nbnd)
