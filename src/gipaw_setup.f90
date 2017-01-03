@@ -19,8 +19,7 @@ SUBROUTINE gipaw_setup
   USE scf,           ONLY : v, vrs, vltot, kedtau, rho
   USE fft_base,      ONLY : dfftp
   USE gvecs,         ONLY : doublegrid
-  USE klist,         ONLY : degauss, ngauss, nks, lgauss, wk, two_fermi_energies
-  USE ktetra,        ONLY : ltetra
+  USE klist,         ONLY : degauss, ngauss, nks, lgauss, wk, two_fermi_energies, ltetra
   USE noncollin_module,  ONLY : noncolin
   USE constants,     ONLY : degspin, pi
   USE mp_pools,      ONLY : inter_pool_comm 
