@@ -621,7 +621,7 @@ SUBROUTINE print_chemical_shifts(sigma_shape, sigma_bare, sigma_diamagnetic, sig
     write(stdout,'(5X,''*** ATTENTION: system is metallic, Knight shift not included ***'')')
 
 1000 FORMAT(5X,A,I3,4X,A,F10.2,4X,A,F10.4)
-1001 FORMAT(5X,A,I3,4X,A,F10.4,4X,A,3F10.6,A)
+1001 FORMAT(5X,A,I3,4X,A,F10.2,4X,A,3F10.6,A)
 
 END SUBROUTINE print_chemical_shifts
 
