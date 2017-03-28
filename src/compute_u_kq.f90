@@ -55,7 +55,7 @@ SUBROUTINE compute_u_kq(ik, q)
   CALL start_clock( 'c_bands' )
 
   ! Initialize the diagonalization
-  if (isolve == 1) then
+  if (isolve == 1 .or. isolve == 2) then
     nbndx = nbnd ! CG
   elseif (isolve == 0) then
     nbndx = 4*nbnd ! Davidson TODO: check if 4 times!!!!

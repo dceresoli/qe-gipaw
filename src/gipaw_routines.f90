@@ -88,6 +88,8 @@ SUBROUTINE gipaw_readin()
        isolve = 1
      case('cg')
        isolve = 0
+     case('rmm-diis')
+       isolve = 2
      case default
        call errore('gipaw_readin', 'diagonalization can be ''david'' or ''cg''', 1)
   end select

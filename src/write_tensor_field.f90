@@ -143,6 +143,7 @@ SUBROUTINE write_nics(filename, field)
   USE fft_base,        ONLY : dfftp
   USE scatter_mod,     ONLY : gather_grid
   USE gvect,           ONLY : gcutm
+  USE gvecs,           ONLY : dual
   USE cell_base,       ONLY : at, ibrav, celldm
   USE ions_base,       ONLY : zv, ntyp => nsp, nat, ityp, atm, tau
   USE gvecw,           ONLY : ecutwfc

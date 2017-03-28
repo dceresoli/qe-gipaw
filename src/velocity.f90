@@ -26,6 +26,7 @@ SUBROUTINE apply_p(psi, p_psi, ik, ipol, q)
   USE wvfct,                ONLY : nbnd, npwx, npw
   USE pwcom
   USE gipaw_module,         ONLY : nbnd_occ
+  USE gvect,                ONLY : g
 #ifdef __BANDS
   USE mp_bands,             ONLY : inter_bgrp_comm
   USE mp,                   ONLY : mp_sum
