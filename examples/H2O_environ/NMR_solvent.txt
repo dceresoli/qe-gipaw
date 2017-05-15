@@ -1,8 +1,10 @@
-pw.x <H2O-scf.in >H2O-scf.out-vac
-gipaw.x <H2O-nmr.in >H2O-scf.nmr-vac
+Testing GIPAW+Environ against Gaussian 09+PCM
+=============================================
+pw.x <H2O_scf.in >H2O_scf.out-vac
+gipaw.x <H2O_nmr.in >H2O_scf.nmr-vac
 
-pw.x -environ <H2O-scf.in >H2O-scf.out-wat
-gipaw.x -environ <H2O-nmr.in >H2O-scf.nmr-wat
+pw.x -environ <H2O_scf.in >H2O_scf.out-wat
+gipaw.x -environ <H2O_nmr.in >H2O_scf.nmr-wat
 
 
 Gaussian no PCM

@@ -1,0 +1,28 @@
+HOW TO ACTIVATE GIPAW+ENVIRON
+=============================
+
+1- Download, expand, configure, compile PW as usual
+./configure
+make pw
+
+2- Download environ and activate it (according to Environ/README)
+
+wget http://qe-forge.org/gf/download/frsrelease/205/918/Environ-0.2.tgz
+tar zxfv Environ-0.2.tgz
+
+./install/addsonpatch.sh Environ Environ/src Modules -patch
+cd PW/src
+../../Environ/patches/environpatch.sh -patch
+cd ../../install
+./makedeps.sh -addson Modules Modules
+./makedeps.sh PW/src
+cd ..
+
+3- Recompile PW, compile GIPAW
+make pw pp
+make gipaw
+
+4- Test Environ
+cd qe-gipaw-6.1/examples/H2O_environ
+mpirun -np 4 ../../../bin/pw.x -environ <H2O_scf.in >H2O_scf.out-wat
+mpirun -np 4 ../../../bin/gipaw.x -environ <H2O_nmr.in >H2O_nmr.out-wat
