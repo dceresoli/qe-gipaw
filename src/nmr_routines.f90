@@ -437,7 +437,7 @@ SUBROUTINE compute_sigma_bare(B_ind, chi_bare, sigma_bare, sigma_shape)
   USE kinds,                ONLY : dp
   USE gvect,                ONLY : ngm, gstart, g
   USE ions_base,            ONLY : nat, tau
-  USE pwcom,                ONLY : pi, tpi
+  USE constants,            ONLY : pi, tpi
   USE gipaw_module,         ONLY : use_nmr_macroscopic_shape, &
                                    nmr_macroscopic_shape
 #ifdef __BANDS
