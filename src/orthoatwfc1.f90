@@ -16,15 +16,17 @@ SUBROUTINE orthoatwfc1(ik)
   USE kinds,            ONLY : DP
   USE basis,            ONLY : natomwfc, swfcatom
   USE ldaU,             ONLY : U_projection, copy_U_wfc
-  USE wvfct,            ONLY : npwx, npw
+  USE wvfct,            ONLY : npwx
+  USE klist,            ONLY : ngk
   USE becmod,           ONLY : allocate_bec_type, deallocate_bec_type, &
                                bec_type, calbec
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
-  integer, intent(in) :: ik
+  INTEGER, INTENT(IN) :: ik
   !-- local variables ----------------------------------------------------
-  complex(dp), allocatable :: wfcatom(:,:)
+  COMPLEX(DP), ALLOCATABLE :: wfcatom(:,:)
+  INTEGER :: npw
   LOGICAL :: normalize_only
 
   allocate(wfcatom(npwx,natomwfc), swfcatom(npwx,natomwfc))    
@@ -34,6 +36,7 @@ SUBROUTINE orthoatwfc1(ik)
  
   ! generate atomic wfcs for projection
   call atomic_wfc(ik, wfcatom)
+  npw = ngk(ik)
   call s_psi(npwx, npw, natomwfc, wfcatom, swfcatom)
 
   if (U_projection=="atomic") goto 200
@@ -41,7 +44,7 @@ SUBROUTINE orthoatwfc1(ik)
   ! orthogonalize
 
   normalize_only = (U_projection == "norm-atomic") 
-  CALL ortho_swfc ( normalize_only, natomwfc, wfcatom, swfcatom )
+  CALL ortho_swfc ( npw, normalize_only, natomwfc, wfcatom, swfcatom )
   !
 200 continue
   !
