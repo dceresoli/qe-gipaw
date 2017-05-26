@@ -19,7 +19,8 @@
 SUBROUTINE rmc(s_weight, delta_g_rmc, delta_g_rmc_gipaw)
   USE kinds,                  ONLY : dp
   USE ions_base,              ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                  ONLY : nbnd, npw, wg, g2kin, current_k
+  USE wvfct,                  ONLY : nbnd, wg, g2kin, current_k
+  USE klist,                  ONLY : ngk
   USE wavefunctions_module,   ONLY : evc
   USE becmod,                 ONLY : calbec  
   USE paw_gipaw,              ONLY : paw_becp, paw_recon
@@ -34,9 +35,11 @@ SUBROUTINE rmc(s_weight, delta_g_rmc, delta_g_rmc_gipaw)
   integer :: l1, m1, lm1, l2, m2, lm2, ih, ikb, nbs1, jh, jkb, nbs2
   integer :: nt, ibnd, na, ijkb0
   complex(dp) :: rmc_corr, bec_product
+  integer :: npw
 
   ! bare term
   do ibnd = 1, nbnd_occ(current_k)
+     npw = ngk(current_k)
      delta_g_rmc = delta_g_rmc - s_weight * wg(ibnd,current_k) * &
                    sum(g2kin(1:npw)*conjg(evc(1:npw,ibnd))*evc(1:npw,ibnd))
   end do
@@ -88,7 +91,8 @@ SUBROUTINE paramagnetic_correction_so (paramagnetic_tensor, paramagnetic_tensor_
                                        g_vel_evc, u_svel_evc, ipol)
   USE kinds,                  ONLY : dp
   USE ions_base,              ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                  ONLY : nbnd, npwx, npw, wg, current_k
+  USE wvfct,                  ONLY : nbnd, npwx, wg, current_k
+  USE klist,                  ONLY : ngk
   USE becmod,                 ONLY : calbec  
   USE paw_gipaw,              ONLY : paw_vkb, paw_becp, paw_recon
   USE gipaw_module,           ONLY : lx, ly, lz, paw_becp2, paw_becp3, alpha, &
@@ -108,7 +112,9 @@ SUBROUTINE paramagnetic_correction_so (paramagnetic_tensor, paramagnetic_tensor_
   complex(dp) :: bec_product, cc
   integer :: l1, m1, lm1, l2, m2, lm2, ih, ikb, nbs1, jh, jkb, nbs2
   integer :: nt, ibnd, na, ijkb0, jpol
+  integer :: npw
 
+  npw = ngk(current_k)
   do jpol = 1, 3 
      if ( jpol == ipol ) cycle
      call calbec (npw, paw_vkb, g_vel_evc(:,:,jpol), paw_becp2)
@@ -271,7 +277,7 @@ END SUBROUTINE diamagnetic_correction_so
 SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
   USE kinds,                  ONLY : dp
   USE ions_base,              ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                  ONLY : nbnd, npwx, npw, wg, g2kin, current_k
+  USE wvfct,                  ONLY : nbnd, npwx, wg, g2kin, current_k
   USE gvecw,                  ONLY : gcutw
   USE lsda_mod,               ONLY : current_spin
   USE wavefunctions_module,   ONLY : evc
@@ -285,7 +291,7 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
   USE uspp,                   ONLY : qq, vkb, nkb 
   USE uspp_param,             ONLY : nh
   USE cell_base,              ONLY : tpiba, tpiba2
-  USE klist,                  ONLY : xk, igk_k
+  USE klist,                  ONLY : xk, igk_k, ngk
   USE gvect,                  ONLY : g, ngm
 
   !-- parameters --------------------------------------------------------
@@ -305,6 +311,7 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
   complex(dp) , allocatable :: g_LQ_evc(:,:,:),becp2(:,:)
   complex(dp) :: cc,bec_product
   real(dp) :: epsi(3,3), xyz(3,3),emine_q(3),dvkb_dir(3),ffact
+  integer :: npw
   DATA epsi/0.d0,-3.d0,2.d0,3.d0,0.d0,-1.d0,-2.d0,1.d0,0.d0/, &
        xyz/1.d0,0.d0,0.d0,0.d0,1.d0,0.d0,0.d0,0.d0,1.d0/
 
@@ -313,6 +320,7 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
 
   allocate( ps( nkb, nbnd ), becp2(nkb,nbnd) )
   ik = current_k
+  npw = ngk(ik)
 
   call gk_sort(xk(1,ik), ngm, g, gcutw, npw, igk_k(1,ik), g2kin)
   vkb = (0.d0,0.d0)

@@ -156,9 +156,9 @@ SUBROUTINE get_smooth_density(rho)
   USE mp,                     ONLY : mp_sum
   USE mp_pools,               ONLY : inter_pool_comm
   USE lsda_mod,               ONLY : current_spin, isk, nspin
-  USE wvfct,                  ONLY : nbnd, npw, wg, g2kin, current_k
+  USE wvfct,                  ONLY : nbnd, wg, g2kin, current_k
   USE gvecw,                  ONLY : gcutw
-  USE klist,                  ONLY : nks, xk, igk_k
+  USE klist,                  ONLY : nks, xk, igk_k, ngk
   USE gvect,                  ONLY : ngm, g
   USE gvecs,                  ONLY : nls
   USE wavefunctions_module,   ONLY : evc
@@ -175,6 +175,7 @@ SUBROUTINE get_smooth_density(rho)
   complex(dp) :: psic(dffts%nnr)
   integer :: ibnd, ik, is
   logical :: save_tg
+  integer :: npw
 
   rho = (0.d0,0.d0)
 
@@ -186,7 +187,8 @@ SUBROUTINE get_smooth_density(rho)
   do ik = 1, nks
      current_k = ik
      current_spin = isk(ik)
-    
+     npw = ngk(ik)
+ 
      ! initialize at k-point k and read wfcs from file
      call gk_sort(xk(1,ik), ngm, g, gcutw, npw, igk_k(1,ik), g2kin)
      call get_buffer (evc, nwordwfc, iunwfc, ik)
@@ -309,10 +311,10 @@ SUBROUTINE efg_correction(efg_corr_tens)
   USE parameters,            ONLY : ntypx
   USE atom,                  ONLY : rgrid
   USE gvect,                 ONLY : g, ngm
-  USE klist,                 ONLY : nks, xk, igk_k
+  USE klist,                 ONLY : nks, xk, igk_k, ngk
   USE cell_base,             ONLY : tpiba2
   USE ions_base,             ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                 ONLY : npw, g2kin, current_k, wg
+  USE wvfct,                 ONLY : g2kin, current_k, wg
   USE gvecw,                 ONLY : gcutw
   USE lsda_mod,              ONLY : current_spin, isk
   USE wavefunctions_module,  ONLY : evc
@@ -334,6 +336,7 @@ SUBROUTINE efg_correction(efg_corr_tens)
   complex(dp) :: bec_product 
   real(dp), allocatable :: at_efg(:,:,:), work(:)
   complex(dp), allocatable :: efg_corr(:,:)
+  integer :: npw
   
   allocate( efg_corr(9,nat) )
   efg_corr = 0.0_dp
@@ -379,7 +382,8 @@ SUBROUTINE efg_correction(efg_corr_tens)
   do ik = 1, nks
      current_k = ik
      current_spin = isk(ik)
-     
+     npw = ngk(ik)
+ 
      ! different sign for spins only in "hyperfine", not "efg"
      if ( current_spin == s_min .and. job == "hyperfine" ) then
         s_weight = -1

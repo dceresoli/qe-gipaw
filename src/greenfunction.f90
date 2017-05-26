@@ -22,7 +22,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   USE wavefunctions_module,        ONLY : evc
   USE noncollin_module,            ONLY : npol
   USE pwcom,                       ONLY : ef
-  USE wvfct,                       ONLY : nbnd, et, npw, npwx, g2kin
+  USE wvfct,                       ONLY : nbnd, et, npwx, g2kin
   USE gvect,                       ONLY : g
   USE uspp,                        ONLY : nkb, vkb
   USE mp_pools,                    ONLY : intra_pool_comm
@@ -31,7 +31,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   USE io_files,                    ONLY : iunhub, nwordwfcU
   USE buffers,                     ONLY : get_buffer
   USE cell_base,                   ONLY : tpiba
-  USE klist,                       ONLY : lgauss, xk, degauss, ngauss, igk_k
+  USE klist,                       ONLY : lgauss, xk, degauss, ngauss, igk_k, ngk
   USE gipaw_module
 #ifdef __BANDS
   USE mp_bands,                    ONLY : intra_bgrp_comm
@@ -55,9 +55,11 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   real(dp), external :: wgauss, w0gauss
   real(dp) :: wg1, w0g, wgp, wwg, deltae, theta
   external ch_psi_all, cg_psi
+  integer :: npw
  
   ! start clock
   call start_clock ('greenf')
+  npw = ngk(ik)
 
   ! allocate memory
   allocate (work(npwx), ps(nbnd,nbnd), h_diag(npwx,nbnd), eprec(nbnd))

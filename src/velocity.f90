@@ -22,8 +22,8 @@ SUBROUTINE apply_p(psi, p_psi, ik, ipol, q)
   ! ... |p_psi> = (G+k+q/2)_{ipol} |psi>
   !  
   USE kinds,                ONLY : DP
-  USE klist,                ONLY : xk, igk_k
-  USE wvfct,                ONLY : nbnd, npwx, npw
+  USE klist,                ONLY : xk, igk_k, ngk
+  USE wvfct,                ONLY : nbnd, npwx
   USE pwcom
   USE gipaw_module,         ONLY : nbnd_occ
   USE gvect,                ONLY : g
@@ -45,8 +45,10 @@ SUBROUTINE apply_p(psi, p_psi, ik, ipol, q)
   !-- local variables ----------------------------------------------------
   REAL(DP) :: gk
   INTEGER :: ig, ibnd
+  INTEGER :: now
 
   do ibnd = 1, nbnd_occ(ik)
+    npw = ngk(ik)
     do ig = 1, npw
       gk = xk(ipol,ik) + g(ipol,igk_k(ig,ik)) + q(ipol)
       p_psi(ig,ibnd) = p_psi(ig,ibnd) + gk * tpiba * psi(ig,ibnd)
@@ -69,8 +71,8 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   ! ...   (1/i)[r,S] => dS_{k+q,k}/dk
   !-----------------------------------------------------------------------
   USE kinds,                ONLY : DP
-  USE klist,                ONLY : xk, igk_k
-  USE wvfct,                ONLY : nbnd, npwx, npw
+  USE klist,                ONLY : xk, igk_k, ngk
+  USE wvfct,                ONLY : nbnd, npwx
   USE becmod,               ONLY : bec_type, becp, calbec, &
                                    allocate_bec_type, deallocate_bec_type
   USE uspp,                 ONLY : nkb, vkb
@@ -99,6 +101,9 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   real(dp) :: dk, dxk(3)
   integer :: isign
   logical :: q_is_zero
+  integer :: npw
+
+  npw = ngk(ik)
 
   ! if no projectors, return
   if (nkb == 0) return

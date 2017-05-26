@@ -24,7 +24,7 @@ SUBROUTINE compute_u_kq(ik, q)
 #endif
   USE klist,                ONLY : nkstot, nks, xk, ngk, igk_k
   USE uspp,                 ONLY : vkb, nkb, okvan
-  USE wvfct,                ONLY : et, nbnd, npw, g2kin, &
+  USE wvfct,                ONLY : et, nbnd, g2kin, &
                                    current_k, nbndx, btype, npwx
   USE gvecw,                ONLY : gcutw
   USE control_flags,        ONLY : ethr, lscf, istep, max_cg_iter
@@ -51,6 +51,7 @@ SUBROUTINE compute_u_kq(ik, q)
   REAL(DP) :: xkold(3)
   REAL(DP), allocatable :: et_old(:,:)
   REAL(DP) :: rr, arg
+  INTEGER :: npw
 
   CALL start_clock( 'c_bands' )
 

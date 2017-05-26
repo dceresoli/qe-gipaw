@@ -27,8 +27,8 @@ SUBROUTINE suscept_crystal
   USE io_files,               ONLY : nwordwfc, iunwfc
   USE cell_base,              ONLY : omega, tpiba, tpiba2
   USE wavefunctions_module,   ONLY : evc
-  USE klist,                  ONLY : nks, wk, xk, igk_k
-  USE wvfct,                  ONLY : nbnd, npwx, npw, wg, g2kin, current_k
+  USE klist,                  ONLY : nks, wk, xk, igk_k, ngk
+  USE wvfct,                  ONLY : nbnd, npwx, wg, g2kin, current_k
   USE gvecw,                  ONLY : gcutw
   USE lsda_mod,               ONLY : current_spin, isk
   USE becmod,                 ONLY : calbec
@@ -115,6 +115,7 @@ SUBROUTINE suscept_crystal
   integer :: s_min, s_maj, s_weight
   complex(dp), external :: zdotc
   real(dp), external :: get_clock
+  integer :: npw
  
   call start_clock('suscept_crystal')
   !-----------------------------------------------------------------------
@@ -192,6 +193,8 @@ SUBROUTINE suscept_crystal
 
     current_k = ik
     current_spin = isk(ik)
+    npw = ngk(ik)
+
     if (job == 'g_tensor') then
       s_weight = +1
       if (current_spin == s_min) s_weight = -1

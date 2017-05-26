@@ -122,10 +122,10 @@ SUBROUTINE moss_gipaw_correction(moss_gipaw)
   USE parameters,            ONLY : ntypx
   USE atom,                  ONLY : rgrid
   USE gvect,                 ONLY : g, ngm
-  USE klist,                 ONLY : nks, xk, igk_k
+  USE klist,                 ONLY : nks, xk, igk_k, ngk
   USE cell_base,             ONLY : tpiba2
   USE ions_base,             ONLY : nat, ityp, ntyp => nsp
-  USE wvfct,                 ONLY : npw, g2kin
+  USE wvfct,                 ONLY : g2kin
   USE gvecw,                 ONLY : gcutw
   USE wavefunctions_module,  ONLY : evc
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
@@ -150,6 +150,7 @@ SUBROUTINE moss_gipaw_correction(moss_gipaw)
   integer :: r_first
   complex(dp) :: bec_product
   !integer, external :: atomic_number
+  integer :: npw
   
   allocate( at_moss(paw_nkb,paw_nkb,ntyp) )
   at_moss = 0.0_dp
@@ -196,7 +197,8 @@ SUBROUTINE moss_gipaw_correction(moss_gipaw)
   do ik = 1, nks
      current_k = ik
      current_spin = isk(ik)
-     
+     npw = ngk(ik)
+ 
      call gk_sort ( xk(1,ik), ngm, g, gcutw, npw, igk_k(1,ik), g2kin )
      call get_buffer ( evc, nwordwfc, iunwfc, ik)
      

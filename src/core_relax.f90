@@ -28,8 +28,8 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   USE lsda_mod,              ONLY : nspin, isk, current_spin
   USE buffers,               ONLY : get_buffer
   USE gipaw_module,          ONLY : iverbosity
-  USE klist,                 ONLY : nks, xk, igk_k
-  USE wvfct,                 ONLY : nbnd, npw, g2kin, wg, current_k
+  USE klist,                 ONLY : nks, xk, igk_k, ngk
+  USE wvfct,                 ONLY : nbnd, g2kin, wg, current_k
   USE gvecw,                 ONLY : gcutw
   USE becmod,                ONLY : calbec
   USE wavefunctions_module,  ONLY : evc
@@ -76,6 +76,8 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   real(dp) :: arho, zeta, ex, ec, vx(2), vc(2)
 
   real(dp), allocatable :: rho_(:,:), rhoc(:), vgc(:,:), egc(:,:), tau_(:,:), vtau(:)
+
+  integer :: npw
 
   if (method < 1 .or. method > 3) call errore('core-relax', 'unknown method', abs(method))
 
@@ -198,7 +200,8 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
     do ik = 1, nks
       current_k = ik
       current_spin = isk(ik)
-     
+      npw = ngk(ik)
+ 
       call gk_sort (xk(1,ik), ngm, g, gcutw, npw, igk_k(1,ik), g2kin)
       call get_buffer (evc, nwordwfc, iunwfc, ik)
       call init_gipaw_2 (npw, igk_k(1,ik), xk(1,ik), paw_vkb)

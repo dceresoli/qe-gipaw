@@ -359,10 +359,10 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   USE parameters,            ONLY : ntypx
   USE atom,                  ONLY : rgrid
   USE gvect,                 ONLY : g, ngm
-  USE klist,                 ONLY : nks, xk, igk_k
+  USE klist,                 ONLY : nks, xk, igk_k, ngk
   USE cell_base,             ONLY : tpiba2
   USE ions_base,             ONLY : nat, ityp, ntyp => nsp, atm
-  USE wvfct,                 ONLY : npw, g2kin
+  USE wvfct,                 ONLY : g2kin
   USE gvecw,                 ONLY : gcutw
   USE wavefunctions_module,  ONLY : evc
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
@@ -394,7 +394,8 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   real(dp) :: r_Thomson
   complex(dp) :: bec_product
   integer, external :: atomic_number
-  
+  integer :: npw
+ 
   allocate( at_hfi(paw_nkb,paw_nkb,ntyp) )
   allocate( at_hfi_zora(paw_nkb,paw_nkb,ntyp) )
   allocate( at_hfi_extra(paw_nkb,paw_nkb,ntyp) )
@@ -494,7 +495,8 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   do ik = 1, nks
      current_k = ik
      current_spin = isk(ik)
-     
+     npw = ngk(ik)
+ 
      if (current_spin == s_min) then
         s_weight = -1
      else

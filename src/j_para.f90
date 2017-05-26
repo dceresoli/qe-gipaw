@@ -15,8 +15,8 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   ! ... In the USPP case, current is computed on the smooth grid.
   !  
   USE kinds,                  ONLY : DP
-  USE klist,                  ONLY : xk, wk, igk_k
-  USE wvfct,                  ONLY : nbnd, npwx, npw
+  USE klist,                  ONLY : xk, wk, igk_k, ngk
+  USE wvfct,                  ONLY : nbnd, npwx
   USE gvecs,                  ONLY : nls
   USE gvect,                  ONLY : g
   USE cell_base,              ONLY : tpiba
@@ -44,6 +44,7 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   REAL(DP), allocatable :: jaux(:,:) 
 #endif
   LOGICAL :: save_tg
+  INTEGER :: npw
 
   call start_clock('j_para')
 
@@ -67,6 +68,7 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
 #else
     do ibnd = 1, nbnd_occ(ik)
 #endif
+      npw = ngk(ik)
 
       ! apply p_k on the left
       do ig = 1, npw
