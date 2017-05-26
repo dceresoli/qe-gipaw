@@ -1,5 +1,5 @@
 
-     Program QE v.6.beta (svn rev. 12871M) starts on 29Aug2016 at 11:49:32 
+     Program QE v.6.1 (svn rev. 13531M) starts on 26May2017 at 13:59:26 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -7,28 +7,16 @@
           URL http://www.quantum-espresso.org", 
      in publications or presentations arising from this work. More details at
      http://www.quantum-espresso.org/quote
- 
-           HOST :    @host@
-           ARCH :    x86_64
-             CC :    icc
-            CPP :    cpp
-            F90 :    mpif90
-            F77 :    ifort
-         DFLAGS :    -D__INTEL -D__DFTI -D__MPI -D__PARA -D__SCALAPACK
-      BLAS LIBS :    -L/opt/intel/xe2016/mkl/lib/intel64 -lmkl_intel_lp64  -lmkl_sequential -lmkl_core
-    LAPACK LIBS :    
-       FFT LIBS :    
-      MASS LIBS :    
 
      Parallel version (MPI), running on     4 processors
      R & G space division:  proc/nbgrp/npool/nimage =       4
  
-     ***** This is GIPAW svn revision 416          *****
+     ***** This is GIPAW svn revision 428          *****
  
      Parallelizing q-star over 1 images
 
      Reading data from directory:
-     /tmp/ceresoli/quartz.save
+     /tmp/ceresoli/quartz.save/
 
    Info: using nr1, nr2, nr3 values from input
 
@@ -111,6 +99,8 @@
      k-point:    19    nbnd_occ=  24
      k-point:    20    nbnd_occ=  24
  
+ 
+     q-space interpolation up to    44.00 Rydberg
  
      GIPAW job: efg                                                                             
  
@@ -275,7 +265,7 @@
      Si   2       -0.013644        0.007889       -0.017062
  
      Si   3        0.079563       -0.000000        0.000000
-     Si   3       -0.000000       -0.062482       -0.015765
+     Si   3        0.000000       -0.062482       -0.015765
      Si   3        0.000000       -0.015765       -0.017081
  
      O    4       -0.193957        0.386184       -0.440635
@@ -350,7 +340,7 @@
      O    9  Q=         2.5500 1e-30 m^2  Cq=         5.3965 MHz  eta= 0.20671
  
      Initialization:
-     gipaw_setup  :      0.12s CPU      0.13s WALL (       1 calls)
+     gipaw_setup  :      0.10s CPU      0.12s WALL (       1 calls)
  
      Linear response
  
@@ -359,18 +349,18 @@
      Induced current
  
      Other routines
-     efg          :      0.22s CPU      0.23s WALL (       1 calls)
+     efg          :      0.26s CPU      0.27s WALL (       1 calls)
  
      General routines
-     calbec       :      0.01s CPU      0.02s WALL (      20 calls)
-     fft          :      0.08s CPU      0.09s WALL (      15 calls)
-     ffts         :      0.00s CPU      0.00s WALL (       2 calls)
-     fftw         :      0.11s CPU      0.10s WALL (     480 calls)
-     davcio       :      0.00s CPU      0.00s WALL (      40 calls)
+     calbec       :      0.02s CPU      0.02s WALL (      20 calls)
+     fft          :      0.02s CPU      0.03s WALL (      16 calls)
+     ffts         :      0.01s CPU      0.00s WALL (       2 calls)
+     fftw         :      0.18s CPU      0.17s WALL (     480 calls)
+     davcio       :      0.01s CPU      0.01s WALL (      60 calls)
  
      Parallel routines
-     fft_scatter  :      0.10s CPU      0.11s WALL (     497 calls)
+     fft_scatter  :      0.06s CPU      0.06s WALL (     498 calls)
  
      Plugins
  
-     GIPAW        :      0.92s CPU      0.96s WALL (       1 calls)
+     GIPAW        :      0.72s CPU      0.81s WALL (       1 calls)
