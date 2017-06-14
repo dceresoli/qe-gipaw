@@ -24,7 +24,6 @@ SUBROUTINE apply_p(psi, p_psi, ik, ipol, q)
   USE kinds,                ONLY : DP
   USE klist,                ONLY : xk, igk_k, ngk
   USE wvfct,                ONLY : nbnd, npwx
-  USE pwcom
   USE gipaw_module,         ONLY : nbnd_occ
   USE gvect,                ONLY : g
   USE cell_base,            ONLY : tpiba
@@ -45,7 +44,7 @@ SUBROUTINE apply_p(psi, p_psi, ik, ipol, q)
   !-- local variables ----------------------------------------------------
   REAL(DP) :: gk
   INTEGER :: ig, ibnd
-  INTEGER :: now
+  INTEGER :: npw
 
   do ibnd = 1, nbnd_occ(ik)
     npw = ngk(ik)
