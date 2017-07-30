@@ -288,7 +288,7 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
   USE gipaw_module,           ONLY : lx, ly, lz, radial_integral_paramagnetic_so, &
                                      q_gipaw, alpha
   USE fft_base,               ONLY : dffts
-  USE uspp,                   ONLY : qq, vkb, nkb 
+  USE uspp,                   ONLY : qq_nt, vkb, nkb 
   USE uspp_param,             ONLY : nh
   USE cell_base,              ONLY : tpiba, tpiba2
   USE klist,                  ONLY : xk, igk_k, ngk
@@ -338,7 +338,7 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
                  ikb = ijkb0 + ih
                  do jh = 1, nh(nt)
                     jkb = ijkb0 + jh  
-                    ps(jkb, ibnd) = ps(jkb, ibnd) + qq(jh,ih,nt) * becp2(ikb,ibnd)
+                    ps(jkb, ibnd) = ps(jkb, ibnd) + qq_nt(jh,ih,nt) * becp2(ikb,ibnd)
                  enddo ! jh
               enddo ! ih
            enddo ! nbnd
