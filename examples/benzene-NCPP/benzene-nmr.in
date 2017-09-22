@@ -2,6 +2,7 @@
         job = 'nmr'
         prefix = 'benzene'
         tmp_dir = '/tmp/ceresoli/'
+        restart_mode = 'from_scratch'
         diagonalization = 'cg'
         verbosity = 'high'
         q_gipaw = 0.01

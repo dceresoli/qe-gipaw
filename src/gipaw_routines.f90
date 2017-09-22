@@ -18,7 +18,6 @@ SUBROUTINE gipaw_readin()
   USE io_files,         ONLY : prefix, tmp_dir  
   USE io_global,        ONLY : ionode
   USE us,               ONLY : spline_ps
-  USE input_parameters, ONLY : max_seconds
   USE mp_images,        ONLY : my_image_id
 
   ! -- local variables ---------------------------------------------------
@@ -126,7 +125,6 @@ SUBROUTINE gipaw_bcast_input
   USE mp,            ONLY : mp_bcast
   USE io_files,      ONLY : prefix, tmp_dir
   USE us,            ONLY : spline_ps
-  USE input_parameters, ONLY : max_seconds
 
   implicit none
   integer :: root = 0

@@ -55,6 +55,9 @@ MODULE gipaw_module
 
   ! restart mode: 'from_scratch' or 'restart'
   CHARACTER(80) :: restart_mode
+
+  ! max CPU time, in s
+  REAL(dp) :: max_seconds
   
   ! verbosity
   INTEGER :: iverbosity

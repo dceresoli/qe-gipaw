@@ -31,7 +31,8 @@ PROGRAM gipaw_main
   USE io_global,       ONLY : stdout, meta_ionode, meta_ionode_id
   USE mp,              ONLY : mp_bcast
   USE cell_base,       ONLY : tpiba
-  USE gipaw_module,    ONLY : job, q_gipaw
+  USE gipaw_module,    ONLY : job, q_gipaw, max_seconds
+  USE check_stop  ,    ONLY : check_stop_init
   USE control_flags,   ONLY : io_level, gamma_only, use_para_diag, twfcollect
   USE mp_global,       ONLY : mp_startup, nproc_pool_file
   USE mp_world,        ONLY : world_comm
@@ -41,7 +42,6 @@ PROGRAM gipaw_main
 #endif
   USE mp_bands,        ONLY : nbgrp
   USE mp_pools,        ONLY : nproc_pool
-  USE check_stop,      ONLY : check_stop_init
   USE environment,     ONLY : environment_start
   USE lsda_mod,        ONLY : nspin
   USE wvfct,           ONLY : nbnd
@@ -49,7 +49,7 @@ PROGRAM gipaw_main
   USE wvfct,           ONLY : nbnd
   USE io_global,       ONLY : stdout
   USE noncollin_module,ONLY : noncolin
-  ! for plugininzation
+  ! for pluginization
   USE input_parameters, ONLY : nat_ => nat, ntyp_ => ntyp
   USE input_parameters, ONLY : assume_isolated_ => assume_isolated, &
                                ibrav_ => ibrav
@@ -92,7 +92,7 @@ PROGRAM gipaw_main
 
   call start_clock('GIPAW')
   call gipaw_readin()
-  call check_stop_init()
+  call check_stop_init( max_seconds )
 
   io_level = 1
  
