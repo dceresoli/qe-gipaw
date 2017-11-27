@@ -137,8 +137,8 @@ SUBROUTINE output_magres_end
 
   write(iumagres,'(''<calculation>'')')
   write(iumagres,'(''  calc_name          '',A)') trim(prefix)
-  write(iumagres,'(''  calc_code          QE-GIPAW 5.x'')')
-  write(iumagres,'(''  calc_code_version  svn'',A)') trim(gipaw_svn_revision)
+  write(iumagres,'(''  calc_code          QE-GIPAW 6.x'')')
+  write(iumagres,'(''  calc_code_version  git'',A)') trim(gipaw_git_revision)
   write(iumagres,'(''</calculation>'')')
   close(iumagres, status='keep')
 
