@@ -460,7 +460,7 @@ SUBROUTINE compute_delta_g_so (j_bare, s_maj, s_min, delta_g_so)
   USE kinds,                  ONLY : dp
   USE constants,              ONLY : pi
   USE cell_base,              ONLY : omega
-  USE gvect,                  ONLY : g, ngm, nl
+  USE gvect,                  ONLY : g, ngm
   USE fft_base,               ONLY : dfftp
   USE scf,                    ONLY : vltot, v
   USE lsda_mod,               ONLY : nspin
@@ -485,7 +485,7 @@ SUBROUTINE compute_delta_g_so (j_bare, s_maj, s_min, delta_g_so)
   enddo
 
   ! calculate the gradient of the potential (WHICH SPIN COMPONENT????)
-  call gradient(dfftp%nnr, v_local, ngm, g, nl, grad_vr)
+  call gradient(dfftp%nnr, v_local, ngm, g, grad_vr)
   grad_vr = grad_vr * ry2ha
   deallocate (v_local)
   
@@ -523,7 +523,7 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
   USE kinds,                  ONLY : dp
   USE constants,              ONLY : pi
   USE cell_base,              ONLY : omega
-  USE gvect,                  ONLY : g, ngm, nl
+  USE gvect,                  ONLY : g, ngm
   USE scf,                    ONLY : rho
   USE lsda_mod,               ONLY : nspin
   USE gipaw_module,           ONLY : ry2ha, alpha, gprime
@@ -551,12 +551,12 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
   aux1(:) = rho%of_r(:,s_maj) - rho%of_r(:,s_min)
   call fwfft('Dense', aux1, dfftp)
 
-  rho%of_g(:,1) = aux1(nl(:))
+  rho%of_g(:,1) = aux1(dfftp%nl(:))
   rho%of_g(:,2) = 0.d0
   vh = 0.d0
 
   call v_h(rho%of_g, e_hartree, charge, vh)
-  call gradient (dfftp%nnr, vh, ngm, g, nl, grad_vh)
+  call gradient (dfftp%nnr, vh, ngm, g, grad_vh)
   grad_vh = grad_vh * ry2ha
 
   deallocate (vh, aux1)

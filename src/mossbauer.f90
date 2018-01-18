@@ -73,7 +73,7 @@ SUBROUTINE moss_bare_el(rho_s, moss_bare)
   USE mp,                     ONLY : mp_sum
   USE mp_pools,               ONLY : intra_pool_comm
   USE constants,              ONLY : tpi, fpi
-  USE gvecs,                  ONLY : nls, ngms
+  USE gvecs,                  ONLY : ngms
   USE gvect,                  ONLY : g, gstart
   USE parameters,             ONLY : ntypx
   USE ions_base,              ONLY : nat, tau
@@ -101,7 +101,7 @@ SUBROUTINE moss_bare_el(rho_s, moss_bare)
       do ig = gstart, ngms
           arg = sum(tau(1:3,na) * g(1:3,ig)) * tpi
           phase = cmplx(cos(arg),sin(arg), kind=dp)
-          moss_bare(na) = moss_bare(na) + real(rhoaux(nls(ig)) * phase, kind=dp)
+          moss_bare(na) = moss_bare(na) + real(rhoaux(dffts%nl(ig)) * phase, kind=dp)
       enddo
   enddo
   call mp_sum(moss_bare, intra_pool_comm)

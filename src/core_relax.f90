@@ -22,7 +22,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   USE atom,                  ONLY : rgrid
   USE radial_grids,          ONLY : ndmx
   USE scf,                   ONLY : rho
-  USE gvect,                 ONLY : g, nl, ngm
+  USE gvect,                 ONLY : g, ngm
   USE fft_base,              ONLY : dfftp
   USE fft_interfaces,        ONLY : fwfft
   USE lsda_mod,              ONLY : nspin, isk, current_spin
@@ -187,7 +187,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
     do ispin = 1, nspin
       aux(1:dfftp%nnr) = rho%of_r(1:dfftp%nnr,ispin)
       call fwfft('Dense',aux,dfftp)
-      rho_g(1:ngm) = aux(nl(1:ngm))
+      rho_g(1:ngm) = aux(dfftp%nl(1:ngm))
       call spherical_average(rgrid(nt)%mesh, rgrid(nt)%r, tau(1,na), r_max, rho_g, sph_rho_bare(1,ispin))
     enddo
     call mp_sum(sph_rho_bare, intra_pool_comm)

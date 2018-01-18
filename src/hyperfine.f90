@@ -228,7 +228,7 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   USE mp,                     ONLY : mp_sum
   USE mp_pools,               ONLY : intra_pool_comm
   USE constants,              ONLY : tpi, fpi
-  USE gvecs,                  ONLY : nls, ngms
+  USE gvecs,                  ONLY : ngms
   USE gvect,                  ONLY : g, gstart
   USE parameters,             ONLY : ntypx
   USE ions_base,              ONLY : nat, tau
@@ -268,7 +268,7 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
       do ig = gstart, ngms
           arg = sum(tau(1:3,na) * g(1:3,ig)) * tpi
           phase = cmplx(cos(arg),sin(arg), kind=dp)
-          hfi_bare(na) = hfi_bare(na) + real(rhoaux(nls(ig)) * phase, kind=dp)
+          hfi_bare(na) = hfi_bare(na) + real(rhoaux(dffts%nl(ig)) * phase, kind=dp)
 #ifdef ZORA
           hfi_bare_zora(na) = hfi_bare_zora(na) + &
               real(delta_Th(ig,ityp(na)) * rhoaux(nls(ig)) * phase, kind=dp)

@@ -160,7 +160,6 @@ SUBROUTINE get_smooth_density(rho)
   USE gvecw,                  ONLY : gcutw
   USE klist,                  ONLY : nks, xk, igk_k, ngk
   USE gvect,                  ONLY : ngm, g
-  USE gvecs,                  ONLY : nls
   USE wavefunctions_module,   ONLY : evc
   USE cell_base,              ONLY : tpiba2, omega
   USE io_files,               ONLY : nwordwfc, iunwfc
@@ -196,7 +195,7 @@ SUBROUTINE get_smooth_density(rho)
      ! loop over bands
      do ibnd = 1, nbnd
        psic(:) = (0.d0,0.d0)
-       psic(nls(igk_k(1:npw,ik))) = evc(1:npw,ibnd)
+       psic(dffts%nl(igk_k(1:npw,ik))) = evc(1:npw,ibnd)
        call invfft ('Wave', psic, dffts)
        rho(:,current_spin) = rho(:,current_spin) + wg(ibnd,ik) * &
                              (dble(psic(:))**2 + aimag(psic(:))**2) / omega
@@ -233,7 +232,7 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
   USE mp,                     ONLY : mp_sum
   USE mp_pools,               ONLY : intra_pool_comm
   USE constants,              ONLY : tpi, fpi
-  USE gvecs,                  ONLY : nls, ngms
+  USE gvecs,                  ONLY : ngms
   USE fft_base,               ONLY : dffts
   USE fft_interfaces,         ONLY : fwfft
   USE gvect,                  ONLY : g, gg, gstart
@@ -267,7 +266,7 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
         efg_g(ig,alpha,alpha) = -trace
         do beta = 1, 3
            efg_g(ig,alpha,beta) = ( efg_g(ig,alpha,beta) + &
-                       g(alpha,ig)*g(beta,ig)) * fac * rhoaux(nls(ig)) / gg(ig)
+                       g(alpha,ig)*g(beta,ig)) * fac * rhoaux(dffts%nl(ig)) / gg(ig)
         enddo
      enddo
   enddo

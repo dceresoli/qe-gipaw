@@ -17,7 +17,6 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   USE kinds,                  ONLY : DP
   USE klist,                  ONLY : xk, wk, igk_k, ngk
   USE wvfct,                  ONLY : nbnd, npwx
-  USE gvecs,                  ONLY : nls
   USE gvect,                  ONLY : g
   USE cell_base,              ONLY : tpiba
   USE gipaw_module,           ONLY : nbnd_occ
@@ -78,20 +77,18 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
      
       ! transform to real space
       p_psic(:) = (0.d0,0.d0)
-      p_psic(nls(igk_k(1:npw,ik))) = aux(1:npw)
+      p_psic(dffts%nl(igk_k(1:npw,ik))) = aux(1:npw)
       CALL invfft ('Wave', p_psic, dffts)
 
       psic(:) = (0.d0,0.d0)
-      psic(nls(igk_k(1:npw,ik))) = psi_m(1:npw,ibnd)
+      psic(dffts%nl(igk_k(1:npw,ik))) = psi_m(1:npw,ibnd)
       CALL invfft ('Wave', psic, dffts)
 
       ! add to the current
 #ifdef __BANDS
-      !WAS: jaux(1:dffts%nnr,ipol) = jaux(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
       jaux(1:dffts%nnr,ipol) = jaux(1:dffts%nnr,ipol) + 0.5d0 * fact * wk(ik) * &
                                aimag(conjg(p_psic(1:dffts%nnr)) * psic(1:dffts%nnr))
 #else
-      !WAS: j(1:dffts%nnr,ipol) = j(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
       j(1:dffts%nnr,ipol) = j(1:dffts%nnr,ipol) + 0.5d0 * fact * wk(ik) * &
                             aimag(conjg(p_psic(1:dffts%nnr)) * psic(1:dffts%nnr))
 #endif
@@ -103,20 +100,18 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
      
       ! transform to real space
       p_psic(:) = (0.d0,0.d0)
-      p_psic(nls(igk_k(1:npw,ik))) = aux(1:npw)
+      p_psic(dffts%nl(igk_k(1:npw,ik))) = aux(1:npw)
       CALL invfft ('Wave', p_psic, dffts)
 
       psic(:) = (0.d0,0.d0)
-      psic(nls(igk_k(1:npw,ik))) = psi_n(1:npw,ibnd)
+      psic(dffts%nl(igk_k(1:npw,ik))) = psi_n(1:npw,ibnd)
       CALL invfft ('Wave', psic, dffts)
 
       ! add to the current
 #ifdef __BANDS
-      !WAS: jaux(1:dffts%nnr,ipol) = jaux(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
       jaux(1:dffts%nnr,ipol) = jaux(1:dffts%nnr,ipol) + 0.5d0 * fact * wk(ik) * &
                                aimag(conjg(psic(1:dffts%nnr)) * p_psic(1:dffts%nnr))
 #else
-      !WAS: j(1:dffts%nnr,ipol) = j(1:dffts%nnr,ipol) + 0.5d0 * fact * wg(ibnd,ik) * &
       j(1:dffts%nnr,ipol) = j(1:dffts%nnr,ipol) + 0.5d0 * fact * wk(ik) * &
                             aimag(conjg(psic(1:dffts%nnr)) * p_psic(1:dffts%nnr))
 #endif
