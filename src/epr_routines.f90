@@ -639,17 +639,17 @@ SUBROUTINE print_g_tensor(delta_g_rmc, delta_g_rmc_gipaw, delta_g_so, &
   delta_g_so_para_aug = delta_g_so_para_aug * gprime / 2.d0 * ry2ha * 1.0d6 
 
   ! calculate total  
-  delta_g_tot = delta_g_so + delta_g_so_para + delta_g_so_para_aug + delta_g_so_para_us &
-       + delta_g_so_dia + delta_g_soo
-  delta_g_tot(1,1) = delta_g_tot(1,1) +  delta_g_rmc + delta_g_rmc_gipaw 
-  delta_g_tot(2,2) = delta_g_tot(2,2) +  delta_g_rmc + delta_g_rmc_gipaw 
-  delta_g_tot(3,3) = delta_g_tot(3,3) +  delta_g_rmc + delta_g_rmc_gipaw
+  delta_g_tot = delta_g_so + delta_g_so_para + delta_g_so_dia + delta_g_soo
+  if (okvan) delta_g_tot = delta_g_tot + delta_g_so_para_us + delta_g_so_para_aug
+  delta_g_tot(1,1) = delta_g_tot(1,1) + delta_g_rmc + delta_g_rmc_gipaw 
+  delta_g_tot(2,2) = delta_g_tot(2,2) + delta_g_rmc + delta_g_rmc_gipaw 
+  delta_g_tot(3,3) = delta_g_tot(3,3) + delta_g_rmc + delta_g_rmc_gipaw
 
-  delta_g_tot2 = delta_g_so + delta_g_so_para + delta_g_so_para_aug + delta_g_so_para_us &
-       + delta_g_so_dia + delta_g_soo2
-  delta_g_tot2(1,1) = delta_g_tot2(1,1) +  delta_g_rmc + delta_g_rmc_gipaw 
-  delta_g_tot2(2,2) = delta_g_tot2(2,2) +  delta_g_rmc + delta_g_rmc_gipaw 
-  delta_g_tot2(3,3) = delta_g_tot2(3,3) +  delta_g_rmc + delta_g_rmc_gipaw
+  delta_g_tot2 = delta_g_so + delta_g_so_para + delta_g_so_dia + delta_g_soo2
+  if (okvan) delta_g_tot2 = delta_g_tot2 + delta_g_so_para_us + delta_g_so_para_aug
+  delta_g_tot2(1,1) = delta_g_tot2(1,1) + delta_g_rmc + delta_g_rmc_gipaw 
+  delta_g_tot2(2,2) = delta_g_tot2(2,2) + delta_g_rmc + delta_g_rmc_gipaw 
+  delta_g_tot2(3,3) = delta_g_tot2(3,3) + delta_g_rmc + delta_g_rmc_gipaw
 
 
   write(stdout,'(5X,''Relativistic mass correction bare :'',F12.2)') delta_g_rmc
@@ -685,12 +685,12 @@ SUBROUTINE print_g_tensor(delta_g_rmc, delta_g_rmc_gipaw, delta_g_so, &
   write(stdout,'(3(5X,3(F12.2,2X)/))') delta_g_soo2(:,:)
   write(stdout,*)
 
-  call symtensor(1, delta_g_tot)
+  !!call symtensor(1, delta_g_tot)
   write(stdout,'(5X,''Delta_g total (SOO a la Paratec): ---------------------------------------'')')
   write(stdout,'(3(5X,3(F12.2,2X)/))') delta_g_tot(:,:)
   write (stdout,*) 
 
-  call symtensor(1, delta_g_tot2) 
+  !!call symtensor(1, delta_g_tot2) 
   write(stdout,'(5X,''Delta_g total (SOO as in Eq.(7)): ---------------------------------------'')')
   write(stdout,'(3(5X,3(F12.2,2X)/))') delta_g_tot2(:,:)
   write (stdout,*) 
