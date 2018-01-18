@@ -34,7 +34,8 @@ Official source releases are found [here](https://github.com/dceresoli/qe-gipaw/
 
 ### News
 * Jan 18, 2018: added ```tools/NMR_tensor-convention.py``` to convert NMR shielding tensors anysotropy in various conventions
-* Jan 19, 2018: added ```tools/EPR_diagonalize_g-tensor``` to output the principal components and directions of the g-tensor, accordin to Weyl, Bolton, *Principles of electron paramagnetic resonance*, ch. 4.4
+* Jan 18, 2018: added ```tools/EPR_diagonalize_g-tensor``` to output the principal components and directions of the g-tensor, accordin to Weyl, Bolton, *Principles of electron paramagnetic resonance*, ch. 4.4
+* Jan 18, 2018: fixed bug in symmetrization of g-tensor
 
 
 
