@@ -93,7 +93,7 @@ SUBROUTINE moss_bare_el(rho_s, moss_bare)
   ! transform to reciprocal space
   allocate(rhoaux(dffts%nnr))
   rhoaux(:) = cmplx(rho_s(:), kind=dp)
-  CALL fwfft('Smooth', rhoaux, dffts)
+  CALL fwfft('Rho', rhoaux, dffts)
 
   ! fourier transform on the atomic position
   moss_bare(:) = 0.d0

@@ -256,7 +256,7 @@ SUBROUTINE hfi_fc_bare_el(rho_s, hfi_bare, hfi_bare_zora)
   ! transform to reciprocal space
   allocate(rhoaux(dffts%nnr))
   rhoaux(:) = cmplx(rho_s(:), kind=dp)
-  CALL fwfft('Smooth', rhoaux, dffts)
+  CALL fwfft('Rho', rhoaux, dffts)
 
 #ifdef ZORA
   ! Fourier transform of Thomson's delta function

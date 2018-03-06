@@ -287,8 +287,8 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
       end select
 
       !! DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
-      write(70+na,'(7(F12.6))') rgrid(nt)%r(j), sph_rho_bare(j,1), sph_rho_bare(j,2), &
-                                sph_rho_gipaw(j,1), sph_rho_gipaw(j,2), sph_rho_core(j), delta_v(j,na)
+      !!write(70+na,'(7(F12.6))') rgrid(nt)%r(j), sph_rho_bare(j,1), sph_rho_bare(j,2), &
+      !!                          sph_rho_gipaw(j,1), sph_rho_gipaw(j,2), sph_rho_core(j), delta_v(j,na)
       !! DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
     enddo
 
