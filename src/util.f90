@@ -238,14 +238,14 @@ SUBROUTINE gradient( nrxx, a, ngm, g, ga )
 
   ! bring a(r) to G-space, a(G) ...
   aux = (0.d0,0.d0)
-  call fwfft ('Dense', aux, dfftp)
+  call fwfft ('Rho', aux, dfftp)
 
   !  multiply by (iG) to get (\grad_ipol a)(G) ...
   do ipol = 1, 3
      gaux(:) = (0.d0,0.d0)
      gaux(dfftp%nl(:)) = g(ipol,:) * cmplx(-aimag(aux(dfftp%nl(:))), real(aux(dfftp%nl(:))), kind=dp)
      ! bring back to R-space, (\grad_ipol a)(r) ...
-     call invfft ('Dense', gaux, dfftp)
+     call invfft ('Rho', gaux, dfftp)
      ! and add the factor 2\pi/a  missing in the definition of G
      ga(ipol,:) = tpiba * dble( gaux(:) )
   enddo

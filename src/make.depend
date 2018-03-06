@@ -362,8 +362,10 @@ symmetrize_rho.o : /home/ceresoli/Codes/q-e/Modules/fft_base.o
 symmetrize_rho.o : /home/ceresoli/Codes/q-e/Modules/kind.o
 symmetrize_rho.o : /home/ceresoli/Codes/q-e/Modules/mp_global.o
 symmetrize_rho.o : /home/ceresoli/Codes/q-e/PW/src/symm_base.o
+util.o : /home/ceresoli/Codes/q-e/FFTXlib/fft_interfaces.o
 util.o : /home/ceresoli/Codes/q-e/Modules/cell_base.o
 util.o : /home/ceresoli/Codes/q-e/Modules/constants.o
+util.o : /home/ceresoli/Codes/q-e/Modules/fft_base.o
 util.o : /home/ceresoli/Codes/q-e/Modules/kind.o
 util.o : /home/ceresoli/Codes/q-e/Modules/mp_bands.o
 util.o : /home/ceresoli/Codes/q-e/Modules/mp_pools.o

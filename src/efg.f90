@@ -257,7 +257,7 @@ SUBROUTINE efg_bare_el(rho, efg_bare)
   rhoaux(:) = cmplx(rho(:), kind=dp)
 
   ! transform to reciprocal space
-  CALL fwfft ('Smooth', rhoaux, dffts)
+  CALL fwfft ('Wave', rhoaux, dffts)  ! ???? Smooth
   
   ! electric field gradient in the G-space
   do ig = gstart, ngms

@@ -237,6 +237,8 @@ SUBROUTINE suscept_crystal
        call suscept_crystal_inner_q
     enddo ! iq
 
+    write(stdout,*)
+
   enddo  ! end of loop over k-point
 
   ! Parallel reductions

@@ -549,7 +549,7 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
   allocate (grad_vh(3,dfftp%nnr), vh(dfftp%nnr,nspin), aux1(dfftp%nnr))
 
   aux1(:) = rho%of_r(:,s_maj) - rho%of_r(:,s_min)
-  call fwfft('Dense', aux1, dfftp)
+  call fwfft('Rho', aux1, dfftp)
 
   rho%of_g(:,1) = aux1(dfftp%nl(:))
   rho%of_g(:,2) = 0.d0

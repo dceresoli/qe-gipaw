@@ -74,7 +74,7 @@ SUBROUTINE biot_savart(j_bare, B_ind, B_ind_r)
       j_of_g(:,:) = (0.d0,0.d0)
       do ipol = 1, 3
         aux(1:dfftp%nnr) = j_bare(1:dfftp%nnr,ipol,jpol,ispin)
-        call fwfft ('Dense', aux, dfftp)
+        call fwfft ('Rho', aux, dfftp)
         j_of_g(1:ngm,ipol) = aux(dfftp%nl(1:ngm))
       enddo
 
@@ -90,7 +90,7 @@ SUBROUTINE biot_savart(j_bare, B_ind, B_ind_r)
       do ipol = 1, 3
         aux = (0.d0,0.d0)
         aux(dfftp%nl(1:ngm)) = B_ind(1:ngm,ipol,jpol,ispin)
-        call invfft ('Dense', aux, dfftp)
+        call invfft ('Rho', aux, dfftp)
         B_ind_r(1:dfftp%nnr,ipol,jpol,ispin) = real(aux(1:dfftp%nnr))
       enddo
 
@@ -147,7 +147,7 @@ SUBROUTINE biot_savart_sic(j_bare, B_ind, B_ind_r)
       do ipol = 1, 3
         aux(1:dfftp%nnr) = j_bare(1:dfftp%nnr,ipol,jpol,2)
         !aux(1:dfftp%nnr) = j_bare(1:dfftp%nnr,ipol,jpol,ispin)
-        CALL fwfft ('Dense', aux, dfftp)
+        CALL fwfft ('Rho', aux, dfftp)
         j_of_g(1:ngm,ipol) = aux(dfftp%nl(1:ngm))
       enddo
 
@@ -163,7 +163,7 @@ SUBROUTINE biot_savart_sic(j_bare, B_ind, B_ind_r)
       do ipol = 1, 3
         aux = (0.d0,0.d0)
         aux(dfftp%nl(1:ngm)) = B_ind(1:ngm,ipol,jpol,ispin)
-        CALL invfft ('Dense', aux, dfftp)
+        CALL invfft ('Rho', aux, dfftp)
         B_ind_r(1:dfftp%nnr,ipol,jpol,ispin) = real(aux(1:dfftp%nnr))
       enddo
 

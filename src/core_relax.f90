@@ -186,7 +186,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
     sph_rho_bare = 0.d0
     do ispin = 1, nspin
       aux(1:dfftp%nnr) = rho%of_r(1:dfftp%nnr,ispin)
-      call fwfft('Dense',aux,dfftp)
+      call fwfft('Rho',aux,dfftp)
       rho_g(1:ngm) = aux(dfftp%nl(1:ngm))
       call spherical_average(rgrid(nt)%mesh, rgrid(nt)%r, tau(1,na), r_max, rho_g, sph_rho_bare(1,ispin))
     enddo
