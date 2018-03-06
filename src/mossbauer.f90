@@ -16,13 +16,13 @@ SUBROUTINE mossbauer
   USE io_global,              ONLY : stdout
   USE parameters,             ONLY : ntypx
   USE fft_base,               ONLY : dffts
-  USE ions_base,              ONLY : nat, atm, ityp
+  USE ions_base,              ONLY : nat, atm, ityp, ntyp => nsp
   USE lsda_mod,               ONLY : nspin
  
   !-- local variables ----------------------------------------------------
   implicit none
   real(dp), allocatable :: rho_s(:,:), rho_tot(:)
-  real(dp), allocatable :: moss_bare(:), moss_gipaw(:), moss_tot(:)
+  real(dp), allocatable :: moss_bare(:), moss_gipaw(:), moss_tot(:), moss_core(:)
   integer :: na
 
   call start_clock('mossbauer')
@@ -30,7 +30,7 @@ SUBROUTINE mossbauer
   !--------------------------------------------------------------------
   ! contact density
   !--------------------------------------------------------------------
-  allocate( moss_bare(nat), moss_gipaw(nat), moss_tot(nat) )
+  allocate( moss_bare(nat), moss_gipaw(nat), moss_tot(nat), moss_core(ntyp) )
   allocate( rho_s(dffts%nnr,nspin), rho_tot(dffts%nnr) )
 
   call get_smooth_density(rho_s)
@@ -43,6 +43,8 @@ SUBROUTINE mossbauer
   call moss_gipaw_correction(moss_gipaw)
   moss_tot = moss_bare + moss_gipaw
 
+  call moss_core_orbitals(moss_core)
+
   !--------------------------------------------------------------------
   ! Print results
   !--------------------------------------------------------------------
@@ -50,16 +52,55 @@ SUBROUTINE mossbauer
   write(stdout,'(5X,''VALENCE DENSITY AT NUCLEI (elec/bohrradius^3):'')')
   write(stdout,*)
 
-  write(stdout,'(5X,8X,''  bare            GIPAW           total'')')
+  write(stdout,'(5X,8X,''  bare            core            GIPAW           total'')')
   do na = 1, nat
-      write(stdout,1002) atm(ityp(na)), na, moss_bare(na), moss_gipaw(na), moss_tot(na)
+      write(stdout,1002) atm(ityp(na)), na, moss_bare(na), moss_core(ityp(na)), &
+                         moss_gipaw(na), moss_tot(na) + moss_core(ityp(na))
   enddo
-1002 FORMAT(5X,A,I3,2X,3(F14.6,2X))
+1002 FORMAT(5X,A,I3,2X,4(F14.6,2X))
+  write(stdout,*)
 
   call stop_clock('mossbauer')
  
 END SUBROUTINE mossbauer
 
+
+!-----------------------------------------------------------------------
+SUBROUTINE moss_core_orbitals(moss_core)
+  !-----------------------------------------------------------------------
+  !
+  ! ... Calculate the core contribution to the Mossbauer density.
+  ! ... For the time being, neglect relativistic and orbital contributions.
+  !  
+  USE kinds,                  ONLY : dp 
+  USE constants,              ONLY : tpi, fpi
+  USE ions_base,              ONLY : ntyp => nsp
+  USE atom,                   ONLY : rgrid
+  USE paw_gipaw,              ONLY : paw_recon
+
+  !-- parameters ---------------------------------------------------------
+  IMPLICIT NONE
+  real(dp), intent(out) :: moss_core(ntyp)
+  !-- local variables ----------------------------------------------------
+  integer :: nt, core_orb, r_first, occupation
+  real(dp) :: rho
+
+  do nt = 1, ntyp
+    moss_core(nt) = 0.0
+    if ( paw_recon(nt)%gipaw_ncore_orbital == 0 ) cycle
+
+    r_first = 1
+    if ( abs ( rgrid(nt)%r(1) ) < 1d-8 ) r_first = 2
+
+    do core_orb = 1, paw_recon(nt)%gipaw_ncore_orbital
+      rho = paw_recon(nt)%gipaw_core_orbital(r_first,core_orb) ** 2 / rgrid(nt)%r(r_first)**2 / fpi
+      occupation = 2 * ( 2 * paw_recon(nt)%gipaw_core_orbital_l(core_orb) + 1 )
+      moss_core(nt) = moss_core(nt) + occupation * rho
+    enddo
+
+  enddo
+
+END SUBROUTINE moss_core_orbitals
 
 
 !-----------------------------------------------------------------------
@@ -149,7 +190,6 @@ SUBROUTINE moss_gipaw_correction(moss_gipaw)
   integer :: ijkb0, ih, jh, na, ikb, jkb
   integer :: r_first
   complex(dp) :: bec_product
-  !integer, external :: atomic_number
   integer :: npw
   
   allocate( at_moss(paw_nkb,paw_nkb,ntyp) )
