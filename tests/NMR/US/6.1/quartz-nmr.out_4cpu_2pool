@@ -1,0 +1,1066 @@
+
+     Program QE v.6.1 (svn rev. 13369) starts on  6Mar2018 at 12:38:49 
+
+     This program is part of the open-source Quantum ESPRESSO suite
+     for quantum simulation of materials; please cite
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 21 395502 (2009);
+          URL http://www.quantum-espresso.org", 
+     in publications or presentations arising from this work. More details at
+     http://www.quantum-espresso.org/quote
+
+     Parallel version (MPI), running on     4 processors
+     K-points division:     npool     =       2
+     R & G space division:  proc/nbgrp/npool/nimage =       2
+ 
+     ***** This is GIPAW svn revision unknown      *****
+ 
+     Parallelizing q-star over 1 images
+
+     Reading data from directory:
+     /tmp/ceresoli/quartz.save
+
+   Info: using nr1, nr2, nr3 values from input
+
+   Info: using nr1, nr2, nr3 values from input
+
+     IMPORTANT: XC functional enforced from input :
+     Exchange-correlation      =  SLA  PW   PBX  PBC ( 1  4  3  4 0 0)
+     Any further DFT definition will be discarded
+     Please, verify this is what you really want
+
+ 
+     Parallelization info
+     --------------------
+     sticks:   dense  smooth     PW     G-vecs:    dense   smooth      PW
+     Min         594     237     81                18148     4601     923
+     Max         595     238     82                18149     4602     924
+     Sum        1189     475    163                36297     9203    1847
+ 
+
+     Subspace diagonalization in iterative solution of the eigenvalue problem:
+     a serial algorithm will be used
+
+     GIPAW projectors -----------------------------------------------
+     atom=  Si   l=0  rc=    2.0000  rs=    1.3333
+     atom=  Si   l=0  rc=    2.0000  rs=    1.3333
+     atom=  Si   l=1  rc=    2.0000  rs=    1.3333
+     atom=  Si   l=1  rc=    2.0000  rs=    1.3333
+     atom=  Si   l=2  rc=    2.0000  rs=    1.3333
+     atom=  Si   l=2  rc=    2.0000  rs=    1.3333
+     projs nearly linearly dependent: l=1  n1,n2= 1, 2  s=  0.99854623
+     projs nearly linearly dependent: l=2  n1,n2= 1, 2  s=  0.99998260
+ 
+     atom=  O    l=0  rc=    1.3000  rs=    0.8667
+     atom=  O    l=0  rc=    1.3000  rs=    0.8667
+     atom=  O    l=1  rc=    1.3000  rs=    0.8667
+     atom=  O    l=1  rc=    1.3000  rs=    0.8667
+     projs nearly linearly dependent: l=1  n1,n2= 1, 2  s=  0.99505596
+     -----------------------------------------------------------------
+ 
+     GIPAW integrals: -------------------------------------------
+     Atom  i/j   nmr_para   nmr_dia   epr_rmc  epr_para   epr_dia
+       Si  1 1   0.12E+04  0.28E+00  0.91E+01  0.33E+05  0.89E+01
+       Si  2 1  -0.12E+04 -0.22E+00 -0.93E+01 -0.33E+05 -0.87E+01
+       Si  2 2   0.12E+04  0.12E+00  0.94E+01  0.34E+05  0.86E+01
+       Si  3 3   0.14E+02  0.32E+00  0.78E+01  0.36E+03  0.89E+01
+       Si  4 3   0.14E+02  0.31E+00  0.79E+01  0.36E+03  0.88E+01
+       Si  4 4   0.14E+02  0.30E+00  0.79E+01  0.37E+03  0.88E+01
+       Si  5 5   0.13E+00  0.19E-01  0.20E+00  0.40E+01  0.39E+00
+       Si  6 5   0.13E+00  0.19E-01  0.20E+00  0.41E+01  0.40E+00
+       Si  6 6   0.13E+00  0.20E-01  0.21E+00  0.42E+01  0.41E+00
+       O   1 1   0.81E+03 -0.32E+00  0.65E+01  0.14E+05  0.71E+01
+       O   2 1   0.90E+03 -0.37E+00  0.70E+01  0.16E+05  0.81E+01
+       O   2 2   0.10E+04 -0.44E+00  0.76E+01  0.17E+05  0.92E+01
+       O   3 3   0.10E+02  0.89E+00  0.59E+01  0.17E+03  0.14E+02
+       O   4 3   0.12E+02  0.10E+01  0.73E+01  0.21E+03  0.16E+02
+       O   4 4   0.15E+02  0.12E+01  0.89E+01  0.24E+03  0.19E+02
+     ------------------------------------------------------------
+ 
+     alpha_pv=     41.5463 eV
+ 
+     Number of occupied bands for each k-point:
+     k-point:     1    nbnd_occ=  24
+     k-point:     2    nbnd_occ=  24
+     k-point:     3    nbnd_occ=  24
+     k-point:     4    nbnd_occ=  24
+     k-point:     5    nbnd_occ=  24
+ 
+ 
+     q-space interpolation up to    22.00 Rydberg
+ 
+     GIPAW job: nmr                                                                             
+     NMR macroscopic correction: yes
+             0.6667          0.0000          0.0000
+             0.0000          0.6667          0.0000
+             0.0000          0.0000          0.6667
+
+ 
+     Largest allocated arrays     est. size (Mb)     dimensions
+        KS wavefunctions at k           0.21 Mb     (     586,   24)
+        KS wavefunctions at k+q         0.21 Mb     (     586,   24)
+        First-order wavefunctions       2.15 Mb     (     586,   24, 10)
+        First-order wavefunct (US)      1.29 Mb     (     586,   24,  6)
+        Charge/spin density             0.08 Mb     (   10935,    1)
+        Induced current                 0.75 Mb     (   10935,    3,3,1)
+        Induced magnetic field          0.75 Mb     (   10935,    3,3,1)
+        NL pseudopotentials             0.54 Mb     (     586,   60)
+        GIPAW NL terms                  0.91 Mb     (     586,  102)
+ 
+     Computing the magnetic susceptibility     isolve=0    ethr=  0.1000E-13
+     Starting from scratch
+     k-point #    1 of     5      pool #  2    cpu time:       0.6
+     k-point #    1 of     5      pool #  1    cpu time:       0.6
+     compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  0.9
+     eigenvalues at k:
+ -17.8748 -17.1112 -16.6368 -16.2258 -16.2019 -16.1746  -5.8693  -4.8764
+  -3.2814  -2.8068  -2.5825  -2.3346  -0.4680  -0.0771   0.0872   0.3334
+   0.6337   1.0335   1.1404   1.5446   1.8250   1.9664   2.4371   2.7613
+     eigenvalues at k+q:
+ -17.8747 -17.1111 -16.6368 -16.2257 -16.2018 -16.1746  -5.8693  -4.8764
+  -3.2814  -2.8068  -2.5824  -2.3346  -0.4680  -0.0771   0.0872   0.3334
+   0.6338   1.0335   1.1404   1.5446   1.8250   1.9664   2.4371   2.7613
+     cgsolve_all iterations  21    anorm=    0.67E-07
+PARA_AUG  1      -1.3716736        -0.0098090         0.2431969
+     cgsolve_all iterations  21    anorm=    0.65E-07
+PARA_AUG  2      -0.1994642        -1.4197691         0.0073604
+     cgsolve_all iterations  21    anorm=    0.65E-07
+PARA_AUG  3      -0.0149017        -0.1144265        -1.4398196
+     cgsolve_all iterations  24    anorm=    0.69E-07
+     cgsolve_all iterations  24    anorm=    0.69E-07
+     cgsolve_all iterations  24    anorm=    0.64E-07
+     compute_u_kq: q = (    0.0074,    0.0000,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.8
+     eigenvalues at k:
+ -17.8748 -17.1112 -16.6368 -16.2258 -16.2019 -16.1746  -5.8693  -4.8764
+  -3.2814  -2.8068  -2.5825  -2.3346  -0.4680  -0.0771   0.0872   0.3334
+   0.6337   1.0335   1.1404   1.5446   1.8250   1.9664   2.4371   2.7613
+     eigenvalues at k+q:
+ -17.8581 -17.1174 -16.6481 -16.2272 -16.2036 -16.1757  -5.8527  -4.8619
+  -3.3124  -2.8034  -2.5832  -2.3143  -0.4706  -0.0822   0.0738   0.3360
+   0.6362   1.0192   1.1460   1.5488   1.8076   1.9792   2.4388   2.7599
+     cgsolve_all iterations  24    anorm=    0.70E-07
+     cgsolve_all iterations  24    anorm=    0.68E-07
+     cgsolve_all iterations  24    anorm=    0.64E-07
+     compute_u_kq: q = (   -0.0074,    0.0000,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.8
+     eigenvalues at k:
+ -17.8748 -17.1112 -16.6368 -16.2258 -16.2019 -16.1746  -5.8693  -4.8764
+  -3.2814  -2.8068  -2.5825  -2.3346  -0.4680  -0.0771   0.0872   0.3334
+   0.6337   1.0335   1.1404   1.5446   1.8250   1.9664   2.4371   2.7613
+     eigenvalues at k+q:
+ -17.8909 -17.1056 -16.6253 -16.2242 -16.2000 -16.1736  -5.8865  -4.8891
+  -3.2516  -2.8102  -2.5817  -2.3543  -0.4643  -0.0728   0.0974   0.3351
+   0.6323   1.0470   1.1356   1.5382   1.8437   1.9545   2.4357   2.7624
+     cgsolve_all iterations  24    anorm=    0.70E-07
+     cgsolve_all iterations  24    anorm=    0.71E-07
+     cgsolve_all iterations  24    anorm=    0.65E-07
+     compute_u_kq: q = (    0.0000,    0.0074,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.8
+     eigenvalues at k:
+ -17.8748 -17.1112 -16.6368 -16.2258 -16.2019 -16.1746  -5.8693  -4.8764
+  -3.2814  -2.8068  -2.5825  -2.3346  -0.4680  -0.0771   0.0872   0.3334
+   0.6337   1.0335   1.1404   1.5446   1.8250   1.9664   2.4371   2.7613
+     eigenvalues at k+q:
+ -17.8743 -17.1123 -16.6355 -16.2260 -16.2026 -16.1744  -5.8678  -4.8769
+  -3.2809  -2.8053  -2.5830  -2.3367  -0.4737  -0.0779   0.0915   0.3406
+   0.6374   1.0314   1.1287   1.5500   1.8297   1.9610   2.4436   2.7562
+     cgsolve_all iterations  24    anorm=    0.69E-07
+     cgsolve_all iterations  24    anorm=    0.70E-07
+     cgsolve_all iterations  24    anorm=    0.65E-07
+     compute_u_kq: q = (    0.0000,   -0.0074,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.8
+     eigenvalues at k:
+ -17.8748 -17.1112 -16.6368 -16.2258 -16.2019 -16.1746  -5.8693  -4.8764
+  -3.2814  -2.8068  -2.5825  -2.3346  -0.4680  -0.0771   0.0872   0.3334
+   0.6337   1.0335   1.1404   1.5446   1.8250   1.9664   2.4371   2.7613
+     eigenvalues at k+q:
+ -17.8745 -17.1102 -16.6386 -16.2256 -16.2010 -16.1749  -5.8699  -4.8758
+  -3.2815  -2.8088  -2.5827  -2.3309  -0.4628  -0.0757   0.0822   0.3255
+   0.6317   1.0353   1.1514   1.5405   1.8189   1.9727   2.4311   2.7665
+     cgsolve_all iterations  24    anorm=    0.69E-07
+     cgsolve_all iterations  24    anorm=    0.69E-07
+     cgsolve_all iterations  24    anorm=    0.64E-07
+     compute_u_kq: q = (    0.0000,    0.0000,    0.0074)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.7
+     eigenvalues at k:
+ -17.8748 -17.1112 -16.6368 -16.2258 -16.2019 -16.1746  -5.8693  -4.8764
+  -3.2814  -2.8068  -2.5825  -2.3346  -0.4680  -0.0771   0.0872   0.3334
+   0.6337   1.0335   1.1404   1.5446   1.8250   1.9664   2.4371   2.7613
+     eigenvalues at k+q:
+ -17.8669 -17.1309 -16.6251 -16.2252 -16.2022 -16.1748  -5.8909  -4.8364
+  -3.3094  -2.8077  -2.5632  -2.3433  -0.4741  -0.0685   0.0760   0.3300
+   0.6414   1.0475   1.1351   1.5408   1.8362   1.9641   2.4268   2.7619
+     cgsolve_all iterations  24    anorm=    0.69E-07
+     cgsolve_all iterations  24    anorm=    0.70E-07
+     cgsolve_all iterations  24    anorm=    0.65E-07
+     compute_u_kq: q = (    0.0000,    0.0000,   -0.0074)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.8
+     eigenvalues at k:
+ -17.8748 -17.1112 -16.6368 -16.2258 -16.2019 -16.1746  -5.8693  -4.8764
+  -3.2814  -2.8068  -2.5825  -2.3346  -0.4680  -0.0771   0.0872   0.3334
+   0.6337   1.0335   1.1404   1.5446   1.8250   1.9664   2.4371   2.7613
+     eigenvalues at k+q:
+ -17.8819 -17.0919 -16.6487 -16.2263 -16.2014 -16.1744  -5.8475  -4.9148
+  -3.2541  -2.8058  -2.6024  -2.3256  -0.4615  -0.0877   0.0987   0.3397
+   0.6255   1.0199   1.1460   1.5480   1.8164   1.9658   2.4500   2.7591
+     cgsolve_all iterations  24    anorm=    0.69E-07
+     cgsolve_all iterations  24    anorm=    0.69E-07
+     cgsolve_all iterations  24    anorm=    0.64E-07
+     k-point #    2 of     5      pool #  2    cpu time:      10.7
+     k-point #    2 of     5      pool #  1    cpu time:      10.7
+     compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  1.0
+     eigenvalues at k:
+ -17.6480 -17.4754 -16.4911 -16.2337 -16.1905 -16.1797  -6.0995  -4.1779
+  -3.7884  -2.7290  -2.6407  -2.2171  -0.4091  -0.3600   0.2598   0.3255
+   0.7131   1.1787   1.2679   1.5430   1.6937   2.2352   2.3809   2.5862
+     eigenvalues at k+q:
+ -17.6480 -17.4754 -16.4910 -16.2336 -16.1905 -16.1797  -6.0995  -4.1779
+  -3.7883  -2.7290  -2.6407  -2.2171  -0.4091  -0.3600   0.2598   0.3255
+   0.7131   1.1787   1.2679   1.5430   1.6937   2.2352   2.3810   2.5862
+     cgsolve_all iterations  20    anorm=    0.63E-07
+PARA_AUG  1      -0.6754597         0.0011233         0.1243041
+     cgsolve_all iterations  20    anorm=    0.64E-07
+PARA_AUG  2      -0.1106260        -0.7074658        -0.0081572
+     cgsolve_all iterations  20    anorm=    0.67E-07
+PARA_AUG  3      -0.0584177        -0.0711315        -0.6825698
+     cgsolve_all iterations  22    anorm=    0.65E-07
+     cgsolve_all iterations  22    anorm=    0.70E-07
+     cgsolve_all iterations  22    anorm=    0.67E-07
+     compute_u_kq: q = (    0.0074,    0.0000,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.7
+     eigenvalues at k:
+ -17.6480 -17.4754 -16.4911 -16.2337 -16.1905 -16.1797  -6.0995  -4.1779
+  -3.7884  -2.7290  -2.6407  -2.2171  -0.4091  -0.3600   0.2598   0.3255
+   0.7131   1.1787   1.2679   1.5430   1.6937   2.2352   2.3809   2.5862
+     eigenvalues at k+q:
+ -17.6445 -17.4571 -16.5145 -16.2357 -16.1913 -16.1818  -6.0561  -4.2167
+  -3.7995  -2.7161  -2.6211  -2.2291  -0.4266  -0.3706   0.2404   0.3442
+   0.7233   1.1766   1.2906   1.5606   1.7046   2.2137   2.3667   2.5732
+     cgsolve_all iterations  22    anorm=    0.65E-07
+     cgsolve_all iterations  22    anorm=    0.67E-07
+     cgsolve_all iterations  22    anorm=    0.67E-07
+     compute_u_kq: q = (   -0.0074,    0.0000,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.7
+     eigenvalues at k:
+ -17.6480 -17.4754 -16.4911 -16.2337 -16.1905 -16.1797  -6.0995  -4.1779
+  -3.7884  -2.7290  -2.6407  -2.2171  -0.4091  -0.3600   0.2598   0.3255
+   0.7131   1.1787   1.2679   1.5430   1.6937   2.2352   2.3809   2.5862
+     eigenvalues at k+q:
+ -17.6515 -17.4932 -16.4680 -16.2316 -16.1897 -16.1775  -6.1417  -4.1399
+  -3.7772  -2.7421  -2.6607  -2.2051  -0.3906  -0.3476   0.2793   0.3075
+   0.7032   1.1784   1.2459   1.5249   1.6832   2.2575   2.3952   2.5989
+     cgsolve_all iterations  22    anorm=    0.65E-07
+     cgsolve_all iterations  22    anorm=    0.70E-07
+     cgsolve_all iterations  22    anorm=    0.65E-07
+     compute_u_kq: q = (    0.0000,    0.0074,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.7
+     eigenvalues at k:
+ -17.6480 -17.4754 -16.4911 -16.2337 -16.1905 -16.1797  -6.0995  -4.1779
+  -3.7884  -2.7290  -2.6407  -2.2171  -0.4091  -0.3600   0.2598   0.3255
+   0.7131   1.1787   1.2679   1.5430   1.6937   2.2352   2.3809   2.5862
+     eigenvalues at k+q:
+ -17.6480 -17.4750 -16.4916 -16.2337 -16.1905 -16.1796  -6.0986  -4.1792
+  -3.7878  -2.7296  -2.6394  -2.2173  -0.4093  -0.3608   0.2592   0.3274
+   0.7123   1.1786   1.2694   1.5426   1.6944   2.2350   2.3793   2.5874
+     cgsolve_all iterations  23    anorm=    0.65E-07
+     cgsolve_all iterations  23    anorm=    0.67E-07
+     cgsolve_all iterations  22    anorm=    0.72E-07
+     compute_u_kq: q = (    0.0000,   -0.0074,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.7
+     eigenvalues at k:
+ -17.6480 -17.4754 -16.4911 -16.2337 -16.1905 -16.1797  -6.0995  -4.1779
+  -3.7884  -2.7290  -2.6407  -2.2171  -0.4091  -0.3600   0.2598   0.3255
+   0.7131   1.1787   1.2679   1.5430   1.6937   2.2352   2.3809   2.5862
+     eigenvalues at k+q:
+ -17.6480 -17.4750 -16.4916 -16.2337 -16.1905 -16.1796  -6.0986  -4.1792
+  -3.7878  -2.7296  -2.6394  -2.2173  -0.4093  -0.3608   0.2592   0.3274
+   0.7123   1.1786   1.2694   1.5426   1.6944   2.2350   2.3793   2.5874
+     cgsolve_all iterations  23    anorm=    0.65E-07
+     cgsolve_all iterations  23    anorm=    0.67E-07
+     cgsolve_all iterations  22    anorm=    0.72E-07
+     compute_u_kq: q = (    0.0000,    0.0000,    0.0074)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.6
+     eigenvalues at k:
+ -17.6480 -17.4754 -16.4911 -16.2337 -16.1905 -16.1797  -6.0995  -4.1779
+  -3.7884  -2.7290  -2.6407  -2.2171  -0.4091  -0.3600   0.2598   0.3255
+   0.7131   1.1787   1.2679   1.5430   1.6937   2.2352   2.3809   2.5862
+     eigenvalues at k+q:
+ -17.6500 -17.4730 -16.4914 -16.2335 -16.1907 -16.1796  -6.0988  -4.1825
+  -3.7844  -2.7305  -2.6383  -2.2178  -0.4133  -0.3546   0.2581   0.3261
+   0.7132   1.1786   1.2678   1.5429   1.6954   2.2305   2.3840   2.5872
+     cgsolve_all iterations  23    anorm=    0.63E-07
+     cgsolve_all iterations  24    anorm=    0.68E-07
+     cgsolve_all iterations  23    anorm=    0.62E-07
+     compute_u_kq: q = (    0.0000,    0.0000,   -0.0074)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.6
+     eigenvalues at k:
+ -17.6480 -17.4754 -16.4911 -16.2337 -16.1905 -16.1797  -6.0995  -4.1779
+  -3.7884  -2.7290  -2.6407  -2.2171  -0.4091  -0.3600   0.2598   0.3255
+   0.7131   1.1787   1.2679   1.5430   1.6937   2.2352   2.3809   2.5862
+     eigenvalues at k+q:
+ -17.6500 -17.4730 -16.4914 -16.2335 -16.1907 -16.1796  -6.0988  -4.1825
+  -3.7844  -2.7305  -2.6383  -2.2178  -0.4133  -0.3546   0.2581   0.3261
+   0.7132   1.1786   1.2678   1.5429   1.6954   2.2305   2.3840   2.5872
+     cgsolve_all iterations  23    anorm=    0.63E-07
+     cgsolve_all iterations  24    anorm=    0.68E-07
+     cgsolve_all iterations  23    anorm=    0.62E-07
+     k-point #    3 of     5      pool #  1    cpu time:      20.7
+     compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
+     Rotating WFCS
+     k-point #    3 of     5      pool #  2    cpu time:      20.7
+     ethr =  1.00E-14,  avg # of iterations =  0.9
+     eigenvalues at k:
+ -17.6694 -17.2220 -16.7386 -16.2361 -16.2130 -16.1846  -5.7388  -4.6275
+  -3.5981  -2.7642  -2.5787  -2.0968  -0.4022  -0.2224  -0.0154   0.4332
+   0.7049   0.9322   1.3027   1.4363   1.7292   2.1735   2.4548   2.7533
+     eigenvalues at k+q:
+ -17.6694 -17.2220 -16.7386 -16.2360 -16.2130 -16.1845  -5.7388  -4.6275
+  -3.5981  -2.7642  -2.5786  -2.0968  -0.4021  -0.2224  -0.0154   0.4332
+   0.7049   0.9322   1.3028   1.4363   1.7292   2.1736   2.4548   2.7534
+     cgsolve_all iterations  21    anorm=    0.64E-07
+PARA_AUG  1      -1.5631524        -0.0457697         0.2115727
+     cgsolve_all iterations  21    anorm=    0.65E-07
+PARA_AUG  2       0.1018701        -1.4768540         0.1544827
+     cgsolve_all iterations  21    anorm=    0.66E-07
+PARA_AUG  3      -0.2224300        -0.0969891        -1.3521823
+     cgsolve_all iterations  24    anorm=    0.74E-07
+     cgsolve_all iterations  24    anorm=    0.64E-07
+     cgsolve_all iterations  24    anorm=    0.69E-07
+     compute_u_kq: q = (    0.0074,    0.0000,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.7
+     eigenvalues at k:
+ -17.6694 -17.2220 -16.7386 -16.2361 -16.2130 -16.1846  -5.7388  -4.6275
+  -3.5981  -2.7642  -2.5787  -2.0968  -0.4022  -0.2224  -0.0154   0.4332
+   0.7049   0.9322   1.3027   1.4363   1.7292   2.1735   2.4548   2.7533
+     eigenvalues at k+q:
+ -17.6777 -17.2153 -16.7367 -16.2356 -16.2128 -16.1841  -5.7427  -4.6342
+  -3.5903  -2.7640  -2.5753  -2.1043  -0.4037  -0.2062  -0.0216   0.4320
+   0.6976   0.9387   1.3093   1.4332   1.7296   2.1680   2.4595   2.7528
+     cgsolve_all iterations  24    anorm=    0.71E-07
+     cgsolve_all iterations  24    anorm=    0.66E-07
+     cgsolve_all iterations  24    anorm=    0.67E-07
+     compute_u_kq: q = (   -0.0074,    0.0000,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.7
+     eigenvalues at k:
+ -17.6694 -17.2220 -16.7386 -16.2361 -16.2130 -16.1846  -5.7388  -4.6275
+  -3.5981  -2.7642  -2.5787  -2.0968  -0.4022  -0.2224  -0.0154   0.4332
+   0.7049   0.9322   1.3027   1.4363   1.7292   2.1735   2.4548   2.7533
+     eigenvalues at k+q:
+ -17.6618 -17.2283 -16.7400 -16.2365 -16.2132 -16.1850  -5.7352  -4.6227
+  -3.6031  -2.7644  -2.5820  -2.0901  -0.4012  -0.2378  -0.0082   0.4349
+   0.7122   0.9262   1.2917   1.4440   1.7302   2.1765   2.4519   2.7539
+     cgsolve_all iterations  24    anorm=    0.74E-07
+     cgsolve_all iterations  24    anorm=    0.62E-07
+     cgsolve_all iterations  24    anorm=    0.67E-07
+     compute_u_kq: q = (    0.0000,    0.0074,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.7
+     eigenvalues at k:
+ -17.6694 -17.2220 -16.7386 -16.2361 -16.2130 -16.1846  -5.7388  -4.6275
+  -3.5981  -2.7642  -2.5787  -2.0968  -0.4022  -0.2224  -0.0154   0.4332
+   0.7049   0.9322   1.3027   1.4363   1.7292   2.1735   2.4548   2.7533
+     eigenvalues at k+q:
+ -17.6826 -17.2119 -16.7349 -16.2357 -16.2117 -16.1842  -5.7435  -4.6523
+  -3.5628  -2.7683  -2.5809  -2.1046  -0.4030  -0.2201  -0.0030   0.4123
+   0.7054   0.9458   1.2962   1.4546   1.7335   2.1599   2.4525   2.7604
+     cgsolve_all iterations  24    anorm=    0.67E-07
+     cgsolve_all iterations  24    anorm=    0.65E-07
+     cgsolve_all iterations  24    anorm=    0.68E-07
+     compute_u_kq: q = (    0.0000,   -0.0074,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.7
+     eigenvalues at k:
+ -17.6694 -17.2220 -16.7386 -16.2361 -16.2130 -16.1846  -5.7388  -4.6275
+  -3.5981  -2.7642  -2.5787  -2.0968  -0.4022  -0.2224  -0.0154   0.4332
+   0.7049   0.9322   1.3027   1.4363   1.7292   2.1735   2.4548   2.7533
+     eigenvalues at k+q:
+ -17.6560 -17.2323 -16.7421 -16.2364 -16.2142 -16.1849  -5.7344  -4.6013
+  -3.6344  -2.7602  -2.5764  -2.0889  -0.4018  -0.2227  -0.0277   0.4537
+   0.7048   0.9187   1.3093   1.4187   1.7243   2.1879   2.4567   2.7465
+     cgsolve_all iterations  24    anorm=    0.73E-07
+     cgsolve_all iterations  24    anorm=    0.64E-07
+     cgsolve_all iterations  24    anorm=    0.68E-07
+     compute_u_kq: q = (    0.0000,    0.0000,    0.0074)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.6
+     eigenvalues at k:
+ -17.6694 -17.2220 -16.7386 -16.2361 -16.2130 -16.1846  -5.7388  -4.6275
+  -3.5981  -2.7642  -2.5787  -2.0968  -0.4022  -0.2224  -0.0154   0.4332
+   0.7049   0.9322   1.3027   1.4363   1.7292   2.1735   2.4548   2.7533
+     eigenvalues at k+q:
+ -17.6665 -17.2220 -16.7416 -16.2360 -16.2140 -16.1843  -5.7321  -4.6247
+  -3.6168  -2.7621  -2.5609  -2.1135  -0.4133  -0.2324  -0.0068   0.4368
+   0.7121   0.9435   1.3152   1.4443   1.7376   2.1708   2.4356   2.7439
+     cgsolve_all iterations  24    anorm=    0.74E-07
+     cgsolve_all iterations  24    anorm=    0.64E-07
+     cgsolve_all iterations  24    anorm=    0.69E-07
+     compute_u_kq: q = (    0.0000,    0.0000,   -0.0074)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.6
+     eigenvalues at k:
+ -17.6694 -17.2220 -16.7386 -16.2361 -16.2130 -16.1846  -5.7388  -4.6275
+  -3.5981  -2.7642  -2.5787  -2.0968  -0.4022  -0.2224  -0.0154   0.4332
+   0.7049   0.9322   1.3027   1.4363   1.7292   2.1735   2.4548   2.7533
+     eigenvalues at k+q:
+ -17.6720 -17.2221 -16.7357 -16.2361 -16.2119 -16.1848  -5.7449  -4.6302
+  -3.5801  -2.7654  -2.5960  -2.0811  -0.3919  -0.2129  -0.0229   0.4310
+   0.6969   0.9221   1.2890   1.4317   1.7212   2.1759   2.4733   2.7620
+     cgsolve_all iterations  24    anorm=    0.72E-07
+     cgsolve_all iterations  24    anorm=    0.62E-07
+     cgsolve_all iterations  24    anorm=    0.68E-07
+     k-point #    4 of     5      pool #  2    cpu time:      30.7
+     k-point #    4 of     5      pool #  1    cpu time:      30.7
+     compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  0.8
+     eigenvalues at k:
+ -17.6107 -17.2360 -16.7786 -16.2573 -16.2040 -16.1946  -5.5943  -4.6382
+  -3.8955  -2.6285  -2.4598  -2.3058  -0.5465  -0.3552   0.1150   0.5792
+   0.7604   1.0799   1.5501   1.6601   1.8256   2.0062   2.2136   2.4709
+     eigenvalues at k+q:
+ -17.6106 -17.2359 -16.7785 -16.2573 -16.2040 -16.1945  -5.5943  -4.6382
+  -3.8954  -2.6285  -2.4598  -2.3058  -0.5464  -0.3552   0.1150   0.5792
+   0.7605   1.0799   1.5501   1.6601   1.8256   2.0062   2.2136   2.4710
+     cgsolve_all iterations  20    anorm=    0.67E-07
+PARA_AUG  1      -1.5290155        -0.0117681         0.2899913
+     cgsolve_all iterations  20    anorm=    0.59E-07
+PARA_AUG  2       0.1009405        -1.4770201         0.2466206
+     cgsolve_all iterations  20    anorm=    0.64E-07
+PARA_AUG  3      -0.2882165        -0.1231888        -1.1663895
+     cgsolve_all iterations  23    anorm=    0.67E-07
+     cgsolve_all iterations  23    anorm=    0.62E-07
+     cgsolve_all iterations  22    anorm=    0.68E-07
+     compute_u_kq: q = (    0.0074,    0.0000,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.6
+     eigenvalues at k:
+ -17.6107 -17.2360 -16.7786 -16.2573 -16.2040 -16.1946  -5.5943  -4.6382
+  -3.8955  -2.6285  -2.4598  -2.3058  -0.5465  -0.3552   0.1150   0.5792
+   0.7604   1.0799   1.5501   1.6601   1.8256   2.0062   2.2136   2.4709
+     eigenvalues at k+q:
+ -17.6113 -17.2475 -16.7654 -16.2563 -16.2036 -16.1949  -5.6167  -4.6140
+  -3.8982  -2.6261  -2.4679  -2.3015  -0.5432  -0.3502   0.1160   0.5639
+   0.7719   1.0784   1.5411   1.6600   1.8179   2.0217   2.2241   2.4681
+     cgsolve_all iterations  23    anorm=    0.65E-07
+     cgsolve_all iterations  23    anorm=    0.63E-07
+     cgsolve_all iterations  22    anorm=    0.69E-07
+     compute_u_kq: q = (   -0.0074,    0.0000,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.6
+     eigenvalues at k:
+ -17.6107 -17.2360 -16.7786 -16.2573 -16.2040 -16.1946  -5.5943  -4.6382
+  -3.8955  -2.6285  -2.4598  -2.3058  -0.5465  -0.3552   0.1150   0.5792
+   0.7604   1.0799   1.5501   1.6601   1.8256   2.0062   2.2136   2.4709
+     eigenvalues at k+q:
+ -17.6101 -17.2250 -16.7910 -16.2582 -16.2042 -16.1941  -5.5740  -4.6608
+  -3.8919  -2.6312  -2.4522  -2.3095  -0.5491  -0.3610   0.1160   0.5944
+   0.7484   1.0822   1.5580   1.6596   1.8338   1.9902   2.2044   2.4750
+     cgsolve_all iterations  23    anorm=    0.66E-07
+     cgsolve_all iterations  23    anorm=    0.62E-07
+     cgsolve_all iterations  22    anorm=    0.68E-07
+     compute_u_kq: q = (    0.0000,    0.0074,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.6
+     eigenvalues at k:
+ -17.6107 -17.2360 -16.7786 -16.2573 -16.2040 -16.1946  -5.5943  -4.6382
+  -3.8955  -2.6285  -2.4598  -2.3058  -0.5465  -0.3552   0.1150   0.5792
+   0.7604   1.0799   1.5501   1.6601   1.8256   2.0062   2.2136   2.4709
+     eigenvalues at k+q:
+ -17.6130 -17.2512 -16.7614 -16.2564 -16.2032 -16.1927  -5.6311  -4.6088
+  -3.8828  -2.6410  -2.4622  -2.2999  -0.5396  -0.3678   0.1339   0.5653
+   0.7524   1.1007   1.5272   1.6489   1.8189   2.0149   2.2191   2.4892
+     cgsolve_all iterations  23    anorm=    0.68E-07
+     cgsolve_all iterations  23    anorm=    0.63E-07
+     cgsolve_all iterations  22    anorm=    0.69E-07
+     compute_u_kq: q = (    0.0000,   -0.0074,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.6
+     eigenvalues at k:
+ -17.6107 -17.2360 -16.7786 -16.2573 -16.2040 -16.1946  -5.5943  -4.6382
+  -3.8955  -2.6285  -2.4598  -2.3058  -0.5465  -0.3552   0.1150   0.5792
+   0.7604   1.0799   1.5501   1.6601   1.8256   2.0062   2.2136   2.4709
+     eigenvalues at k+q:
+ -17.6083 -17.2203 -16.7958 -16.2581 -16.2047 -16.1963  -5.5566  -4.6686
+  -3.9076  -2.6160  -2.4580  -2.3114  -0.5526  -0.3411   0.0955   0.5938
+   0.7680   1.0587   1.5731   1.6716   1.8320   1.9986   2.2083   2.4521
+     cgsolve_all iterations  23    anorm=    0.66E-07
+     cgsolve_all iterations  23    anorm=    0.63E-07
+     cgsolve_all iterations  22    anorm=    0.67E-07
+     compute_u_kq: q = (    0.0000,    0.0000,    0.0074)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.6
+     eigenvalues at k:
+ -17.6107 -17.2360 -16.7786 -16.2573 -16.2040 -16.1946  -5.5943  -4.6382
+  -3.8955  -2.6285  -2.4598  -2.3058  -0.5465  -0.3552   0.1150   0.5792
+   0.7604   1.0799   1.5501   1.6601   1.8256   2.0062   2.2136   2.4709
+     eigenvalues at k+q:
+ -17.6106 -17.2365 -16.7779 -16.2573 -16.2045 -16.1941  -5.5945  -4.6377
+  -3.8952  -2.6312  -2.4547  -2.3088  -0.5473  -0.3541   0.1152   0.5790
+   0.7650   1.0739   1.5495   1.6556   1.8221   2.0291   2.2062   2.4666
+     cgsolve_all iterations  23    anorm=    0.67E-07
+     cgsolve_all iterations  23    anorm=    0.62E-07
+     cgsolve_all iterations  22    anorm=    0.67E-07
+     compute_u_kq: q = (    0.0000,    0.0000,   -0.0074)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.6
+     eigenvalues at k:
+ -17.6107 -17.2360 -16.7786 -16.2573 -16.2040 -16.1946  -5.5943  -4.6382
+  -3.8955  -2.6285  -2.4598  -2.3058  -0.5465  -0.3552   0.1150   0.5792
+   0.7604   1.0799   1.5501   1.6601   1.8256   2.0062   2.2136   2.4709
+     eigenvalues at k+q:
+ -17.6111 -17.2352 -16.7789 -16.2570 -16.2039 -16.1945  -5.5953  -4.6388
+  -3.8938  -2.6296  -2.4598  -2.3036  -0.5449  -0.3551   0.1143   0.5782
+   0.7566   1.0848   1.5463   1.6630   1.8347   1.9817   2.2213   2.4779
+     cgsolve_all iterations  23    anorm=    0.64E-07
+     cgsolve_all iterations  23    anorm=    0.63E-07
+     cgsolve_all iterations  22    anorm=    0.69E-07
+     k-point #    5 of     5      pool #  1    cpu time:      40.7
+     compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
+     Rotating WFCS
+     k-point #    5 of     5      pool #  2    cpu time:      40.7
+     ethr =  1.00E-14,  avg # of iterations =  0.9
+     eigenvalues at k:
+ -18.0059 -17.0830 -16.5265 -16.2092 -16.1873 -16.1645  -6.0492  -4.9575
+  -3.0575  -2.8239  -2.6203  -2.4313  -0.4233  -0.0755   0.0601   0.3864
+   0.7315   1.0934   1.1481   1.4215   1.8743   2.0527   2.4174   2.7472
+     eigenvalues at k+q:
+ -18.0059 -17.0830 -16.5265 -16.2092 -16.1873 -16.1644  -6.0492  -4.9575
+  -3.0575  -2.8239  -2.6203  -2.4312  -0.4233  -0.0755   0.0601   0.3864
+   0.7315   1.0934   1.1482   1.4215   1.8743   2.0527   2.4174   2.7472
+     cgsolve_all iterations  21    anorm=    0.61E-07
+PARA_AUG  1      -0.6861757        -0.0714619         0.0140063
+     cgsolve_all iterations  21    anorm=    0.62E-07
+PARA_AUG  2       0.0017689        -0.5878502         0.0281753
+     cgsolve_all iterations  20    anorm=    0.66E-07
+PARA_AUG  3      -0.0202192         0.0369909        -0.7267665
+     cgsolve_all iterations  24    anorm=    0.63E-07
+     cgsolve_all iterations  24    anorm=    0.64E-07
+     cgsolve_all iterations  24    anorm=    0.61E-07
+     compute_u_kq: q = (    0.0074,    0.0000,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  3.0
+     eigenvalues at k:
+ -18.0059 -17.0830 -16.5265 -16.2092 -16.1873 -16.1645  -6.0492  -4.9575
+  -3.0575  -2.8239  -2.6203  -2.4313  -0.4233  -0.0755   0.0601   0.3864
+   0.7315   1.0934   1.1481   1.4215   1.8743   2.0527   2.4174   2.7472
+     eigenvalues at k+q:
+ -18.0055 -17.0830 -16.5269 -16.2093 -16.1873 -16.1645  -6.0485  -4.9574
+  -3.0584  -2.8237  -2.6199  -2.4308  -0.4234  -0.0759   0.0608   0.3861
+   0.7299   1.0947   1.1481   1.4217   1.8751   2.0516   2.4173   2.7477
+     cgsolve_all iterations  24    anorm=    0.63E-07
+     cgsolve_all iterations  24    anorm=    0.64E-07
+     cgsolve_all iterations  24    anorm=    0.61E-07
+     compute_u_kq: q = (   -0.0074,    0.0000,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  3.0
+     eigenvalues at k:
+ -18.0059 -17.0830 -16.5265 -16.2092 -16.1873 -16.1645  -6.0492  -4.9575
+  -3.0575  -2.8239  -2.6203  -2.4313  -0.4233  -0.0755   0.0601   0.3864
+   0.7315   1.0934   1.1481   1.4215   1.8743   2.0527   2.4174   2.7472
+     eigenvalues at k+q:
+ -18.0055 -17.0830 -16.5269 -16.2093 -16.1873 -16.1645  -6.0485  -4.9574
+  -3.0584  -2.8237  -2.6199  -2.4308  -0.4234  -0.0759   0.0608   0.3861
+   0.7299   1.0947   1.1481   1.4217   1.8751   2.0516   2.4173   2.7477
+     cgsolve_all iterations  24    anorm=    0.63E-07
+     cgsolve_all iterations  24    anorm=    0.64E-07
+     cgsolve_all iterations  24    anorm=    0.61E-07
+     compute_u_kq: q = (    0.0000,    0.0074,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.9
+     eigenvalues at k:
+ -18.0059 -17.0830 -16.5265 -16.2092 -16.1873 -16.1645  -6.0492  -4.9575
+  -3.0575  -2.8239  -2.6203  -2.4313  -0.4233  -0.0755   0.0601   0.3864
+   0.7315   1.0934   1.1481   1.4215   1.8743   2.0527   2.4174   2.7472
+     eigenvalues at k+q:
+ -18.0162 -17.0814 -16.5180 -16.2069 -16.1853 -16.1637  -6.0663  -4.9599
+  -3.0421  -2.8249  -2.6348  -2.4268  -0.4094  -0.0777   0.0558   0.3780
+   0.7512   1.0958   1.1547   1.4147   1.8665   2.0675   2.4184   2.7445
+     cgsolve_all iterations  24    anorm=    0.63E-07
+     cgsolve_all iterations  24    anorm=    0.65E-07
+     cgsolve_all iterations  24    anorm=    0.61E-07
+     compute_u_kq: q = (    0.0000,   -0.0074,    0.0000)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  2.8
+     eigenvalues at k:
+ -18.0059 -17.0830 -16.5265 -16.2092 -16.1873 -16.1645  -6.0492  -4.9575
+  -3.0575  -2.8239  -2.6203  -2.4313  -0.4233  -0.0755   0.0601   0.3864
+   0.7315   1.0934   1.1481   1.4215   1.8743   2.0527   2.4174   2.7472
+     eigenvalues at k+q:
+ -17.9949 -17.0849 -16.5355 -16.2116 -16.1894 -16.1653  -6.0313  -4.9545
+  -3.0737  -2.8224  -2.6072  -2.4339  -0.4369  -0.0732   0.0646   0.3925
+   0.7142   1.0909   1.1405   1.4300   1.8811   2.0379   2.4176   2.7493
+     cgsolve_all iterations  24    anorm=    0.63E-07
+     cgsolve_all iterations  24    anorm=    0.66E-07
+     cgsolve_all iterations  24    anorm=    0.66E-07
+     compute_u_kq: q = (    0.0000,    0.0000,    0.0074)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  3.0
+     eigenvalues at k:
+ -18.0059 -17.0830 -16.5265 -16.2092 -16.1873 -16.1645  -6.0492  -4.9575
+  -3.0575  -2.8239  -2.6203  -2.4313  -0.4233  -0.0755   0.0601   0.3864
+   0.7315   1.0934   1.1481   1.4215   1.8743   2.0527   2.4174   2.7472
+     eigenvalues at k+q:
+ -17.9964 -17.1118 -16.5064 -16.2086 -16.1884 -16.1641  -6.0881  -4.8962
+  -3.0877  -2.8292  -2.6250  -2.4103  -0.4264  -0.0611   0.0679   0.3846
+   0.7159   1.0877   1.1552   1.3942   1.8653   2.0674   2.4227   2.7555
+     cgsolve_all iterations  24    anorm=    0.64E-07
+     cgsolve_all iterations  24    anorm=    0.65E-07
+     cgsolve_all iterations  24    anorm=    0.64E-07
+     compute_u_kq: q = (    0.0000,    0.0000,   -0.0074)
+     Rotating WFCS
+     ethr =  1.00E-14,  avg # of iterations =  3.0
+     eigenvalues at k:
+ -18.0059 -17.0830 -16.5265 -16.2092 -16.1873 -16.1645  -6.0492  -4.9575
+  -3.0575  -2.8239  -2.6203  -2.4313  -0.4233  -0.0755   0.0601   0.3864
+   0.7315   1.0934   1.1481   1.4215   1.8743   2.0527   2.4174   2.7472
+     eigenvalues at k+q:
+ -18.0145 -17.0543 -16.5473 -16.2098 -16.1862 -16.1648  -6.0087  -5.0182
+  -3.0277  -2.8187  -2.6188  -2.4498  -0.4189  -0.0901   0.0521   0.3877
+   0.7485   1.0985   1.1413   1.4496   1.8797   2.0395   2.4155   2.7372
+     cgsolve_all iterations  23    anorm=    0.66E-07
+     cgsolve_all iterations  24    anorm=    0.65E-07
+     cgsolve_all iterations  24    anorm=    0.65E-07
+     End of magnetic susceptibility calculation
+ 
+     f-sum rule (1st term):
+           -44.2613          0.0000          0.0000
+             0.0000        -44.2695          0.0027
+             0.0000          0.0024        -44.2564
+
+     f-sum rule (2nd term):
+            -1.1497          0.0000          0.0000
+             0.0000         -1.1512          0.0000
+             0.0000         -0.0000         -1.1475
+
+     f-sum rule (should be   -47.2611):
+           -45.4110          0.0000          0.0000
+             0.0000        -45.4207          0.0027
+             0.0000          0.0024        -45.4039
+
+     chi_bare pGv (HH) in paratec units:
+       -14.701793      0.367064     -0.742557
+         0.344564    -14.727769     -0.083644
+        -0.745234     -0.058506    -14.543205
+
+       -14.701793     -0.000000      0.000000
+         0.000000    -14.727769     -0.083644
+         0.000000     -0.058506    -14.543205
+
+     chi_bare vGv (VV) in paratec units:
+       -14.087965      0.288539     -0.597758
+         0.288583    -14.085384     -0.045779
+        -0.597626     -0.045790    -13.976183
+
+       -14.087965      0.000000      0.000000
+         0.000000    -14.085384     -0.045779
+         0.000000     -0.045790    -13.976183
+
+     chi_bare pGv (HH) in 10^{-6} cm^3/mol:
+           -69.8643         -0.0000          0.0000
+             0.0000        -69.9877         -0.3975
+             0.0000         -0.2780        -69.1107
+
+     chi_bare vGv (VV) in 10^{-6} cm^3/mol:
+           -66.9473          0.0000          0.0000
+             0.0000        -66.9351         -0.2175
+             0.0000         -0.2176        -66.4161
+
+     Contributions to the NMR chemical shifts: -------------------------------
+ 
+     Macroscopic shape contribution in ppm:                    8.58
+             8.6063          0.0000          0.0000
+             0.0000          8.6216          0.0000
+             0.0000          0.0000          8.5135
+
+ 
+     Core contribution in ppm:
+ 
+     Atom  1  Si  pos: (  0.470100 -0.814241  0.733333)  core sigma:         837.91
+     Atom  2  Si  pos: (  0.470100  0.814241  1.466667)  core sigma:         837.91
+     Atom  3  Si  pos: ( -0.940200  0.000000  0.000000)  core sigma:         837.91
+     Atom  4  O   pos: (  0.681300 -0.253747  0.471680)  core sigma:         271.07
+     Atom  5  O   pos: ( -0.120900  0.716899  1.205013)  core sigma:         271.07
+     Atom  6  O   pos: ( -0.560400 -0.463152  1.938347)  core sigma:         271.07
+     Atom  7  O   pos: (  0.681300  0.253747 -0.471680)  core sigma:         271.07
+     Atom  8  O   pos: ( -0.120900 -0.716899  0.994987)  core sigma:         271.07
+     Atom  9  O   pos: ( -0.560400  0.463152  0.261653)  core sigma:         271.07
+ 
+     Bare contribution in ppm:
+ 
+     Atom  1  Si  pos: (  0.470100 -0.814241  0.733333)  bare sigma:         -28.25
+           -27.6150          1.3548          0.3060
+             1.3576        -29.1677          0.1946
+            -0.8470         -0.4733        -27.9542
+
+     Atom  2  Si  pos: (  0.470100  0.814241  1.466667)  bare sigma:         -28.25
+           -27.6150         -1.3548         -0.3060
+            -1.3576        -29.1677          0.1946
+             0.8470         -0.4733        -27.9542
+
+     Atom  3  Si  pos: ( -0.940200  0.000000  0.000000)  bare sigma:         -28.21
+           -29.9850         -0.0000          0.0000
+            -0.0000        -26.7499         -0.3994
+            -0.0000          0.9533        -27.8945
+
+     Atom  4  O   pos: (  0.681300 -0.253747  0.471680)  bare sigma:          64.08
+            60.9535          5.7663         -5.0002
+             5.5246         67.0693         -6.8226
+            -5.4217         -6.4888         64.2069
+
+     Atom  5  O   pos: ( -0.120900  0.716899  1.205013)  bare sigma:          63.97
+            70.6594          0.1777          8.3046
+            -0.2116         57.1995         -1.1014
+             8.0281         -1.5762         64.0635
+
+     Atom  6  O   pos: ( -0.560400 -0.463152  1.938347)  bare sigma:          64.05
+            60.9585         -5.3956         -3.2685
+            -5.7785         66.9880          7.6718
+            -2.8885          7.6881         64.1903
+
+     Atom  7  O   pos: (  0.681300  0.253747 -0.471680)  bare sigma:          64.08
+            60.9535         -5.7663          5.0002
+            -5.5246         67.0693         -6.8226
+             5.4217         -6.4888         64.2069
+
+     Atom  8  O   pos: ( -0.120900 -0.716899  0.994987)  bare sigma:          63.97
+            70.6594         -0.1777         -8.3046
+             0.2116         57.1995         -1.1014
+            -8.0281         -1.5762         64.0635
+
+     Atom  9  O   pos: ( -0.560400  0.463152  0.261653)  bare sigma:          64.05
+            60.9585          5.3956          3.2685
+             5.7785         66.9880          7.6718
+             2.8885          7.6881         64.1903
+
+     Diamagnetic contribution in ppm:
+ 
+     Atom  1  Si  pos: (  0.470100 -0.814241  0.733333)  dia sigma:           5.46
+             5.4515         -0.0142          0.0034
+            -0.0142          5.4682          0.0021
+             0.0034          0.0021          5.4538
+
+     Atom  2  Si  pos: (  0.470100  0.814241  1.466667)  dia sigma:           5.46
+             5.4515          0.0142         -0.0034
+             0.0142          5.4682          0.0021
+            -0.0034          0.0021          5.4538
+
+     Atom  3  Si  pos: ( -0.940200  0.000000  0.000000)  dia sigma:           5.46
+             5.4779          0.0000          0.0000
+             0.0000          5.4439         -0.0041
+             0.0000         -0.0041          5.4550
+
+     Atom  4  O   pos: (  0.681300 -0.253747  0.471680)  dia sigma:          11.70
+            11.6415          0.1210         -0.1421
+             0.1210         11.7483         -0.1523
+            -0.1421         -0.1523         11.7034
+
+     Atom  5  O   pos: ( -0.120900  0.716899  1.205013)  dia sigma:          11.70
+            11.8341         -0.0100          0.2026
+            -0.0100         11.5586         -0.0477
+             0.2026         -0.0477         11.7051
+
+     Atom  6  O   pos: ( -0.560400 -0.463152  1.938347)  dia sigma:          11.70
+            11.6248         -0.1105         -0.0597
+            -0.1105         11.7671          0.1999
+            -0.0597          0.1999         11.7037
+
+     Atom  7  O   pos: (  0.681300  0.253747 -0.471680)  dia sigma:          11.70
+            11.6415         -0.1210          0.1421
+            -0.1210         11.7483         -0.1523
+             0.1421         -0.1523         11.7034
+
+     Atom  8  O   pos: ( -0.120900 -0.716899  0.994987)  dia sigma:          11.70
+            11.8341          0.0100         -0.2026
+             0.0100         11.5586         -0.0477
+            -0.2026         -0.0477         11.7051
+
+     Atom  9  O   pos: ( -0.560400  0.463152  0.261653)  dia sigma:          11.70
+            11.6248          0.1105          0.0597
+             0.1105         11.7671          0.1999
+             0.0597          0.1999         11.7037
+
+     Paramagnetic contribution in ppm:
+ 
+     Atom  1  Si  pos: (  0.470100 -0.814241  0.733333)  para sigma:        -372.51
+          -371.7291         -0.7419          6.6404
+            -0.8432       -371.1808          3.6658
+           -12.2597         -7.1931       -374.6239
+
+     Atom  2  Si  pos: (  0.470100  0.814241  1.466667)  para sigma:        -372.51
+          -371.7291          0.7419         -6.6404
+             0.8432       -371.1808          3.6658
+            12.2597         -7.1931       -374.6239
+
+     Atom  3  Si  pos: ( -0.940200  0.000000  0.000000)  para sigma:        -372.17
+          -370.5915          0.0000          0.0000
+             0.0000       -371.7081         -7.5732
+             0.0000         14.1470       -374.2025
+
+     Atom  4  O   pos: (  0.681300 -0.253747  0.471680)  para sigma:         -19.04
+           -25.4550         13.0020        -12.1566
+            12.7334        -13.0398        -16.2460
+           -13.0085        -15.5384        -18.6352
+
+     Atom  5  O   pos: ( -0.120900  0.716899  1.205013)  para sigma:         -19.27
+            -4.5046         -0.4002         19.8963
+            -0.9582        -34.1933         -2.7523
+            19.4419         -3.7622        -19.1004
+
+     Atom  6  O   pos: ( -0.560400 -0.463152  1.938347)  para sigma:         -19.08
+           -26.6056        -11.6810         -7.7099
+           -12.4377        -12.0094         18.4966
+            -6.9511         18.4506        -18.6380
+
+     Atom  7  O   pos: (  0.681300  0.253747 -0.471680)  para sigma:         -19.04
+           -25.4550        -13.0020         12.1566
+           -12.7334        -13.0398        -16.2460
+            13.0085        -15.5384        -18.6352
+
+     Atom  8  O   pos: ( -0.120900 -0.716899  0.994987)  para sigma:         -19.27
+            -4.5046          0.4002        -19.8963
+             0.9582        -34.1933         -2.7523
+           -19.4419         -3.7622        -19.1004
+
+     Atom  9  O   pos: ( -0.560400  0.463152  0.261653)  para sigma:         -19.08
+           -26.6056         11.6810          7.7099
+            12.4377        -12.0094         18.4966
+             6.9511         18.4506        -18.6380
+
+     Paramagnetic US occ-occ contribution in ppm:
+ 
+     Atom  1  Si  pos: (  0.470100 -0.814241  0.733333)  para_oo sigma:          -8.73
+            -8.9740         -0.4680         -0.0570
+            -0.4623         -8.4091         -0.0286
+             0.2379          0.1402         -8.7957
+
+     Atom  2  Si  pos: (  0.470100  0.814241  1.466667)  para_oo sigma:          -8.73
+            -8.9740          0.4680          0.0570
+             0.4623         -8.4091         -0.0286
+            -0.2379          0.1402         -8.7957
+
+     Atom  3  Si  pos: ( -0.940200  0.000000  0.000000)  para_oo sigma:          -8.73
+            -8.1465          0.0000          0.0000
+             0.0000         -9.2434          0.0677
+             0.0000         -0.2761         -8.7955
+
+     Atom  4  O   pos: (  0.681300 -0.253747  0.471680)  para_oo sigma:          -5.10
+            -5.0187         -0.1441          0.2001
+            -0.1998         -5.1883          0.2650
+             0.2106          0.2623         -5.1027
+
+     Atom  5  O   pos: ( -0.120900  0.716899  1.205013)  para_oo sigma:          -5.08
+            -5.2936          0.0293         -0.3217
+            -0.0217         -4.8821          0.0616
+            -0.3223          0.0655         -5.0745
+
+     Atom  6  O   pos: ( -0.560400 -0.463152  1.938347)  para_oo sigma:          -5.10
+            -5.0035          0.1871          0.1129
+             0.1424         -5.1959         -0.3047
+             0.1160         -0.3049         -5.1111
+
+     Atom  7  O   pos: (  0.681300  0.253747 -0.471680)  para_oo sigma:          -5.10
+            -5.0187          0.1441         -0.2001
+             0.1998         -5.1883          0.2650
+            -0.2106          0.2623         -5.1027
+
+     Atom  8  O   pos: ( -0.120900 -0.716899  0.994987)  para_oo sigma:          -5.08
+            -5.2936         -0.0293          0.3217
+             0.0217         -4.8821          0.0616
+             0.3223          0.0655         -5.0745
+
+     Atom  9  O   pos: ( -0.560400  0.463152  0.261653)  para_oo sigma:          -5.10
+            -5.0035         -0.1871         -0.1129
+            -0.1424         -5.1959         -0.3047
+            -0.1160         -0.3049         -5.1111
+
+     Paramagnetic US L_R Q_R contribution in ppm:
+ 
+     Atom  1  Si  pos: (  0.470100 -0.814241  0.733333)  para_lq sigma:          -9.31
+            -9.5575         -0.4237          1.0715
+            -0.4077         -9.0478          0.6230
+            -0.7252         -0.4083         -9.3166
+
+     Atom  2  Si  pos: (  0.470100  0.814241  1.466667)  para_lq sigma:          -9.31
+            -9.5575          0.4237         -1.0715
+             0.4077         -9.0478          0.6230
+             0.7252         -0.4083         -9.3166
+
+     Atom  3  Si  pos: ( -0.940200  0.000000  0.000000)  para_lq sigma:          -9.31
+            -8.8121         -0.0000          0.0000
+             0.0000         -9.7965         -1.2371
+             0.0000          0.8296         -9.3218
+
+     Atom  4  O   pos: (  0.681300 -0.253747  0.471680)  para_lq sigma:         -61.40
+           -60.9115         -1.2647          1.4788
+            -1.2647        -61.8523          1.3705
+             1.3429          1.4046        -61.4247
+
+     Atom  5  O   pos: ( -0.120900  0.716899  1.205013)  para_lq sigma:         -61.40
+           -62.8144          0.1662         -1.9271
+             0.1695        -59.9624          0.5826
+            -1.8932          0.4494        -61.4318
+
+     Atom  6  O   pos: ( -0.560400 -0.463152  1.938347)  para_lq sigma:         -61.40
+           -60.6183          1.0991          0.4589
+             1.1017        -62.1417         -1.9634
+             0.5581         -1.8643        -61.4254
+
+     Atom  7  O   pos: (  0.681300  0.253747 -0.471680)  para_lq sigma:         -61.40
+           -60.9115          1.2647         -1.4788
+             1.2647        -61.8523          1.3705
+            -1.3429          1.4046        -61.4247
+
+     Atom  8  O   pos: ( -0.120900 -0.716899  0.994987)  para_lq sigma:         -61.40
+           -62.8144         -0.1662          1.9271
+            -0.1695        -59.9624          0.5826
+             1.8932          0.4494        -61.4318
+
+     Atom  9  O   pos: ( -0.560400  0.463152  0.261653)  para_lq sigma:         -61.40
+           -60.6183         -1.0991         -0.4589
+            -1.1017        -62.1417         -1.9634
+            -0.5581         -1.8643        -61.4254
+
+ 
+     Total NMR chemical shifts in ppm: ---------------------------------------
+     (adopting the Simpson convention for anisotropy and asymmetry)-----------
+ 
+     Atom  1  Si  pos: (  0.470100 -0.814241  0.733333)  Total sigma:         433.16
+           434.0948         -0.2930          7.9643
+            -0.3697        434.1971          4.4568
+           -13.5907         -7.9324        431.1896
+
+     Si   1    anisotropy:     -6.32    eta:   -0.3825
+     Si   1    sigma_11=    434.46    axis=( -0.492598  0.869417 -0.038234)
+     Si   1    sigma_22=    436.07    axis=( -0.731191 -0.389658  0.559934)
+     Si   1    sigma_33=    428.95    axis=(  0.471917  0.303779  0.827655)
+ 
+     Atom  2  Si  pos: (  0.470100  0.814241  1.466667)  Total sigma:         433.16
+           434.0948          0.2930         -7.9643
+             0.3697        434.1971          4.4568
+            13.5907         -7.9324        431.1896
+
+     Si   2    anisotropy:     -6.32    eta:   -0.3825
+     Si   2    sigma_11=    434.46    axis=( -0.492598 -0.869417  0.038234)
+     Si   2    sigma_22=    436.07    axis=(  0.731191 -0.389658  0.559934)
+     Si   2    sigma_33=    428.95    axis=( -0.471917  0.303779  0.827655)
+ 
+     Atom  3  Si  pos: ( -0.940200  0.000000  0.000000)  Total sigma:         433.54
+           434.4617         -0.0000          0.0000
+            -0.0000        434.4803         -9.1460
+            -0.0000         15.6497        431.6669
+
+     Si   3    anisotropy:     -6.01    eta:   -0.5380
+     Si   3    sigma_11=    434.46    axis=(  1.000000  0.000000  0.000000)
+     Si   3    sigma_22=    436.62    axis=( -0.000000  0.835770  0.549079)
+     Si   3    sigma_33=    429.53    axis=( -0.000000  0.549079 -0.835770)
+ 
+     Atom  4  O   pos: (  0.681300 -0.253747  0.471680)  Total sigma:         269.89
+           260.8910         17.4805        -15.6199
+            16.9145        278.4336        -21.5854
+           -17.0188        -20.5125        270.3360
+
+     O    4    anisotropy:     56.82    eta:   -0.1303
+     O    4    sigma_11=    253.42    axis=( -0.271117  0.721960  0.636607)
+     O    4    sigma_22=    248.48    axis=(  0.850451 -0.130087  0.509717)
+     O    4    sigma_33=    307.77    axis=( -0.450809 -0.679596  0.578723)
+ 
+     Atom  5  O   pos: ( -0.120900  0.716899  1.205013)  Total sigma:         269.58
+           289.5620         -0.0370         26.1546
+            -1.0321        249.4167         -3.2572
+            25.4571         -4.8711        269.7503
+
+     O    5    anisotropy:     56.78    eta:   -0.1762
+     O    5    sigma_11=    253.99    axis=( -0.498407 -0.542939  0.675875)
+     O    5    sigma_22=    247.32    axis=( -0.276335  0.838436  0.469750)
+     O    5    sigma_33=    307.43    axis=(  0.821723 -0.047359  0.567916)
+ 
+     Atom  6  O   pos: ( -0.560400 -0.463152  1.938347)  Total sigma:         269.82
+           260.0372        -15.9009        -10.4662
+           -17.0827        279.1046         24.1002
+            -9.2251         24.1694        270.3079
+
+     O    6    anisotropy:     55.68    eta:   -0.1614
+     O    6    sigma_11=    254.25    axis=(  0.762324 -0.112981  0.637258)
+     O    6    sigma_22=    248.26    axis=( -0.526773 -0.680357  0.509533)
+     O    6    sigma_33=    306.94    axis=( -0.375995  0.724120  0.578168)
+ 
+     Atom  7  O   pos: (  0.681300  0.253747 -0.471680)  Total sigma:         269.89
+           260.8910        -17.4805         15.6199
+           -16.9145        278.4336        -21.5854
+            17.0188        -20.5125        270.3360
+
+     O    7    anisotropy:     56.82    eta:   -0.1303
+     O    7    sigma_11=    253.42    axis=(  0.271117  0.721960  0.636607)
+     O    7    sigma_22=    248.48    axis=(  0.850451  0.130087 -0.509717)
+     O    7    sigma_33=    307.77    axis=(  0.450809 -0.679596  0.578723)
+ 
+     Atom  8  O   pos: ( -0.120900 -0.716899  0.994987)  Total sigma:         269.58
+           289.5620          0.0370        -26.1546
+             1.0321        249.4167         -3.2572
+           -25.4571         -4.8711        269.7503
+
+     O    8    anisotropy:     56.78    eta:   -0.1762
+     O    8    sigma_11=    253.99    axis=(  0.498407 -0.542939  0.675875)
+     O    8    sigma_22=    247.32    axis=( -0.276335 -0.838436 -0.469750)
+     O    8    sigma_33=    307.43    axis=( -0.821723 -0.047359  0.567916)
+ 
+     Atom  9  O   pos: ( -0.560400  0.463152  0.261653)  Total sigma:         269.82
+           260.0372         15.9009         10.4662
+            17.0827        279.1046         24.1002
+             9.2251         24.1694        270.3079
+
+     O    9    anisotropy:     55.68    eta:   -0.1614
+     O    9    sigma_11=    254.25    axis=( -0.762324 -0.112981  0.637258)
+     O    9    sigma_22=    248.26    axis=( -0.526773  0.680357 -0.509533)
+     O    9    sigma_33=    306.94    axis=(  0.375995  0.724120  0.578168)
+ 
+     Initialization:
+     gipaw_setup  :      0.14s CPU      0.14s WALL (       1 calls)
+ 
+     Linear response
+     greenf       :     34.06s CPU     34.27s WALL (     120 calls)
+     cgsolve      :     33.88s CPU     34.09s WALL (     120 calls)
+     ch_psi       :     33.57s CPU     33.77s WALL (    2769 calls)
+     h_psiq       :     31.47s CPU     31.65s WALL (    2769 calls)
+ 
+     Apply operators
+     h_psi        :     34.34s CPU     34.61s WALL (    3233 calls)
+     apply_vel    :      0.59s CPU      0.62s WALL (     105 calls)
+ 
+     Induced current
+     j_para       :      8.52s CPU      8.59s WALL (     135 calls)
+     biot_savart  :      0.02s CPU      0.02s WALL (       1 calls)
+ 
+     Other routines
+ 
+     General routines
+     calbec       :      2.18s CPU      2.23s WALL (    9786 calls)
+     fft          :      0.04s CPU      0.05s WALL (      42 calls)
+     ffts         :      0.00s CPU      0.01s WALL (      10 calls)
+     fftw         :     36.02s CPU     36.50s WALL (  190306 calls)
+     davcio       :      0.00s CPU      0.00s WALL (      75 calls)
+ 
+     Parallel routines
+     fft_scatter  :      4.00s CPU      4.05s WALL (  190358 calls)
+ 
+     Plugins
+ 
+     GIPAW        :     50.50s CPU     53.51s WALL (       1 calls)
