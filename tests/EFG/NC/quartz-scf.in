@@ -13,8 +13,7 @@
     celldm(1) = 4.6415377
     nat = 9
     ntyp = 2
-    ecutwfc = 20
-    ecutrho = 200
+    ecutwfc = 50
     spline_ps = .true.
 /
 &electrons
@@ -27,7 +26,7 @@
 
 ATOMIC_SPECIES
 Si 28.086  Si.pbe-tm-gipaw.UPF
-O  15.999  O.pbe-rrkjus-gipaw-dc.UPF
+O  15.999  O.pbe-tm-gipaw.UPF
 
 ATOMIC_POSITIONS crystal
 Si    0.4701     0.0000      0.3333333333
@@ -46,5 +45,5 @@ CELL_PARAMETERS cubic
 0.0000000       0.0000000       2.2000000
 
 K_POINTS automatic
-4 4 4   1 1 1
+3 3 3   1 1 1
 
