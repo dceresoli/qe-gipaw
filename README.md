@@ -12,7 +12,8 @@ This is the official Git repository of the GIPAW code for Quantum-Espresso.
 
 
 ## Authors and contributors
-D. Ceresoli, A. P. Seitsonen, U. Gerstmann, E. Kucukbenli, S. de Gironcoli, P. Giannozzi, N. Varini
+D. Ceresoli, A. P. Seitsonen, U. Gerstmann, E. Kucukbenli, S. de Gironcoli, P. Giannozzi, N. Varini,
+M. Calandra, L. Paulatto, C. Cavazzoni, A. Dal Corso, F. Spiga, A. Ferreira
 
 
 ## Build instructions:
