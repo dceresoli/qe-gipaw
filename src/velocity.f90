@@ -71,12 +71,14 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   !-----------------------------------------------------------------------
   USE kinds,                ONLY : DP
   USE klist,                ONLY : xk, igk_k, ngk
-  USE wvfct,                ONLY : nbnd, npwx
+  USE wvfct,                ONLY : nbnd, npwx, current_k
   USE becmod,               ONLY : bec_type, becp, calbec, &
                                    allocate_bec_type, deallocate_bec_type
   USE uspp,                 ONLY : nkb, vkb
   USE cell_base,            ONLY : tpiba
   USE gipaw_module,         ONLY : q_gipaw, nbnd_occ
+  USE ldaU,                 ONLY : lda_plus_U
+  USE lsda_mod,             ONLY : current_spin, lsda, isk, nspin
 #ifdef __BANDS
   USE mp_bands,             ONLY : inter_bgrp_comm
   USE mp,                   ONLY : mp_sum
@@ -102,8 +104,6 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   logical :: q_is_zero
   integer :: npw
 
-  npw = ngk(ik)
-
   ! if no projectors, return
   if (nkb == 0) return
 
@@ -114,8 +114,12 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   q_is_zero = .false.
   if (sqrt(q(1)*q(1)+q(2)*q(2)+q(3)*q(3)) < 1d-8) q_is_zero = .true.
 
+  ! initialization
+  npw = ngk(ik)
+  current_k = ik
+  if (lsda) current_spin = isk(ik)
+
   ! allocate temporary arrays, save old NL-potential
-  call allocate_bec_type(nkb, nbnd_occ(ik), becp)
   allocate(aux(npwx,nbnd), vkb_save(npwx,nkb))
   vkb_save = vkb
 
@@ -135,6 +139,7 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
 
       ! compute <\beta(k \pm dk)| and project on |psi>
       call init_us_2_no_phase(npw, igk_k(1,ik), dxk, vkb)
+      call allocate_bec_type(nkb, nbnd_occ(ik), becp)
 #ifdef __BANDS
       call calbec_bands (npwx, npw, nkb, vkb, psi, becp%k, nbnd_occ(ik), ibnd_start, ibnd_end)
 #else
@@ -150,14 +155,19 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
       aux = (0.d0,0.d0)
       if (what == 'V' .or. what == 'v') then
           ! apply |\beta(k \pm dk+q)>D<\beta(k \pm dk)| to |psi>
-          !! Hubbard? any other term here?
 #ifdef __BANDS
           call add_vuspsi_bands(npwx, npw, nbnd_occ(ik), aux, ibnd_start, ibnd_end)
+          !! specialized Hubbard term missing
           aux2(:,ibnd_start:ibnd_end) = aux2(:,ibnd_start:ibnd_end) + dble(isign) * ryd_to_hartree * &
                                         aux(:,ibnd_start:ibnd_end)/(2.d0*dk*tpiba)
 #else
           call add_vuspsi(npwx, npw, nbnd_occ(ik), aux)
-          !! Hubbard? any other term here?
+          call deallocate_bec_type(becp)
+
+          if (lda_plus_U) then
+             call orthoatwfc1(ik)
+             call vhpsi(npwx, npw, nbnd_occ(ik), psi, aux)
+          endif
           vel_psi = vel_psi + dble(isign) * ryd_to_hartree * aux/(2.d0*dk*tpiba)
 #endif
 
@@ -168,6 +178,7 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
           aux2(:,ibnd_start:ibnd_end) = aux2(:,ibnd_start:ibnd_end) + dble(isign) * aux(:,ibnd_start:ibnd_end)/(2.d0*dk*tpiba)
 #else
           call s_psi(npwx, npw, nbnd_occ(ik), psi, aux)
+          call deallocate_bec_type(becp)
           vel_psi = vel_psi + dble(isign) * aux/(2.d0*dk*tpiba)
 #endif
       else
@@ -184,7 +195,6 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   vkb = vkb_save
   
   ! free memory
-  call deallocate_bec_type(becp)
   deallocate(aux, vkb_save)
 #ifdef __BANDS
   deallocate(aux2)

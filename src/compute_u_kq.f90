@@ -80,7 +80,7 @@ SUBROUTINE compute_u_kq(ik, q)
 
   !! debug
   if (iverbosity > 10) &
-    WRITE(stdout, '(5X,"compute_u_kq: q = (",F10.4,",",F10.4,",",F10.4,")")') q
+    write(stdout, '(5X,"compute_u_kq: q = (",F10.4,",",F10.4,",",F10.4,")")') q
 
   avg_iter = 0.D0
 
@@ -99,7 +99,8 @@ SUBROUTINE compute_u_kq(ik, q)
                    ( xk(3,ik) + g(3,igk_k(1:npw,ik)) )**2 ) * tpiba2
 
   ! various initializations
-  IF ( nkb > 0 ) CALL init_us_2( npw, igk_k(1,ik), xk(1,ik), vkb )
+  if (nkb > 0) call init_us_2( npw, igk_k(1,ik), xk(1,ik), vkb )
+  if (lda_plus_U) call orthoatwfc1(ik)
 
   ! read in wavefunctions from the previous iteration
   CALL get_buffer( evc, nwordwfc, iunwfc, ik)
@@ -107,9 +108,6 @@ SUBROUTINE compute_u_kq(ik, q)
   ! not needed anymore??
   !!call mp_sum(evc, inter_bgrp_comm)
 #endif
-
-  ! Needed for LDA+U
-  IF ( lda_plus_u ) CALL get_buffer( wfcU, nwordwfcU, iunhub, ik )
 
 #if 0
   ! randomize a little bit in case of CG diagonalization

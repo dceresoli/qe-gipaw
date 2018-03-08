@@ -1,3 +1,5 @@
+# hubbard branch: to support DFT+U in GIPAW calculations
+
 # QE-GIPAW
 This is the official Git repository of the GIPAW code for Quantum-Espresso.
 

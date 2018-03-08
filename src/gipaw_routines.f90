@@ -227,7 +227,6 @@ SUBROUTINE gipaw_summary
 END SUBROUTINE gipaw_summary
   
 
-
 !-----------------------------------------------------------------------
 SUBROUTINE gipaw_openfil
   !-----------------------------------------------------------------------
@@ -236,9 +235,7 @@ SUBROUTINE gipaw_openfil
   !
   USE gipaw_module
   USE wvfct,            ONLY : nbnd, npwx
-  USE ldaU,             ONLY : lda_plus_U, nwfcU
-  USE io_files,         ONLY : iunhub, iunwfc, &
-                               nwordwfcU, nwordwfc, seqopn
+  USE io_files,         ONLY : iunwfc, nwordwfc
   USE noncollin_module, ONLY : npol
   USE buffers,          ONLY : open_buffer
   USE control_flags,    ONLY : io_level    
@@ -254,27 +251,16 @@ SUBROUTINE gipaw_openfil
   nwordwfc = nbnd*npwx*npol
   CALL open_buffer( iunwfc, 'wfc', nwordwfc, io_level, exst )
 
-  ! ... Needed for LDA+U
-  ! ... iunhub contains the (orthogonalized) atomic wfcs * S
-  
-  nwordwfcU = npwx*nwfcU*npol
-  IF ( lda_plus_u ) &
-     CALL open_buffer( iunhub, 'hub', nwordwfcU, io_level, exst )
-
 END SUBROUTINE gipaw_openfil
+
 
 !-----------------------------------------------------------------------
 SUBROUTINE gipaw_closefil
   !-----------------------------------------------------------------------
   !
-  ! ... Close files opened by GIPAW
+  ! ... Close files opened by GIPAW, if any
   !
-  USE ldaU,             ONLY : lda_plus_U  
-  USE io_files,         ONLY : iunhub, iunwfc
-  USE buffers,          ONLY : close_buffer
-
-  call close_buffer( iunwfc, 'keep' )
-  if ( lda_plus_u ) call close_buffer ( iunhub, status = 'keep' )
+  return
 
 END SUBROUTINE gipaw_closefil
 
@@ -335,8 +321,6 @@ SUBROUTINE print_clock_gipaw
   write(stdout,*) '    Plugins'
   call plugin_clock()
   write(stdout,*)
-
-  call print_clock ('GIPAW') 
 
 END SUBROUTINE print_clock_gipaw
 

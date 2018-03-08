@@ -241,14 +241,6 @@ endif
   call calbec (npw, vkb, psi, becp, nbnd)
 #endif
 
-  if (lda_plus_u) then
-    if (q_is_zero) then
-      call get_buffer(wfcU, nwordwfcU, iunhub, ik)
-    else
-      call orthoatwfc1(ik)
-    endif
-  endif
-
   ! initial guess
   g_psi(:,:) = (0.d0, 0.d0)
 

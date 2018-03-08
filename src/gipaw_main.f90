@@ -42,7 +42,7 @@ PROGRAM gipaw_main
 #endif
   USE mp_bands,        ONLY : nbgrp
   USE mp_pools,        ONLY : nproc_pool
-  USE environment,     ONLY : environment_start
+  USE environment,     ONLY : environment_start, environment_end
   USE lsda_mod,        ONLY : nspin
   USE wvfct,           ONLY : nbnd
   USE uspp,            ONLY : okvan
@@ -61,7 +61,7 @@ PROGRAM gipaw_main
   USE xml_io_base
   !------------------------------------------------------------------------
   IMPLICIT NONE
-  CHARACTER (LEN=9)   :: code = 'QE'
+  CHARACTER (LEN=9)   :: code = 'GIPAW'
   CHARACTER (LEN=10)  :: dirname = 'dummy'
   LOGICAL, EXTERNAL  :: check_para_diag
   !------------------------------------------------------------------------
@@ -90,7 +90,6 @@ PROGRAM gipaw_main
   write(stdout,'(5X,''Parallelizing q-star over'',I2,'' images'')') nimage
   if (nimage > 7) write(stdout,'(5X,''ATTENTION: optimal number of images is 7'')')
 
-  call start_clock('GIPAW')
   call gipaw_readin()
   call check_stop_init( max_seconds )
 
@@ -169,9 +168,10 @@ PROGRAM gipaw_main
   end select
   
   ! print timings and stop the code
-  CALL gipaw_closefil
-  CALL print_clock_gipaw()
-  CALL stop_code( .TRUE. )
+  call gipaw_closefil
+  call print_clock_gipaw
+  call environment_end(code)
+  call stop_code( .true. )
   
   STOP
   
