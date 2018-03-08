@@ -85,6 +85,8 @@ PROGRAM gipaw_main
 
   write(stdout,*)
   write(stdout,'(5X,''***** This is GIPAW git revision '',A,'' *****'')') gipaw_git_revision
+  write(stdout,'(5X,''***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****'')')
+  write(stdout,'(5X,''***** in publications or presentations arising from this work.            *****'')')
   write(stdout,*)
  
   write(stdout,'(5X,''Parallelizing q-star over'',I2,'' images'')') nimage
