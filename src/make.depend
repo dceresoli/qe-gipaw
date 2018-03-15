@@ -305,6 +305,7 @@ nmr_routines.o : gipaw_module.o
 nmr_routines.o : paw_gipaw.o
 orthoatwfc1.o : /home/ceresoli/Codes/q-e/Modules/becmod.o
 orthoatwfc1.o : /home/ceresoli/Codes/q-e/Modules/kind.o
+orthoatwfc1.o : /home/ceresoli/Codes/q-e/Modules/uspp.o
 orthoatwfc1.o : /home/ceresoli/Codes/q-e/PW/src/atomic_wfc_mod.o
 orthoatwfc1.o : /home/ceresoli/Codes/q-e/PW/src/ldaU.o
 orthoatwfc1.o : /home/ceresoli/Codes/q-e/PW/src/pwcom.o
@@ -380,6 +381,7 @@ velocity.o : /home/ceresoli/Codes/q-e/Modules/kind.o
 velocity.o : /home/ceresoli/Codes/q-e/Modules/mp_bands.o
 velocity.o : /home/ceresoli/Codes/q-e/Modules/recvec.o
 velocity.o : /home/ceresoli/Codes/q-e/Modules/uspp.o
+velocity.o : /home/ceresoli/Codes/q-e/PW/src/ldaU.o
 velocity.o : /home/ceresoli/Codes/q-e/PW/src/pwcom.o
 velocity.o : /home/ceresoli/Codes/q-e/UtilXlib/mp.o
 velocity.o : gipaw_module.o

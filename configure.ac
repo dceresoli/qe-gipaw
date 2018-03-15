@@ -1,5 +1,5 @@
 # Autoconf template for qe-gipaw
-AC_INIT(qe-gipaw, 6.2.1, dceresoli@gmail.com, qe-gipaw)
+AC_INIT(qe-gipaw, 6.2.2, dceresoli@gmail.com, qe-gipaw)
 
 # Option: Quantum-Espresso source directory (QE_SOURCE)
 AC_ARG_WITH(qe-source,

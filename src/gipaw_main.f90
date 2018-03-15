@@ -27,7 +27,7 @@ PROGRAM gipaw_main
   ! ... C. J. Pickard and F. Mauri, Phys. Rev. Lett. 88, 086403 (2002)
   ! ...
   USE kinds,           ONLY : DP
-  USE io_files,        ONLY : tmp_dir
+  USE io_files,        ONLY : tmp_dir, create_directory
   USE io_global,       ONLY : stdout, meta_ionode, meta_ionode_id
   USE mp,              ONLY : mp_bcast
   USE cell_base,       ONLY : tpiba
