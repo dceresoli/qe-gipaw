@@ -484,8 +484,8 @@ SUBROUTINE compute_delta_g_so (j_bare, s_maj, s_min, delta_g_so)
      v_local(:,ispin) = vltot(:) + v%of_r(:,ispin)
   enddo
 
-  ! calculate the gradient of the potential (WHICH SPIN COMPONENT????)
-  call gradient(dfftp%nnr, v_local, ngm, g, grad_vr)
+  ! calculate the gradient of the potential
+  call external_gradient(v_local(:,s_maj), grad_vr)
   grad_vr = grad_vr * ry2ha
   deallocate (v_local)
   
@@ -556,7 +556,7 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
   vh = 0.d0
 
   call v_h(rho%of_g, e_hartree, charge, vh)
-  call gradient (dfftp%nnr, vh, ngm, g, grad_vh)
+  call external_gradient(vh, grad_vh)
   grad_vh = grad_vh * ry2ha
 
   deallocate (vh, aux1)
@@ -571,7 +571,7 @@ SUBROUTINE compute_delta_g_soo (j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delt
     delta_g_soo(ipol,3) = 2.d0 * sum( j_bare(:,1,ipol,s_min) * grad_vh(2,:) &
                                     - j_bare(:,2,ipol,s_min) * grad_vh(1,:) )
   enddo
-  deallocate ( grad_vh )
+  deallocate (grad_vh)
   
 #ifdef __MPI
   call mp_sum(delta_g_soo, intra_pool_comm)
