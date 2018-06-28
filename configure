@@ -1772,7 +1772,7 @@ version=`grep version_number ${qe_source}/Modules/version.f90 | cut -d\' -f2`
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $version" >&5
 $as_echo "$version" >&6; }
 case $version in
-  6.2.2 ) ;;
+  6.3* ) ;;
   *) as_fn_error $? "Cannot compile against this version of Quantum-Espresso" "$LINENO" 5 ;;
 esac
 
