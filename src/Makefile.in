@@ -35,7 +35,7 @@ version:
 
 gipaw_version.f90: version
 
-gipaw.x: $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS) 
+gipaw.x: $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS)
 	$(LD) $(LDFLAGS) -o $@ $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS) $(LIBS)
 	(cd ../bin; ln -sf ../src/gipaw.x .)
 
