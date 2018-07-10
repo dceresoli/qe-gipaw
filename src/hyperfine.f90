@@ -212,6 +212,8 @@ SUBROUTINE hyperfine
   enddo
 #endif
 
+  write(stdout,*)
+
   call stop_clock('hyperfine')
  
 END SUBROUTINE hyperfine
