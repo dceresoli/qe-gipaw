@@ -7,3 +7,4 @@ config.status
 makedeps.sh
 src/Makefile
 src/Makefile-gpu
+src/make.depend

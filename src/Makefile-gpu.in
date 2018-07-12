@@ -28,7 +28,7 @@ PWOBJS  = $(QE_SOURCE)/GPU/PW/libpwgpu.a
 all: gipaw-gpu.x
 
 gipaw-gpu.x: $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS) 
-	$(LD) $(LDFLAGS) -o $@ $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS) $(LIBS)
+	$(LD) $(LDFLAGS) -o $@ $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS) $(QELIBS)
 	(cd ../bin; ln -sf ../src/gipaw-gpu.x .)
 
 clean:
