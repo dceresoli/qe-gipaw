@@ -168,7 +168,7 @@ SUBROUTINE moss_gipaw_correction(moss_gipaw)
   USE ions_base,             ONLY : nat, ityp, ntyp => nsp
   USE wvfct,                 ONLY : g2kin
   USE gvecw,                 ONLY : gcutw
-  USE wavefunctions_module,  ONLY : evc
+  USE wavefunctions,  ONLY : evc
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
   USE becmod,                ONLY : calbec
   USE constants,             ONLY : pi, fpi

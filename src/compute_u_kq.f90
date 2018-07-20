@@ -31,7 +31,7 @@ SUBROUTINE compute_u_kq(ik, q)
   USE control_flags,        ONLY : cntrl_isolve => isolve
   USE ldaU,                 ONLY : lda_plus_u, wfcU
   USE lsda_mod,             ONLY : current_spin, lsda, isk, nspin
-  USE wavefunctions_module, ONLY : evc  
+  USE wavefunctions, ONLY : evc  
   USE gvect,                ONLY : g, ngm, gstart
   USE gvecs,                ONLY : doublegrid
   USE dfunct,               ONLY : newd

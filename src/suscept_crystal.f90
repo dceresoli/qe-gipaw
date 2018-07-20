@@ -26,7 +26,7 @@ SUBROUTINE suscept_crystal
   USE io_global,              ONLY : stdout, ionode
   USE io_files,               ONLY : nwordwfc, iunwfc
   USE cell_base,              ONLY : omega, tpiba, tpiba2
-  USE wavefunctions_module,   ONLY : evc
+  USE wavefunctions,   ONLY : evc
   USE klist,                  ONLY : nks, wk, xk, igk_k, ngk
   USE wvfct,                  ONLY : nbnd, npwx, wg, g2kin, current_k
   USE gvecw,                  ONLY : gcutw

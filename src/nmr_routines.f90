@@ -228,7 +228,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   USE wvfct,                  ONLY : nbnd, npwx, wg, g2kin, current_k
   USE gvecw,                  ONLY : gcutw
   USE lsda_mod,               ONLY : current_spin
-  USE wavefunctions_module,   ONLY : evc
+  USE wavefunctions,   ONLY : evc
   USE becmod,                 ONLY : calbec, allocate_bec_type, deallocate_bec_type
   USE constants,              ONLY : pi
   USE fft_base,               ONLY : dffts

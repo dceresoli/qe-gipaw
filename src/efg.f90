@@ -160,7 +160,7 @@ SUBROUTINE get_smooth_density(rho)
   USE gvecw,                  ONLY : gcutw
   USE klist,                  ONLY : nks, xk, igk_k, ngk
   USE gvect,                  ONLY : ngm, g
-  USE wavefunctions_module,   ONLY : evc
+  USE wavefunctions,   ONLY : evc
   USE cell_base,              ONLY : tpiba2, omega
   USE io_files,               ONLY : nwordwfc, iunwfc
   USE buffers,                ONLY : get_buffer
@@ -316,7 +316,7 @@ SUBROUTINE efg_correction(efg_corr_tens)
   USE wvfct,                 ONLY : g2kin, current_k, wg
   USE gvecw,                 ONLY : gcutw
   USE lsda_mod,              ONLY : current_spin, isk
-  USE wavefunctions_module,  ONLY : evc
+  USE wavefunctions,  ONLY : evc
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
   USE becmod,                ONLY : calbec
   USE constants,             ONLY : pi, fpi

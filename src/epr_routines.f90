@@ -21,7 +21,7 @@ SUBROUTINE rmc(s_weight, delta_g_rmc, delta_g_rmc_gipaw)
   USE ions_base,              ONLY : nat, ityp, ntyp => nsp
   USE wvfct,                  ONLY : nbnd, wg, g2kin, current_k
   USE klist,                  ONLY : ngk
-  USE wavefunctions_module,   ONLY : evc
+  USE wavefunctions,   ONLY : evc
   USE becmod,                 ONLY : calbec  
   USE paw_gipaw,              ONLY : paw_becp, paw_recon
   USE gipaw_module,           ONLY : nbnd_occ, radial_integral_rmc
@@ -280,7 +280,7 @@ SUBROUTINE paramagnetic_correction_aug_so (paug_corr_tensor, j_bare_s)
   USE wvfct,                  ONLY : nbnd, npwx, wg, g2kin, current_k
   USE gvecw,                  ONLY : gcutw
   USE lsda_mod,               ONLY : current_spin
-  USE wavefunctions_module,   ONLY : evc
+  USE wavefunctions,   ONLY : evc
   USE becmod,                 ONLY : calbec, allocate_bec_type, deallocate_bec_type
   USE constants,              ONLY : pi
   USE lsda_mod,               ONLY : nspin

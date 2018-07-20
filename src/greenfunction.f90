@@ -19,7 +19,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   USE io_global,                   ONLY : stdout  
   USE becmod,                      ONLY : bec_type, becp, calbec, &
                                           allocate_bec_type, deallocate_bec_type
-  USE wavefunctions_module,        ONLY : evc
+  USE wavefunctions,        ONLY : evc
   USE noncollin_module,            ONLY : npol
   USE pwcom,                       ONLY : ef
   USE wvfct,                       ONLY : nbnd, et, npwx, g2kin
