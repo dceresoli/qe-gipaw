@@ -17,7 +17,7 @@ SUBROUTINE compute_u_kq(ik, q)
   USE io_global,            ONLY : stdout
   USE io_files,             ONLY : nwordwfcU, iunhub, iunwfc, nwordwfc
   USE mp,                   ONLY : mp_sum
-  USE mp_pools,             ONLY : inter_pool_comm, me_pool
+  USE mp_pools,             ONLY : inter_pool_comm, intra_pool_comm, me_pool
   USE mp_bands,             ONLY : intra_bgrp_comm
 #ifdef __BANDS
   USE mp_bands,             ONLY : me_bgrp, inter_bgrp_comm
@@ -57,7 +57,7 @@ SUBROUTINE compute_u_kq(ik, q)
 
   ! Initialize the diagonalization
   if (isolve == 1 .or. isolve == 2) then
-    nbndx = nbnd ! CG
+    nbndx = nbnd ! CG or PPCG
   elseif (isolve == 0) then
     nbndx = 4*nbnd ! Davidson TODO: check if 4 times!!!!
   else
@@ -142,9 +142,6 @@ SUBROUTINE compute_u_kq(ik, q)
   avg_iter = 1.d0
   CALL deallocate_bec_type ( becp )
   call diag_bands ( iter, ik, avg_iter )
-
-  call mp_sum( avg_iter, inter_pool_comm )
-  avg_iter = avg_iter / nkstot
 
   !! debug
   if (iverbosity > 20) &

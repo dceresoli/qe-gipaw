@@ -1,6 +1,7 @@
 &inputgipaw
     job = 'nmr'
     prefix = 'quartz'
+    restart_mode = 'from_scratch'
     tmp_dir = '/tmp/ceresoli/'
     diagonalization = 'cg'
     verbosity = 'low'

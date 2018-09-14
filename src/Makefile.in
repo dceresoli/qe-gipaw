@@ -23,6 +23,7 @@ LIBOBJS = $(QE_SOURCE)/clib/clib.a $(QE_SOURCE)/iotk/src/libiotk.a
 QEMODS = $(QE_SOURCE)/Modules/libqemod.a \
          $(QE_SOURCE)/KS_Solvers/Davidson/libdavid.a \
          $(QE_SOURCE)/KS_Solvers/CG/libcg.a \
+         $(QE_SOURCE)/KS_Solvers/PPCG/libppcg.a \
          $(QE_SOURCE)/FFTXlib/libqefft.a \
          $(QE_SOURCE)/LAXlib/libqela.a \
          $(QE_SOURCE)/UtilXlib/libutil.a

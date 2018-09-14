@@ -58,7 +58,6 @@ PROGRAM gipaw_main
   ! end
   USE gipaw_version
   USE iotk_module  
-  USE xml_io_base
   !------------------------------------------------------------------------
   IMPLICIT NONE
   CHARACTER (LEN=9)   :: code = 'GIPAW'

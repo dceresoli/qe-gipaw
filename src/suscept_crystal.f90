@@ -48,7 +48,7 @@ SUBROUTINE suscept_crystal
   USE mp_pools,               ONLY : my_pool_id, me_pool, root_pool,  &
                                      inter_pool_comm, intra_pool_comm
   USE mp_images,              ONLY : my_image_id, inter_image_comm, nimage
-  USE mp,                     ONLY : mp_sum
+  USE mp,                     ONLY : mp_sum, mp_barrier
 #ifdef __BANDS
   USE gipaw_module,           ONLY : ibnd_start, ibnd_end
   USE mp_bands,               ONLY : intra_bgrp_comm, inter_bgrp_comm

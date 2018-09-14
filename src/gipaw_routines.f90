@@ -87,10 +87,12 @@ SUBROUTINE gipaw_readin()
        isolve = 1
      case('cg')
        isolve = 0
-     case('rmm-diis')
-       isolve = 2
+     !!case('ppcg')
+     !!  isolve = 2
+     !!case('rmm-diis')
+     !!  isolve = 3
      case default
-       call errore('gipaw_readin', 'diagonalization can be ''david'' or ''cg''', 1)
+       call errore('gipaw_readin', 'diagonalization can be ''david'', ''cg'' or ''ppcg''', 1)
   end select
 
   select case (verbosity)
