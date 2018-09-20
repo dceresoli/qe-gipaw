@@ -84,9 +84,9 @@ SUBROUTINE gipaw_readin()
 
   select case (diagonalization)
      case('david')
-       isolve = 1
-     case('cg')
        isolve = 0
+     case('cg')
+       isolve = 1
      !!case('ppcg')
      !!  isolve = 2
      !!case('rmm-diis')
