@@ -108,7 +108,7 @@ PROGRAM gipaw_main
 
   if (gamma_only) call errore ('gipaw_main', 'Cannot run GIPAW with gamma_only == .true. ', 1)
 #ifdef __BANDS
-  if (nbgrp > 1 .and. (twfcollect .eqv. .false.)) &
+  if (nbgrp > 1) &
     call errore('gipaw_main', 'Cannot use band-parallelization without wf_collect in SCF', 1)
 #endif
   if (noncolin) call errore('gipaw_main', 'non-collinear not supported yet', 1)
