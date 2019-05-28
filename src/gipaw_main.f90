@@ -33,7 +33,7 @@ PROGRAM gipaw_main
   USE cell_base,       ONLY : tpiba
   USE gipaw_module,    ONLY : job, q_gipaw, max_seconds
   USE check_stop  ,    ONLY : check_stop_init
-  USE control_flags,   ONLY : io_level, gamma_only, use_para_diag, twfcollect
+  USE control_flags,   ONLY : io_level, gamma_only, use_para_diag
   USE mp_global,       ONLY : mp_startup, nproc_pool_file
   USE mp_world,        ONLY : world_comm
   USE mp_images,       ONLY : nimage, my_image_id
@@ -107,8 +107,6 @@ PROGRAM gipaw_main
   call gipaw_openfil
 
   if (gamma_only) call errore ('gipaw_main', 'Cannot run GIPAW with gamma_only == .true. ', 1)
-  if ((twfcollect .eqv. .false.)  .and. (nproc_pool_file /= nproc_pool)) &
-    call errore('gipaw_main', 'Different number of CPU/pool. Set wf_collect=.true. in SCF', 1)
 #ifdef __BANDS
   if (nbgrp > 1 .and. (twfcollect .eqv. .false.)) &
     call errore('gipaw_main', 'Cannot use band-parallelization without wf_collect in SCF', 1)
