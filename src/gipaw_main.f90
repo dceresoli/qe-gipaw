@@ -37,9 +37,9 @@ PROGRAM gipaw_main
   USE mp_global,       ONLY : mp_startup, nproc_pool_file
   USE mp_world,        ONLY : world_comm
   USE mp_images,       ONLY : nimage, my_image_id
-#ifdef __BANDS
-  USE mp_bands,        ONLY : inter_bgrp_comm, nbgrp
-#endif
+  USE mp_pools,        ONLY : intra_pool_comm
+  USE mp_bands,        ONLY : intra_bgrp_comm, inter_bgrp_comm
+  USE mp_diag,         ONLY : mp_start_diag
   USE mp_bands,        ONLY : nbgrp
   USE mp_pools,        ONLY : nproc_pool
   USE environment,     ONLY : environment_start, environment_end
@@ -49,6 +49,7 @@ PROGRAM gipaw_main
   USE wvfct,           ONLY : nbnd
   USE io_global,       ONLY : stdout
   USE noncollin_module,ONLY : noncolin
+  USE command_line_options, ONLY: input_file_, command_line, ndiag_
   ! for pluginization
   USE input_parameters, ONLY : nat_ => nat, ntyp_ => ntyp
   USE input_parameters, ONLY : assume_isolated_ => assume_isolated, &
@@ -71,6 +72,14 @@ PROGRAM gipaw_main
 #else
   call mp_startup(start_images=.false.)
 #endif
+
+#ifndef __BANDS
+  call mp_start_diag(ndiag_, world_comm, intra_pool_comm, do_distr_diag_inside_bgrp_=.false.)
+#else
+  call mp_start_diag(ndiag_, world_comm, intra_pool_comm, do_distr_diag_inside_bgrp_=.true.)
+#endif
+  call set_mpi_comm_4_solvers( intra_pool_comm, intra_bgrp_comm, inter_bgrp_comm)
+
   call environment_start (code)
 
   ! read plugin command line arguments, if any

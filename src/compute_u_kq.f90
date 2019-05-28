@@ -27,7 +27,7 @@ SUBROUTINE compute_u_kq(ik, q)
   USE wvfct,                ONLY : et, nbnd, g2kin, &
                                    current_k, nbndx, btype, npwx
   USE gvecw,                ONLY : gcutw
-  USE control_flags,        ONLY : ethr, lscf, istep, max_cg_iter
+  USE control_flags,        ONLY : ethr, lscf, istep, max_cg_iter, david
   USE control_flags,        ONLY : cntrl_isolve => isolve
   USE ldaU,                 ONLY : lda_plus_u, wfcU
   USE lsda_mod,             ONLY : current_spin, lsda, isk, nspin
@@ -59,7 +59,8 @@ SUBROUTINE compute_u_kq(ik, q)
   if (isolve == 1 .or. isolve == 2) then
     nbndx = nbnd ! CG or PPCG
   elseif (isolve == 0) then
-    nbndx = 4*nbnd ! Davidson TODO: check if 4 times!!!!
+    david = 4
+    nbndx = david*nbnd
   else
     call errore('compute_u_kq', 'wrong isolve', 1)
   endif
