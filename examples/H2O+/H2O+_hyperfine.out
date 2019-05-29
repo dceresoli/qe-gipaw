@@ -1,41 +1,30 @@
 
-     Program QE v.6.beta (svn rev. 12871M) starts on 29Aug2016 at 12: 4:15 
+     Program GIPAW v.6.4.1 starts on 29May2019 at 13:26:56 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
          "P. Giannozzi et al., J. Phys.:Condens. Matter 21 395502 (2009);
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 29 465901 (2017);
           URL http://www.quantum-espresso.org", 
      in publications or presentations arising from this work. More details at
      http://www.quantum-espresso.org/quote
- 
-           HOST :    @host@
-           ARCH :    x86_64
-             CC :    icc
-            CPP :    cpp
-            F90 :    mpif90
-            F77 :    ifort
-         DFLAGS :    -D__INTEL -D__DFTI -D__MPI -D__PARA -D__SCALAPACK
-      BLAS LIBS :    -L/opt/intel/xe2016/mkl/lib/intel64 -lmkl_intel_lp64  -lmkl_sequential -lmkl_core
-    LAPACK LIBS :    
-       FFT LIBS :    
-      MASS LIBS :    
 
      Parallel version (MPI), running on     4 processors
+
+     MPI processes distributed on     1 nodes
      R & G space division:  proc/nbgrp/npool/nimage =       4
  
-     ***** This is GIPAW svn revision 416          *****
+     ***** This is GIPAW git revision 5391d9015a1d0d7f243b4ea6da3c02ea5229b7f7 *****
+     ***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****
+     ***** in publications or presentations arising from this work.            *****
  
      Parallelizing q-star over 1 images
 
      Reading data from directory:
-     /tmp/ceresoli/h2o+.save
-
-   Info: using nr1, nr2, nr3 values from input
-
-   Info: using nr1, nr2, nr3 values from input
+     /tmp/ceresoli/h2o+.save/
 
      IMPORTANT: XC functional enforced from input :
-     Exchange-correlation      =  SLA  PW   PBX  PBC ( 1  4  3  4 0 0)
+     Exchange-correlation      = PBE ( 1  4  3  4 0 0)
      Any further DFT definition will be discarded
      Please, verify this is what you really want
 
@@ -86,7 +75,18 @@
      k-point:     2    nbnd_occ=   3
  
  
+     q-space interpolation up to   110.00 Rydberg
+ 
      GIPAW job: hyperfine                                                                       
+ 
+
+(RHO,ZETA) => (RHO_UP,RHO_DOWN)
+
+     select_spin: s_maj=1 s_min=2 rho_diff=    1.000000
+ 
+     select_spin: s_maj=1 s_min=2 rho_diff=    1.000000
+ 
+     select_spin: s_maj=1 s_min=2 rho_diff=    1.000000
  
      Warning: core-relaxation is an experimental feature
      core-relax: calculating AE orbitals
@@ -99,6 +99,8 @@
      O      6S   eig=     -0.0493 Ry   norm=      1.0000
      O      7S   eig=     -0.0331 Ry   norm=      1.0000
      O      8S   eig=     -0.0237 Ry   norm=      1.0020
+ 
+     select_spin: s_maj=1 s_min=2 rho_diff=    1.000000
  
      core-relax: max core radius (r_max) =        5.0000
      core-relax: projecting around atom   1
@@ -122,65 +124,65 @@
  
      DIPOLAR COUPLINGS:
      ----- bare term -----
-     O    1       33.245958       -0.001187       -0.000024
-     O    1       -0.001187       34.264087        0.000585
-     O    1       -0.000024        0.000585      -67.510044
+     O    1       33.245996       -0.001187       -0.000024
+     O    1       -0.001187       34.264133        0.000585
+     O    1       -0.000024        0.000585      -67.510128
  
-     H    2       14.174634       25.342293        0.000053
-     H    2       25.342293       -7.001345        0.000002
-     H    2        0.000053        0.000002       -7.173289
+     H    2       14.174625       25.342277        0.000053
+     H    2       25.342277       -7.001345        0.000002
+     H    2        0.000053        0.000002       -7.173280
  
-     H    3       14.173717      -25.341462       -0.000055
-     H    3      -25.341462       -7.001043        0.000004
-     H    3       -0.000055        0.000004       -7.172674
+     H    3       14.173708      -25.341446       -0.000055
+     H    3      -25.341446       -7.001044        0.000004
+     H    3       -0.000055        0.000004       -7.172665
  
      ----- GIPAW term -----
-     O    1       24.414386       -0.000785       -0.000014
-     O    1       -0.000785       25.178735        0.000392
-     O    1       -0.000014        0.000392      -49.593121
+     O    1       24.414411       -0.000785       -0.000014
+     O    1       -0.000785       25.178769        0.000392
+     O    1       -0.000014        0.000392      -49.593180
  
-     H    2        0.000000        0.000000       -0.000000
-     H    2        0.000000        0.000000        0.000000
-     H    2       -0.000000        0.000000       -0.000000
+     H    2       -0.000000       -0.000000       -0.000000
+     H    2       -0.000000       -0.000000        0.000000
+     H    2       -0.000000        0.000000        0.000000
  
-     H    3        0.000000        0.000000       -0.000000
-     H    3        0.000000        0.000000        0.000000
-     H    3       -0.000000        0.000000       -0.000000
+     H    3       -0.000000       -0.000000       -0.000000
+     H    3       -0.000000       -0.000000        0.000000
+     H    3       -0.000000        0.000000        0.000000
  
      ----- total dipolar -----
-     O    1       57.660344       -0.001972       -0.000038
-     O    1       -0.001972       59.442821        0.000977
-     O    1       -0.000038        0.000977     -117.103165
+     O    1       57.660406       -0.001972       -0.000038
+     O    1       -0.001972       59.442901        0.000977
+     O    1       -0.000038        0.000977     -117.103308
  
-     H    2       14.174634       25.342293        0.000053
-     H    2       25.342293       -7.001345        0.000002
-     H    2        0.000053        0.000002       -7.173289
+     H    2       14.174625       25.342277        0.000053
+     H    2       25.342277       -7.001345        0.000002
+     H    2        0.000053        0.000002       -7.173280
  
-     H    3       14.173717      -25.341462       -0.000055
-     H    3      -25.341462       -7.001043        0.000004
-     H    3       -0.000055        0.000004       -7.172674
+     H    3       14.173708      -25.341446       -0.000055
+     H    3      -25.341446       -7.001044        0.000004
+     H    3       -0.000055        0.000004       -7.172665
  
      ----- total dipolar (symmetrized) -----
-     O    1       57.660344       -0.001972       -0.000038
-     O    1       -0.001972       59.442821        0.000977
-     O    1       -0.000038        0.000977     -117.103165
+     O    1       57.660406       -0.001972       -0.000038
+     O    1       -0.001972       59.442901        0.000977
+     O    1       -0.000038        0.000977     -117.103308
  
-     H    2       14.174634       25.342293        0.000053
-     H    2       25.342293       -7.001345        0.000002
-     H    2        0.000053        0.000002       -7.173289
+     H    2       14.174625       25.342277        0.000053
+     H    2       25.342277       -7.001345        0.000002
+     H    2        0.000053        0.000002       -7.173280
  
-     H    3       14.173717      -25.341462       -0.000055
-     H    3      -25.341462       -7.001043        0.000004
-     H    3       -0.000055        0.000004       -7.172674
+     H    3       14.173708      -25.341446       -0.000055
+     H    3      -25.341446       -7.001044        0.000004
+     H    3       -0.000055        0.000004       -7.172665
  
  
      PRINCIPAL AXIS OF THE DIPOLAR COUPLINGS:
-     O    1    Axx=   57.6603    axis=(  0.999999  0.001106 -0.000000)
-     O    1    Ayy=   59.4428    axis=( -0.001106  0.999999  0.000006)
-     O    1    Azz= -117.1032    axis=(  0.000000 -0.000006  1.000000)
+     O    1    Axx=   57.6604    axis=(  0.999999  0.001107 -0.000000)
+     O    1    Ayy=   59.4429    axis=( -0.001107  0.999999  0.000006)
+     O    1    Azz= -117.1033    axis=(  0.000000 -0.000006  1.000000)
  
      H    2    Axx=   -7.1733    axis=( -0.000000 -0.000002  1.000000)
-     H    2    Ayy=  -23.8786    axis=(  0.554299 -0.832318 -0.000002)
+     H    2    Ayy=  -23.8785    axis=(  0.554299 -0.832318 -0.000002)
      H    2    Azz=   31.0518    axis=(  0.832318  0.554299  0.000001)
  
      H    3    Axx=   -7.1727    axis=(  0.000000 -0.000002  1.000000)
@@ -193,16 +195,17 @@
      Warning: core-relaxation is an experimental feature
      ----- spin-densities in bohrradius^-3 -----
                bare            GIPAW           core-relax      total
-     O    1        0.006667        0.337362       -0.203429        0.140600
+     O    1        0.006667        0.337363       -0.203429        0.140601
      H    2       -0.008880       -0.006290        0.000000       -0.015170
      H    3       -0.008875       -0.006286        0.000000       -0.015161
      ----- Fermi contact in G -----
                bare            GIPAW           core-relax      total
-     O    1       -1.442135      -72.971400       44.001759      -30.411776
-     H    2      -14.162996      -10.031957        0.000000      -24.194953
-     H    3      -14.155301      -10.026496        0.000000      -24.181796
+     O    1       -1.442134      -72.971690       44.001749      -30.412075
+     H    2      -14.162944      -10.031917        0.000000      -24.194861
+     H    3      -14.155248      -10.026455        0.000000      -24.181703
+ 
      Initialization:
-     gipaw_setup  :      0.12s CPU      0.12s WALL (       1 calls)
+     gipaw_setup  :      0.10s CPU      0.11s WALL (       1 calls)
  
      Linear response
  
@@ -211,19 +214,26 @@
      Induced current
  
      Other routines
-     hyperfine    :      9.86s CPU      9.90s WALL (       1 calls)
-     core_relax   :      9.26s CPU      9.29s WALL (       1 calls)
+     hyperfine    :      5.28s CPU      5.37s WALL (       1 calls)
+     core_relax   :      4.74s CPU      4.79s WALL (       1 calls)
  
      General routines
-     calbec       :      0.00s CPU      0.01s WALL (       6 calls)
-     fft          :      0.68s CPU      0.68s WALL (      21 calls)
-     ffts         :      0.05s CPU      0.06s WALL (       2 calls)
-     fftw         :      0.12s CPU      0.12s WALL (       8 calls)
-     davcio       :      0.00s CPU      0.01s WALL (       8 calls)
+     calbec       :      0.02s CPU      0.01s WALL (       6 calls)
+     fft          :      0.97s CPU      1.00s WALL (      23 calls)
+     ffts         :      0.07s CPU      0.07s WALL (       2 calls)
+     fftw         :      0.14s CPU      0.15s WALL (       8 calls)
+     davcio       :      0.00s CPU      0.01s WALL (      10 calls)
  
      Parallel routines
-     fft_scatter  :      0.48s CPU      0.47s WALL (      31 calls)
  
      Plugins
  
-     GIPAW        :     12.58s CPU     13.66s WALL (       1 calls)
+ 
+     GIPAW        :      7.05s CPU      7.25s WALL
+
+ 
+   This run was terminated on:  13:27: 3  29May2019            
+
+=------------------------------------------------------------------------------=
+   JOB DONE.
+=------------------------------------------------------------------------------=

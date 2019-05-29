@@ -88,7 +88,7 @@ SUBROUTINE get_rho_up_down
      rho%of_r(i,1) = 0.5d0*(r+z)
      rho%of_r(i,2) = 0.5d0*(r-z)
   enddo
-  write(stdout,'(5X,/,''(RHO,ZETA) => (RHO_UP,RHO_DOWN)'',/)')
+  write(stdout,'(/,5X,''(RHO,ZETA) => (RHO_UP,RHO_DOWN)'',/)')
 
 END SUBROUTINE get_rho_up_down
 
