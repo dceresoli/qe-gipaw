@@ -50,6 +50,9 @@ SUBROUTINE hyperfine
 
   call start_clock('hyperfine')
 
+  ! get rho up/down
+  call get_rho_up_down
+
   ! select majority and minority spin components
   call select_spin(s_min, s_maj)
 

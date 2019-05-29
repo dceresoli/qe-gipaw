@@ -54,6 +54,7 @@ SUBROUTINE efg
   deallocate( tmp )
 
   ! calculate GIPAW correction
+  call get_rho_up_down
   call efg_correction(efg_gipaw)
   
   ! print results
@@ -160,7 +161,7 @@ SUBROUTINE get_smooth_density(rho)
   USE gvecw,                  ONLY : gcutw
   USE klist,                  ONLY : nks, xk, igk_k, ngk
   USE gvect,                  ONLY : ngm, g
-  USE wavefunctions,   ONLY : evc
+  USE wavefunctions,          ONLY : evc
   USE cell_base,              ONLY : tpiba2, omega
   USE io_files,               ONLY : nwordwfc, iunwfc
   USE buffers,                ONLY : get_buffer
@@ -205,7 +206,6 @@ SUBROUTINE get_smooth_density(rho)
   ! reduce over k-points
   call mp_sum( rho, inter_pool_comm )
 #endif
-
   !!!dffts%have_task_groups = save_tg
 
   if (job == 'hyperfine' .or. job == 'mossbauer') then
@@ -342,7 +342,7 @@ SUBROUTINE efg_correction(efg_corr_tens)
 
   allocate ( at_efg(paw_nkb,paw_nkb,ntypx) ) 
   at_efg = 0.0_dp
-  
+ 
   ! Select majority and minority spin components
   call select_spin(s_min, s_maj)
   

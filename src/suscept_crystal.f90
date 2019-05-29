@@ -422,6 +422,7 @@ SUBROUTINE suscept_crystal
        call output_magres_end
     endif
   elseif (job == 'g_tensor') then
+    call get_rho_up_down
     call compute_delta_g_so(j_bare, s_maj, s_min, delta_g_so)
     call compute_delta_g_soo(j_bare, B_ind_r, s_maj, s_min, delta_g_soo, delta_g_soo2)
     call print_g_tensor(delta_g_rmc, delta_g_rmc_gipaw, delta_g_so, &

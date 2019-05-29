@@ -69,8 +69,34 @@ SUBROUTINE principal_axis_simpson(tens, eigs, eigv)
 END SUBROUTINE principal_axis_simpson
 
 
+! transform rho from (rho,zeta) => (up,down)
+SUBROUTINE get_rho_up_down
+  USE kinds,        ONLY : dp
+  USE scf,          ONLY : rho
+  USE lsda_mod,     ONLY : nspin
+  USE fft_base,     ONLY : dfftp
+  USE io_global,    ONLY : stdout
+  IMPLICIT NONE
+  real(dp) :: r, z
+  integer :: i
+
+  if (nspin == 1) return
+
+  do i = 1, dfftp%nnr
+     r = rho%of_r(i,1)
+     z = rho%of_r(i,2)
+     rho%of_r(i,1) = 0.5d0*(r+z)
+     rho%of_r(i,2) = 0.5d0*(r-z)
+  enddo
+  write(stdout,'(5X,/,''(RHO,ZETA) => (RHO_UP,RHO_DOWN)'',/)')
+
+END SUBROUTINE get_rho_up_down
+
+
 
 ! Select majority and minority spin
+! starting from QE-6.4, rho has to be transformed back to (up,down)
+! before calling this routine
 SUBROUTINE select_spin(s_min, s_maj)
   USE kinds,        ONLY : dp
   USE scf,          ONLY : rho
@@ -80,18 +106,32 @@ SUBROUTINE select_spin(s_min, s_maj)
 #endif
   USE mp_pools,     ONLY : intra_pool_comm
   USE mp,           ONLY : mp_sum
+  USE cell_base,    ONLY : omega
+  USE io_global,    ONLY : stdout
+  USE fft_base,     ONLY : dfftp
   IMPLICIT NONE
   integer, intent(out) :: s_min, s_maj
+  integer :: nrxx
   real(dp) :: rho_diff
 
-  rho_diff = sum(rho%of_r(:,1) - rho%of_r(:,nspin))
+  if (nspin == 1) then
+      s_maj = 1
+      s_min = 1
+      return
+  endif
+
+  ! calculate spin magnetization
+  nrxx = dfftp%nnr
+  rho_diff = sum(rho%of_r(1:nrxx,1) - rho%of_r(1:nrxx,nspin))
 #ifdef __BANDS
   ! siamo sicuri di questo comunicatore?
   call mp_sum(rho_diff, intra_bgrp_comm)
 #else
   call mp_sum(rho_diff, intra_pool_comm)
 #endif
-  if ( nspin > 1 .and. abs(rho_diff) < 1.0d-3 ) then
+  rho_diff = rho_diff * omega / (dfftp%nr1*dfftp%nr2*dfftp%nr3)
+
+  if ( abs(rho_diff) < 1.0d-3 ) then
      call errore("select_spin", "warning, rho_diff is small", -1)
      s_maj = 1
      s_min = nspin
@@ -102,6 +142,8 @@ SUBROUTINE select_spin(s_min, s_maj)
      s_maj = nspin
      s_min = 1
   endif
+  write(stdout,'(5X,''select_spin: s_maj='',I1,'' s_min='',I1,'' rho_diff='',F12.6)') s_maj, s_min, rho_diff
+  write(stdout,*)
 
 END SUBROUTINE select_spin
 

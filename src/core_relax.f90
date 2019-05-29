@@ -32,7 +32,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   USE wvfct,                 ONLY : nbnd, g2kin, wg, current_k
   USE gvecw,                 ONLY : gcutw
   USE becmod,                ONLY : calbec
-  USE wavefunctions,  ONLY : evc
+  USE wavefunctions,         ONLY : evc
   USE io_global,             ONLY : stdout
   USE io_files,              ONLY : nwordwfc, iunwfc
   USE mp_pools,              ONLY : intra_pool_comm, inter_pool_comm

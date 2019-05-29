@@ -1,0 +1,45 @@
+&control
+    calculation = 'scf'
+    restart_mode = 'from_scratch'
+    prefix = 'superox'
+    outdir = '/tmp/ceresoli/'
+    pseudo_dir = './pseudo/'
+    verbosity = 'high'
+    tprnfor = .true.
+    tstress = .true.
+/
+&system
+    ibrav = 11
+    space_group = 71
+    a = 9.059, b = 12.7296, c = 9.09708
+    nat = 8
+    ntyp = 3
+    ecutwfc = 40
+    occupations = 'smearing'
+    degauss = 0.01
+    nspin=2
+    starting_magnetization(3) = 0.4
+    spline_ps = .true.
+/
+&electrons
+    mixing_beta = 0.2
+    conv_thr = 2.0d-6
+/
+ATOMIC_SPECIES
+K   39.1   K.pbe-tm-gipaw-dc.UPF
+Cl  35.45  Cl.pbe-tm-gipaw.UPF
+O   16.00  O.pbe-tm-new-gipaw-dc.UPF
+
+K_POINTS automatic
+1 1 1  0 0 0
+
+ATOMIC_POSITIONS   crystal_sg
+Cl   0.2500    0.2500    0.2500
+Cl   0.5000    0.5000    0.0000
+Cl   0.0000    0.5000    0.5000
+Cl   0.5000    0.0000    0.5000
+K    0.0000    0.7508    0.5000
+K    0.0000    0.2433    0.0000
+K    0.2516    0.0000    0.7478
+O    0.0000    0.0000    0.9252
+
