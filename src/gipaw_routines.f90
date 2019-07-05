@@ -58,7 +58,7 @@ SUBROUTINE gipaw_readin()
   nmr_macroscopic_shape(3,3) = 2.d0 / 3.d0
   spline_ps = .true.
   isolve = -1
-  diagonalization = 'cg'
+  diagonalization = 'david'
   core_relax_method = 1
   hfi_via_reconstruction_only = .false.
 
@@ -78,9 +78,9 @@ SUBROUTINE gipaw_readin()
 
   ! further checks
   if (isolve /= -1) &
-     call infomsg('gipaw_readin', '*** isolve is obsolete, use diagonalization instead ***')
+     call errore('gipaw_readin', '*** isolve is obsolete, use diagonalization instead ***', 1)
   if (iverbosity /= -1) &
-     call infomsg('gipaw_readin', '*** iverbosity is obsolete, use verbosity instead ***')
+     call errore('gipaw_readin', '*** iverbosity is obsolete, use verbosity instead ***', 1)
 
   select case (diagonalization)
      case('david')
