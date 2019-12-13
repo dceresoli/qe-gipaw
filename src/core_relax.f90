@@ -38,7 +38,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   USE mp_pools,              ONLY : intra_pool_comm, inter_pool_comm
   USE mp,                    ONLY : mp_sum
   USE paw_gipaw,             ONLY : paw_recon, paw_vkb, paw_becp
-  USE funct,                 ONLY : xc, xc_spin
+  USE xc_lda_lsda,           ONLY : xc
   USE gipaw_module,          ONLY : nbrx
 
   !-- parameters --------------------------------------------------------
@@ -73,7 +73,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   integer :: n1, n2, ncore, r_first
   real(dp) :: b(2), coeff, norm, contrib
   integer :: mode, nin, mesh
-  real(dp) :: arho, zeta, ex, ec, vx(2), vc(2)
+  real(dp) :: arho, zeta, ex(1), ec(1), vx(2), vc(2), rhoaux(2)
 
   real(dp), allocatable :: rho_(:,:), rhoc(:), vgc(:,:), egc(:,:), tau_(:,:), vtau(:)
 
@@ -273,16 +273,20 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
       zeta = (b(s_maj)-b(s_min))/arho
 
       ! compute the perturbing potential, three possibilities
+      rhoaux(1) = arho
+      rhoaux(2) = zeta
       select case (method)
          case (1) ! simple local exchange: Eq.(20) or PRB 76, 035124
          delta_v(j,na) = -(e2*2.d0/pi) * (b(s_maj)-b(s_min)) / arho**(2.d0/3.d0)
 
          case (2) ! Exchange only
-         call xc_spin(arho, zeta, ex, ec, vx(s_maj), vx(s_min), vc(s_maj), vc(s_min))
+         !!call xc_spin(arho, zeta, ex, ec, vx(s_maj), vx(s_min), vc(s_maj), vc(s_min))
+         call xc(1, 2, 2, rhoaux, ex, ec, vx, vc)
          delta_v(j,na) = e2*(vx(s_maj) - vx(s_min))
 
          case (3) ! Full XC
-         call xc_spin(arho, zeta, ex, ec, vx(s_maj), vx(s_min), vc(s_maj), vc(s_min))
+         !!call xc_spin(arho, zeta, ex, ec, vx(s_maj), vx(s_min), vc(s_maj), vc(s_min))
+         call xc(1, 2, 2, rhoaux, ex, ec, vx, vc)
          delta_v(j,na) = e2*(vx(s_maj)+vc(s_maj)-vx(s_min)-vc(s_min))
       end select
 

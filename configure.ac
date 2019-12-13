@@ -1,5 +1,5 @@
 # Autoconf template for qe-gipaw
-AC_INIT(qe-gipaw, 6.4.1, dceresoli@gmail.com, qe-gipaw)
+AC_INIT(qe-gipaw, 6.5, dceresoli@gmail.com, qe-gipaw)
 
 # Option: Quantum-Espresso source directory (QE_SOURCE)
 AC_ARG_WITH(qe-source,
@@ -28,7 +28,7 @@ AC_MSG_CHECKING([Quantum-Espresso version])
 version=`grep version_number ${qe_source}/Modules/version.f90 | cut -d\' -f2`
 AC_MSG_RESULT([$version])
 case $version in
-  6.4* ) ;;
+  6.5* ) ;;
   *) AC_MSG_ERROR([Cannot compile against this version of Quantum-Espresso]) ;;
 esac
 

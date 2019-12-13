@@ -13,7 +13,7 @@ SUBROUTINE symmetrize_rho_s (rho)
   !     symmetrize the smooth charge density in real space
   !
   USE kinds,            ONLY : dp
-  USE symm_base,        ONLY : nsym, s, ftau
+  USE symm_base,        ONLY : nsym, s, ft
   USE fft_base,         ONLY : dffts
   !-- parameters ------------------------------------------------------
   implicit none
@@ -42,7 +42,7 @@ SUBROUTINE symmetrize_rho_s (rho)
            if (symflag(i,j,k) == 0) then
               sum = 0.d0
               do isym = 1, nsym
-                 call ruotaijk(s(1,1,isym), ftau(1,isym), i, j, k, &
+                 call ruotaijk(s(1,1,isym), ft(1,isym), i, j, k, &
                       dffts%nr1, dffts%nr2, dffts%nr3, ri(isym), rj(isym), rk(isym))
                  sum = sum + rho(ri(isym),rj(isym),rk(isym))
               enddo

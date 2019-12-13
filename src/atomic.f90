@@ -707,8 +707,8 @@ END SUBROUTINE derV
 !
 !
 !---------------------------------------------------------------
-subroutine vxcgc ( ndm, mesh, nspin, r, r2, rho, rhoc, vgc, egc, &
-     tau, vtau, iflag)
+subroutine vxcgc( ndm, mesh, nspin, r, r2, rho, rhoc, vgc, egc, &
+                  tau, vtau, iflag )
   !---------------------------------------------------------------
   !
   !
@@ -719,9 +719,11 @@ subroutine vxcgc ( ndm, mesh, nspin, r, r2, rho, rhoc, vgc, egc, &
   !
   !     The units of the potential are Ry.
   !
-  use kinds, only : DP
+  use kinds,     only : DP
   use constants, only : fpi, e2
-  use funct, only : gcxc, gcx_spin, gcc_spin, dft_is_meta, xc
+  use funct,     only : dft_is_meta
+  use xc_gga,    only : xc_gcx
+  use metagga,   only : tpsscxc
   implicit none
   integer,  intent(in) :: ndm,mesh,nspin,iflag
   real(DP), intent(in) :: r(mesh), r2(mesh), rho(ndm,2), rhoc(ndm)
@@ -730,11 +732,16 @@ subroutine vxcgc ( ndm, mesh, nspin, r, r2, rho, rhoc, vgc, egc, &
   real(DP), intent(out):: vtau(mesh)
 
   integer :: i, is, ierr
-  real(DP) :: sx,sc,v1x,v2x,v1c,v2c
+  real(DP) :: sx, sc, v2c, v1x, v2x, v1c
+  !
+  REAL(DP) :: grho_v(3,mesh,nspin)
+  REAL(DP), ALLOCATABLE, DIMENSION(:) :: sx_v, sc_v, v2c_ud
+  REAL(DP), ALLOCATABLE, DIMENSION(:,:) :: v1x_v, v2x_v, v1c_v, v2c_v
+  !
   real(DP) :: v1xup, v1xdw, v2xup, v2xdw, v1cup, v1cdw
   real(DP) :: v3x, v3c, de_cc, dv1_cc,dv2_cc
   real(DP) :: segno, arho
-  real(DP) :: rh, zeta, grh2, grho2(2)
+  real(DP) :: rh(1), zeta(1), grh2(1), grho2(2)
   real(DP),parameter :: eps=1.e-12_dp
 
   real(DP), allocatable :: grho(:,:), h(:,:), dh(:), rhoaux(:,:)
@@ -743,11 +750,11 @@ subroutine vxcgc ( ndm, mesh, nspin, r, r2, rho, rhoc, vgc, egc, &
   !      to have spherical symmetry. The gradient is the derivative of
   !      the charge with respect to the modulus of r. 
   !
-  allocate(rhoaux(mesh,2),stat=ierr)
-  allocate(grho(mesh,2),stat=ierr)
+  allocate(rhoaux(mesh,nspin),stat=ierr)
+  allocate(grho(mesh,nspin),stat=ierr)
   allocate(h(mesh,2),stat=ierr)
   allocate(dh(mesh),stat=ierr)
-
+  
   egc=0.0_dp
   vgc=0.0_dp
 
@@ -757,7 +764,18 @@ subroutine vxcgc ( ndm, mesh, nspin, r, r2, rho, rhoc, vgc, egc, &
      enddo
      call radial_gradient(rhoaux(1,is),grho(1,is),r,mesh,iflag)
   enddo
-
+  !
+  do is=1,nspin
+     do i=1, mesh
+        grho_v(:,i,is) = grho(i,is)/SQRT(3.d0)
+     enddo
+  enddo
+  !
+  allocate( sx_v(mesh) , sc_v(mesh)  )
+  allocate( v1x_v(mesh,nspin), v2x_v(mesh,nspin) )
+  allocate( v1c_v(mesh,nspin), v2c_v(mesh,nspin) )
+  IF (nspin==2) allocate( v2c_ud(mesh) )
+  !
   if (nspin.eq.1) then
      !
      IF ( dft_is_meta ()  ) THEN
@@ -769,7 +787,7 @@ subroutine vxcgc ( ndm, mesh, nspin, r, r2, rho, rhoc, vgc, egc, &
         dv1_cc= 0.0_dp
         dv2_cc= 0.0_dp
         !
-	vtau(:) = 0.0_dp
+        vtau(:) = 0.0_dp
         ! 
        do i=1,mesh
            arho=abs(rhoaux(i,1)) 
@@ -798,64 +816,37 @@ subroutine vxcgc ( ndm, mesh, nspin, r, r2, rho, rhoc, vgc, egc, &
         !
         !     GGA case
         !
-        do i=1,mesh
-           arho=abs(rhoaux(i,1)) 
-           segno=sign(1.0_dp,rhoaux(i,1))
-           if (arho.gt.eps.and.abs(grho(i,1)).gt.eps) then
-              call gcxc(arho,grho(i,1)**2,sx,sc,v1x,v2x,v1c,v2c)
-              egc(i)=(sx+sc)*segno
-              vgc(i,1)= v1x+v1c
-              h(i,1)  =(v2x+v2c)*grho(i,1)*r2(i)
-              !            if (i.lt.4) write(6,'(f20.12,e20.12,2f20.12)') &
-              !                          rho(i,1), grho(i,1)**2,  &
-              !                          vgc(i,1),h(i,1)
-           else
-              vgc(i,1)=0.0_dp
-              egc(i)=0.0_dp
-              h(i,1)=0.0_dp
-           endif
-        end do
+        CALL xc_gcx( mesh, nspin, rhoaux, grho_v, sx_v, sc_v, v1x_v, v2x_v, v1c_v, v2c_v )
+        !
+        egc(1:mesh) = sx_v + sc_v
+        vgc(1:mesh,1) = v1x_v(1:mesh,1) + v1c_v(1:mesh,1) 
+        h(1:mesh,1) = ( v2x_v(1:mesh,1) + v2c_v(1:mesh,1) ) * grho(1:mesh,1)*r2(1:mesh)
+        !
      END IF
-  else
+     !
+  ELSE
      !
      !   this is the \sigma-GGA case
      !       
-     do i=1,mesh
-        !
-        !  NB: the special or wrong cases where one or two charges 
-        !      or gradients are zero or negative must
-        !      be detected within the gcxc_spin routine
-        !
-        !    spin-polarised case
-        !
-        do is = 1, nspin
-           grho2(is)=grho(i,is)**2
-        enddo
-
-        call gcx_spin (rhoaux(i, 1), rhoaux(i, 2), grho2(1), grho2(2), &
-             sx, v1xup, v1xdw, v2xup, v2xdw)
-        rh = rhoaux(i, 1) + rhoaux(i, 2)
-        if (rh.gt.eps) then
-           zeta = (rhoaux (i, 1) - rhoaux (i, 2) ) / rh
-           grh2 = (grho (i, 1) + grho (i, 2) ) **2 
-           call gcc_spin (rh, zeta, grh2, sc, v1cup, v1cdw, v2c)
-        else
-           sc = 0.0_dp
-           v1cup = 0.0_dp
-           v1cdw = 0.0_dp
-           v2c = 0.0_dp
-        endif
-
+     CALL xc_gcx( mesh, 2, rhoaux, grho_v, sx_v, sc_v, v1x_v, v2x_v, v1c_v, v2c_v, v2c_ud )
+     !
+     do i = 1, mesh
         egc(i)=sx+sc
-        vgc(i,1)= v1xup+v1cup
-        vgc(i,2)= v1xdw+v1cdw
-        h(i,1)  =((v2xup+v2c)*grho(i,1)+v2c*grho(i,2))*r2(i)
-        h(i,2)  =((v2xdw+v2c)*grho(i,2)+v2c*grho(i,1))*r2(i)
+        vgc(i,1) = v1x_v(i,1)+v1c_v(i,1)
+        vgc(i,2) = v1x_v(i,2)+v1c_v(i,2)
+        h(i,1) =((v2x_v(i,1)+v2c_v(i,1))*grho(i,1)+v2c_v(i,1)*grho(i,2))*r2(i)
+        h(i,2) =((v2x_v(i,2)+v2c_v(i,1))*grho(i,2)+v2c_v(i,1)*grho(i,1))*r2(i)
         !            if (i.lt.4) write(6,'(f20.12,e20.12,2f20.12)') &
         !                          rho(i,1)*2.0_dp, grho(i,1)**2*4.0_dp, &
         !                          vgc(i,1),  h(i,2)
      enddo
+!
   endif
+  !
+  deallocate( sx_v  , sc_v  )
+  deallocate( v1x_v , v2x_v )
+  deallocate( v1c_v , v2c_v )
+  IF (nspin==2) deallocate( v2c_ud )
   !     
   !     We need the gradient of h to calculate the last part of the exchange
   !     and correlation potential.
@@ -875,7 +866,7 @@ subroutine vxcgc ( ndm, mesh, nspin, r, r2, rho, rhoc, vgc, egc, &
         !                                      vgc(i,1)
      enddo
   enddo
-  IF ( dft_is_meta () ) vtau(:) = e2*vtau(:)
+  IF ( dft_is_meta() ) vtau(:) = e2*vtau(:)
 
   deallocate(dh)
   deallocate(h)
@@ -884,4 +875,3 @@ subroutine vxcgc ( ndm, mesh, nspin, r, r2, rho, rhoc, vgc, egc, &
 
   return
 end subroutine vxcgc
-

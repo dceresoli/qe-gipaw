@@ -104,7 +104,7 @@ END SUBROUTINE psymmetrize_field
 subroutine syme2 (dvsym, iflag)
   !-------------------------------------------------------------------
   use kinds,            ONLY : dp
-  USE symm_base,        ONLY : s, nsym, ftau
+  USE symm_base,        ONLY : s, nsym, ft
   USE symme,            ONLY : crys_to_cart
   USE fft_base,         ONLY : dfftp
 
@@ -153,7 +153,7 @@ subroutine syme2 (dvsym, iflag)
   do jx = 1, dfftp%nr2
   do ix = 1, dfftp%nr1
      do irot = 1, nsym
-        call ruotaijk(s (1, 1, irot), ftau (1, irot), ix, jx, kx, &
+        call ruotaijk(s (1, 1, irot), ft (1, irot), ix, jx, kx, &
                      dfftp%nr1, dfftp%nr2, dfftp%nr3, ri, rj, rk)
         !
         ! ruotaijk finds the rotated of ix,jx,kx with the inverse of S
