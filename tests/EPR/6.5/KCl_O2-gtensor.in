@@ -1,0 +1,10 @@
+&inputgipaw
+    job = 'g_tensor'
+    prefix = 'superox'
+    tmp_dir = '/tmp/ceresoli/'
+    restart_mode = 'from_scratch'
+    verbosity = 'high'
+    diagonalization = 'cg'
+    q_gipaw = 0.01
+    spline_ps = .true.
+/
