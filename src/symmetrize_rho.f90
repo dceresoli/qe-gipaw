@@ -15,17 +15,23 @@ SUBROUTINE symmetrize_rho_s (rho)
   USE kinds,            ONLY : dp
   USE symm_base,        ONLY : nsym, s, ft
   USE fft_base,         ONLY : dffts
+  USE cell_base,        ONLY : at
   !-- parameters ------------------------------------------------------
   implicit none
   real(dp), intent(inout) :: rho(dffts%nr1x,dffts%nr2x,dffts%nr3x)
 
   !-- local variables ----------------------------------------------------
   integer, allocatable :: symflag (:,:,:)
-  integer :: ri(48), rj(48), rk(48), i, j, k, isym
-  real(DP) :: sum
+  integer :: ri(48), rj(48), rk(48), i, j, k, isym, ns
+  real(DP) :: sum, ft_(3,48)
 
   ! if no symmetries, return
   if (nsym <= 1) return
+
+  ! convert fractional translations to cartesian, in a0 units
+  do ns = 1, nsym
+     ft_(:,ns) = at(:,1)*ft(1,ns) + at(:,2)*ft(2,ns) + at(:,3)*ft(3,ns)
+  enddo
 
   allocate (symflag(dffts%nr1x, dffts%nr2x, dffts%nr3x))    
   do k = 1, dffts%nr3
@@ -42,7 +48,7 @@ SUBROUTINE symmetrize_rho_s (rho)
            if (symflag(i,j,k) == 0) then
               sum = 0.d0
               do isym = 1, nsym
-                 call ruotaijk(s(1,1,isym), ft(1,isym), i, j, k, &
+                 call ruotaijk(s(1,1,isym), ft_(1,isym), i, j, k, &
                       dffts%nr1, dffts%nr2, dffts%nr3, ri(isym), rj(isym), rk(isym))
                  sum = sum + rho(ri(isym),rj(isym),rk(isym))
               enddo

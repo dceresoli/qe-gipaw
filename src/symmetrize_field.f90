@@ -107,6 +107,7 @@ subroutine syme2 (dvsym, iflag)
   USE symm_base,        ONLY : s, nsym, ft
   USE symme,            ONLY : crys_to_cart
   USE fft_base,         ONLY : dfftp
+  USE cell_base,        ONLY : at
 
   implicit none
 
@@ -115,17 +116,22 @@ subroutine syme2 (dvsym, iflag)
   ! the function to symmetrize
   ! auxiliary space
 
-  integer :: ix, jx, kx, ri, rj, rk, irot, ip, jp, lp, mp, iflag
+  integer :: ix, jx, kx, ri, rj, rk, irot, ip, jp, lp, mp, iflag, ns
   ! define a real-space point on the grid
   ! the rotated points
   ! counter on symmetries
   ! counter on polarizations
-  real(dp) :: det(48), sc(3,3), d
+  real(dp) :: det(48), sc(3,3), d, ft_(3,48)
 
   if (nsym.eq.1) return
   allocate (aux(dfftp%nr1x,dfftp%nr2x,dfftp%nr3x,3,3))
 
   call dcopy (dfftp%nr1x*dfftp%nr2x*dfftp%nr3x * 9, dvsym, 1, aux, 1)
+
+  ! convert fractional translations to cartesian, in a0 units
+  do ns = 1, nsym
+     ft_(:,ns) = at(:,1)*ft(1,ns) + at(:,2)*ft(2,ns) + at(:,3)*ft(3,ns)
+  enddo
   
   ! compute determinants of transformation matrixes
   do irot = 1, nsym
@@ -153,7 +159,7 @@ subroutine syme2 (dvsym, iflag)
   do jx = 1, dfftp%nr2
   do ix = 1, dfftp%nr1
      do irot = 1, nsym
-        call ruotaijk(s (1, 1, irot), ft (1, irot), ix, jx, kx, &
+        call ruotaijk(s (1, 1, irot), ft_(1, irot), ix, jx, kx, &
                      dfftp%nr1, dfftp%nr2, dfftp%nr3, ri, rj, rk)
         !
         ! ruotaijk finds the rotated of ix,jx,kx with the inverse of S
