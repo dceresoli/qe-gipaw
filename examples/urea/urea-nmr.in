@@ -1,0 +1,12 @@
+&inputgipaw
+        job = 'nmr'
+        prefix = 'urea'
+        tmp_dir = '/tmp/ceresoli/'
+        restart_mode = 'from_scratch'
+        diagonalization = 'david'
+        verbosity = 'high'
+        q_gipaw = 0.01
+        spline_ps = .true.
+        use_nmr_macroscopic_shape = .false.
+/
+

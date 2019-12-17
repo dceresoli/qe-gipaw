@@ -1,0 +1,58 @@
+&control
+    calculation = 'relax'
+    restart_mode = 'from_scratch'
+    prefix = 'urea'
+    tstress = .false.
+    tprnfor = .true.
+    pseudo_dir = './pseudo/'
+    outdir = '/tmp/ceresoli/'
+/
+&system
+    ibrav = 0
+    nat = 16
+    ntyp = 4
+    ecutwfc = 90
+    spline_ps = .true.
+    vdw_corr = 'grimme-d2'
+/
+&electrons
+    diagonalization = 'david'
+    mixing_beta = 0.2
+    conv_thr =  1e-8
+    diago_thr_init = 1e-4
+/
+&ions
+    ion_dynamics = 'bfgs'
+/
+
+ATOMIC_SPECIES
+C  12.000  C.pbe-tm-gipaw.UPF
+O  15.999  C.pbe-tm-gipaw.UPF
+N  14.007  N.pbe-tm-gipaw.UPF
+H   2.000  H.pbe-tm-gipaw.UPF
+
+K_POINTS automatic
+3 3 3   0 0 0
+
+CELL_PARAMETERS angstrom
+        5.6609997749         0.0000000000         0.0000000000
+        0.0000000000         5.6609997749         0.0000000000
+        0.0000000000         0.0000000000         4.7119998932
+
+ATOMIC_POSITIONS crystal
+C     0.000000000         0.500000000         0.333000001
+C     0.500000000         0.000000000         0.666999974
+O     0.000000000         0.500000000         0.596800020
+O     0.500000000         0.000000000         0.403199980
+N     0.143900011         0.643899959         0.183200003
+N     0.856099957         0.356100041         0.183200003
+N     0.643899959         0.856099957         0.816800010
+N     0.356100041         0.143900011         0.816800010
+H     0.252200013         0.752199992         0.283899991
+H     0.747799966         0.247799987         0.283899991
+H     0.752199992         0.747799966         0.716099984
+H     0.247799987         0.252200013         0.716099984
+H     0.136500001         0.636500012         0.972400013
+H     0.863499988         0.363499988         0.972400013
+H     0.636500012         0.863499988         0.027599990
+H     0.363499988         0.136500001         0.027599990

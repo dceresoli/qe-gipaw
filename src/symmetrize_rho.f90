@@ -22,16 +22,12 @@ SUBROUTINE symmetrize_rho_s (rho)
 
   !-- local variables ----------------------------------------------------
   integer, allocatable :: symflag (:,:,:)
-  integer :: ri(48), rj(48), rk(48), i, j, k, isym, ns
-  real(DP) :: sum, ft_(3,48)
+  integer :: ri(48), rj(48), rk(48), i, j, k, isym, ns, ftau(3)
+  integer :: nr1, nr2, nr3
+  real(DP) :: sum, ft_(3)
 
   ! if no symmetries, return
   if (nsym <= 1) return
-
-  ! convert fractional translations to cartesian, in a0 units
-  do ns = 1, nsym
-     ft_(:,ns) = at(:,1)*ft(1,ns) + at(:,2)*ft(2,ns) + at(:,3)*ft(3,ns)
-  enddo
 
   allocate (symflag(dffts%nr1x, dffts%nr2x, dffts%nr3x))    
   do k = 1, dffts%nr3
@@ -42,14 +38,21 @@ SUBROUTINE symmetrize_rho_s (rho)
      enddo
   enddo
 
-  do k = 1, dffts%nr3
-     do j = 1, dffts%nr2
-        do i = 1, dffts%nr1
+  nr1 = dffts%nr1
+  nr2 = dffts%nr2
+  nr3 = dffts%nr3
+  do k = 1, nr3
+     do j = 1, nr2
+        do i = 1, nr1
            if (symflag(i,j,k) == 0) then
               sum = 0.d0
               do isym = 1, nsym
-                 call ruotaijk(s(1,1,isym), ft_(1,isym), i, j, k, &
-                      dffts%nr1, dffts%nr2, dffts%nr3, ri(isym), rj(isym), rk(isym))
+                 ! recover fractional translations
+                 ft_(1) = ft(1,isym)*nr1
+                 ft_(2) = ft(2,isym)*nr2
+                 ft_(3) = ft(3,isym)*nr3
+                 ftau(:) = nint(ft_(:))
+                 call ruotaijk(s(1,1,isym), ftau, i, j, k, nr1, nr2, nr3, ri(isym), rj(isym), rk(isym))
                  sum = sum + rho(ri(isym),rj(isym),rk(isym))
               enddo
               sum = sum / real(nsym,kind=dp)
