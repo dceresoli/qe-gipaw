@@ -70,7 +70,7 @@ SUBROUTINE gipaw_setup
   ! some pre-conditions
   if (ltetra) call errore('gipaw_setup','GIPAW + tetrahedra not implemented', 1)
   if (noncolin) call errore('gipaw_setup','GIPAW + non-collinear not implemented', 1)
-  if (two_fermi_energies .and. lgauss) &
+  if (two_fermi_energies .and. lgauss .and. (job == 'nmr' .or. job == 'epr')) &
      call errore('gipaw_setup','GIPAW + two Fermi energies not implemented', 1)
 
   ! computes the number of occupied bands for each k point
@@ -382,7 +382,7 @@ SUBROUTINE gipaw_setup_l
   !
   USE gipaw_module
   USE kinds,         ONLY : dp
-  USE parameters,    ONLY : lmaxx
+  USE upf_params,    ONLY : lmaxx
 #ifdef DEBUG_CUBIC_HARMONIC
   USE io_global,     ONLY : stdout, ionode
 #endif

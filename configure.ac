@@ -1,5 +1,5 @@
 # Autoconf template for qe-gipaw
-AC_INIT(qe-gipaw, 6.5, dceresoli@gmail.com, qe-gipaw)
+AC_INIT(qe-gipaw, 6.6, dceresoli@gmail.com, qe-gipaw)
 
 # Option: Quantum-Espresso source directory (QE_SOURCE)
 AC_ARG_WITH(qe-source,
@@ -21,14 +21,14 @@ AC_ARG_ENABLE(band-parallel,
 AC_CHECK_FILE(${qe_source}/make.inc, [], [AC_MSG_ERROR([Cannot find make.inc in ${qe_source}])])
 
 # Look for Modules/version.f90
-AC_CHECK_FILE(${qe_source}/Modules/version.f90, [], [AC_MSG_ERROR([Cannot find version.f90 in ${qe_source}/Modules])])
+AC_CHECK_FILE(${qe_source}/include/version.h, [], [AC_MSG_ERROR([Cannot find version.h in ${qe_source}/include])])
 
 # Extract version
 AC_MSG_CHECKING([Quantum-Espresso version])
-version=`grep version_number ${qe_source}/Modules/version.f90 | cut -d\' -f2`
+version=`grep version_number ${qe_source}/include/version.h | cut -d\' -f2`
 AC_MSG_RESULT([$version])
 case $version in
-  6.5* ) ;;
+  6.6* ) ;;
   *) AC_MSG_ERROR([Cannot compile against this version of Quantum-Espresso]) ;;
 esac
 

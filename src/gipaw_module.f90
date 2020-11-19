@@ -11,9 +11,10 @@ MODULE gipaw_module
   !
   ! ... This module contains the variables used for GIPAW calculations
   !
-  USE kinds, ONLY : DP
-  USE constants, ONLY : a0_to_cm => bohr_radius_cm
-  USE parameters, ONLY : npk, ntypx, lmaxx
+  USE kinds,             ONLY : DP
+  USE constants,         ONLY : a0_to_cm => bohr_radius_cm
+  USE parameters,        ONLY : npk, ntypx
+  USE upf_params,        ONLY : lmaxx
   
   IMPLICIT NONE
   SAVE

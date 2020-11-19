@@ -16,7 +16,7 @@ SUBROUTINE init_gipaw_1
   ! and create the projectors in radial part (paw_beta) 
   !
   USE kinds ,      ONLY : dp
-  USE parameters , ONLY : lqmax , lmaxx
+  USE upf_params,  ONLY : lqmax , lmaxx
   USE gipaw_module,ONLY : nbrx, pawproj
   USE cell_base ,  ONLY : omega
   USE ions_base,   ONLY : nat, ntyp => nsp, ityp, atm

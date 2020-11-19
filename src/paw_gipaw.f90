@@ -8,7 +8,7 @@
 MODULE paw_gipaw
 
   USE kinds,        ONLY: DP
-  USE parameters,   ONLY: npsx
+  USE upf_params,   ONLY: npsx
   use radial_grids, ONLY: ndmx
   !!use gipaw_module, ONLY: nbrx
   !
