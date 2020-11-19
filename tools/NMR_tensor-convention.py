@@ -8,9 +8,9 @@ import sys
 
 def read_tensor(l1, l2, l3):
     tens = []
-    tens.append( map(float, l1.split()) )
-    tens.append( map(float, l2.split()) )
-    tens.append( map(float, l3.split()) )
+    tens.append( list(map(float, l1.split())) )
+    tens.append( list(map(float, l2.split())) )
+    tens.append( list(map(float, l3.split())) )
     return np.array(tens)
 
 def haerbelen(d):
@@ -53,13 +53,13 @@ except:
 sigma = []
 atoms = []
 pos = []
-for i in xrange(len(out)):
+for i in range(len(out)):
     if out[i].find("Total NMR chemical shifts in ppm:") >= 0:
         i += 3
         while out[i].find("Atom") >= 0:
             atoms.append(out[i].split()[2])
             out[i] = out[i].replace(")", " ")
-            pos.append(map(float, out[i].split()[5:8]))
+            pos.append(list(map(float, out[i].split()[5:8])))
 	    sigma.append(read_tensor(out[i+1], out[i+2], out[i+3]))
             i += 10
 
@@ -67,34 +67,34 @@ natoms = len(atoms)
 
 np.set_printoptions(precision = 6, suppress = True)
 
-print "="*72
-print "Principal components and directions:"
-print "="*72
-for i in xrange(natoms):
+print("="*72)
+print("Principal components and directions:")
+print("="*72)
+for i in range(natoms):
     sigma[i] = 0.5*(sigma[i] + sigma[i].T)  # symmetric part only
     d, v = np.linalg.eigh(sigma[i])
-    print "%-2s %4i   sigma: %10.4f =>" % (atoms[i], i+1, d[0]), v[:,0]
-    print "          sigma: %10.4f =>" % (d[1]), v[:,1]
-    print "          sigma: %10.4f =>" % (d[2]), v[:,2]
-print
+    print("%-2s %4i   sigma: %10.4f =>" % (atoms[i], i+1, d[0]), v[:,0])
+    print("          sigma: %10.4f =>" % (d[1]), v[:,1])
+    print("          sigma: %10.4f =>" % (d[2]), v[:,2])
+print()
 
 
-print "="*72
-print "HAERBELEN (SIMPSON) convention:"
-print "="*72
-for i in xrange(natoms):
+print("="*72)
+print("HAERBELEN (SIMPSON) convention:")
+print("="*72)
+for i in range(natoms):
     d = np.linalg.eigvalsh(sigma[i])
     iso, aniso, eta = haerbelen(d)
-    print "%-2s %4i   iso: %10.4f   aniso: %10.4f    eta:  %10.4f" % (atoms[i], i+1, iso, aniso, eta)
-print
+    print("%-2s %4i   iso: %10.4f   aniso: %10.4f    eta:  %10.4f" % (atoms[i], i+1, iso, aniso, eta))
+print()
 
-print "="*72
-print "HERZFELD-BERGER convention:"
-print "="*72
-for i in xrange(natoms):
+print("="*72)
+print("HERZFELD-BERGER convention:")
+print("="*72)
+for i in range(natoms):
     d = np.linalg.eigvalsh(sigma[i])
     iso, span, skew = herzfeld_berger(d)
-    print "%-2s %4i   iso: %10.4f   span:  %10.4f    skew: %10.4f" % (atoms[i], i+1, iso, span, skew)
+    print("%-2s %4i   iso: %10.4f   span:  %10.4f    skew: %10.4f" % (atoms[i], i+1, iso, span, skew))
 
 quit()
 quit()
