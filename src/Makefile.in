@@ -5,8 +5,7 @@ include $(QE_SOURCE)/make.inc
 DFLAGS += @dflags_gipaw@
 
 # location of needed modules
-BASEMOD_FLAGS= $(MOD_FLAG)$(QE_SOURCE)/iotk/src \
-               $(MOD_FLAG)$(QE_SOURCE)/upflib \
+BASEMOD_FLAGS= $(MOD_FLAG)$(QE_SOURCE)/upflib \
                $(MOD_FLAG)$(QE_SOURCE)/Modules \
                $(MOD_FLAG)$(QE_SOURCE)/FFTXlib \
                $(MOD_FLAG)$(QE_SOURCE)/LAXlib \
@@ -27,7 +26,7 @@ GIPAW_OBJS = gipaw_module.o gipaw_main.o paw_gipaw.o stop_code.o gipaw_setup.o \
 	     velocity.o nmr_routines.o epr_routines.o efg.o hyperfine.o core_relax.o \
 	     util.o atomic.o knight_shift.o mossbauer.o gipaw_version.o output_magres.o
 
-LIBOBJS = $(QE_SOURCE)/clib/clib.a $(QE_SOURCE)/iotk/src/libiotk.a
+LIBOBJS = $(QE_SOURCE)/clib/clib.a
 QEMODS = $(QE_SOURCE)/Modules/libqemod.a \
          $(QE_SOURCE)/KS_Solvers/Davidson/libdavid.a \
          $(QE_SOURCE)/KS_Solvers/CG/libcg.a \

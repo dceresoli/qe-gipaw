@@ -57,7 +57,6 @@ PROGRAM gipaw_main
   USE cell_base,        ONLY : ibrav
   ! end
   USE gipaw_version
-  USE iotk_module  
   !------------------------------------------------------------------------
   IMPLICIT NONE
   CHARACTER (LEN=9)   :: code = 'GIPAW'

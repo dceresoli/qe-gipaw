@@ -1741,15 +1741,15 @@ fi
 
 
 # Look for Modules/version.f90
-as_ac_File=`$as_echo "ac_cv_file_${qe_source}/include/version.h" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ${qe_source}/include/version.h" >&5
-$as_echo_n "checking for ${qe_source}/include/version.h... " >&6; }
+as_ac_File=`$as_echo "ac_cv_file_${qe_source}/include/qe_version.h" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ${qe_source}/include/qe_version.h" >&5
+$as_echo_n "checking for ${qe_source}/include/qe_version.h... " >&6; }
 if eval \${$as_ac_File+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   test "$cross_compiling" = yes &&
   as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
-if test -r "${qe_source}/include/version.h"; then
+if test -r "${qe_source}/include/qe_version.h"; then
   eval "$as_ac_File=yes"
 else
   eval "$as_ac_File=no"
@@ -1761,18 +1761,18 @@ $as_echo "$ac_res" >&6; }
 if eval test \"x\$"$as_ac_File"\" = x"yes"; then :
 
 else
-  as_fn_error $? "Cannot find version.h in ${qe_source}/include" "$LINENO" 5
+  as_fn_error $? "Cannot find qe_version.h in ${qe_source}/include" "$LINENO" 5
 fi
 
 
 # Extract version
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking Quantum-Espresso version" >&5
 $as_echo_n "checking Quantum-Espresso version... " >&6; }
-version=`grep version_number ${qe_source}/include/version.h | cut -d\' -f2`
+version=`grep version_number ${qe_source}/include/qe_version.h | cut -d\' -f2`
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $version" >&5
 $as_echo "$version" >&6; }
 case $version in
-  6.6* ) ;;
+  6.7* ) ;;
   *) as_fn_error $? "Cannot compile against this version of Quantum-Espresso" "$LINENO" 5 ;;
 esac
 

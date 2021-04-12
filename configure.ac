@@ -21,14 +21,14 @@ AC_ARG_ENABLE(band-parallel,
 AC_CHECK_FILE(${qe_source}/make.inc, [], [AC_MSG_ERROR([Cannot find make.inc in ${qe_source}])])
 
 # Look for Modules/version.f90
-AC_CHECK_FILE(${qe_source}/include/version.h, [], [AC_MSG_ERROR([Cannot find version.h in ${qe_source}/include])])
+AC_CHECK_FILE(${qe_source}/include/qe_version.h, [], [AC_MSG_ERROR([Cannot find qe_version.h in ${qe_source}/include])])
 
 # Extract version
 AC_MSG_CHECKING([Quantum-Espresso version])
-version=`grep version_number ${qe_source}/include/version.h | cut -d\' -f2`
+version=`grep version_number ${qe_source}/include/qe_version.h | cut -d\' -f2`
 AC_MSG_RESULT([$version])
 case $version in
-  6.6* ) ;;
+  6.7* ) ;;
   *) AC_MSG_ERROR([Cannot compile against this version of Quantum-Espresso]) ;;
 esac
 
