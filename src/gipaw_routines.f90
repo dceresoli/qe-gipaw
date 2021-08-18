@@ -17,7 +17,7 @@ SUBROUTINE gipaw_readin()
   USE gipaw_module
   USE io_files,         ONLY : prefix, tmp_dir  
   USE io_global,        ONLY : ionode
-  USE us,               ONLY : spline_ps
+  USE uspp_data,        ONLY : spline_ps
   USE mp_images,        ONLY : my_image_id
 
   ! -- local variables ---------------------------------------------------
@@ -126,7 +126,7 @@ SUBROUTINE gipaw_bcast_input
   USE mp_world,      ONLY : world_comm
   USE mp,            ONLY : mp_bcast
   USE io_files,      ONLY : prefix, tmp_dir
-  USE us,            ONLY : spline_ps
+  USE uspp_data,     ONLY : spline_ps
 
   implicit none
   integer :: root = 0
@@ -196,7 +196,7 @@ SUBROUTINE gipaw_summary
   USE ldaU,          ONLY : lda_plus_U
   USE cellmd,        ONLY : cell_factor
   USE gvecw,         ONLY : ecutwfc
-  USE us,            ONLY : spline_ps
+  USE uspp_data,     ONLY : spline_ps
   implicit none
 
   if (.not. spline_ps) then

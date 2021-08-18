@@ -8,7 +8,6 @@
 MODULE paw_gipaw
 
   USE kinds,        ONLY: DP
-  USE upf_params,   ONLY: npsx
   use radial_grids, ONLY: ndmx
   !!use gipaw_module, ONLY: nbrx
   !
@@ -45,7 +44,9 @@ MODULE paw_gipaw
 !  REAL(DP), ALLOCATABLE :: &
 !       paw_tab_d2y(:,:,:)          ! for cubic splines
 !  !</ceres>
-  
+ 
+  integer, parameter :: npsx = 20
+ 
   type wfc_label
      integer  :: na , &   ! Atom number
           nt ,        &   ! Type

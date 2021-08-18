@@ -38,7 +38,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   USE mp_pools,              ONLY : intra_pool_comm, inter_pool_comm
   USE mp,                    ONLY : mp_sum
   USE paw_gipaw,             ONLY : paw_recon, paw_vkb, paw_becp
-  USE xc_lda_lsda,           ONLY : xc
+  USE qe_drivers_lda_lsda,   ONLY : xc_lsda
   USE gipaw_module,          ONLY : nbrx
 
   !-- parameters --------------------------------------------------------
@@ -281,12 +281,12 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
 
          case (2) ! Exchange only
          !!call xc_spin(arho, zeta, ex, ec, vx(s_maj), vx(s_min), vc(s_maj), vc(s_min))
-         call xc(1, 2, 2, rhoaux, ex, ec, vx, vc)
+         call xc_lsda(1, rhoaux(1), rhoaux(2), ex, ec, vx, vc)
          delta_v(j,na) = e2*(vx(s_maj) - vx(s_min))
 
          case (3) ! Full XC
          !!call xc_spin(arho, zeta, ex, ec, vx(s_maj), vx(s_min), vc(s_maj), vc(s_min))
-         call xc(1, 2, 2, rhoaux, ex, ec, vx, vc)
+         call xc_lsda(1, rhoaux(1), rhoaux(2), ex, ec, vx, vc)
          delta_v(j,na) = e2*(vx(s_maj)+vc(s_maj)-vx(s_min)-vc(s_min))
       end select
 

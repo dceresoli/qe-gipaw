@@ -27,6 +27,8 @@ SUBROUTINE gipaw_setup
   USE dfunct,        ONLY : newd
   USE pwcom,         ONLY : ef
   USE constants,     ONLY : rytoev
+  USE cell_base,     ONLY : alat, at, bg, omega
+  USE mp_bands,      ONLY : intra_bgrp_comm
   USE gipaw_module
   USE ions_base, only: tau, ityp
 
@@ -43,7 +45,7 @@ SUBROUTINE gipaw_setup
 
   ! initialize pseudopotentials and projectors for LDA+U
   call init_us_1
-  call init_at_1
+  call init_tab_atwfc(omega, intra_bgrp_comm)
 
   call plugin_initbase()
   call plugin_init_cell()

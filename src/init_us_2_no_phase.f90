@@ -19,7 +19,7 @@ subroutine init_us_2_no_phase (npw_, igk_, q_, vkb_)
   USE constants,  ONLY : tpi
   USE gvect,      ONLY : eigts1, eigts2, eigts3, mill, g
   USE wvfct,      ONLY : npwx
-  USE us,         ONLY : nqx, dq, tab, tab_d2y, spline_ps
+  USE uspp_data,  ONLY : nqx, dq, tab, tab_d2y, spline_ps
   USE splinelib
   USE uspp,       ONLY : nkb, nhtol, nhtolm, indv
   USE uspp_param, ONLY : upf, lmaxkb, nhm, nh

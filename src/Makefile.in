@@ -10,6 +10,7 @@ BASEMOD_FLAGS= $(MOD_FLAG)$(QE_SOURCE)/upflib \
                $(MOD_FLAG)$(QE_SOURCE)/FFTXlib \
                $(MOD_FLAG)$(QE_SOURCE)/LAXlib \
                $(MOD_FLAG)$(QE_SOURCE)/UtilXlib \
+               $(MOD_FLAG)$(QE_SOURCE)/XClib \
                $(MOD_FLAG)$(QE_SOURCE)/FoX/finclude
 
 MODFLAGS = $(BASEMOD_FLAGS) \
@@ -27,6 +28,7 @@ GIPAW_OBJS = gipaw_module.o gipaw_main.o paw_gipaw.o stop_code.o gipaw_setup.o \
 	     util.o atomic.o knight_shift.o mossbauer.o gipaw_version.o output_magres.o
 
 LIBOBJS = $(QE_SOURCE)/clib/clib.a
+
 QEMODS = $(QE_SOURCE)/Modules/libqemod.a \
          $(QE_SOURCE)/KS_Solvers/Davidson/libdavid.a \
          $(QE_SOURCE)/KS_Solvers/CG/libcg.a \
@@ -37,7 +39,10 @@ QEMODS = $(QE_SOURCE)/Modules/libqemod.a \
          $(QE_SOURCE)/UtilXlib/libutil.a \
          $(QE_SOURCE)/upflib/libupf.a \
          $(QE_SOURCE)/dft-d3/libdftd3qe.a \
-         $(QE_SOURCE)/LR_Modules/liblrmod.a
+         $(QE_SOURCE)/LR_Modules/liblrmod.a \
+         $(QE_SOURCE)/XClib/xc_lib.a
+
+
 PWOBJS = $(QE_SOURCE)/PW/src/libpw.a
 
 all: version make_lr_modules gipaw.x

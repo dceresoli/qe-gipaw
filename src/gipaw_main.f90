@@ -105,12 +105,9 @@ PROGRAM gipaw_main
  
   ! read ground state wavefunctions
   call read_file
-#ifdef __MPI
-  use_para_diag = check_para_diag(nbnd)
-#else
-  use_para_diag = .false.
-#endif
 
+  call set_para_diag(nbnd, use_para_diag)
+  
   call gipaw_openfil
 
   if (gamma_only) call errore ('gipaw_main', 'Cannot run GIPAW with gamma_only == .true. ', 1)
