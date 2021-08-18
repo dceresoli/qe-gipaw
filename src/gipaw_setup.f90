@@ -19,7 +19,9 @@ SUBROUTINE gipaw_setup
   USE scf,           ONLY : v, vrs, vltot, kedtau, rho
   USE fft_base,      ONLY : dfftp
   USE gvecs,         ONLY : doublegrid
+  USE gvect,         ONLY : ecutrho, ngm, g, gg, eigts1, eigts2, eigts3
   USE klist,         ONLY : degauss, ngauss, nks, lgauss, wk, two_fermi_energies, ltetra
+  USE ions_base,     ONLY : nat, nsp, ityp, tau
   USE noncollin_module,  ONLY : noncolin
   USE constants,     ONLY : degspin, pi
   USE mp_pools,      ONLY : inter_pool_comm 
@@ -44,7 +46,7 @@ SUBROUTINE gipaw_setup
   ! call test_symmetries ( s, nsym )    
 
   ! initialize pseudopotentials and projectors for LDA+U
-  call init_us_1
+  call init_us_1(nat, ityp, omega, ngm, g, gg, intra_bgrp_comm)
   call init_tab_atwfc(omega, intra_bgrp_comm)
 
   call plugin_initbase()
