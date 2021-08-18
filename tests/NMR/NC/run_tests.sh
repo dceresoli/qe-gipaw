@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pw=$HOME/Codes/qe-6.7MaX/bin/pw.x
+pw=$HOME/Codes/qe-6.8/bin/pw.x
 gipaw=../../../bin/gipaw.x
 
 set -x
