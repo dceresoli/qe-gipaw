@@ -108,7 +108,7 @@
     <simpleType name="boolvectorType">
         <restriction>
             <simpleType>
-                <list itemType="bool"/>
+                <list itemType="boolean"/>
             </simpleType>
         </restriction>
     </simpleType>
@@ -117,7 +117,7 @@
     <simpleType name="realvectorType">
         <restriction>
             <simpleType>
-                <list itemType="real"/>
+                <list itemType="double"/>
             </simpleType>
         </restriction>
     </simpleType>
@@ -176,11 +176,11 @@
     
     
     <!-- GIPAW INPUT types -->
-    <complexType name="control_jobType">
+    <complexType name="jobType">
         <sequence>
-            <element type="JobType" name="job" default="nmr" minOccurs="0" />
-            <element type="RestartModeType" name="restart_mode" default="from_scratch" minOccurs="0" />
-            <element type="VerbosityType" name="verbosity" default="low" minOccurs="0" />
+            <element type="qes_gipaw:JobType" name="job" default="nmr" minOccurs="0" />
+            <element type="qes_gipaw:RestartModeType" name="restart_mode" default="from_scratch" minOccurs="0" />
+            <element type="qes_gipaw:VerbosityType" name="verbosity" default="low" minOccurs="0" />
             <element type="double" name="max_seconds" default="1e7" minOccurs="0" />
         </sequence>
     </complexType>
@@ -197,7 +197,7 @@
 
      <complexType name="scf_gipawType">
         <sequence>
-            <element type="DiagonalizationType" name="diagonalization" default="david" minOccurs="0" />
+            <element type="qes_gipaw:DiagonalizationType" name="diagonalization" default="david" minOccurs="0" />
             <element type="double" name="conv_threshold" default="1e-14" minOccurs="0" />
             <element type="double" name="q_gipaw" default="0.01" minOccurs="0" />
             <element type="double" name="r_rand" default="0.1" minOccurs="0" />
@@ -222,7 +222,7 @@
 
     <complexType name="hfiType">
         <sequence>
-            <element type="HFIOutputUnitType" name="hfi_output_unit" default="MHz" minOccurs="0" />
+            <element type="qes_gipaw:HFIOutputUnitType" name="hfi_output_unit" default="MHz" minOccurs="0" />
             <element type="qes_gipaw:realvectorType" name="hfi_nuclear_g_tensor" default="0.0" minOccurs="0" />
             <element type="integer" name="core_relax_method" default="0" minOccurs="0" />
             <element type="boolean" name="hfi_via_reconstruction_only" default="false" minOccurs="0" />
