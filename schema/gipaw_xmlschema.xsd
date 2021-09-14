@@ -1,0 +1,235 @@
+<?xml version="1.0"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:qes_gipaw="http://www.quantum-espresso.org/ns/qes/qes_gipaw_1.0"
+        targetNamespace="http://www.quantum-espresso.org/ns/qes/qes_gipaw_1.0">
+
+    <!-- QE-GIPAW (root element) -->
+    <element name="gipaw" type="qes_gipaw:gipawType" />
+    <complexType name="gipawType">
+        <sequence>
+            <element type="qes_gipaw:general_infoType" name="general_info" minOccurs="0"/>
+            <element type="qes_gipaw:parallel_infoType" name="parallel_info" minOccurs="0"/>
+            <element type="qes_gipaw:inputGIPAWType" name="inputGIPAW" />
+            <!-- <element type="qes_gipaw:outputGIPAWType" name="outputGIPAW" minOccurs="0" /> -->
+            <element type="qes_gipaw:statusType" name="status" minOccurs="0" />
+            <element type="nonNegativeInteger" name="cputime" minOccurs="0" />
+            <element type="qes_gipaw:closedType" name="closed" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+
+    <!-- GENERAL INFO, same as in qes schema -->
+    <complexType name="general_infoType">
+        <sequence>
+            <element type="qes_gipaw:formatType" name="format"/>
+            <element type="qes_gipaw:creatorType" name="creator"/>
+            <element type="qes_gipaw:createdType" name="created"/>
+            <element type="string" name="job"/>
+        </sequence>
+    </complexType>
+    <complexType name="formatType">
+        <simpleContent>
+            <extension base="string">
+                <attribute type="string" name="NAME"/>
+                <attribute type="string" name="VERSION"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+    <complexType name="creatorType">
+        <simpleContent>
+            <extension base="string">
+                <attribute type="string" name="NAME"/>
+                <attribute type="string" name="VERSION"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+    <complexType name="createdType">
+        <simpleContent>
+            <extension base="string">
+                <attribute type="string" name="DATE"/>
+                <attribute type="string" name="TIME"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+    
+    
+    <!-- PARALLEL INFO, same as in qes schema -->
+    <complexType name="parallel_infoType">
+        <sequence>
+            <element type="positiveInteger" name="nprocs"/>
+            <element type="positiveInteger" name="nthreads"/>
+            <element type="positiveInteger" name="ntasks"/>
+            <element type="positiveInteger" name="nbgrp"/>
+            <element type="positiveInteger" name="npool"/>
+            <element type="positiveInteger" name="ndiag"/>
+            <element type="positiveInteger" name="nimages" minOccurs="0"/>
+        </sequence>
+    </complexType>
+
+
+    <!-- CLOSED, same as in qes schema -->
+    <complexType name="closedType">
+        <simpleContent>
+            <extension base="string">
+                <attribute type="string" name="DATE"/>
+                <attribute type="string" name="TIME"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+
+
+    <!-- STATUS, same as in qes schema -->
+    <simpleType name="statusType">
+        <restriction base="unsignedByte">
+            <enumeration value="0" />
+            <enumeration value="1" />
+            <enumeration value="2" />
+            <enumeration value="3" />
+            <enumeration value="255"/>
+        </restriction>
+    </simpleType>
+
+
+    <!-- INPUTGIPAW TYPE-->
+    <complexType name="inputGIPAWType">
+        <sequence>
+            <element type="qes_gipaw:jobType" name="control_job" minOccurs="0" />
+            <element type="qes_gipaw:scf_gipawType" name="scf_gipaw" minOccurs="0" />
+            <element type="qes_gipaw:filesType" name="files" minOccurs="0" />
+            <element type="qes_gipaw:nmrType" name="nmr_input" minOccurs="0" />
+            <element type="qes_gipaw:efgType" name="efg_input" minOccurs="0" />
+            <element type="qes_gipaw:hfiType" name="hfi_input" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+
+    <!-- vector types -->
+    <!-- bool array -->
+    <simpleType name="boolvectorType">
+        <restriction>
+            <simpleType>
+                <list itemType="bool"/>
+            </simpleType>
+        </restriction>
+    </simpleType>
+
+    <!-- bool array -->
+    <simpleType name="realvectorType">
+        <restriction>
+            <simpleType>
+                <list itemType="real"/>
+            </simpleType>
+        </restriction>
+    </simpleType>
+    
+    <!-- 3x3 real matrix type -->
+    <simpleType name="real3x3Type">
+        <restriction>
+            <simpleType>
+                <list itemType="double"/>
+            </simpleType>
+            <length value="9"/>
+        </restriction>
+    </simpleType>
+
+
+    <!-- enumerations -->
+    <simpleType name="JobType">
+        <restriction base="string">
+            <enumeration value="nmr"/>
+            <enumeration value="efg"/>
+            <enumeration value="g_tensor"/>
+            <enumeration value="hyperfine"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="RestartModeType">
+        <restriction base="string">
+            <enumeration value="from_scratch"/>
+            <enumeration value="restart"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="VerbosityType">
+        <restriction base="string">
+            <enumeration value="low"/>
+            <enumeration value="medium"/>
+            <enumeration value="high"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="DiagonalizationType">
+        <restriction base="string">
+            <enumeration value="cg"/>
+            <enumeration value="david"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="HFIOutputUnitType">
+        <restriction base="string">
+            <enumeration value="MHz"/>
+            <enumeration value="mT"/>
+            <enumeration value="G"/>
+            <enumeration value="10e-4cm^-1"/>
+        </restriction>
+    </simpleType>
+    
+    
+    <!-- GIPAW INPUT types -->
+    <complexType name="control_jobType">
+        <sequence>
+            <element type="JobType" name="job" default="nmr" minOccurs="0" />
+            <element type="RestartModeType" name="restart_mode" default="from_scratch" minOccurs="0" />
+            <element type="VerbosityType" name="verbosity" default="low" minOccurs="0" />
+            <element type="double" name="max_seconds" default="1e7" minOccurs="0" />
+        </sequence>
+    </complexType>
+ 
+    <complexType name="filesType">
+        <sequence>
+            <element type="string" name="prefix" default="pwscf" minOccurs="0" />
+            <element type="string" name="tmp_dir" default="./" minOccurs="0" />
+            <element type="string" name="filcurr" default="matdyn" minOccurs="0" />
+            <element type="string" name="fildfield" default="" minOccurs="0" />
+            <element type="string" name="filnics" default="" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+     <complexType name="scf_gipawType">
+        <sequence>
+            <element type="DiagonalizationType" name="diagonalization" default="david" minOccurs="0" />
+            <element type="double" name="conv_threshold" default="1e-14" minOccurs="0" />
+            <element type="double" name="q_gipaw" default="0.01" minOccurs="0" />
+            <element type="double" name="r_rand" default="0.1" minOccurs="0" />
+            <element type="boolean" name="spline_ps" default="true" minOccurs="0" />
+            <element type="qes_gipaw:boolvectorType" name="paw_proj" default="false" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+     <complexType name="nmrType">
+        <sequence>
+            <element type="boolean" name="use_nmr_macroscopic_shape" default="true" minOccurs="0" />
+            <element type="qes_gipaw:real3x3Type" name="nmr_macroscopic_shape"
+            default="0.666667 0.000000 0.000000 0.000000 0.666667 0.000000 0.000000 0.000000 0.666667" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+     <complexType name="efgType">
+        <sequence>
+            <element type="qes_gipaw:realvectorType" name="efg_q" default="0.0" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="hfiType">
+        <sequence>
+            <element type="HFIOutputUnitType" name="hfi_output_unit" default="MHz" minOccurs="0" />
+            <element type="qes_gipaw:realvectorType" name="hfi_nuclear_g_tensor" default="0.0" minOccurs="0" />
+            <element type="integer" name="core_relax_method" default="0" minOccurs="0" />
+            <element type="boolean" name="hfi_via_reconstruction_only" default="false" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+
+</schema>
+
+
