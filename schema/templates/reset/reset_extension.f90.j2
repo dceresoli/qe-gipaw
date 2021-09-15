@@ -1,0 +1,8 @@
+{%- if (type.extension_xsd_type_name=="vectorType") or (type.name == "vectorType") or
+    (type.extension_xsd_type_name =="integerVectorType") or (type.name == "integerVectorType") or
+    (type.extension_xsd_type_name=="matrixType") or (type.name=="matrixType") or
+        (type.extension_xsd_type_name=="integerMatrixType") or (type.name=="integerMatrixType") %}
+    IF (ALLOCATED(obj%{{type.name.replace('Type','')}})) THEN
+      DEALLOCATE(obj%{{type.name.replace('Type','')}})
+    ENDIF
+{%- endif %}

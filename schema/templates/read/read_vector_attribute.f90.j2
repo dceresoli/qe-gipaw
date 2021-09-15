@@ -1,0 +1,7 @@
+    IF (hasAttribute(xml_node, "size"))  THEN
+        CALL extractDataAttribute(xml_node, "size", obj%size)
+    ELSE
+        CALL errore ("qes_read: {{type.name}}", &
+                     "mandatory size attribute not found in "//TRIM(obj%tagname), 12)
+    END IF
+    !

@@ -1,0 +1,33 @@
+!
+! Copyright (C) 2001-2009 Quantum ESPRESSO group
+! This file is distributed under the terms of the
+! GNU General Public License. See the file `License'
+! in the root directory of the present distribution,
+! or http://www.gnu.org/copyleft/gpl.txt .
+!
+MODULE qesgipaw_write_module
+  !
+  ! Auto-generated code: don't edit this file
+  !
+  ! Quantum Espresso XSD namespace: {{xsd_schema.target_namespace}}
+  !
+  USE qesgipaw_types_module
+  USE FoX_wxml
+  !
+  IMPLICIT NONE
+  !
+  PUBLIC
+  !
+  INTERFACE qesgipaw_write
+  {%- for type in xsd_schema.complex_types %}
+    MODULE PROCEDURE {{type.write_function_name()}}
+  {%- endfor %}
+  END INTERFACE qesgipaw_write
+  !
+  CONTAINS
+  !
+  {% for type in xsd_schema.complex_types %}
+{% include "qes_write_subroutines.f90.j2" %}
+  {%- endfor %}
+  !
+END MODULE qesgipaw_write_module

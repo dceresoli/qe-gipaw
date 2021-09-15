@@ -1,0 +1,26 @@
+  !
+  SUBROUTINE {{type.reset_function_name()}}(obj)
+    !
+    IMPLICIT NONE
+    TYPE({{type.fortran_type_name()}}),INTENT(INOUT)    :: obj
+    {%- if type.has_multi_sequence() %}
+    INTEGER :: i
+    {%- endif %}
+    !
+    obj%tagname = ""
+    obj%lwrite  = .FALSE.
+    obj%lread  = .FALSE.
+    !
+{%- with type_name=type.extension_xsd_type_name, attributes=type.extension_attributes(xsd_schema.sorted_complex_types()) %}
+{%- include "reset_attributes.f90.j2" %}
+{%- endwith %}
+{%- include "reset_sequence.f90.j2" %}
+{%- if type.extension_xsd_type_name != None %}
+{%- include "reset_extension.f90.j2" %}
+{%- endif %}
+{%- with type_name=type.name, attributes=type.attributes %}
+{%- include "reset_attributes.f90.j2" %}
+{%- endwith %}
+    !
+  END SUBROUTINE {{type.reset_function_name()}}
+  !

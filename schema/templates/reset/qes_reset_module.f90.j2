@@ -1,0 +1,35 @@
+!
+! Copyright (C) 2001-2009 Quantum ESPRESSO group
+! This file is distributed under the terms of the
+! GNU General Public License. See the file `License'
+! in the root directory of the present distribution,
+! or http://www.gnu.org/copyleft/gpl.txt .
+!
+!
+MODULE qesgipaw_reset_module
+  !
+  ! Auto-generated code: don't edit or at least don't commit changes
+  !
+  ! Quantum Espresso XSD namespace: {{xsd_schema.target_namespace}}
+  !
+  USE qesgipaw_types_module
+  !
+  IMPLICIT NONE
+  !
+  PRIVATE
+  !
+  PUBLIC qesgipaw_reset
+  !
+  INTERFACE qesgipaw_reset
+  {%- for type in xsd_schema.complex_types %}
+    MODULE PROCEDURE {{type.reset_function_name()}}
+  {%- endfor %}
+  END INTERFACE qesgipaw_reset
+  !
+  CONTAINS
+  !
+  {%- for type in xsd_schema.complex_types %}
+{% include "reset_subroutines.f90.j2" %}
+  {%- endfor %}
+  !
+END MODULE qesgipaw_reset_module

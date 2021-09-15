@@ -1,0 +1,42 @@
+{%- for element in type.sequence %}
+  {%- if (element.min_occurs==0) and (element.max_occurs==1) %}
+    CALL mp_bcast(obj%{{element.tag_name}}_ispresent, ionode_id, comm)
+    IF (obj%{{element.tag_name}}_ispresent) &
+    {%- if (element.is_qes_type and element.xsd_type.xsd_basic_type=="complexType") %}
+      CALL {{element.xsd_type.bcast_function_name()}}(obj%{{element.tag_name}}, ionode_id, comm)
+    {%- else %}
+      CALL mp_bcast(obj%{{element.tag_name}}, ionode_id, comm)
+    {%- endif %}
+  {%- elif (element.min_occurs==1) and (element.max_occurs==1) %}
+    {%- if (element.is_qes_type and element.xsd_type.xsd_basic_type=="complexType") %}
+    CALL {{element.xsd_type.bcast_function_name()}}(obj%{{element.tag_name}}, ionode_id, comm)
+    {%- else %}
+    CALL mp_bcast(obj%{{element.tag_name}}, ionode_id, comm)
+    {%- endif %}
+  {%- else %}
+    {%- if (element.min_occurs==0) %}
+    CALL mp_bcast(obj%{{element.tag_name}}_ispresent, ionode_id, comm)
+    IF (obj%{{element.tag_name}}_ispresent) THEN
+      CALL mp_bcast(obj%ndim_{{element.tag_name}}, ionode_id, comm)
+      IF (.NOT.ionode) ALLOCATE(obj%{{element.tag_name}}(obj%ndim_{{element.tag_name}}))
+      DO i=1, obj%ndim_{{element.tag_name}}
+      {%- if (element.is_qes_type and element.xsd_type.xsd_basic_type=="complexType") %}
+        CALL {{element.xsd_type.bcast_function_name()}}(obj%{{element.tag_name}}(i), ionode_id, comm)
+      {%- else %}
+        CALL mp_bcast(obj%{{element.tag_name}}(i), ionode_id, comm)
+      {%- endif %}
+      ENDDO
+    ENDIF
+    {%- else %}
+    CALL mp_bcast(obj%ndim_{{element.tag_name}}, ionode_id, comm)
+    IF (.NOT.ionode) ALLOCATE(obj%{{element.tag_name}}(obj%ndim_{{element.tag_name}}))
+    DO i=1, obj%ndim_{{element.tag_name}}
+      {%- if (element.is_qes_type and element.xsd_type.xsd_basic_type=="complexType") %}
+      CALL {{element.xsd_type.bcast_function_name()}}(obj%{{element.tag_name}}(i), ionode_id, comm)
+      {%- else %}
+      CALL mp_bcast(obj%{{element.tag_name}}(i), ionode_id, comm)
+      {%- endif %}
+    ENDDO
+    {%- endif %}
+  {%- endif %}
+{%- endfor %}

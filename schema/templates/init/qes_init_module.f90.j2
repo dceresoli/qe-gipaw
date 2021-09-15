@@ -1,0 +1,47 @@
+!
+! Copyright (C) 2001-2009 Quantum ESPRESSO group
+! This file is distributed under the terms of the
+! GNU General Public License. See the file `License'
+! in the root directory of the present distribution,
+! or http://www.gnu.org/copyleft/gpl.txt .
+!
+!
+MODULE qesgipaw_init_module
+  !
+  ! Auto-generated code: don't edit or at least don't commit changes
+  !
+  ! Quantum Espresso XSD namespace: {{xsd_schema.target_namespace}}
+  !
+  USE kinds, only: DP
+  USE qesgipaw_types_module
+  !
+  IMPLICIT NONE
+  !
+  PRIVATE
+  !
+  PUBLIC :: qesgipaw_init
+  !
+  INTERFACE qesgipaw_init
+    !
+  {%- for type in xsd_schema.complex_types %}
+    MODULE PROCEDURE {{type.init_function_name()}}
+  {%- endfor %}
+    !
+  END INTERFACE qesgipaw_init
+  !
+  CONTAINS
+  !
+  {%- for type in xsd_schema.complex_types %}
+    {%- if type.name in ['matrixType', 'integerMatrixType'] %}
+{%include "init_matrix_subroutines.f90.j2" %}
+    {%- elif type.extension_xsd_type_name in ['matrixType', 'integerMatrixType'] %}
+{%include "init_matrix_extension.f90.j2" %}
+    {%- elif type.name in ['vectorType', 'integerVectorType'] or 
+    type.extension_xsd_type_name in ['vectorType', 'integerVectorType'] %}
+{%include "init_vector_subroutines.f90.j2" %}
+    {%- else %}
+{% include "init_subroutine.f90.j2" %}
+    {%- endif %}
+  {%- endfor %}
+  !
+END MODULE qesgipaw_init_module

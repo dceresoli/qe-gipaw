@@ -1,0 +1,34 @@
+!
+! Copyright (C) 2001-2009 Quantum ESPRESSO group
+! This file is distributed under the terms of the
+! GNU General Public License. See the file `License'
+! in the root directory of the present distribution,
+! or http://www.gnu.org/copyleft/gpl.txt .
+!
+MODULE qesgipaw_bcast_module
+  !
+  ! Auto-generated code: don't edit this file
+  !
+  ! Quantum Espresso XSD namespace: {{xsd_schema.target_namespace}}
+  !
+  USE qesgipaw_types_module
+  USE io_global, ONLY : ionode
+  USE mp, ONLY : mp_bcast
+  !
+  IMPLICIT NONE
+  !
+  PUBLIC qesgipaw_bcast
+  !
+  INTERFACE qesgipaw_bcast
+  {%- for type in xsd_schema.complex_types %}
+    MODULE PROCEDURE {{type.bcast_function_name()}}
+  {%- endfor %}
+  END INTERFACE qesgipaw_bcast
+  !
+  CONTAINS
+  !
+  {%- for type in xsd_schema.complex_types %}
+{% include "bcast_subroutine.f90.j2" %}
+  {%- endfor %}
+  !
+END MODULE qesgipaw_bcast_module

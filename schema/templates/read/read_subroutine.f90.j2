@@ -1,0 +1,35 @@
+  !
+  SUBROUTINE {{type.read_function_name()}}(xml_node, obj, ierr )
+    !
+    IMPLICIT NONE
+    !
+    TYPE(Node), INTENT(IN), POINTER                 :: xml_node
+    TYPE({{type.fortran_type_name()}}), INTENT(OUT) :: obj
+    INTEGER, OPTIONAL, INTENT(INOUT)                  :: ierr
+    !
+    TYPE(Node), POINTER :: tmp_node
+    TYPE(NodeList), POINTER :: tmp_node_list
+    INTEGER :: tmp_node_list_size, index, iostat_
+    {%- if type.extension_xsd_type_name in ["matrixType", "integerMatrixType"] or
+    type.name in ["matrixType", "integerMatrixType"] %}
+    INTEGER :: i, length
+    {%- endif %}
+    !
+    obj%tagname = getTagName(xml_node)
+    !
+{% with type_name=type.name, attributes=type.attributes %}
+{%- include "read_attributes.f90.j2" %}
+{% endwith %}
+{% with type_name=type.extension_xsd_type_name, attributes=type.extension_attributes(xsd_schema.sorted_complex_types()) %}
+{%- include "read_attributes.f90.j2" %}
+{% endwith %}
+    !
+{%- include "read_sequence.f90.j2" %}
+    !
+{%- if type.extension_xsd_type_name != None %}
+{%- include "read_extension.f90.j2" %}
+{%- endif %}
+    obj%lwrite = .TRUE.
+    !
+  END SUBROUTINE {{type.read_function_name()}}
+  !

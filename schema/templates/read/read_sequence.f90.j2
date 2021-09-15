@@ -1,0 +1,101 @@
+{%- for element in type.sequence %}
+    tmp_node_list => getElementsByTagname(xml_node, "{{element.tag_name}}")
+    tmp_node_list_size = getLength(tmp_node_list)
+    !
+{%- if (element.min_occurs==element.max_occurs) %}
+    IF (tmp_node_list_size /= {{element.min_occurs}}) THEN
+        IF (PRESENT(ierr) ) THEN 
+           CALL infomsg("qes_read:{{type.name}}","{{ element.tag_name}}: wrong number of occurrences")
+           ierr = ierr + 1 
+        ELSE 
+           CALL errore("qes_read:{{type.name}}","{{ element.tag_name}}: wrong number of occurrences",10)
+        END IF
+    END IF
+{%- else %}
+    {%- if (element.min_occurs>0) %}
+    IF (tmp_node_list_size < {{element.min_occurs}}) THEN
+        IF (PRESENT(ierr) ) THEN 
+           CALL infomsg("qes_read:{{type.name}}","{{element.tag_name}}: not enough elements")
+           ierr = ierr + 1 
+        ELSE 
+           CALL errore("qes_read:{{type.name}}","{{element.tag_name}}: not enough elements",10)
+        END IF
+    END IF
+    {%- endif %}
+    {%- if (element.max_occurs>0) %}
+    IF (tmp_node_list_size > {{element.max_occurs}}) THEN
+        IF (PRESENT(ierr) ) THEN 
+           CALL infomsg("qes_read:{{type.name}}","{{element.tag_name}}: too many occurrences")
+           ierr = ierr + 1 
+        ELSE 
+           CALL errore("qes_read:{{type.name}}","{{element.tag_name}}: too many occurrences",10)
+        END IF
+    END IF
+    {%- endif %}
+{%- endif %}
+    !
+{%- if (element.min_occurs==0) and (element.max_occurs==1) %}
+    IF (tmp_node_list_size>0) THEN
+      obj%{{element.tag_name}}_ispresent = .TRUE.
+      tmp_node => item(tmp_node_list, 0)
+  {%- if (element.is_qes_type and element.xsd_type.xsd_basic_type=="complexType") %}
+      CALL {{element.xsd_type.read_function_name()}}(tmp_node, obj%{{element.tag_name}}, ierr )
+  {%- else %}
+      CALL extractDataContent(tmp_node, obj%{{element.tag_name}} , IOSTAT = iostat_)
+      IF ( iostat_ /= 0 ) THEN
+         IF ( PRESENT (ierr ) ) THEN 
+            CALL infomsg("qes_read:{{type.name}}","error reading {{element.tag_name}}")
+            ierr = ierr + 1
+         ELSE 
+            CALL errore ("qes_read:{{type.name}}","error reading {{ element.tag_name}}",10)
+         END IF
+      END IF
+  {%- endif %}
+    ELSE
+       obj%{{element.tag_name}}_ispresent = .FALSE.
+    END IF
+{%- elif (element.min_occurs==1) and (element.max_occurs==1) %}
+    tmp_node => item(tmp_node_list, 0)
+    IF (ASSOCIATED(tmp_node))&
+  {%- if (element.is_qes_type and element.xsd_type.xsd_basic_type == "complexType") %}
+       CALL {{element.xsd_type.read_function_name()}}(tmp_node, obj%{{element.tag_name}}, ierr )
+  {%- else %}
+       CALL extractDataContent(tmp_node, obj%{{element.tag_name}}, IOSTAT = iostat_ )
+    IF ( iostat_ /= 0 ) THEN
+       IF ( PRESENT (ierr ) ) THEN 
+          CALL infomsg("qes_read:{{type.name}}","error reading {{element.tag_name}}")
+          ierr = ierr + 1
+       ELSE 
+          CALL errore ("qes_read:{{type.name}}","error reading {{ element.tag_name}}",10)
+       END IF
+    END IF
+  {%- endif %}
+{%- else %}
+    {%- if (element.min_occurs==0) %}
+    IF (tmp_node_list_size>0) THEN
+      obj%{{element.tag_name}}_ispresent = .TRUE.
+    ELSE
+      obj%{{element.tag_name}}_ispresent = .FALSE.
+    END IF
+    {%- endif %}
+    obj%ndim_{{element.tag_name}} = tmp_node_list_size
+    ALLOCATE(obj%{{element.tag_name}}(tmp_node_list_size))
+    DO index=1,tmp_node_list_size
+        tmp_node => item( tmp_node_list, index-1 )
+        {%- if (element.is_qes_type and element.xsd_type.xsd_basic_type=="complexType") %}
+        CALL {{element.xsd_type.read_function_name()}}(tmp_node, obj%{{element.tag_name}}(index), ierr )
+        {%- else %}
+        CALL extractDataContent(tmp_node, obj%{{element.tag_name}}(index), IOSTAT = iostat_ )
+        IF ( iostat_ /= 0 ) THEN
+           IF ( PRESENT (ierr ) ) THEN 
+              CALL infomsg("qes_read:{{type.name}}","error reading {{element.tag_name}}")
+              ierr = ierr + 1
+           ELSE 
+              CALL errore ("qes_read:{{type.name}}","error reading {{ element.tag_name}}",10)
+           END IF
+        END IF
+        {%- endif %}
+    END DO
+{%- endif %}
+    !
+{%- endfor %}

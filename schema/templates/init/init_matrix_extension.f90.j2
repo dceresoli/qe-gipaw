@@ -1,0 +1,80 @@
+  !
+  SUBROUTINE {{type.init_function_name()}}({{type.init_argument_line(xsd_schema.sorted_complex_types()).replace("rank, dims, ","")}})
+    !
+    IMPLICIT NONE
+    !
+    TYPE({{type.fortran_type_name()}}), INTENT(OUT) :: obj
+    CHARACTER(LEN=*), INTENT(IN) :: tagname
+{%- for attribute in type.attributes %}
+  {%- if attribute.name not in ["rank","dims"] %}
+    {%- if attribute.is_required %}
+    {{attribute.init_fortran_type_name()}}, INTENT(IN) :: {{attribute.name}}
+    {%- else %}
+    {{attribute.init_fortran_type_name()}}, OPTIONAL, INTENT(IN) :: {{attribute.name}}
+    {%- endif %}
+  {%- endif %}
+{%- endfor %}
+{%- if type.is_extension() %}
+    {{ type.init_extension_fortran_type().replace(":",":,:")}}, INTENT(IN) :: {{ type.name.replace('Type','')}} 
+  {%- if type.extension_type(xsd_schema.sorted_complex_types()) != None %}
+    {%- for attribute in type.extension_type(xsd_schema.sorted_complex_types()).attributes %}
+      {%- if attribute.name not in ["rank","dims"] %}
+        {%- if attribute.is_required %}
+    {{attribute.init_fortran_type_name()}},INTENT(IN) :: {{attribute.name}}
+        {%- else %}
+    {{attribute.init_fortran_type_name()}},OPTIONAL,INTENT(IN) :: {{attribute.name}}
+        {%- endif %}
+      {%- endif %}
+    {%- endfor %}
+  {%- endif %}
+{%- endif %}
+    INTEGER :: length, i
+    !
+    obj%tagname = TRIM(tagname) 
+    obj%lwrite = .TRUE.
+    obj%lread = .TRUE.
+{%- for attribute in type.attributes %}
+  {%- if attribute.name not in ["rank","dims"] %}
+    {%- if attribute.is_required %}
+    obj%{{attribute.name}} = {{attribute.name}}
+    {%- else %}
+    IF (PRESENT({{ attribute.name }})) THEN
+      obj%{{attribute.name}}_ispresent = .TRUE.
+      obj%{{attribute.name}} = {{attribute.name}}
+    ELSE 
+      obj%{{attribute.name}}_ispresent = .FALSE.
+    END IF
+    {%- endif %}
+  {%- endif %}
+{%- endfor %}
+    !
+{%- if type.is_extension() %}
+  {%- if type.extension_type(xsd_schema.sorted_complex_types()) != None %}
+    {% for attribute in type.extension_type(xsd_schema.sorted_complex_types()).attributes %}
+      {%- if attribute.name not in ["rank","dims"] %}
+        {%- if attribute.is_required %}
+    obj%{{attribute.name}} = {{attribute.name}}
+        {%- else %}
+    IF ( PRESENT({{attribute.name}})) THEN
+      obj%{{attribute.name}}_ispresent = .TRUE.
+      obj%{{attribute.name}} = {{attribute.name}}
+    ELSE 
+      obj%{{attribute.name}}_ispresent = .FALSE.
+    END IF
+        {%- endif %} 
+      {%- endif %} 
+    {% endfor %}
+  {%- endif %}
+{%- endif %}
+    length = 1
+    obj%rank = SIZE(shape({{ type.name.replace('Type','')}}))
+    ALLOCATE ( obj%dims(obj%rank))
+    obj%dims = shape({{ type.name.replace('Type','')}})
+    DO i = 1, obj%rank
+      length = length * obj%dims(i)
+    END DO
+    ALLOCATE(obj%{{type.name.replace('Type','')}}(length))
+    obj%{{type.name.replace('Type','')}}(1:length) = reshape({{ type.name.replace('Type','')}}, [length])
+    !
+  END SUBROUTINE {{type.init_function_name()}}
+  !

@@ -1,0 +1,42 @@
+{%- if type.extension_xsd_type_name == 'vectorType' or type.name == 'vectorType' %}
+     CALL xml_addNewLine(xp)
+     DO i = 1, obj%size, 5
+        CALL xml_AddCharacters(xp, obj%{{type.name.replace('Type', '')}}(i:MIN(i+5-1,obj%size)), fmt='s16')
+        CALL xml_AddNewLine(xp)
+     END DO
+{%- elif type.extension_xsd_type_name == 'integerVectorType' or type.name == 'integerVectorType' %}
+     CALL xml_addNewLine(xp)
+     DO i = 1, obj%size, 8
+        CALL xml_AddCharacters(xp, obj%{{type.name.replace('Type', '')}}(i:MIN(i+8-1, obj%size)))
+        CALL xml_AddNewLine(xp)
+     END DO
+{%- elif type.extension_xsd_type_name == 'matrixType' or type.name == 'matrixType' %}
+       CALL xml_addNewLine(xp)
+        DO i = 1, obj%dims(2)
+           CALL xml_AddCharacters(xp, obj%{{type.name.replace('Type','')}}((i-1)*obj%dims(1)+1: i*obj%dims(1)), fmt ='s16')
+           CALL xml_addNewLine(xp)
+        END DO
+ {%- elif type.extension_xsd_type_name == 'integerMatrixType' or type.name == 'integerMatrixType' %}
+        CALL xml_addNewLine(xp)
+        DO i = 1, obj%dims(2)
+           CALL xml_AddCharacters(xp, obj%{{type.name.replace('Type','')}}((i-1)*obj%dims(1)+1: i*obj%dims(1)) )
+           CALL xml_addNewLine(xp)
+        END DO
+ {%- elif type.extension_xsd_type_name =='string' or type.name == 'string' %}
+        CALL xml_AddCharacters(xp, TRIM(obj%{{type.name.replace('Type','')}}))
+
+ {%- elif type.extension_xsd_type_name =='double' or type.name == 'double' %}
+        CALL xml_AddCharacters(xp, obj%{{type.name.replace('Type','')}}, fmt='s16')
+ {%- else %}
+    {%- if type.extension_xsd_type %}
+        {%- if 'CHARACTER' in type.extension_xsd_type.fortran_type_name() %}
+        CALL xml_AddCharacters(xp, TRIM(obj%{{type.name.replace('Type','')}}))
+        {%- elif 'REAL' in type.extension_xsd_type.fortran_type_name() %}
+        CALL xml_AddCharacters(xp, obj%{{type.name.replace('Type','')}}, fmt='s16')
+        {%- else %}
+        CALL xml_AddCharacters(xp, obj%{{type.name.replace('Type','')}})
+        {%- endif %}
+    {%- else %}
+        CALL xml_AddCharacters(xp, obj%{{type.name.replace('Type','')}})
+    {%- endif %}
+ {%- endif %}

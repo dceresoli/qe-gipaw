@@ -1,0 +1,18 @@
+{%- if type_name in ["matrixType", "integerMatrixType"] %}
+    CALL mp_bcast(obj%rank, ionode_id, comm)
+    IF (.NOT.ionode) ALLOCATE(obj%dims(obj%rank))
+    CALL mp_bcast(obj%dims, ionode_id, comm)
+    CALL mp_bcast(obj%order, ionode_id, comm)
+{%- elif type_name in ["vectorType", "integerVectorType"] %}
+    CALL mp_bcast(obj%size, ionode_id, comm)
+{%- else %}
+  {%- for attribute in attributes %}
+    {%- if not attribute.is_required %}
+    CALL mp_bcast(obj%{{attribute.name}}_ispresent, ionode_id, comm)
+    IF (obj%{{attribute.name}}_ispresent) &
+      CALL mp_bcast(obj%{{attribute.name}}, ionode_id, comm)
+    {%- else %}
+    CALL mp_bcast(obj%{{attribute.name}}, ionode_id, comm)
+    {%- endif %}
+  {%- endfor %}
+{%- endif %}

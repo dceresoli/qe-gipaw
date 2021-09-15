@@ -1,0 +1,19 @@
+   SUBROUTINE {{type.write_function_name()}}(xp, obj) 
+     !-----------------------------------------------------------------
+     IMPLICIT NONE
+     TYPE (xmlf_t),INTENT(INOUT)                      :: xp
+     TYPE({{type.fortran_type_name()}}),INTENT(IN)    :: obj
+     ! 
+     INTEGER                                          :: i 
+     ! 
+     IF ( .NOT. obj%lwrite ) RETURN 
+     ! 
+     CALL xml_NewElement(xp, TRIM(obj%tagname)) 
+{%- include "write_attributes.f90.j2" %}
+{%- if  type.is_extension() %}
+{%- include "write_extension.f90.j2" %}
+{%- endif %} 
+{%- include "write_sequence.f90.j2" %}
+     CALL xml_EndElement(xp, TRIM(obj%tagname))
+   END SUBROUTINE {{type.write_function_name()}}
+

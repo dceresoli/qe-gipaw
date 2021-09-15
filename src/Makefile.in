@@ -27,6 +27,10 @@ GIPAW_OBJS = gipaw_module.o gipaw_main.o paw_gipaw.o stop_code.o gipaw_setup.o \
 	     velocity.o nmr_routines.o epr_routines.o efg.o hyperfine.o core_relax.o \
 	     util.o atomic.o knight_shift.o mossbauer.o gipaw_version.o output_magres.o
 
+QESGIPAW_OBJS = qes_bcast_module.o qes_libs_module.o qes_reset_module.o \
+	        qes_write_module.o qes_init_module.o qes_read_module.o \
+	        qes_types_module.o
+
 LIBOBJS = $(QE_SOURCE)/clib/clib.a
 
 QEMODS = $(QE_SOURCE)/Modules/libqemod.a \
@@ -55,8 +59,8 @@ gipaw_version.f90: version
 make_lr_modules:
 	make -C $(QE_SOURCE)/LR_Modules
 
-gipaw.x: $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS)
-	$(LD) $(LDFLAGS) -o $@ $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS) $(QELIBS)
+gipaw.x: $(QESGIPAW_OBJS) $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS)
+	$(LD) $(LDFLAGS) -o $@ $(QESGIPAW_OBJS) $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS) $(QELIBS)
 	(cd ../bin; ln -sf ../src/gipaw.x .)
 
 clean:

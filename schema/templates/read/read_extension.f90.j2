@@ -1,0 +1,31 @@
+{%- if (type.extension_xsd_type_name=="vectorType") or (type.name == "vectorType") %}
+    ALLOCATE (obj%{{type.name.replace('Type','')}}(obj%size))
+    CALL extractDataContent(xml_node, obj%{{type.name.replace('Type','')}} )
+    !
+{%- elif (type.extension_xsd_type_name=="matrixType") or (type.name=="matrixType") %}
+    length = 1
+    DO i =1, obj%rank
+       length = length * obj%dims(i)
+    END DO
+    ALLOCATE (obj%{{type.name.replace('Type','')}}(length) )
+    CALL extractDataContent(xml_node, obj%{{type.name.replace('Type','') }} )
+    !
+{%- elif (type.extension_xsd_type_name=="integerMatrixType") or (type.name=="integerMatrixType") %}
+    length = 1
+    DO i = 1, obj%rank
+        length = length * obj%dims(i)
+    END DO
+    ALLOCATE(obj%{{type.name.replace('Type','')}}(length))
+    CALL extractDataContent(xml_node, obj%{{type.name.replace('Type','')}})
+    !
+{%- elif (type.extension_xsd_type_name =="integerVectorType") or (type.name == "integerVectorType") %}
+    ALLOCATE (obj%{{type.name.replace('Type','')}}(obj%size))
+    CALL extractDataContent(xml_node, obj%{{type.name.replace('Type','')}})
+    !
+{%- elif (type.extension_xsd_type_name=="doubleListType") %}
+    !CALL extractDataContent(xml_node, obj%???? ) NEVER HAPPENED
+    !
+{%- else %}
+    CALL extractDataContent(xml_node, obj%{{type.name.replace('Type', '')}} )
+    !
+{%- endif %}

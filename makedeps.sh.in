@@ -9,7 +9,7 @@ DEPENDS="${QE_SOURCE}/include ${QE_SOURCE}/iotk/src
          ${QE_SOURCE}/Modules ${QE_SOURCE}/PW/src
          ${QE_SOURCE}/FFTXlib ${QE_SOURCE}/UtilXlib
          ${QE_SOURCE}/LAXlib  ${QE_SOURCE}/upflib
-         ${QE_SOURCE}/XClib"
+         ${QE_SOURCE}/XClib   ${QE_SOURCE}/FoX/finclude"
 
 cd src
 
@@ -19,6 +19,11 @@ ${QE_SOURCE}/install/includedep.sh $DEPENDS >> make.depend
 # handle special cases
 sed -i '/@\/cineca\/prod\/hpm\/include\/f_hpm.h@/d' make.depend
 sed -i '/@iso_c_binding@/d;/@ifcore@/d' make.depend
+
+# handle FoX
+sed -i "s|@fox_dom@|${QE_SOURCE}/FoX/finclude/fox_dom.mod|" make.depend
+sed -i "s|@fox_wxml@|${QE_SOURCE}/FoX/finclude/fox_wxml.mod|" make.depend
+
     
 # check for missing dependencies 
 if grep @ make.depend

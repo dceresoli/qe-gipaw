@@ -1,0 +1,35 @@
+{%- for attribute in type.attributes %}
+   {%- if not attribute.is_required %}
+      {%- if 'CHARACTER' in attribute.fortran_type_name() %}
+     IF (obj%{{attribute.name}}_ispresent) CALL xml_addAttribute(xp, '{{attribute.name}}', TRIM(obj%{{attribute.name}}) )
+      {%- else %}
+     IF (obj%{{attribute.name}}_ispresent) CALL xml_addAttribute(xp, '{{attribute.name}}', obj%{{attribute.name}} )
+      {%- endif %}
+   {%- else %}
+      {%- if 'CHARACTER' in attribute.fortran_type_name() %}
+     CALL xml_addAttribute(xp, '{{attribute.name}}', TRIM(obj%{{attribute.name}}) )
+      {%- else %}
+     CALL xml_addAttribute(xp, '{{attribute.name}}', obj%{{attribute.name}} )
+      {%- endif %}
+   {%- endif %}
+{%- endfor %}
+
+{%- if type.extension_attributes(xsd_schema.sorted_complex_types())| length > 0 %}
+   {%- if type.extension_type(xsd_schema.sorted_complex_types()) != None %}
+      {%- for attribute in type.extension_type(xsd_schema.sorted_complex_types()).attributes %}
+         {%- if not attribute.is_required %}
+            {%- if 'CHARACTER' in attribute.fortran_type_name() %}
+     IF (obj%{{attribute.name}}_ispresent) CALL xml_addAttribute(xp, '{{attribute.name}}', TRIM(obj%{{attribute.name}}) )
+            {%- else %}
+     IF (obj%{{attribute.name}}_ispresent) CALL xml_addAttribute(xp, '{{attribute.name}}', obj%{{attribute.name}} )
+            {%- endif %}
+         {%- else %}
+            {%- if 'CHARACTER' in attribute.fortran_type_name() %}
+     CALL xml_addAttribute(xp, '{{attribute.name}}', TRIM(obj%{{attribute.name}}) )
+            {%- else %}
+     CALL xml_addAttribute(xp, '{{attribute.name}}', obj%{{attribute.name}} )
+            {%- endif %}
+         {%- endif %}
+      {%- endfor %}
+   {%- endif %}
+{%- endif %}

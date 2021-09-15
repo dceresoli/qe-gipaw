@@ -1,0 +1,65 @@
+!
+! Copyright (C) 2001-2009 Quantum ESPRESSO group
+! This file is distributed under the terms of the
+! GNU General Public License. See the file `License'
+! in the root directory of the present distribution,
+! or http://www.gnu.org/copyleft/gpl.txt .
+!
+!
+MODULE qesgipaw_types_module
+  !
+  ! Auto-generated code: don't edit this file
+  !
+  ! Quantum Espresso XSD namespace: {{xsd_schema.target_namespace}} 
+  !
+  USE kinds, only: DP
+  !
+  IMPLICIT NONE
+  !
+  {%- for type in xsd_schema.sorted_complex_types() %}
+  TYPE :: {{type.fortran_type_name()}}
+    !
+    CHARACTER(len=100) :: tagname
+    LOGICAL  :: lwrite = .FALSE.
+    LOGICAL  :: lread  = .FALSE.
+    !
+{%- for attribute in type.attributes %}
+    {{attribute.fortran_type_name()}} :: {{attribute.name}}
+  {%- if not attribute.is_required %}
+    LOGICAL :: {{attribute.name}}_ispresent = .FALSE.
+  {%- endif %}
+{%- endfor %}
+
+{%- if type.is_extension() %}
+    {%- if type.extension_type(xsd_schema.sorted_complex_types()) != None %}
+       {%- for attribute in type.extension_type(xsd_schema.sorted_complex_types()).attributes %}
+    {{attribute.fortran_type_name()}} :: {{attribute.name}}
+           {%- if not attribute.is_required %}
+    LOGICAL :: {{attribute.name}}_ispresent = .FALSE.
+           {%- endif %} 
+        {%- endfor %}
+    {%- endif %}
+    !
+    {{type.extension_fortran_type()}} :: {{type.name.replace('Type', '')}}
+{%- endif %}
+{%- for element in type.sequence %}
+{%- if (element.min_occurs==0) %}
+    LOGICAL  :: {{element.tag_name}}_ispresent = .FALSE.
+{%- endif %}
+{%- if (element.max_occurs==1) %}
+    {%- if (element.is_qes_type) and (not element.xsd_type.is_simple() )%}
+    TYPE({{element.fortran_type_name()}}) :: {{element.tag_name}}
+    {%- else %}
+    {{ element.fortran_type_name() }} :: {{element.tag_name}}
+    {%- endif %}
+{%- else %}
+    TYPE({{element.xsd_type.fortran_type_name()}}), DIMENSION(:), ALLOCATABLE :: {{element.tag_name}}
+    INTEGER   :: ndim_{{element.tag_name}}
+{%- endif %}
+{%- endfor %}
+    !
+  END TYPE {{type.fortran_type_name()}}
+  !
+{%- endfor %}
+  !
+END MODULE qesgipaw_types_module

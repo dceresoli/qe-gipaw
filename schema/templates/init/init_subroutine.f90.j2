@@ -1,0 +1,94 @@
+  !
+  SUBROUTINE {{type.init_function_name()}}({{type.init_argument_line(xsd_schema.sorted_complex_types())}})
+    !
+    IMPLICIT NONE
+    !
+    TYPE({{type.fortran_type_name()}}), INTENT(OUT) :: obj
+    CHARACTER(LEN=*), INTENT(IN) :: tagname
+{%- for attribute in type.attributes %}
+  {%- if attribute.is_required %}
+    {{attribute.init_fortran_type_name()}}, INTENT(IN) :: {{attribute.name}}
+  {%- else %}
+    {{attribute.init_fortran_type_name()}}, OPTIONAL, INTENT(IN) :: {{attribute.name}}
+  {%- endif %}
+{%- endfor %}
+{%- if type.is_extension() %}
+    {{ type.init_extension_fortran_type()}}, INTENT(IN) :: {{ type.name.replace('Type','')}} 
+  {%- if type.extension_type(xsd_schema.sorted_complex_types()) != None %}
+    {%- for attribute in type.extension_type(xsd_schema.sorted_complex_types()).attributes %}
+      {%- if attribute.is_required %}
+    {{attribute.init_fortran_type_name()}},INTENT(IN) :: {{attribute.name}}
+      {%- else %}
+     {{attribute.init_fortran_type_name()}},OPTIONAL,INTENT(IN) :: {{attribute.name}}
+      {%- endif %}
+    {%- endfor %}
+  {%- endif %}
+{%- endif %}
+{%- for element in type.sequence %}
+  {%- if element.is_qes_type %} 
+    {%- if element.xsd_type.is_simple() %}
+    {{ element.xsd_type.init_fortran_type_name()}},{{element.optional()}}{{element.dimension()}}INTENT(IN) :: {{element.tag_name}}
+    {%- else %}
+    TYPE({{element.xsd_type.init_fortran_type_name()}}),{{element.optional()}}{{element.dimension()}}INTENT(IN) :: {{element.tag_name}}
+    {%- endif %}
+  {%- else %}
+    {{ element.init_fortran_type_name() }},{{element.optional()}}{{element.dimension()}}INTENT(IN) :: {{element.tag_name}} 
+  {%- endif %}
+{%- endfor %}
+    !
+    obj%tagname = TRIM(tagname) 
+    obj%lwrite = .TRUE.
+    obj%lread = .TRUE.
+{%- for attribute in type.attributes %}
+  {%- if attribute.is_required %}
+    obj%{{attribute.name}} = {{attribute.name}}
+  {%- else %}
+    IF (PRESENT({{ attribute.name }})) THEN
+      obj%{{attribute.name}}_ispresent = .TRUE.
+      obj%{{attribute.name}} = {{attribute.name}}
+    ELSE 
+      obj%{{attribute.name}}_ispresent = .FALSE.
+    END IF  
+  {%- endif %}
+{%- endfor %}
+    !
+{%- if type.is_extension() %}
+    obj%{{type.name.replace('Type', '')}} = {{ type.name.replace('Type','')}}
+  {%- if type.extension_type(xsd_schema.sorted_complex_types()) != None %}
+    {%- for attribute in type.extension_type(xsd_schema.sorted_complex_types()).attributes %}
+      {%- if attribute.is_required %}
+    obj%{{attribute.name}} = {{attribute.name}}
+      {%- else %}
+    IF ( PRESENT({{attribute.name}})) THEN
+      obj%{{attribute.name}}_ispresent = .TRUE.
+      obj%{{attribute.name}} = {{attribute.name}}
+    ELSE 
+      obj%{{attribute.name}}_ispresent = .FALSE.
+    END IF   
+      {%- endif %}            
+    {%- endfor %}
+  {%- endif %}
+{%- endif %}
+{%- for element in type.sequence %}
+  {%- if element.min_occurs == 0 %}
+    IF ( PRESENT({{element.tag_name}})) THEN 
+      obj%{{element.tag_name}}_ispresent = .TRUE.
+    {%- if element.max_occurs > 1 or element.max_occurs == -1 %}
+      ALLOCATE(obj%{{element.tag_name}}(SIZE({{element.tag_name}})))
+      obj%ndim_{{element.tag_name}} = SIZE({{element.tag_name}})
+    {%- endif %} 
+      obj%{{element.tag_name}} = {{element.tag_name}}
+    ELSE 
+      obj%{{element.tag_name}}_ispresent = .FALSE.
+    END IF 
+  {%- else %}
+    {%- if (element.max_occurs > 1) or (element.max_occurs == -1) %}
+    ALLOCATE( obj%{{element.tag_name}}(SIZE({{element.tag_name}}))) 
+    obj%ndim_{{element.tag_name}} = SIZE({{element.tag_name}}) 
+    {%- endif %}
+    obj%{{element.tag_name}} = {{element.tag_name}}
+  {%- endif %}
+{%- endfor %}
+    !
+  END SUBROUTINE {{type.init_function_name()}} 
+  !

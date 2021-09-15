@@ -1,0 +1,67 @@
+{%- for element  in type.sequence %}
+   {%- if element.min_occurs == 0 %}
+     IF (obj%{{element.tag_name}}_ispresent) THEN
+      {%- if element.max_occurs == 1 %}
+         {%- if element.is_qes_type and element.xsd_type.xsd_basic_type=="complexType" %}
+        CALL {{element.xsd_type.write_function_name()}} (xp, obj%{{element.tag_name}})
+         {%- else %}
+        CALL xml_NewElement(xp, "{{element.tag_name}}")
+           {%- if 'CHARACTER' in element.fortran_type_name() %}
+           CALL xml_addCharacters(xp, TRIM(obj%{{element.tag_name}}))
+           {%- elif 'REAL' in element.fortran_type_name() %}
+           CALL xml_addCharacters(xp, obj%{{element.tag_name}}, fmt='s16')
+           {%- else %}
+           CALL xml_addCharacters(xp, obj%{{element.tag_name}})
+           {%- endif %}
+        CALL xml_EndElement(xp, "{{element.tag_name}}")
+         {%- endif %}
+      {%- else %}
+        DO i = 1, obj%ndim_{{element.tag_name}}
+         {%- if element.is_qes_type and element.xsd_type.xsd_basic_type=="complexType" %}
+           CALL {{element.xsd_type.write_function_name()}}(xp, obj%{{element.tag_name}}(i) )
+         {%- else %}
+           CALL xml_NewElement(xp, "{{element.tag_name}}")
+              {%- if 'CHARACTER' in element.fortran_type_name() %}
+           CALL xml_addCharacters(xp, TRIM(obj%{{element.tag_name}}(i)))
+              {%- elif 'REAL' in element.fortran_type_name() %}
+           CALL xml_addCharacters(xp, obj%{{element.tag_name}}(i), fmt='s16')
+              {%- else %}
+              CALL xml_addCharacters(xp, obj%{{element.tag_name}}(i) )
+              {%- endif %}
+           CALL xml_EndElement(xp, "{{element.tag_name}}")
+         {%- endif %}
+        END DO
+      {%- endif %}
+     END IF
+   {%- elif element.max_occurs == 1 %}
+     {%- if element.is_qes_type and element.xsd_type.xsd_basic_type=="complexType" %}
+     CALL {{element.xsd_type.write_function_name()}} (xp, obj%{{element.tag_name}})
+     {%- else %}
+     CALL xml_NewElement(xp, '{{element.tag_name}}')
+        {%- if 'CHARACTER' in element.fortran_type_name() %}
+        CALL xml_addCharacters(xp, TRIM(obj%{{element.tag_name}}))
+        {%- elif 'REAL' in element.fortran_type_name() %}
+        CALL xml_addCharacters(xp, obj%{{element.tag_name}}, fmt='s16')
+        {%- else %}
+        CALL xml_addCharacters(xp, obj%{{element.tag_name}})
+        {%- endif %}
+     CALL xml_EndElement(xp, '{{element.tag_name}}')
+     {%- endif %}
+   {%- else %}
+     DO i = 1, obj%ndim_{{element.tag_name}}
+     {%- if element.is_qes_type and element.xsd_type.xsd_basic_type=="complexType" %}
+        CALL {{element.xsd_type.write_function_name()}}(xp, obj%{{element.tag_name}}(i) )
+     {%- else %}
+        CALL xml_NewElelement(xp, '{{element.tag_name}}')
+           {%- if 'CHARACTER' in element.fortran_type_name() %}
+           CALL xml_addCharacters(xp, TRIM(obj%{{element.tag_name}}(i)))
+           {%- elif 'REAL' in element.fortran_type_name() %}
+           CALL xml_addCharacters(xp, obj%{{element.tag_name}}(i), fmt='s16')
+           {%- else %}
+           CALL xml_addCharacters(xp, obj%{{element.tag_name}}(i) )
+           {%- endif %}
+        CALL xml_EndElement(xp, '{{element.tag_name}}')
+     {%- endif %}
+     END DO
+   {%- endif %}
+{%- endfor %}
