@@ -16,14 +16,17 @@ SUBROUTINE gipaw_readin()
   !
   USE gipaw_module
   USE io_files,         ONLY : prefix, tmp_dir  
-  USE io_global,        ONLY : ionode
+  USE io_global,        ONLY : ionode, stdout, qestdin
   USE uspp_data,        ONLY : spline_ps
   USE mp_images,        ONLY : my_image_id
+  USE open_close_input_file
 
   ! -- local variables ---------------------------------------------------
   implicit none
   integer :: ios
+  logical :: is_xml
   character(len=256), external :: trimcheck
+  character(len=256) :: line
   character(len=80) :: diagonalization, verbosity
   namelist /inputgipaw/ job, prefix, tmp_dir, conv_threshold, restart_mode, &
                         q_gipaw, iverbosity, filcurr, filfield, filnics, pawproj, &
@@ -35,8 +38,11 @@ SUBROUTINE gipaw_readin()
 
   if (.not. ionode .or. my_image_id > 0) goto 400
     
-  call input_from_file()
-    
+  !!call input_from_file()
+  ios = open_input_file(is_xml=is_xml)
+  if (ios > 0) call errore('gipaw_readin', 'error reading input file', 1)
+  if (is_xml) call errore('gipaw_readin', 'XML not yet supported', 1)
+
   ! define input default values
   call get_environment_variable( 'ESPRESSO_TMPDIR', tmp_dir ) 
   if (trim(tmp_dir) == ' ') tmp_dir = './scratch/'
@@ -69,8 +75,8 @@ SUBROUTINE gipaw_readin()
   r_rand = 0.1
   max_seconds  =  1.d7
 
-  ! read input    
-  read( 5, inputgipaw, err = 200, iostat = ios )
+  print*, qestdin
+  read(qestdin, inputgipaw, err=200, iostat=ios)
 
   ! check input
   if (max_seconds < 0.1d0) call errore ('gipaw_readin', ' wrong max_seconds', 1)
@@ -111,6 +117,23 @@ SUBROUTINE gipaw_readin()
   ! broadcast input variables  
   call gipaw_bcast_input
 #endif
+
+  ! copy input file in output
+  if (verbosity == 'high') then
+      write(stdout,*)
+      write(stdout,'(5X,''------------------- Input file: --------------------'')')
+      rewind(qestdin)
+      do
+          read(qestdin,'(A)',iostat=ios) line
+          if (ios == 0) then
+              write(stdout,'(A)') trim(line)
+          else
+              exit
+          endif
+      end do
+      write(stdout,*)
+  endif
+  ios = close_input_file()
 
 END SUBROUTINE gipaw_readin
 
