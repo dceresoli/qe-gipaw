@@ -42,6 +42,7 @@ SUBROUTINE suscept_crystal
                                      avogadro, g_e, gprime, filcurr, filfield, filnics, &
                                      nbnd_occ, a0_to_cm, isolve, &
                                      conv_threshold, job, restart_mode
+  USE gipaw_results,          ONLY : suscept1, suscept2
   USE paw_gipaw,              ONLY : paw_vkb, paw_becp
   USE ions_base,              ONLY : nat
   USE buffers,                ONLY : get_buffer
@@ -370,10 +371,12 @@ SUBROUTINE suscept_crystal
 
   ! convert from atomic units to 10^{-6} cm^3 / mol
   tmp(:,:) = chi_bare_pGv(:,:) * 1e6_dp * a0_to_cm**3.0_dp * avogadro
+  suscept1 = tmp
   write(stdout, '(5X,''chi_bare pGv (HH) in 10^{-6} cm^3/mol:'')')
   write(stdout, tens_fmt) tmp(:,:)
 
   tmp(:,:) = chi_bare_vGv(:,:) * 1e6_dp * a0_to_cm**3.0_dp * avogadro
+  suscept2 = tmp
   write(stdout, '(5X,''chi_bare vGv (VV) in 10^{-6} cm^3/mol:'')')
   write(stdout, tens_fmt) tmp(:,:)
 

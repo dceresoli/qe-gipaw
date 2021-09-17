@@ -59,12 +59,14 @@ MODULE gipaw_module
 
   ! max CPU time, in s
   REAL(dp) :: max_seconds
-  
+ 
   ! verbosity
   INTEGER :: iverbosity
  
   ! diagonalization method
   INTEGER :: isolve
+
+  character(len=80) :: diagonalization, verbosity
  
   ! job: nmr, g_tensor, efg, hyperfine
   CHARACTER(80) :: job

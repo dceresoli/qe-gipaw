@@ -209,6 +209,7 @@ SUBROUTINE gipaw_allocate
   ! ... Allocate memory for GIPAW
   !
   USE gipaw_module
+  USE gipaw_results
   USE ions_base,     ONLY : ntyp => nsp
   USE paw_gipaw,     ONLY : paw_recon
   USE pwcom
@@ -223,7 +224,9 @@ SUBROUTINE gipaw_allocate
 
   ! GIPAW projectors
   if (.not. allocated(paw_recon)) allocate(paw_recon(ntyp))
-    
+
+  call allocate_gipaw_results
+
 END SUBROUTINE gipaw_allocate
   
 
