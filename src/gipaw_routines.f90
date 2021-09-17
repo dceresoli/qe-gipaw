@@ -26,8 +26,6 @@ SUBROUTINE gipaw_readin()
   integer :: ios
   logical :: is_xml
   character(len=256), external :: trimcheck
-  character(len=256) :: line
-  character(len=80) :: diagonalization, verbosity
   namelist /inputgipaw/ job, prefix, tmp_dir, conv_threshold, restart_mode, &
                         q_gipaw, iverbosity, filcurr, filfield, filnics, pawproj, &
                         use_nmr_macroscopic_shape, nmr_macroscopic_shape, &
@@ -111,6 +109,13 @@ SUBROUTINE gipaw_readin()
      case default
        call errore('gipaw_readin', 'verbosity can be ''low'', ''medium'' or ''high''', 1)
   end select
+
+  ! dump input file in output
+  if (verbosity == 'high') call dump_input_file
+
+  ! close input file
+  ios = close_input_file()
+
 400 continue
 
 #ifdef __MPI
@@ -118,24 +123,37 @@ SUBROUTINE gipaw_readin()
   call gipaw_bcast_input
 #endif
 
-  ! copy input file in output
-  if (verbosity == 'high') then
-      write(stdout,*)
-      write(stdout,'(5X,''------------------- Input file: --------------------'')')
-      rewind(qestdin)
-      do
-          read(qestdin,'(A)',iostat=ios) line
-          if (ios == 0) then
-              write(stdout,'(A)') trim(line)
-          else
-              exit
-          endif
-      end do
-      write(stdout,*)
-  endif
-  ios = close_input_file()
-
 END SUBROUTINE gipaw_readin
+
+
+!-----------------------------------------------------------------------
+SUBROUTINE dump_input_file
+  !-----------------------------------------------------------------------
+  !
+  ! ... dump input file to the output
+  !
+  USE io_global,        ONLY : ionode, stdout, qestdin
+  USE gipaw_module
+  implicit none
+  character(len=256) :: line
+  integer :: ios
+
+  if (.not. ionode) return
+
+  write(stdout,*)
+  write(stdout,'(5X,''------------------- Input file: --------------------'')')
+  rewind(qestdin)
+  do
+      read(qestdin,'(A)',iostat=ios) line
+      if (ios == 0) then
+          write(stdout,'(A)') trim(line)
+      else
+          exit
+      endif
+  end do
+  write(stdout,*)
+
+END SUBROUTINE dump_input_file
 
 
 #ifdef __MPI
@@ -176,6 +194,8 @@ SUBROUTINE gipaw_bcast_input
   call mp_bcast(r_rand, root, world_comm)
   call mp_bcast(max_seconds, root, world_comm)
   call mp_bcast(restart_mode, root, world_comm)
+  call mp_bcast(verbosity, root, world_comm)
+  call mp_bcast(diagonalization, root, world_comm)
 
 END SUBROUTINE gipaw_bcast_input
 #endif
