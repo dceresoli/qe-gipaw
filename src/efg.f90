@@ -21,6 +21,7 @@ SUBROUTINE efg
   USE lsda_mod,               ONLY : nspin
   USE mp,                     ONLY : mp_sum
   USE gipaw_module,           ONLY : q_efg, iverbosity
+  USE gipaw_results,          ONLY : res_efg
 
   !-- local variables ----------------------------------------------------
   IMPLICIT NONE
@@ -117,6 +118,7 @@ SUBROUTINE efg
   call output_magres_begin('efg')
   call output_magres_efg(efg_tot)
   call output_magres_end
+  res_efg = efg_tot
   
   ! calculate principal axis and spectroscopic parameters
   write(stdout,*)

@@ -17,11 +17,11 @@ MODULE gipaw_results
   SAVE
 
   ! GIPAW results, in order to dump them on the XML file
-  real(dp) :: suscept1(3,3), suscept2(3,3)
-  real(dp), allocatable :: nmr_sigma_tot(:,:,:)
-  real(dp) :: epr_Dg_tensor(3,3), epr_Dg_tensor_paratec(3,3)
-  real(dp), allocatable :: efg_efg_tot(:,:,:)
-  real(dp), allocatable :: hfi_dip_tot(:,:,:), hfi_fc_tot(:)
+  real(dp) :: res_suscept1(3,3), res_suscept2(3,3)
+  real(dp), allocatable :: res_nmr_sigma(:,:,:)
+  real(dp), allocatable :: res_efg(:,:,:)
+  real(dp) :: res_epr_deltag(3,3), res_epr_deltag_paratec(3,3)
+  real(dp), allocatable :: res_hfi_dip(:,:,:), res_hfi_fc(:)
 
   PUBLIC :: allocate_gipaw_results
 
@@ -31,8 +31,8 @@ MODULE gipaw_results
     USE ions_base,     ONLY : ntyp => nsp, nat
     implicit none
 
-    allocate(nmr_sigma_tot(3,3,nat))
-    allocate(efg_efg_tot(3,3,nat), hfi_dip_tot(3,3,nat), hfi_fc_tot(nat))
+    allocate(res_nmr_sigma(3,3,nat))
+    allocate(res_efg(3,3,nat), res_hfi_dip(3,3,nat), res_hfi_fc(nat))
 
   END SUBROUTINE allocate_gipaw_results
 

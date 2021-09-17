@@ -505,7 +505,7 @@ SUBROUTINE print_chemical_shifts(sigma_shape, sigma_bare, sigma_diamagnetic, sig
   USE uspp,                 ONLY : okvan
   USE pwcom,                ONLY : lgauss
   USE gipaw_module,         ONLY : tens_fmt, iverbosity, nmr_shift_core
-  USE gipaw_results,        ONLY : nmr_sigma_tot
+  USE gipaw_results,        ONLY : res_nmr_sigma
   !-- parameters --------------------------------------------------------
   IMPLICIT NONE
   real(dp), intent(in) :: sigma_shape(3,3), sigma_bare(3,3,nat)
@@ -624,7 +624,7 @@ SUBROUTINE print_chemical_shifts(sigma_shape, sigma_bare, sigma_diamagnetic, sig
     write(stdout,*)
   enddo
 
-  nmr_sigma_tot = sigma_tot * 1d6
+  res_nmr_sigma = sigma_tot * 1d6
 
   if (lgauss) &
     write(stdout,'(5X,''*** ATTENTION: system is metallic, Knight shift not included ***'')')

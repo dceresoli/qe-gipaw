@@ -48,6 +48,7 @@ PROGRAM gipaw_main
   USE wvfct,           ONLY : nbnd
   USE io_global,       ONLY : stdout
   USE noncollin_module,ONLY : noncolin
+  USE xml_gipaw_module
   USE command_line_options, ONLY: input_file_, command_line, ndiag_
   ! for pluginization
   USE input_parameters, ONLY : nat_ => nat, ntyp_ => ntyp
@@ -101,6 +102,16 @@ PROGRAM gipaw_main
   call gipaw_readin()
   call check_stop_init( max_seconds )
 
+  ! open XML output file
+  call open_xml_output('test.xml')
+  call xml_output_parallelinfo
+  call xml_output_generalinfo
+  call xml_output_namelist
+  call close_xml_output
+  ! dump input variables
+  stop
+
+
   io_level = 1
  
   ! read ground state wavefunctions
@@ -140,6 +151,7 @@ PROGRAM gipaw_main
   call init_parallel_over_band(inter_bgrp_comm, nbnd)
 #endif
 
+
   ! calculation
   select case ( trim(job) )
   case ( 'nmr' )
@@ -169,6 +181,11 @@ PROGRAM gipaw_main
   case default
      call errore('gipaw_main', 'wrong or undefined job in input', 1)
   end select
+
+  ! close XML output file
+  !!call xml_output_generalinfo
+  ! clocks, status etc..
+  call close_xml_output
   
   ! print timings and stop the code
   call gipaw_closefil

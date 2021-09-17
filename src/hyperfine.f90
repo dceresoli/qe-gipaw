@@ -26,6 +26,7 @@ SUBROUTINE hyperfine
   USE mp,                     ONLY : mp_sum
   USE gipaw_module,           ONLY : hfi_nuclear_g_factor, hfi_output_unit, &
                                      iverbosity, core_relax_method
+  USE gipaw_results,          ONLY : res_hfi_dip, res_hfi_fc
  
   !-- constants ----------------------------------------------------------
   IMPLICIT NONE
@@ -164,6 +165,8 @@ SUBROUTINE hyperfine
   enddo
 1000 FORMAT(5X,A,I3,2X,3(F14.6,2X))
 
+  res_hfi_dip = fact*hfi_dip_tot
+
   write(stdout,*)
   write(stdout,'(5X,''PRINCIPAL AXIS OF THE DIPOLAR COUPLINGS:'')')
   do na = 1, nat
@@ -199,6 +202,8 @@ SUBROUTINE hyperfine
           fact * hfi_fc_gipaw(na), fact * hfi_fc_core(na), fact * hfi_fc_tot(na)
   enddo
 1002 FORMAT(5X,A,I3,2X,4(F14.6,2X))
+
+  res_hfi_fc = fact*hfi_fc_tot
 
 #ifdef ZORA
   write(stdout,*)
