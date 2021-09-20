@@ -27,7 +27,7 @@ PROGRAM gipaw_main
   ! ... C. J. Pickard and F. Mauri, Phys. Rev. Lett. 88, 086403 (2002)
   ! ...
   USE kinds,           ONLY : DP
-  USE io_files,        ONLY : tmp_dir, create_directory
+  USE io_files,        ONLY : tmp_dir, create_directory, prefix
   USE io_global,       ONLY : stdout, meta_ionode, meta_ionode_id
   USE mp,              ONLY : mp_bcast
   USE cell_base,       ONLY : tpiba
@@ -48,7 +48,7 @@ PROGRAM gipaw_main
   USE wvfct,           ONLY : nbnd
   USE io_global,       ONLY : stdout
   USE noncollin_module,ONLY : noncolin
-  USE xml_gipaw_module
+  USE xml_routines
   USE command_line_options, ONLY: input_file_, command_line, ndiag_
   ! for pluginization
   USE input_parameters, ONLY : nat_ => nat, ntyp_ => ntyp
@@ -102,16 +102,6 @@ PROGRAM gipaw_main
   call gipaw_readin()
   call check_stop_init( max_seconds )
 
-  ! open XML output file
-  call open_xml_output('test.xml')
-  call xml_output_parallelinfo
-  call xml_output_generalinfo
-  call xml_output_namelist
-  call close_xml_output
-  ! dump input variables
-  stop
-
-
   io_level = 1
  
   ! read ground state wavefunctions
@@ -132,6 +122,7 @@ PROGRAM gipaw_main
   ntyp_ = ntyp
   ibrav_ = ibrav
   assume_isolated_ = 'none'
+
   call plugin_read_input()
   call gipaw_allocate()
   call gipaw_setup()
@@ -141,7 +132,7 @@ PROGRAM gipaw_main
   q_gipaw = q_gipaw / tpiba
   
   ! image initialization
-  if (nimage >= 1) then
+  if (nimage > 1) then
      write(dirname, fmt='(I5.5)') my_image_id
      tmp_dir = trim(tmp_dir) // '/' // trim(dirname)
      call create_directory(tmp_dir)
@@ -150,7 +141,6 @@ PROGRAM gipaw_main
 #ifdef __BANDS
   call init_parallel_over_band(inter_bgrp_comm, nbnd)
 #endif
-
 
   ! calculation
   select case ( trim(job) )
@@ -182,9 +172,15 @@ PROGRAM gipaw_main
      call errore('gipaw_main', 'wrong or undefined job in input', 1)
   end select
 
-  ! close XML output file
-  !!call xml_output_generalinfo
-  ! clocks, status etc..
+  ! open XML output file
+  call open_xml_output(trim(tmp_dir) // '/' // trim(prefix) // '-gipaw.xml')
+  call xml_output_parallelinfo
+  call xml_output_generalinfo
+  call xml_output_namelist
+  call xml_output_results
+  call xml_output_status
+  call xml_output_timinginfo
+  call xml_output_closed
   call close_xml_output
   
   ! print timings and stop the code

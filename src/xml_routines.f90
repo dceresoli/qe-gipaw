@@ -23,7 +23,7 @@
 #define ATTR(x,y) call XML_AddAttribute(xmlf, #x, (y))
 
 !-----------------------------------------------------------------------
-MODULE xml_gipaw_module
+MODULE xml_routines
 !-----------------------------------------------------------------------  
   ! ... This module contains the variables routines to I/O the XML files
   USE kinds,                       ONLY : dp
@@ -41,14 +41,12 @@ MODULE xml_gipaw_module
 
   PUBLIC :: open_xml_output, close_xml_output
   PUBLIC :: xml_output_generalinfo, xml_output_parallelinfo
-  PUBLIC :: xml_output_namelist
-  !PUBLIC :: xml_output_nmr, xml_output_gtensor, xml_output_efg, xml_output_hfi
-  !PUBLIC :: xml_output_status
-  !PUBLIC :: xml_output_timinginfo
-  !PUBLIC :: xml_output_closed
+  PUBLIC :: xml_output_namelist, xml_output_results
+  PUBLIC :: xml_output_status
+  PUBLIC :: xml_output_timinginfo
+  PUBLIC :: xml_output_closed
 
   CONTAINS
-
 
   !-----------------------------------------------------------------------
   SUBROUTINE open_xml_output(filename)
@@ -177,5 +175,160 @@ MODULE xml_gipaw_module
   END SUBROUTINE xml_output_namelist
 
 
-END MODULE xml_gipaw_module
+  !-----------------------------------------------------------------------
+  SUBROUTINE xml_output_susceptibility
+  !-----------------------------------------------------------------------
+    USE gipaw_results
+    implicit none
+
+    CHECK_IONODE
+    NE(suceptibility_low)
+      ATTR(units, '1e-6 cm^3/mol')
+      ADDV(res_suscept1)
+    EE(suceptibility_low)
+    NE(suceptibility_high)
+      ATTR(units, '1e-6 cm^3/mol')
+      ADDV(res_suscept2)
+    EE(suceptibility_high)
+
+  END SUBROUTINE xml_output_susceptibility
+
+
+  !-----------------------------------------------------------------------
+  SUBROUTINE xml_atom_attributes(na)
+  !-----------------------------------------------------------------------
+    USE gipaw_results
+    USE ions_base, ONLY: tau, atm, ityp
+    implicit none
+    integer, intent(in) :: na
+
+    ATTR(atom, trim(atm(ityp(na))))
+    ATTR(tau, tau(:,na))
+
+  END SUBROUTINE xml_atom_attributes
+
+
+  !-----------------------------------------------------------------------
+  SUBROUTINE xml_output_results
+  !-----------------------------------------------------------------------
+    USE gipaw_module     ! to access internal variables
+    USE gipaw_results
+    USE ions_base, ONLY: nat
+    implicit none
+    integer :: na
+
+    CHECK_IONODE
+    NE(output)
+
+    if (job == 'nmr') then
+      call xml_output_susceptibility
+      NE(shielding_tensors)
+      do na = 1, nat
+        NE(sigma)
+          ATTR(units, 'ppm')
+          call xml_atom_attributes(na)
+          ADDV(res_nmr_sigma(:,:,na))
+        EE(sigma)
+      enddo
+      EE(shielding_tensors)
+    endif
+
+    if (job == 'g_tensor') then
+      call xml_output_susceptibility
+      NE(delta_g)
+        ATTR(units, 'ppm')
+        OUTV(res_epr_deltag)
+      EE(delta_g)
+      NE(delta_g_paratec)
+        ATTR(units, 'ppm')
+        OUTV(res_epr_deltag_paratec)
+      EE(delta_g_paratec)
+    endif
+
+    if (job == 'efg') then
+      NE(electric_field_gradients)
+        do na = 1, nat
+          NE(efg)
+            ATTR(units, 'MHz')
+            call xml_atom_attributes(na)
+            ADDV(res_efg(:,:,na))
+          EE(efg)
+        enddo
+        EE(electric_field_gradients)
+    endif
+
+    if (job == 'hyperfine') then
+      NE(hyperfine_couplings)
+      do na = 1, nat
+        NE(hfi_dipolar)
+          ATTR(units, trim(hfi_output_unit))
+          call xml_atom_attributes(na)
+          ADDV(res_hfi_dip(:,:,na))
+        EE(hfi_dipolar)
+      enddo
+      do na = 1, nat
+        NE(hfi_fermi_contact)
+          ATTR(units, trim(hfi_output_unit))
+          call xml_atom_attributes(na)
+          ADDV(res_hfi_fc(na))
+        EE(hfi_fermi_contact)
+      enddo
+      EE(hyperfine_couplings)
+    endif
+
+    EE(output)
+
+  END SUBROUTINE xml_output_results
+
+
+  !-----------------------------------------------------------------------
+  SUBROUTINE xml_output_status
+  !-----------------------------------------------------------------------
+    implicit none
+    integer :: status = 0
+
+    CHECK_IONODE
+    OUTV(status)
+
+  END SUBROUTINE xml_output_status
+
+
+  !-----------------------------------------------------------------------
+  SUBROUTINE xml_output_closed
+  !-----------------------------------------------------------------------
+    implicit none
+    character(9) :: cdate, ctime
+
+    CHECK_IONODE
+    call date_and_tim(cdate, ctime)
+    NE(closed)
+       ATTR(date, cdate)
+       ATTR(time, ctime)
+    EE(closed)
+
+  END SUBROUTINE xml_output_closed
+
+
+  !-----------------------------------------------------------------------
+  SUBROUTINE xml_output_timinginfo
+  !-----------------------------------------------------------------------
+    USE gipaw_module
+    implicit none
+    real(dp), external :: get_clock
+    real(dp) :: wall
+
+    CHECK_IONODE
+    NE(timing_info)
+      NE(total)
+        ATTR(label, 'GIPAW')
+        wall = get_clock('GIPAW')
+        OUTV(wall)
+      EE(total)
+
+    EE(timing_info)
+
+  END SUBROUTINE xml_output_timinginfo
+
+
+END MODULE xml_routines
 
