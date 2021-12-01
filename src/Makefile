@@ -1,0 +1,74 @@
+# Makefile for qe-gipaw
+
+QE_SOURCE=/scratch/marsamos/qe-github/q-e
+include $(QE_SOURCE)/make.inc
+DFLAGS += 
+
+# location of needed modules
+BASEMOD_FLAGS= $(MOD_FLAG)$(QE_SOURCE)/upflib \
+               $(MOD_FLAG)$(QE_SOURCE)/Modules \
+               $(MOD_FLAG)$(QE_SOURCE)/MBD \
+               $(MOD_FLAG)$(QE_SOURCE)/FFTXlib \
+               $(MOD_FLAG)$(QE_SOURCE)/LAXlib \
+               $(MOD_FLAG)$(QE_SOURCE)/UtilXlib \
+               $(MOD_FLAG)$(QE_SOURCE)/XClib \
+               $(MOD_FLAG)$(QE_SOURCE)/FoX/finclude
+
+MODFLAGS = $(BASEMOD_FLAGS) \
+           $(MOD_FLAG)$(QE_SOURCE)/PW/src \
+           $(MOD_FLAG)$(QE_SOURCE)/dft-d3 \
+           $(MOD_FLAG)$(QE_SOURCE)/LR_Modules \
+           $(MOD_FLAG).
+
+GIPAW_OBJS = gipaw_module.o gipaw_main.o paw_gipaw.o stop_code.o gipaw_setup.o \
+	     gipaw_routines.o gipaw_routines_bands.o greenfunction.o orthoatwfc1.o \
+	     cgsolve_all.o h_psiq.o cg_psi.o symmetrize_rho.o symmetrize_field.o ch_psi_all.o \
+	     compute_u_kq.o suscept_crystal.o j_para.o biot_savart.o \
+	     init_gipaw_1.o init_gipaw_2.o init_us_2_no_phase.o write_tensor_field.o \
+	     velocity.o nmr_routines.o epr_routines.o efg.o hyperfine.o core_relax.o \
+	     util.o atomic.o knight_shift.o mossbauer.o gipaw_version.o output_magres.o \
+	     gipaw_results.o xml_routines.o
+
+LIBOBJS = $(QE_SOURCE)/UtilXlib/libutil.a \
+	  $(QE_SOURCE)/clib/clib.a
+
+QEMODS = $(QE_SOURCE)/Modules/libqemod.a \
+         $(QE_SOURCE)/MBD/libmbd.a \
+         $(QE_SOURCE)/KS_Solvers/Davidson/libdavid.a \
+         $(QE_SOURCE)/KS_Solvers/CG/libcg.a \
+         $(QE_SOURCE)/KS_Solvers/PPCG/libppcg.a \
+         $(QE_SOURCE)/KS_Solvers/libks_solvers.a \
+         $(QE_SOURCE)/FFTXlib/libqefft.a \
+         $(QE_SOURCE)/LAXlib/libqela.a \
+         $(QE_SOURCE)/upflib/libupf.a \
+         $(QE_SOURCE)/dft-d3/libdftd3qe.a \
+         $(QE_SOURCE)/LR_Modules/liblrmod.a \
+         $(QE_SOURCE)/XClib/xc_lib.a
+
+
+PWOBJS = $(QE_SOURCE)/PW/src/libpw.a
+
+all: version make_lr_modules gipaw.x
+
+version:
+	./update_gipaw_version
+
+gipaw_version.f90: version
+
+make_lr_modules:
+	make -C $(QE_SOURCE)/LR_Modules
+
+gipaw.x: $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS)
+	$(LD) $(LDFLAGS) -o $@ $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS) $(QELIBS)
+	(cd ../bin; ln -sf ../src/gipaw.x .)
+
+clean:
+	-/bin/rm -f gipaw.x *.o *.F90 *__genmod.f90 *.d *.mod *.i *.L
+
+distclean: clean
+	-/bin/rm -f Makefile make.depend
+
+include make.depend
+
+# DO NOT DELETE
+
