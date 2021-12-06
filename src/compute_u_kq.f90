@@ -24,6 +24,7 @@ SUBROUTINE compute_u_kq(ik, q)
 #endif
   USE klist,                ONLY : nkstot, nks, xk, ngk, igk_k
   USE uspp,                 ONLY : vkb, nkb, okvan
+  USE uspp_init,            ONLY : init_us_2
   USE wvfct,                ONLY : et, nbnd, g2kin, &
                                    current_k, nbndx, btype, npwx
   USE gvecw,                ONLY : gcutw

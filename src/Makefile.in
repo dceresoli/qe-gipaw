@@ -29,8 +29,7 @@ GIPAW_OBJS = gipaw_module.o gipaw_main.o paw_gipaw.o stop_code.o gipaw_setup.o \
 	     util.o atomic.o knight_shift.o mossbauer.o gipaw_version.o output_magres.o \
 	     gipaw_results.o xml_routines.o
 
-LIBOBJS = $(QE_SOURCE)/UtilXlib/libutil.a \
-	  $(QE_SOURCE)/clib/clib.a 
+LIBOBJS = $(QE_SOURCE)/UtilXlib/libutil.a
 
 QEMODS = $(QE_SOURCE)/Modules/libqemod.a \
          $(QE_SOURCE)/MBD/libmbd.a \

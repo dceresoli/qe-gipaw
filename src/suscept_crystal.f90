@@ -37,6 +37,7 @@ SUBROUTINE suscept_crystal
   USE gvect,                  ONLY : ngm, g
   USE fft_base,               ONLY : dfftp, dffts
   USE uspp,                   ONLY : vkb, okvan
+  USE uspp_init,              ONLY : init_us_2
   USE lsda_mod,               ONLY : nspin
   USE gipaw_module,           ONLY : tens_fmt, q_gipaw, iverbosity, alpha, evq, &
                                      avogadro, g_e, gprime, filcurr, filfield, filnics, &
