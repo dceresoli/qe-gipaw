@@ -1,0 +1,30 @@
+quartz-scf.out_1cpu:!    total energy              =    -213.14913840 Ry
+quartz-scf.out_4cpu:!    total energy              =    -213.14913834 Ry
+quartz-scf.out_4cpu_2pool:!    total energy              =    -213.14913834 Ry
+quartz-nmr.out_1cpu:     Atom  1  Si  pos: (  0.470100 -0.814241  0.733333)  Total sigma:         433.16
+quartz-nmr.out_1cpu:     Atom  2  Si  pos: (  0.470100  0.814241  1.466667)  Total sigma:         433.16
+quartz-nmr.out_1cpu:     Atom  3  Si  pos: ( -0.940200  0.000000  0.000000)  Total sigma:         433.54
+quartz-nmr.out_1cpu:     Atom  4  O   pos: (  0.681300 -0.253747  0.471680)  Total sigma:         269.89
+quartz-nmr.out_1cpu:     Atom  5  O   pos: ( -0.120900  0.716899  1.205013)  Total sigma:         269.58
+quartz-nmr.out_1cpu:     Atom  6  O   pos: ( -0.560400 -0.463152  1.938347)  Total sigma:         269.82
+quartz-nmr.out_1cpu:     Atom  7  O   pos: (  0.681300  0.253747 -0.471680)  Total sigma:         269.89
+quartz-nmr.out_1cpu:     Atom  8  O   pos: ( -0.120900 -0.716899  0.994987)  Total sigma:         269.58
+quartz-nmr.out_1cpu:     Atom  9  O   pos: ( -0.560400  0.463152  0.261653)  Total sigma:         269.82
+quartz-nmr.out_4cpu:     Atom  1  Si  pos: (  0.470100 -0.814241  0.733333)  Total sigma:         433.16
+quartz-nmr.out_4cpu:     Atom  2  Si  pos: (  0.470100  0.814241  1.466667)  Total sigma:         433.16
+quartz-nmr.out_4cpu:     Atom  3  Si  pos: ( -0.940200  0.000000  0.000000)  Total sigma:         433.54
+quartz-nmr.out_4cpu:     Atom  4  O   pos: (  0.681300 -0.253747  0.471680)  Total sigma:         269.89
+quartz-nmr.out_4cpu:     Atom  5  O   pos: ( -0.120900  0.716899  1.205013)  Total sigma:         269.58
+quartz-nmr.out_4cpu:     Atom  6  O   pos: ( -0.560400 -0.463152  1.938347)  Total sigma:         269.82
+quartz-nmr.out_4cpu:     Atom  7  O   pos: (  0.681300  0.253747 -0.471680)  Total sigma:         269.89
+quartz-nmr.out_4cpu:     Atom  8  O   pos: ( -0.120900 -0.716899  0.994987)  Total sigma:         269.58
+quartz-nmr.out_4cpu:     Atom  9  O   pos: ( -0.560400  0.463152  0.261653)  Total sigma:         269.82
+quartz-nmr.out_4cpu_2pool:     Atom  1  Si  pos: (  0.470100 -0.814241  0.733333)  Total sigma:         433.16
+quartz-nmr.out_4cpu_2pool:     Atom  2  Si  pos: (  0.470100  0.814241  1.466667)  Total sigma:         433.16
+quartz-nmr.out_4cpu_2pool:     Atom  3  Si  pos: ( -0.940200  0.000000  0.000000)  Total sigma:         433.53
+quartz-nmr.out_4cpu_2pool:     Atom  4  O   pos: (  0.681300 -0.253747  0.471680)  Total sigma:         269.88
+quartz-nmr.out_4cpu_2pool:     Atom  5  O   pos: ( -0.120900  0.716899  1.205013)  Total sigma:         269.57
+quartz-nmr.out_4cpu_2pool:     Atom  6  O   pos: ( -0.560400 -0.463152  1.938347)  Total sigma:         269.81
+quartz-nmr.out_4cpu_2pool:     Atom  7  O   pos: (  0.681300  0.253747 -0.471680)  Total sigma:         269.88
+quartz-nmr.out_4cpu_2pool:     Atom  8  O   pos: ( -0.120900 -0.716899  0.994987)  Total sigma:         269.57
+quartz-nmr.out_4cpu_2pool:     Atom  9  O   pos: ( -0.560400  0.463152  0.261653)  Total sigma:         269.81

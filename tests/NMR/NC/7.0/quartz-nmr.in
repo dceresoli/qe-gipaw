@@ -1,0 +1,12 @@
+&inputgipaw
+        job = 'nmr'
+        prefix = 'quartz'
+        tmp_dir = '/tmp/ceresoli/'
+        restart_mode = 'from_scratch'
+        verbosity = 'high'
+        diagonalization = 'david'
+        spline_ps = .true.
+        q_gipaw = 0.01
+        use_nmr_macroscopic_shape = .true.
+/
+
