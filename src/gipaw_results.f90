@@ -34,6 +34,15 @@ MODULE gipaw_results
     allocate(res_nmr_sigma(3,3,nat))
     allocate(res_efg(3,3,nat), res_hfi_dip(3,3,nat), res_hfi_fc(nat))
 
+    res_suscept1 = 0.d0
+    res_suscept2 = 0.d0
+    res_nmr_sigma = 0.d0
+    res_efg = 0.d0
+    res_epr_deltag = 0.d0
+    res_epr_deltag_paratec = 0.d0
+    res_hfi_dip = 0.d0
+    res_hfi_fc = 0.d0
+
   END SUBROUTINE allocate_gipaw_results
 
 END MODULE gipaw_results

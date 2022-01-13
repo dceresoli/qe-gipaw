@@ -154,6 +154,7 @@ MODULE xml_routines
   !-----------------------------------------------------------------------
     USE io_files,        ONLY : prefix, tmp_dir
     USE uspp_data,       ONLY : spline_ps
+    USE cell_base,       ONLY : tpiba
     USE ions_base,       ONLY : nat
     USE gipaw_module     ! to access internal variables
     implicit none
@@ -165,7 +166,9 @@ MODULE xml_routines
       _OUTS(tmp_dir)
       _OUTV(conv_threshold)
       _OUTS(restart_mode)
-      _OUTV(q_gipaw)
+      _NE(q_gipaw)
+        _ADDV(q_gipaw*tpiba)
+      _EE(q_gipaw)
       _OUTS(verbosity)
       _OUTS(filcurr)
       _OUTS(filfield)
