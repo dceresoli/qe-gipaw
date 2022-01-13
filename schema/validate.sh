@@ -7,8 +7,10 @@ if [ -z $1 ]; then
 fi
 prefix=$1
 
+schemadir=$HOME/Codes/qe-gipaw/schema
+
 # validate PW XML file
-xmllint --noout --schema qes_211101.xsd $ ${prefix}.xml
+xmllint --noout --schema $schemadir/qes_211101.xsd ${prefix}.xml
 
 # validate GIPAW XML file
-xmllint --noout --schema gipaw_xmlschema_import_local.xsd  ${prefix}-gipaw.xml
+xmllint --noout --schema $schemadir/gipaw_xmlschema_import_local.xsd  ${prefix}-gipaw.xml

@@ -130,7 +130,7 @@
     
     <!-- OUTPUTGIPAW TYPE -->
     <complexType name="outputGIPAWType">
-        <sequence>
+        <all>
             <element type="qes:matrixType" name="susceptibility_low" minOccurs="0" />
             <element type="qes:matrixType" name="susceptibility_high" minOccurs="0" />
 
@@ -141,10 +141,10 @@
 
             <element type="gpw:atomTensorList" name="electric_field_gradients" minOccurs="0" />
 
-            <element type="gpw:atomTensorList" name="hfi_dipolar" minOccurs="0" />
-            <element type="gpw:atomTensorList" name="hfi_fermi_contact" minOccurs="0" />
+            <element type="gpw:atomTensorList" name="hyperfine_dipolar" minOccurs="0" />
+            <element type="gpw:atomTensorList" name="hyperfine_fermi_contact" minOccurs="0" />
 
-        </sequence>
+        </all>
      </complexType>
 
 

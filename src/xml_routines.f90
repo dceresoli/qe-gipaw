@@ -62,10 +62,11 @@ MODULE xml_routines
     ! write namespace
     call XML_DeclareNamespace(xmlf, prefix="xsi", nsURI="http://www.w3.org/2001/XMLSchema-instance")
     call XML_DeclareNamespace(xmlf, prefix="qes", nsURI="http://www.quantum-espresso.org/ns/qes/qes-1.0")
-    call XML_NewElement(xmlf, name="qes:espresso")
+    call XML_DeclareNamespace(xmlf, prefix="gpw", nsURI="http://www.quantum-espresso.org/ns/gpw/qes_gipaw_1.0")
+    call XML_NewElement(xmlf, name="gpw:gipaw")
     call XML_AddAttribute(xmlf, name="xsi:schemaLocation", &
-                          value="http://www.quantum-espresso.org/ns/qes/qes-1.0 "//&
-                                "http://www.quantum-espresso.org/ns/qes/qes_210716.xsd")   ! cambiare questo!!!
+                          value="http://www.quantum-espresso.org/ns/gpw/qes_gipaw_1.0 "//&
+                                "http://www.quantum-espresso.org/ns/gpw/gpw_202201.xsd")
   END SUBROUTINE open_xml_output
 
 
@@ -153,6 +154,7 @@ MODULE xml_routines
   !-----------------------------------------------------------------------
     USE io_files,        ONLY : prefix, tmp_dir
     USE uspp_data,       ONLY : spline_ps
+    USE ions_base,       ONLY : nat
     USE gipaw_module     ! to access internal variables
     implicit none
 
@@ -170,14 +172,24 @@ MODULE xml_routines
       _OUTS(filnics)
       _OUTV(pawproj)
       _OUTV(use_nmr_macroscopic_shape)
-      _OUTV(nmr_macroscopic_shape)
+      _NE(nmr_macroscopic_shape)
+        _ATTR(rank, "2")
+        _ATTR(dims, "3 3")
+        _ADDV(nmr_macroscopic_shape)
+      _EE(nmr_macroscopic_shape)
       _OUTV(spline_ps)
       _OUTS(diagonalization)
-      _OUTV(q_efg)
+      _NE(q_efg)
+        _ATTR(size, nat)
+        _ADDV(q_efg)
+      _EE(q_efg)
       _OUTV(max_seconds)
       _OUTV(r_rand)
       _OUTS(hfi_output_unit)
-      _OUTV(hfi_nuclear_g_factor)
+      _NE(hfi_nuclear_g_factor)
+        _ATTR(size, nat)
+        _ADDV(hfi_nuclear_g_factor)
+      _EE(hfi_nuclear_g_factor)
       _OUTV(core_relax_method)
       _OUTV(hfi_via_reconstruction_only)
     _EE(input)
@@ -191,28 +203,37 @@ MODULE xml_routines
     implicit none
 
     CHECK_IONODE
-    _NE(suceptibility_low)
-      _ATTR(units, '1e-6 cm^3/mol')
+
+    _NE(susceptibility_low)
+      _ATTR(rank, '2')
+      _ATTR(dims, '3 3')
       _ADDV(res_suscept1)
-    _EE(suceptibility_low)
-    _NE(suceptibility_high)
-      _ATTR(units, '1e-6 cm^3/mol')
+    _EE(susceptibility_low)
+
+    _NE(susceptibility_high)
+      _ATTR(rank, '2')
+      _ATTR(dims, '3 3')
       _ADDV(res_suscept2)
-    _EE(suceptibility_high)
+    _EE(susceptibility_high)
 
   END SUBROUTINE xml_output_susceptibility
 
 
   !-----------------------------------------------------------------------
-  SUBROUTINE xml_atom_attributes(na)
+  SUBROUTINE xml_atom_attributes(na, units, rank, dims)
   !-----------------------------------------------------------------------
     USE gipaw_results
     USE ions_base, ONLY: tau, atm, ityp
     implicit none
     integer, intent(in) :: na
+    character(*) :: rank, dims, units
 
-    _ATTR(atom, trim(atm(ityp(na))))
+    _ATTR(name, trim(atm(ityp(na))))
     _ATTR(tau, tau(:,na))
+    _ATTR(index, na)
+    _ATTR(rank, rank)
+    _ATTR(dims, dims)
+    _ATTR(units, units)
 
   END SUBROUTINE xml_atom_attributes
 
@@ -229,61 +250,61 @@ MODULE xml_routines
     CHECK_IONODE
     _NE(output)
 
-    if (job == 'nmr') then
+!!    if (job == 'nmr') then
       call xml_output_susceptibility
       _NE(shielding_tensors)
       do na = 1, nat
-        _NE(sigma)
-          _ATTR(units, 'ppm')
-          call xml_atom_attributes(na)
+        _NE(atom)
+          call xml_atom_attributes(na, 'ppm', '2', '3 3')
           _ADDV(res_nmr_sigma(:,:,na))
-        _EE(sigma)
+        _EE(atom)
       enddo
       _EE(shielding_tensors)
-    endif
+!!    endif
 
-    if (job == 'g_tensor') then
-      call xml_output_susceptibility
+!!    if (job == 'g_tensor') then
+!!      call xml_output_susceptibility
       _NE(delta_g)
-        _ATTR(units, 'ppm')
-        _OUTV(res_epr_deltag)
+        _ATTR(rank, '2')
+        _ATTR(dims, '3 3')
+        _ADDV(res_epr_deltag)
       _EE(delta_g)
       _NE(delta_g_paratec)
-        _ATTR(units, 'ppm')
-        _OUTV(res_epr_deltag_paratec)
+        _ATTR(rank, '2')
+        _ATTR(dims, '3 3')
+        _ADDV(res_epr_deltag_paratec)
       _EE(delta_g_paratec)
-    endif
+!!    endif
 
-    if (job == 'efg') then
+!!    if (job == 'efg') then
       _NE(electric_field_gradients)
         do na = 1, nat
-          _NE(efg)
-            _ATTR(units, 'MHz')
-            call xml_atom_attributes(na)
+          _NE(atom)
+            call xml_atom_attributes(na, 'MHz', '2', '3 3')
             _ADDV(res_efg(:,:,na))
-          _EE(efg)
+          _EE(atom)
         enddo
         _EE(electric_field_gradients)
-    endif
+!!    endif
 
-    if (job == 'hyperfine') then
-      _NE(hyperfine_couplings)
+!!    if (job == 'hyperfine') then
+      _NE(hyperfine_dipolar)
       do na = 1, nat
-        _NE(hfi_dipolar)
-          _ATTR(units, trim(hfi_output_unit))
-          call xml_atom_attributes(na)
+        _NE(atom)
+          call xml_atom_attributes(na, trim(hfi_output_unit), '2', '3 3')
           _ADDV(res_hfi_dip(:,:,na))
-        _EE(hfi_dipolar)
+        _EE(atom)
       enddo
+      _EE(hyperfine_dipolar)
+      _NE(hyperfine_fermi_contact)
       do na = 1, nat
-        _NE(hfi_fermi_contact)
-          _ATTR(units, trim(hfi_output_unit))
-          call xml_atom_attributes(na)
+        _NE(atom)
+          call xml_atom_attributes(na, trim(hfi_output_unit), '1', '1')
           _ADDV(res_hfi_fc(na))
-        _EE(hfi_fermi_contact)
+        _EE(atom)
       enddo
-      _EE(hyperfine_couplings)
-    endif
+      _EE(hyperfine_fermi_contact)
+!!    endif
 
     _EE(output)
 
@@ -294,10 +315,10 @@ MODULE xml_routines
   SUBROUTINE xml_output_status
   !-----------------------------------------------------------------------
     implicit none
-    integer :: status = 0
+    integer :: exit_status = 0
 
     CHECK_IONODE
-    _OUTV(status)
+    _OUTV(exit_status)
 
   END SUBROUTINE xml_output_status
 
@@ -311,8 +332,8 @@ MODULE xml_routines
     CHECK_IONODE
     call date_and_tim(cdate, ctime)
     _NE(closed)
-       _ATTR(date, cdate)
-       _ATTR(time, ctime)
+       _ATTR(DATE, cdate)
+       _ATTR(TIME, ctime)
     _EE(closed)
 
   END SUBROUTINE xml_output_closed
@@ -321,16 +342,20 @@ MODULE xml_routines
   !-----------------------------------------------------------------------
   SUBROUTINE xml_output_timinginfo
   !-----------------------------------------------------------------------
+    USE mytime,  ONLY : f_wall, f_tcpu
     USE gipaw_module
     implicit none
     real(dp), external :: get_clock
-    real(dp) :: wall
+    real(dp) :: wall, cpu
 
     CHECK_IONODE
     _NE(timing_info)
       _NE(total)
         _ATTR(label, 'GIPAW')
-        wall = get_clock('GIPAW')
+        cpu = f_tcpu()
+        wall = f_wall()
+        !wall = get_clock('GIPAW')
+        _OUTV(cpu)
         _OUTV(wall)
       _EE(total)
 
