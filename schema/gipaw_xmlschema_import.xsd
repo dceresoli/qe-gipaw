@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:qes="http://www.quantum-espresso.org/ns/qes/qes-1.0"
+        xmlns:gpw="http://www.quantum-espresso.org/ns/gpw/qes_gipaw_1.0"
+        targetNamespace="http://www.quantum-espresso.org/ns/gpw/qes_gipaw_1.0">
+        <import schemaLocation="http://www.quantum-espresso.org/ns/qes/qes_211101.xsd" namespace="http://www.quantum-espresso.org/ns/qes/qes-1.0"/>
+
+    <!-- QE-GIPAW (root element) -->
+    <element name="gipaw" type="gpw:gipawType" />
+
+    <complexType name="gipawType">
+        <all>
+            <element type="qes:general_infoType" name="general_info" minOccurs="0"/>
+            <element type="qes:parallel_infoType" name="parallel_info" minOccurs="0"/>
+            <element type="gpw:inputGIPAWType" name="input" />
+            <element type="gpw:outputGIPAWType" name="output" minOccurs="0" />
+            <element type="qes:statusType" name="exit_status" minOccurs="0" />
+            <element type="qes:closedType" name="closed" minOccurs="0" />
+            <element type="qes:timingType" name="timing_info" minOccurs="0" />
+        </all>
+    </complexType>
+
+
+    <!-- vector types -->
+    <!-- bool array da spostare in qes  -->
+    <simpleType name="boolvectorType">
+        <restriction>
+            <simpleType>
+                <list itemType="boolean"/>
+            </simpleType>
+        </restriction>
+    </simpleType>
+
+    <complexType name="atomTensorList">
+        <sequence>
+            <element type="gpw:atomtensor" name="atom" maxOccurs="unbounded" />
+        </sequence>
+     </complexType>
+
+     <complexType name="atomtensor">
+         <simpleContent>
+             <extension base="qes:matrixType">
+                 <attribute type="string" name="name" />
+                 <attribute type="string" name="tau" />
+                 <attribute type="string" name="units" />
+                 <attribute type="positiveInteger" name="index" />
+             </extension>
+         </simpleContent>
+     </complexType>
+
+
+    <!-- enumerations -->
+    <simpleType name="JobType">
+        <restriction base="string">
+            <enumeration value="nmr"/>
+            <enumeration value="efg"/>
+            <enumeration value="g_tensor"/>
+            <enumeration value="hyperfine"/>
+            <enumeration value="mossbauer"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="RestartModeType">
+        <restriction base="string">
+            <enumeration value="from_scratch"/>
+            <enumeration value="restart"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="VerbosityType">
+        <restriction base="string">
+            <enumeration value="low"/>
+            <enumeration value="medium"/>
+            <enumeration value="high"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="DiagonalizationType">
+        <restriction base="string">
+            <enumeration value="cg"/>
+            <enumeration value="david"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="HFIOutputUnitType">
+        <restriction base="string">
+            <enumeration value="MHz"/>
+            <enumeration value="mT"/>
+            <enumeration value="G"/>
+            <enumeration value="10e-4cm^-1"/>
+        </restriction>
+    </simpleType>
+
+
+    <!-- INPUTGIPAW TYPE-->
+    <complexType name="inputGIPAWType">
+        <all>
+            <element type="gpw:JobType" name="job" default="nmr" minOccurs="0" />
+            <element type="gpw:RestartModeType" name="restart_mode" default="from_scratch" minOccurs="0" />
+            <element type="gpw:VerbosityType" name="verbosity" default="low" minOccurs="0" />
+            <element type="double" name="max_seconds" default="1e7" minOccurs="0" />
+
+            <element type="string" name="prefix" default="pwscf" minOccurs="0" />
+            <element type="string" name="tmp_dir" default="./" minOccurs="0" />
+            <element type="string" name="filcurr" default="" minOccurs="0" />
+            <element type="string" name="filfield" default="" minOccurs="0" />
+            <element type="string" name="filnics" default="" minOccurs="0" />
+
+            <element type="gpw:DiagonalizationType" name="diagonalization" default="david" minOccurs="0" />
+            <element type="double" name="conv_threshold" default="1e-14" minOccurs="0" />
+            <element type="double" name="q_gipaw" default="0.01" minOccurs="0" />
+            <element type="double" name="r_rand" default="0.1" minOccurs="0" />
+            <element type="boolean" name="spline_ps" default="true" minOccurs="0" />
+            <element type="gpw:boolvectorType" name="pawproj" default="false" minOccurs="0" />
+
+            <element type="boolean" name="use_nmr_macroscopic_shape" default="true" minOccurs="0" />
+            <element type="qes:matrixType" name="nmr_macroscopic_shape"
+                     default="0.666667 0.000000 0.000000 0.000000 0.666667 0.000000 0.000000 0.000000 0.666667" minOccurs="0" />
+
+            <element type="qes:vectorType" name="q_efg" default="0.0" minOccurs="0" />
+
+            <element type="gpw:HFIOutputUnitType" name="hfi_output_unit" default="MHz" minOccurs="0" />
+            <element type="qes:vectorType" name="hfi_nuclear_g_factor" default="0.0" minOccurs="0" />
+            <element type="integer" name="core_relax_method" default="0" minOccurs="0" />
+            <element type="boolean" name="hfi_via_reconstruction_only" default="false" minOccurs="0" />
+
+        </all>
+    </complexType>
+
+    
+    <!-- OUTPUTGIPAW TYPE -->
+    <complexType name="outputGIPAWType">
+        <sequence>
+            <element type="qes:matrixType" name="susceptibility_low" minOccurs="0" />
+            <element type="qes:matrixType" name="susceptibility_high" minOccurs="0" />
+
+            <element type="gpw:atomTensorList" name="shielding_tensors" minOccurs="0" />
+
+            <element type="qes:matrixType" name="delta_g" minOccurs="0" />
+            <element type="qes:matrixType" name="delta_g_paratec" minOccurs="0" />
+
+            <element type="gpw:atomTensorList" name="electric_field_gradients" minOccurs="0" />
+
+            <element type="gpw:atomTensorList" name="hfi_dipolar" minOccurs="0" />
+            <element type="gpw:atomTensorList" name="hfi_fermi_contact" minOccurs="0" />
+
+        </sequence>
+     </complexType>
+
+
+</schema>

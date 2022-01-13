@@ -174,8 +174,8 @@ PROGRAM gipaw_main
 
   ! open XML output file
   call open_xml_output(trim(tmp_dir) // '/' // trim(prefix) // '-gipaw.xml')
-  call xml_output_parallelinfo
   call xml_output_generalinfo
+  call xml_output_parallelinfo
   call xml_output_namelist
   call xml_output_results
   call xml_output_status
