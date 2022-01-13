@@ -35,7 +35,7 @@ for child in list(inp):
         text = text.replace('true', '.t.')
         print('    {0} = {1}'.format(tag, ', '.join(text.split())))
 
-    elif tag in ['q_efg', 'hfi_nuclear_g_factor']:
+    elif tag in ['q_efg', 'hfi_nuclear_g_factor', 'nmr_macroscopic_shape']:
         print('    {0} = {1}'.format(tag, ', '.join(text.split())))
 
     else:
