@@ -68,6 +68,9 @@ clean:
 distclean: clean
 	-/bin/rm -f Makefile make.depend
 
+xml_routines.f90: xmlmacros.m4 xml_routines.f90.in
+	m4 xmlmacros.m4 xml_routines.f90.in >xml_routines.f90
+
 include make.depend
 
 # DO NOT DELETE
