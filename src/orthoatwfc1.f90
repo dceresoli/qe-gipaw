@@ -15,7 +15,7 @@ SUBROUTINE orthoatwfc1(ik)
   !
   USE kinds,            ONLY : DP
   USE basis,            ONLY : natomwfc, swfcatom
-  USE ldaU,             ONLY : U_projection, copy_U_wfc
+  USE ldaU,             ONLY : Hubbard_projectors, copy_U_wfc
   USE wvfct,            ONLY : npwx
   USE klist,            ONLY : ngk
   USE uspp,             ONLY : nkb, vkb
@@ -30,8 +30,8 @@ SUBROUTINE orthoatwfc1(ik)
   INTEGER :: npw
   LOGICAL :: normalize_only
 
-  if (U_projection == "file") &
-    call errore('orthoatwfc1', 'U_projection == file cannot be used', 1)
+  if (Hubbard_projectors == "file") &
+    call errore('orthoatwfc1', 'Hubbard_projectors == file cannot be used', 1)
  
   allocate(wfcatom(npwx,natomwfc), swfcatom(npwx,natomwfc))    
   call allocate_bec_type(nkb, natomwfc, becp)
@@ -42,8 +42,8 @@ SUBROUTINE orthoatwfc1(ik)
   call calbec (npw, vkb, wfcatom, becp)
   call s_psi(npwx, npw, natomwfc, wfcatom, swfcatom)
 
-  if (U_projection /= 'atomic') then
-      normalize_only = (U_projection == 'norm-atomic') 
+  if (Hubbard_projectors /= 'atomic') then
+      normalize_only = (Hubbard_projectors == 'norm-atomic') 
       call ortho_swfc(npw, normalize_only, natomwfc, wfcatom, swfcatom)
   endif
 

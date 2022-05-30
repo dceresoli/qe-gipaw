@@ -237,7 +237,7 @@ SUBROUTINE paramagnetic_correction_aug (paug_corr_tensor, j_bare_s)
   USE gipaw_module,           ONLY : lx, ly, lz, radial_integral_paramagnetic, &
                                      q_gipaw, alpha, iverbosity
   USE uspp,                   ONLY : qq_nt, vkb, nkb 
-  USE uspp_init,              ONLY : init_us_2
+  USE uspp_init,              ONLY : init_us_2, gen_us_dj, gen_us_dy
   USE uspp_param,             ONLY : nh
   USE cell_base,              ONLY : tpiba, tpiba2
   USE klist,                  ONLY : xk, igk_k, ngk
