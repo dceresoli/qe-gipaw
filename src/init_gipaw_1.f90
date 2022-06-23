@@ -15,13 +15,13 @@ SUBROUTINE init_gipaw_1
   ! This routine initialize the variables of the paw projector
   ! and create the projectors in radial part (paw_beta) 
   !
-  USE kinds ,      ONLY : dp
-  USE upf_params,  ONLY : lqmax , lmaxx
+  USE kinds,       ONLY : dp
+  USE upf_params,  ONLY : lqmax, lmaxx
   USE gipaw_module,ONLY : nbrx, pawproj
   USE cell_base ,  ONLY : omega
   USE ions_base,   ONLY : nat, ntyp => nsp, ityp, atm
   USE constants,   ONLY : fpi
-  USE uspp_data,   ONLY : dq, nqx, spline_ps
+  USE uspp_data,   ONLY : dq, nqx
   USE paw_gipaw,   ONLY : paw_recon, paw_nkb, paw_lmaxkb
   USE splinelib
   USE uspp,        ONLY : aainit
@@ -33,7 +33,8 @@ SUBROUTINE init_gipaw_1
   USE matrix_inversion
   USE mp_pools,    ONLY : intra_pool_comm
   USE mp,          ONLY : mp_sum
-  USE uspp_param,  ONLY : upf  
+  USE uspp_param,  ONLY : upf
+  USE gipaw_module, ONLY : spline_ps
   !--------------------------------------------------------------------
   implicit none
   integer :: nt, ih, jh, nb, l, m, ir, iq, startq

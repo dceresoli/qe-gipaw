@@ -109,6 +109,10 @@ MODULE gipaw_module
 
   INTEGER, PARAMETER :: iumagres = 57
 
+  ! these used to be in upflib/uspp_data.f90
+  LOGICAL, PUBLIC :: spline_ps=.TRUE.
+  REAL(DP), ALLOCATABLE, PUBLIC :: tab_d2y(:,:,:)
+
 #ifdef __BANDS
   INTEGER :: ibnd_start, ibnd_end
 #endif

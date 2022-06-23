@@ -20,7 +20,8 @@ subroutine init_gipaw_2 (npw_, igk_, q_, vkb_)
   USE ions_base,  ONLY : nat, ntyp => nsp, ityp, tau
   USE gvect ,     ONLY : eigts1, eigts2, eigts3, g, mill 
   USE paw_gipaw,  ONLY : paw_nkb, paw_recon, paw_lmaxkb
-  USE uspp_data,  ONLY : nqx, dq, spline_ps
+  USE uspp_data,  ONLY : nqx, dq
+  USE gipaw_module, ONLY : spline_ps
   USE splinelib
   !
   implicit none
@@ -173,14 +174,15 @@ subroutine init_gipaw_2_no_phase (npw_, igk_, q_, vkb_)
   !   Calculates paw_beta functions (paw projectors), with
   !   structure factor, for all atoms, in reciprocal space
   !
-  USE kinds ,     ONLY : dp
-  USE constants , ONLY : tpi
-  USE wvfct ,     ONLY : npwx
-  USE cell_base , ONLY : tpiba
+  USE kinds,      ONLY : dp
+  USE constants,  ONLY : tpi
+  USE wvfct,      ONLY : npwx
+  USE cell_base,  ONLY : tpiba
   USE ions_base,  ONLY : nat, ntyp => nsp, ityp, tau
-  USE gvect ,     ONLY : eigts1, eigts2, eigts3, g, mill 
+  USE gvect,      ONLY : eigts1, eigts2, eigts3, g, mill 
   USE paw_gipaw,  ONLY : paw_nkb, paw_recon, paw_lmaxkb
-  USE uspp_data,  ONLY : nqx, dq, spline_ps
+  USE uspp_data,  ONLY : nqx, dq
+  USE gipaw_module, ONLY : spline_ps
   USE splinelib
   !
   implicit none

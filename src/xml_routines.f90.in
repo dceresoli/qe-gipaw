@@ -147,7 +147,6 @@ MODULE xml_routines
   SUBROUTINE xml_output_namelist
   !-----------------------------------------------------------------------
     USE io_files,        ONLY : prefix, tmp_dir
-    USE uspp_data,       ONLY : spline_ps
     USE cell_base,       ONLY : tpiba
     USE ions_base,       ONLY : nat
     USE gipaw_module     ! to access internal variables

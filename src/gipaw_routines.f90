@@ -17,7 +17,6 @@ SUBROUTINE gipaw_readin()
   USE gipaw_module
   USE io_files,         ONLY : prefix, tmp_dir  
   USE io_global,        ONLY : ionode, stdout, qestdin
-  USE uspp_data,        ONLY : spline_ps
   USE mp_images,        ONLY : my_image_id
   USE open_close_input_file
 
@@ -73,7 +72,6 @@ SUBROUTINE gipaw_readin()
   r_rand = 0.1
   max_seconds  =  1.d7
 
-  print*, qestdin
   read(qestdin, inputgipaw, err=200, iostat=ios)
 
   ! check input
@@ -167,7 +165,6 @@ SUBROUTINE gipaw_bcast_input
   USE mp_world,      ONLY : world_comm
   USE mp,            ONLY : mp_bcast
   USE io_files,      ONLY : prefix, tmp_dir
-  USE uspp_data,     ONLY : spline_ps
 
   implicit none
   integer :: root = 0
@@ -212,6 +209,7 @@ SUBROUTINE gipaw_allocate
   USE gipaw_results
   USE ions_base,     ONLY : ntyp => nsp
   USE paw_gipaw,     ONLY : paw_recon
+  USE uspp_data,     ONLY : tab
   USE pwcom
     
   implicit none
@@ -224,6 +222,9 @@ SUBROUTINE gipaw_allocate
 
   ! GIPAW projectors
   if (.not. allocated(paw_recon)) allocate(paw_recon(ntyp))
+
+  ! used to be in upflib/uspp_data.f90
+  allocate(tab_d2y, mold=tab)
 
   call allocate_gipaw_results
 
@@ -242,7 +243,6 @@ SUBROUTINE gipaw_summary
   USE ldaU,          ONLY : lda_plus_U
   USE cellmd,        ONLY : cell_factor
   USE gvecw,         ONLY : ecutwfc
-  USE uspp_data,     ONLY : spline_ps
   implicit none
 
   if (.not. spline_ps) then
