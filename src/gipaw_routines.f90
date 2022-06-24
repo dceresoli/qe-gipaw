@@ -209,7 +209,6 @@ SUBROUTINE gipaw_allocate
   USE gipaw_results
   USE ions_base,     ONLY : ntyp => nsp
   USE paw_gipaw,     ONLY : paw_recon
-  USE uspp_data,     ONLY : tab
   USE pwcom
     
   implicit none
@@ -222,9 +221,6 @@ SUBROUTINE gipaw_allocate
 
   ! GIPAW projectors
   if (.not. allocated(paw_recon)) allocate(paw_recon(ntyp))
-
-  ! used to be in upflib/uspp_data.f90
-  allocate(tab_d2y, mold=tab)
 
   call allocate_gipaw_results
 

@@ -74,7 +74,7 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   USE wvfct,                ONLY : nbnd, npwx, current_k
   USE becmod,               ONLY : bec_type, becp, calbec, &
                                    allocate_bec_type, deallocate_bec_type
-  USE uspp,                 ONLY : nkb, vkb
+  USE uspp,                 ONLY : nkb, vkb, qq_at
   USE cell_base,            ONLY : tpiba
   USE gipaw_module,         ONLY : q_gipaw, nbnd_occ
   USE ldaU,                 ONLY : lda_plus_U
@@ -230,6 +230,7 @@ SUBROUTINE apply_vel(psi, vel_psi, ik, ipol, q)
   real(dp), parameter :: ryd_to_hartree = 0.5d0
 
   call start_clock('apply_vel')
+  vel_psi = (0.d0,0.d0)
 
   if (okvan) then
       call apply_vel_NL('S', psi, vel_psi, ik, ipol, q)

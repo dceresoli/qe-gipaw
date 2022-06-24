@@ -9,7 +9,7 @@ This is the official Git repository of the GIPAW code for Quantum-Espresso.
 * EPR g-tensor, hyperfine couplings
 * Mössbauer
 * Norm-conserving (g-tensor only), USPP and PAW
-* LDA and GGA functionals
+* LDA and GGA functionals, +Hubbard U
 * isolated and periodic systems
 * integration with Quantum-Environment (solvent effects)
 

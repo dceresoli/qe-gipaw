@@ -116,10 +116,12 @@ subroutine init_us_2_no_phase (npw_, igk_, q_, vkb_)
               lm =nhtolm (ih, nt)
               do ig = 1, npw_
                  vkb1 (ig,ih) = ylm (ig, lm) * vq (ig)
+                 if (isnan(vq(ig))) STOP
               enddo
            endif
         enddo
      enddo
+
      !
      ! vkb1 contains all betas including angular part for type nt
      ! now add the structure factor and factor (-i)^l

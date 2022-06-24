@@ -57,6 +57,9 @@ SUBROUTINE gipaw_setup
   call gipaw_setup_integrals
   call gipaw_setup_l
 
+  ! setup splines
+  call gipaw_setup_splines
+
   ! computes the total local potential (external+scf) on the smooth grid
   call setlocal
   call plugin_scf_potential(rho, .false., -1d0)
@@ -508,3 +511,40 @@ SUBROUTINE gipaw_setup_l
 END SUBROUTINE gipaw_setup_l
     
 
+!-----------------------------------------------------------------------
+SUBROUTINE gipaw_setup_splines
+  !-----------------------------------------------------------------------
+  !
+  ! ... Setup the radial splines
+  !
+  USE kinds,         ONLY : dp
+  USE uspp_data,     ONLY : nqx, dq, tab
+  USE uspp_param,    ONLY : upf
+  USE ions_base,     ONLY : nsp
+  USE splinelib,     ONLY : spline
+  USE gipaw_module
+
+  implicit none
+  real(dp), allocatable :: xdata(:)
+  real(dp) :: d1
+  integer :: iq, nt, nb
+
+  ! used to be in upflib/uspp_data.f90
+  allocate(tab_d2y, mold=tab)
+
+  ! initialize spline interpolation
+  if (spline_ps) then
+     allocate( xdata(nqx) )
+     do iq = 1, nqx
+        xdata(iq) = (iq - 1) * dq
+     enddo
+     do nt = 1, nsp
+        do nb = 1, upf(nt)%nbeta
+           d1 = (tab(2,nb,nt) - tab(1,nb,nt)) / dq
+           call spline(xdata, tab(:,nb,nt), 0.d0, d1, tab_d2y(:,nb,nt))
+        enddo
+     enddo
+     deallocate(xdata)
+  endif
+
+END SUBROUTINE gipaw_setup_splines
