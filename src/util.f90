@@ -69,7 +69,7 @@ SUBROUTINE principal_axis_simpson(tens, eigs, eigv)
 END SUBROUTINE principal_axis_simpson
 
 
-! transform rho from (rho,zeta) => (up,down)
+! transform rho from (rho,zeta) to (up,down)
 SUBROUTINE get_rho_up_down
   USE kinds,        ONLY : dp
   USE scf,          ONLY : rho
@@ -91,6 +91,30 @@ SUBROUTINE get_rho_up_down
   write(stdout,'(/,5X,''(RHO,ZETA) => (RHO_UP,RHO_DOWN)'',/)')
 
 END SUBROUTINE get_rho_up_down
+
+
+! transform rho from (up,down) to (rho,zeta)
+SUBROUTINE get_rho_zeta
+  USE kinds,        ONLY : dp
+  USE scf,          ONLY : rho
+  USE lsda_mod,     ONLY : nspin
+  USE fft_base,     ONLY : dfftp
+  USE io_global,    ONLY : stdout
+  IMPLICIT NONE
+  real(dp) :: up, dw
+  integer :: i
+
+  if (nspin == 1) return
+
+  do i = 1, dfftp%nnr
+     up = rho%of_r(i,1)
+     dw = rho%of_r(i,2)
+     rho%of_r(i,1) = up + dw
+     rho%of_r(i,2) = up - dw
+  enddo
+  write(stdout,'(/,5X,''(RHO_UP,RHO_DOWN) => (RHO,ZETA)'',/)')
+
+END SUBROUTINE get_rho_zeta
 
 
 

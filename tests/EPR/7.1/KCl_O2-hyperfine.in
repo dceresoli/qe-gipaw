@@ -1,0 +1,12 @@
+&inputgipaw
+    job = 'hyperfine'
+    prefix = 'superox'
+    tmp_dir = '/tmp/ceresoli/'
+    restart_mode = 'from_scratch'
+    verbosity = 'high'
+    spline_ps = .true.
+    hfi_output_unit = 'MHz'
+    hfi_nuclear_g_factor(1) = 1         ! K
+    hfi_nuclear_g_factor(2) = 1         ! Cl
+    hfi_nuclear_g_factor(3) = -0.7575   ! O
+/

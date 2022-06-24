@@ -169,7 +169,11 @@ SUBROUTINE suscept_crystal
   call gipaw_memory_report
 
   ! EPR: select minority and majority spins
-  if (job == 'g_tensor') call select_spin(s_min, s_maj)
+  if (job == 'g_tensor') then
+      call get_rho_up_down
+      call select_spin(s_min, s_maj)
+      call get_rho_zeta
+  endif
 
   write(stdout, '(5X,''Computing the magnetic susceptibility'',$)')
   write(stdout, '(5X,''isolve='',I1,4X,''ethr='',E12.4)') isolve, conv_threshold
