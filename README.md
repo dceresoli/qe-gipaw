@@ -1,6 +1,9 @@
 # QE-GIPAW
 This is the official Git repository of the GIPAW code for Quantum-Espresso.
 
+> Since 7.1 spline interpolation of radial function (`spline_ps`) has been removed from QE.
+> Expect small numerical changes in your calculations!
+
 ## Features
 * NMR shielding tensors, EFG tensors
 * EPR g-tensor, hyperfine couplings
