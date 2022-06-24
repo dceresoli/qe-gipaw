@@ -14,7 +14,6 @@
     nat = 9
     ntyp = 2
     ecutwfc = 50
-    spline_ps = .true.
 /
 &electrons
     diagonalization = 'david'
