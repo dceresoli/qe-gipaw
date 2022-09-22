@@ -42,6 +42,7 @@ set(src_gipaw
 # gipaw.x
 ###########################################################
 qe_add_executable(qe_gipaw_exe ${src_gipaw})
+qe_install_targets(qe_gipaw_exe)
 set_target_properties(qe_gipaw_exe
     PROPERTIES
         OUTPUT_NAME gipaw.x)
