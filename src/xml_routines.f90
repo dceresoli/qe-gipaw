@@ -12,7 +12,7 @@
 
 
 ! DO NOT EDIT xml_routines.f90, EDIT INSTEAD xml_routines.f90.in
-! m4 xmlmacros.m4 xml_routines.f90.in >xml_routines.f90, 
+! m4 xmlmacros.m4 xml_routines.f90.in >xml_routines.f90 
 
 !
 ! Copyright (C) 2001-2021 Quantum ESPRESSO group
@@ -35,8 +35,8 @@ MODULE xml_routines
   ! ... This module contains the variables routines to I/O the XML files
   USE kinds,                       ONLY : dp
   USE io_global,                   ONLY : ionode
-  USE fox_wxml                     ! to output XML
-  USE fox_dom                      ! to parse XML file
+  USE wxml                         ! to output XML
+  USE dom                          ! to parse XML file
 
   IMPLICIT NONE
   SAVE

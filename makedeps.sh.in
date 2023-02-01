@@ -9,7 +9,7 @@ DEPENDS="${QE_SOURCE}/include ${QE_SOURCE}/iotk/src
          ${QE_SOURCE}/Modules ${QE_SOURCE}/PW/src
          ${QE_SOURCE}/FFTXlib/src ${QE_SOURCE}/UtilXlib
          ${QE_SOURCE}/LAXlib  ${QE_SOURCE}/upflib
-         ${QE_SOURCE}/XClib   ${QE_SOURCE}/FoX/finclude"
+         ${QE_SOURCE}/XClib"
 
 cd src
 

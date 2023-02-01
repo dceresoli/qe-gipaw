@@ -11,8 +11,7 @@ BASEMOD_FLAGS= $(MOD_FLAG)$(QE_SOURCE)/upflib \
                $(MOD_FLAG)$(QE_SOURCE)/FFTXlib/src \
                $(MOD_FLAG)$(QE_SOURCE)/LAXlib \
                $(MOD_FLAG)$(QE_SOURCE)/UtilXlib \
-               $(MOD_FLAG)$(QE_SOURCE)/XClib \
-               $(MOD_FLAG)$(QE_SOURCE)/FoX/finclude
+               $(MOD_FLAG)$(QE_SOURCE)/XClib
 
 MODFLAGS = $(BASEMOD_FLAGS) \
            $(MOD_FLAG)$(QE_SOURCE)/PW/src \
