@@ -1,5 +1,5 @@
 
-     Program GIPAW v.7.2 starts on 29May2023 at 10:25:46 
+     Program GIPAW v.7.2 starts on 29May2023 at 11:38:14 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -15,10 +15,10 @@
      MPI processes distributed on     1 nodes
      K-points division:     npool     =       2
      R & G space division:  proc/nbgrp/npool/nimage =       2
-     28632 MiB available memory on the printing compute node when the environment starts
+     28358 MiB available memory on the printing compute node when the environment starts
  
  
-     ***** This is GIPAW git revision 00b2bd4877b89d417e7bf30c49bb3366ac6fc247 *****
+     ***** This is GIPAW git revision 82651a7ae3571e07e2fcac9a2193f70bfed5031c *****
      ***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****
      ***** in publications or presentations arising from this work.            *****
  
@@ -109,7 +109,7 @@
      k-point:     5    nbnd_occ=  24
  
  
-     q-space interpolation up to    20.00 Rydberg
+     q-space interpolation up to    24.00 Rydberg
  
      GIPAW job: efg                                                                             
  
@@ -349,7 +349,7 @@
      O    9  Q=         2.5500 1e-30 m^2  Cq=         3.7240 MHz  eta= 0.24269
  
      Initialization:
-     gipaw_setup  :      0.04s CPU      0.04s WALL (       1 calls)
+     gipaw_setup  :      0.05s CPU      0.05s WALL (       1 calls)
  
      Linear response
  
@@ -358,25 +358,25 @@
      Induced current
  
      Other routines
-     efg          :      0.01s CPU      0.02s WALL (       1 calls)
+     efg          :      0.02s CPU      0.02s WALL (       1 calls)
  
      General routines
      calbec       :      0.00s CPU      0.00s WALL (       5 calls)
-     fft          :      0.01s CPU      0.01s WALL (      15 calls)
+     fft          :      0.04s CPU      0.04s WALL (      15 calls)
      ffts         :      0.00s CPU      0.00s WALL (       2 calls)
      fftw         :      0.01s CPU      0.01s WALL (     120 calls)
      davcio       :      0.00s CPU      0.00s WALL (      15 calls)
  
      Parallel routines
-     fft_scatter  :      0.00s CPU      0.01s WALL (     137 calls)
+     fft_scatter  :      0.03s CPU      0.03s WALL (     137 calls)
  
      Plugins
  
  
-     GIPAW        :      0.20s CPU      0.23s WALL
+     GIPAW        :      0.25s CPU      0.27s WALL
 
  
-   This run was terminated on:  10:25:47  29May2023            
+   This run was terminated on:  11:38:14  29May2023            
 
 =------------------------------------------------------------------------------=
    JOB DONE.

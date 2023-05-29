@@ -48,6 +48,7 @@ PROGRAM gipaw_main
   USE wvfct,           ONLY : nbnd
   USE io_global,       ONLY : stdout
   USE noncollin_module,ONLY : noncolin
+  USE cellmd,          ONLY : cell_factor
   USE xml_routines
   USE command_line_options, ONLY: input_file_, command_line, ndiag_
   ! for pluginization
@@ -105,6 +106,7 @@ PROGRAM gipaw_main
   io_level = 1
  
   ! read ground state wavefunctions
+  cell_factor = 1.2
   call read_file
 
   call set_para_diag(nbnd, use_para_diag)
