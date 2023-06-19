@@ -24,6 +24,7 @@ subroutine init_us_2_no_phase (npw_, igk_, q_, vkb_)
   USE uspp,       ONLY : nkb, nhtol, nhtolm, indv
   USE uspp_param, ONLY : upf, lmaxkb, nhm, nh
   USE gipaw_module, ONLY : spline_ps, tab_d2y
+  USE ieee_arithmetic
   !
   implicit none
   !
@@ -116,7 +117,7 @@ subroutine init_us_2_no_phase (npw_, igk_, q_, vkb_)
               lm =nhtolm (ih, nt)
               do ig = 1, npw_
                  vkb1 (ig,ih) = ylm (ig, lm) * vq (ig)
-                 if (isnan(vq(ig))) STOP
+                 if (ieee_is_nan(vq(ig))) STOP
               enddo
            endif
         enddo
