@@ -44,7 +44,7 @@ SUBROUTINE orthoatwfc1(ik)
 
   if (Hubbard_projectors /= 'atomic') then
       normalize_only = (Hubbard_projectors == 'norm-atomic') 
-      call ortho_swfc(npw, normalize_only, natomwfc, wfcatom, swfcatom)
+      call ortho_swfc(npw, normalize_only, natomwfc, wfcatom, swfcatom, .FALSE.)
   endif
 
   CALL copy_U_wfc (swfcatom)
