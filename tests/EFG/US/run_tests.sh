@@ -13,6 +13,6 @@ mpirun -np 4 $gipaw <quartz-efg.in >quartz-efg.out_4cpu
 mpirun -np 4 $pw -npool 2 <quartz-scf.in >quartz-scf.out_4cpu_2pool
 mpirun -np 4 $gipaw -npool 2 <quartz-efg.in >quartz-efg.out_4cpu_2pool
 
-rm -f *.magres
+#rm -f *.magres
 grep ! *scf.out* > RESULTS.txt
 grep "Cq" *efg.out* >>RESULTS.txt

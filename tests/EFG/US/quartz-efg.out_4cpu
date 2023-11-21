@@ -1,5 +1,5 @@
 
-     Program GIPAW v.7.2 starts on 29May2023 at 11:38:12 
+     Program GIPAW v.7.2 starts on 21Nov2023 at 14:10:21 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -14,10 +14,10 @@
 
      MPI processes distributed on     1 nodes
      R & G space division:  proc/nbgrp/npool/nimage =       4
-     28359 MiB available memory on the printing compute node when the environment starts
+     3542 MiB available memory on the printing compute node when the environment starts
  
  
-     ***** This is GIPAW git revision 82651a7ae3571e07e2fcac9a2193f70bfed5031c *****
+     ***** This is GIPAW git revision eccee44d3caf1c930fb72ad9c741fbb743eabf45 *****
      ***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****
      ***** in publications or presentations arising from this work.            *****
  
@@ -354,7 +354,7 @@
      O    9  Q=         2.5500 1e-30 m^2  Cq=         3.7240 MHz  eta= 0.24269
  
      Initialization:
-     gipaw_setup  :      0.03s CPU      0.03s WALL (       1 calls)
+     gipaw_setup  :      0.02s CPU      0.03s WALL (       1 calls)
  
      Linear response
  
@@ -373,15 +373,15 @@
      davcio       :      0.00s CPU      0.00s WALL (      30 calls)
  
      Parallel routines
-     fft_scatter  :      0.00s CPU      0.00s WALL (     257 calls)
+     fft_scatter  :      0.00s CPU      0.01s WALL (     257 calls)
  
      Plugins
  
  
-     GIPAW        :      0.17s CPU      0.19s WALL
+     GIPAW        :      0.18s CPU      0.21s WALL
 
  
-   This run was terminated on:  11:38:12  29May2023            
+   This run was terminated on:  14:10:21  21Nov2023            
 
 =------------------------------------------------------------------------------=
    JOB DONE.
