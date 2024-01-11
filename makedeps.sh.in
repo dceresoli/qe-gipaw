@@ -19,6 +19,7 @@ ${QE_SOURCE}/install/includedep.sh $DEPENDS >> make.depend
 # handle special cases
 sed -i '/@\/cineca\/prod\/hpm\/include\/f_hpm.h@/d' make.depend
 sed -i '/@iso_c_binding@/d;/@ifcore@/d' make.depend
+sed -i '/@ieee_arithmetic@/d' make.depend
 
 # handle FoX
 sed -i "s|@fox_dom@|${QE_SOURCE}/FoX/finclude/fox_dom.mod|" make.depend
