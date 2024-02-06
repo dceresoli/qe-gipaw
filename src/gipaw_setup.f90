@@ -17,10 +17,11 @@ SUBROUTINE gipaw_setup
   USE wvfct,         ONLY : nbnd, et, wg
   USE lsda_mod,      ONLY : nspin
   USE scf,           ONLY : v, vrs, vltot, kedtau, rho
+  USE cellmd,        ONLY : cell_factor
   USE fft_base,      ONLY : dfftp
   USE gvecs,         ONLY : doublegrid
   USE gvect,         ONLY : ecutrho, ngm, g, gg, eigts1, eigts2, eigts3
-  USE klist,         ONLY : degauss, ngauss, nks, lgauss, wk, two_fermi_energies, ltetra
+  USE klist,         ONLY : degauss, ngauss, nks, lgauss, wk, two_fermi_energies, ltetra, qnorm
   USE ions_base,     ONLY : nat, nsp, ityp, tau
   USE noncollin_module,  ONLY : noncolin
   USE constants,     ONLY : degspin, pi
@@ -36,7 +37,7 @@ SUBROUTINE gipaw_setup
 
   implicit none
   integer :: ik, ibnd
-  real(dp) :: emin, emax, xmax, small, fac, target
+  real(dp) :: emin, emax, xmax, small, fac, target, qmax
     
 
   call start_clock ('gipaw_setup')
@@ -46,7 +47,9 @@ SUBROUTINE gipaw_setup
   ! call test_symmetries ( s, nsym )    
 
   ! initialize pseudopotentials and projectors for LDA+U
-  call init_us_1(nat, ityp, omega, ngm, g, gg, intra_bgrp_comm)
+  cell_factor = 1.2
+  qmax = (qnorm + sqrt(ecutrho))*cell_factor
+  call init_us_1(nat, ityp, omega, qmax, intra_bgrp_comm)
   call init_tab_atwfc(omega, intra_bgrp_comm)
 
   call plugin_initbase()
