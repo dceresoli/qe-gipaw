@@ -1,0 +1,39 @@
+&control
+    calculation = 'scf'
+    restart_mode = 'from_scratch'
+    prefix = 'ceo2'
+    pseudo_dir = './pseudo/'
+    outdir = '/tmp/ceresoli/'
+    tstress = .true.
+    tprnfor = .true.
+/
+&system
+    ibrav = 2
+    a = 5.409719944
+    nat = 3
+    ntyp = 2
+    ecutwfc = 120
+/
+&electrons
+    diagonalization = 'david'
+    conv_thr =  1e-8
+    diago_thr_init = 1e-4
+    mixing_beta = 0.2
+/
+
+ATOMIC_SPECIES
+Ce  0.000  Ce.pbe-tm-semi-dc-dipaw.UPF
+O   0.000  O.pbe-tm-gipaw-dc.UPF
+
+K_POINTS automatic
+4 4 4   0 0 0
+
+ATOMIC_POSITIONS alat
+Ce   0.00  0.00  0.00
+O    0.25  0.25  0.25
+O    0.75  0.75  0.75
+
+HUBBARD atomic
+U Ce-4f 5.0
+U O-2p  1e-4
+
