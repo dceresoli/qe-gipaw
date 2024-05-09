@@ -138,7 +138,7 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
       dxk(ipol) = dxk(ipol) + isign * dk     ! k \pm dk
 
       ! compute <\beta(k \pm dk)| and project on |psi>
-      call init_us_2_no_phase(npw, igk_k(1,ik), dxk, vkb)
+      call init_us_2_no_phase(npw, igk_k(1,ik), dxk, vkb, .false.)  ! TODO: .true. if on GPU
       call allocate_bec_type(nkb, nbnd_occ(ik), becp)
 #ifdef __BANDS
       call calbec_bands (npwx, npw, nkb, vkb, psi, becp%k, nbnd_occ(ik), ibnd_start, ibnd_end)
@@ -149,7 +149,7 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
       ! |q|!=0 => compute |\beta(k \pm dk + q)>
       if (.not. q_is_zero) then
           dxk(:) = dxk(:) + q(:)
-          call init_us_2_no_phase(npw, igk_k(1,ik), dxk, vkb)
+          call init_us_2_no_phase(npw, igk_k(1,ik), dxk, vkb, .false.) ! TODO: .true. if on GPU
       endif
 
       aux = (0.d0,0.d0)
