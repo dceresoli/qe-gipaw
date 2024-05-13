@@ -84,6 +84,12 @@ SUBROUTINE gipaw_readin()
   if (iverbosity /= -1) &
      call errore('gipaw_readin', '*** iverbosity is obsolete, use verbosity instead ***', 1)
 
+  if (spline_ps) then
+     write(stdout,'(5X,''*** warning: spline_ps is deprecated and it will be removed ***'')')
+     write(stdout,'(5X,''*** warning: spline_ps is now set to .false.                ***'')')
+     spline_ps = .false.
+  endif
+
   select case (diagonalization)
      case('david')
        isolve = 0
