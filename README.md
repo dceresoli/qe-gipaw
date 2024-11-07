@@ -1,6 +1,10 @@
 # QE-GIPAW
 This is the official Git repository of the GIPAW code for Quantum-Espresso.
 
+*Other NMR-, EPR- and GIPAW-related repositories:*
+* [GIPAW pseudopotentials](https://github.com/dceresoli/gipaw-pseudopotentials) (work in progress)
+* [List of papers with NMR, EPR and Mössbauer experiments/calculations](https://github.com/dceresoli/NMR-EPR-papers)
+
 ## Features
 * NMR shielding tensors, EFG tensors
 * EPR g-tensor, hyperfine couplings
