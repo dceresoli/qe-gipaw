@@ -18,23 +18,26 @@ SUBROUTINE init_gipaw_1
   USE kinds,       ONLY : dp
   USE upf_params,  ONLY : lqmax, lmaxx
   USE gipaw_module,ONLY : nbrx, pawproj
-  USE cell_base ,  ONLY : omega
+  USE cell_base ,  ONLY : omega, tpiba2
   USE ions_base,   ONLY : nat, ntyp => nsp, ityp, atm
   USE constants,   ONLY : fpi
-  USE uspp_data,   ONLY : dq, nqx
+  USE gvect,       ONLY : ngl, gl, ecutrho
+  USE klist,       ONLY : qnorm
   USE paw_gipaw,   ONLY : paw_recon, paw_nkb, paw_lmaxkb
   USE splinelib
   USE uspp,        ONLY : aainit
   USE atom,        ONLY : rgrid, msh
   USE io_global,   ONLY : stdout
 #ifdef __BANDS
-  USE mp_bands,    ONLY : intra_bgrp_comm, inter_bgrp_comm
+  USE mp_bands,    ONLY : inter_bgrp_comm
 #endif
+  USE mp_bands,    ONLY : intra_bgrp_comm
+  USE cellmd,      ONLY : cell_factor
   USE matrix_inversion
   USE mp_pools,    ONLY : intra_pool_comm
-  USE mp,          ONLY : mp_sum
+  USE mp,          ONLY : mp_sum, mp_max
   USE uspp_param,  ONLY : upf
-  USE gipaw_module, ONLY : spline_ps
+  USE gipaw_module, ONLY : spline_ps, nqx, nqxq, dq
   !--------------------------------------------------------------------
   implicit none
   integer :: nt, ih, jh, nb, l, m, ir, iq, startq
@@ -43,11 +46,18 @@ SUBROUTINE init_gipaw_1
   real(dp), allocatable :: s(:,:), sinv(:,:)
   real(DP), allocatable :: xdata(:)
   real(dp) :: prefr, pref, qi, norm
-  real(dp) ::  vqint, rc, rs, pow, d1
-  
+  real(dp) ::  vqint, rc, rs, pow, d1, qmax
+
   ! Initialization
   call start_clock ('init_gipaw_1')
   prefr = fpi / omega
+
+  ! initialize nqx, nqxq, etc...
+  qmax = tpiba2 * maxval(gl)
+  call mp_max(qmax, intra_bgrp_comm)
+  qmax = max(sqrt(qmax), sqrt(ecutrho)*cell_factor)
+  nqx = int(qmax/dq + 4)
+  nqxq = int(((sqrt(ecutrho) + qnorm) / dq + 4) * cell_factor)
 
   ndm = maxval(msh(1:ntyp))
   allocate (aux(ndm))

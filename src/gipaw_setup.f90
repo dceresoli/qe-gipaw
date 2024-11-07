@@ -32,11 +32,12 @@ SUBROUTINE gipaw_setup
   USE constants,     ONLY : rytoev
   USE cell_base,     ONLY : alat, at, bg, omega
   USE mp_bands,      ONLY : intra_bgrp_comm
+  USE atwfc_mod,     ONLY : init_tab_atwfc
+  USE ions_base,     ONLY : tau, ityp
   USE gipaw_module
-  USE ions_base, only: tau, ityp
 
   implicit none
-  integer :: ik, ibnd
+  integer :: ik, ibnd, ierr
   real(dp) :: emin, emax, xmax, small, fac, target, qmax
     
 
@@ -50,7 +51,7 @@ SUBROUTINE gipaw_setup
   cell_factor = 1.2
   qmax = (qnorm + sqrt(ecutrho))*cell_factor
   call init_us_1(nat, ityp, omega, qmax, intra_bgrp_comm)
-  call init_tab_atwfc(omega, intra_bgrp_comm)
+  call init_tab_atwfc(qmax, omega, intra_bgrp_comm, ierr)
 
   call plugin_initbase()
   call plugin_init_cell()

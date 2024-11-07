@@ -113,6 +113,10 @@ MODULE gipaw_module
   LOGICAL, PUBLIC :: spline_ps=.TRUE.
   REAL(DP), ALLOCATABLE, PUBLIC :: tab_d2y(:,:,:)
 
+  ! used to be in uspp_data module
+  INTEGER :: nqx, nqxq
+  REAL(dp), PARAMETER :: dq = 0.01d0
+
 #ifdef __BANDS
   INTEGER :: ibnd_start, ibnd_end
 #endif
