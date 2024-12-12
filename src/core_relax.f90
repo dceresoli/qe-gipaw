@@ -79,6 +79,8 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
 
   integer :: npw
 
+  logical :: paw_beta_done
+
   if (method < 1 .or. method > 3) call errore('core-relax', 'unknown method', abs(method))
 
   call start_clock('core_relax')
@@ -174,6 +176,8 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   allocate( delta_v(ndmx,nat) )
   delta_v = 0.d0
 
+  paw_beta_done = .false.
+
   if (iverbosity > 1) write(stdout,'(5X,''core-relax: max core radius (r_max) =  '',F12.4)') r_max
   do na = 1, nat
     nt = ityp(na)
@@ -203,10 +207,13 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
       npw = ngk(ik)
  
       call gk_sort (xk(1,ik), ngm, g, gcutw, npw, igk_k(1,ik), g2kin)
-      call get_buffer (evc, nwordwfc, iunwfc, ik)
-      call init_gipaw_2 (npw, igk_k(1,ik), xk(1,ik), paw_vkb)
-      call calbec (npw, paw_vkb, evc, paw_becp)
-     
+      if ( nks > 1 .or. (nks == 1 .and. .not. paw_beta_done) ) then
+         call get_buffer (evc, nwordwfc, iunwfc, ik)
+         call init_gipaw_2 (npw, igk_k(1,ik), xk(1,ik), paw_vkb)
+         call calbec (npw, paw_vkb, evc, paw_becp)
+         paw_beta_done = .true.
+      endif
+
       do ibnd = 1, nbnd
         ijkb0 = 0
         do nt = 1, ntyp
