@@ -1,0 +1,46 @@
+#$magres-abinitio-v1.0
+ 
+[calculation]
+calc_code              QE-GIPAW
+calc_code_version      7.3.1
+calc_code_version_git  79d3a03b7bdc4325e66f3fad02a24c6e6e3e5806
+calc_name              
+calc_prefix            quartz
+calc_xcfunctional      PBESOL
+calc_xcfunctional_long SLA  PW   PSX  PSC
+calc_cutoffenergy           40.00 Ry
+calc_cutoffenergy_rho      240.00 Ry
+calc_pspot             Si.GGA-PBESOL-paw.UPF
+calc_pspot             O.GGA-PBESOL-paw.UPF
+calc_kpoint_mp_grid         3      3      3
+calc_kpoint_mp_offset    0.50   0.50   0.50
+[/calculation]
+[atoms]
+  units lattice Angstrom
+  lattice     2.456196   -4.254274    0.000000    2.456196    4.254274    0.000000    0.000000    0.000000    5.403631
+ 
+  units atom Angstrom
+  atom Si Si       1      1.154658   -1.999934    1.801210
+  atom Si Si       2      1.154658    1.999934    3.602421
+  atom Si Si       3     -2.309315    0.000000    0.000000
+  atom O  O        4      1.673406   -0.623251    1.158539
+  atom O  O        5     -0.296954    1.760844    2.959749
+  atom O  O        6     -1.376452   -1.137593    4.760959
+  atom O  O        7      1.673406    0.623251   -1.158539
+  atom O  O        8     -0.296954   -1.760844    2.443882
+  atom O  O        9     -1.376452    1.137593    0.642672
+[/atoms]
+ 
+[magres]
+  units efg au
+  efg Si       1       -0.0270     -0.0590      0.0105     -0.0590      0.0412      0.0061      0.0105      0.0061     -0.0142
+  efg Si       2       -0.0270      0.0590     -0.0105      0.0590      0.0412      0.0061     -0.0105      0.0061     -0.0142
+  efg Si       3        0.0754      0.0000      0.0000      0.0000     -0.0611     -0.0122      0.0000     -0.0122     -0.0143
+  efg O        4       -0.1892      0.3832     -0.4334      0.3832      0.1779     -0.4829     -0.4334     -0.4829      0.0113
+  efg O        5        0.4185     -0.0320      0.6347     -0.0320     -0.4299     -0.1340      0.6347     -0.1340      0.0114
+  efg O        6       -0.2448     -0.3510     -0.2013     -0.3510      0.2335      0.6168     -0.2013      0.6168      0.0113
+  efg O        7       -0.1892     -0.3832      0.4334     -0.3832      0.1779     -0.4829      0.4334     -0.4829      0.0113
+  efg O        8        0.4185      0.0320     -0.6347      0.0320     -0.4299     -0.1340     -0.6347     -0.1340      0.0114
+  efg O        9       -0.2448      0.3510      0.2013      0.3510      0.2335      0.6168      0.2013      0.6168      0.0113
+[/magres]
+ 
