@@ -1,5 +1,5 @@
 
-     Program GIPAW v.7.3.1 starts on  9May2024 at 15:50:32 
+     Program GIPAW v.7.4 starts on 29Jan2025 at 12:18:45 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -14,16 +14,18 @@
 
      MPI processes distributed on     1 nodes
      R & G space division:  proc/nbgrp/npool/nimage =       4
-     53435 MiB available memory on the printing compute node when the environment starts
+     5724 MiB available memory on the printing compute node when the environment starts
  
  
-     ***** This is GIPAW git revision 916a344359cb8478c93d46541e4286b75bd881c4 *****
+     ***** This is GIPAW git revision 710919b8143fb120f224416503b7da6188cbee46 *****
      ***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****
      ***** in publications or presentations arising from this work.            *****
  
      Parallelizing q-star over 1 images
      Waiting for input...
      Reading input from standard input
+     *** warning: spline_ps is deprecated and it will be removed ***
+     *** warning: spline_ps is now set to .false.                ***
  
      ------------------- Input file: --------------------
 &inputgipaw
@@ -117,6 +119,9 @@
      k-point:     8    nbnd_occ=  12
  
  
+     Message from routine gipaw_summary:
+     spline_ps is .false., expect some extrapolation errors
+ 
      q-space interpolation up to   144.00 Rydberg
  
      GIPAW job: nmr                                                                             
@@ -138,7 +143,7 @@
  
      Computing the magnetic susceptibility     isolve=1    ethr=  0.1000E-13
      Starting from scratch
-     k-point #    1 of     8      pool #  1    cpu time:       0.2
+     k-point #    1 of     8      pool #  1    cpu time:       0.3
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations = 10.7
@@ -224,7 +229,7 @@
      cgsolve_all iterations  40    anorm=    0.68E-07
      cgsolve_all iterations  36    anorm=    0.46E-07
  
-     k-point #    2 of     8      pool #  1    cpu time:       7.4
+     k-point #    2 of     8      pool #  1    cpu time:       7.2
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations = 14.4
@@ -310,7 +315,7 @@
      cgsolve_all iterations  51    anorm=    0.55E-07
      cgsolve_all iterations  51    anorm=    0.67E-07
  
-     k-point #    3 of     8      pool #  1    cpu time:      16.2
+     k-point #    3 of     8      pool #  1    cpu time:      16.0
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations = 13.0
@@ -396,7 +401,7 @@
      cgsolve_all iterations  47    anorm=    0.64E-07
      cgsolve_all iterations  43    anorm=    0.68E-07
  
-     k-point #    4 of     8      pool #  1    cpu time:      25.0
+     k-point #    4 of     8      pool #  1    cpu time:      24.5
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations = 15.0
@@ -482,7 +487,7 @@
      cgsolve_all iterations  52    anorm=    0.73E-07
      cgsolve_all iterations  54    anorm=    0.69E-07
  
-     k-point #    5 of     8      pool #  1    cpu time:      33.5
+     k-point #    5 of     8      pool #  1    cpu time:      32.8
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations = 16.1
@@ -568,7 +573,7 @@
      cgsolve_all iterations  52    anorm=    0.66E-07
      cgsolve_all iterations  54    anorm=    0.71E-07
  
-     k-point #    6 of     8      pool #  1    cpu time:      43.0
+     k-point #    6 of     8      pool #  1    cpu time:      42.2
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations = 14.2
@@ -654,7 +659,7 @@
      cgsolve_all iterations  51    anorm=    0.56E-07
      cgsolve_all iterations  44    anorm=    0.64E-07
  
-     k-point #    7 of     8      pool #  1    cpu time:      51.6
+     k-point #    7 of     8      pool #  1    cpu time:      50.6
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations = 11.7
@@ -740,7 +745,7 @@
      cgsolve_all iterations  38    anorm=    0.50E-07
      cgsolve_all iterations  34    anorm=    0.61E-07
  
-     k-point #    8 of     8      pool #  1    cpu time:      57.9
+     k-point #    8 of     8      pool #  1    cpu time:      56.7
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations = 14.2
@@ -905,106 +910,106 @@
      Diamagnetic contribution in ppm:
  
      Atom  1  Ce  pos: (  0.000000  0.000000  0.000000)  dia sigma:          23.37
-            23.3716          0.0000         -0.0000
-             0.0000         23.3716         -0.0000
-             0.0000         -0.0000         23.3716
+            23.3716          0.0000          0.0000
+            -0.0000         23.3716          0.0000
+             0.0000          0.0000         23.3716
 
      Atom  2  O   pos: (  0.250000  0.250000  0.250000)  dia sigma:           8.89
-             8.8947         -0.0000         -0.0000
-            -0.0000          8.8947          0.0000
-            -0.0000          0.0000          8.8947
+             8.8947          0.0000         -0.0000
+             0.0000          8.8947         -0.0000
+            -0.0000         -0.0000          8.8947
 
      Atom  3  O   pos: (  0.750000  0.750000  0.750000)  dia sigma:           8.89
-             8.8947         -0.0000          0.0000
-            -0.0000          8.8947          0.0000
-            -0.0000          0.0000          8.8947
+             8.8947          0.0000          0.0000
+             0.0000          8.8947         -0.0000
+             0.0000          0.0000          8.8947
 
      Paramagnetic contribution in ppm:
  
      Atom  1  Ce  pos: (  0.000000  0.000000  0.000000)  para sigma:       -6496.56
-         -6496.5589          0.0000          0.0000
-             0.0000      -6496.5589          0.0000
-            -0.0000         -0.0000      -6496.5589
+         -6496.5589         -0.0000          0.0000
+            -0.0000      -6496.5589          0.0000
+             0.0000         -0.0000      -6496.5589
 
      Atom  2  O   pos: (  0.250000  0.250000  0.250000)  para sigma:        -590.15
           -590.1482          0.0000          0.0000
-             0.0000       -590.1482          0.0000
-             0.0000          0.0000       -590.1482
+             0.0000       -590.1482         -0.0000
+             0.0000         -0.0000       -590.1482
 
      Atom  3  O   pos: (  0.750000  0.750000  0.750000)  para sigma:        -590.15
-          -590.1482          0.0000          0.0000
+          -590.1482          0.0000         -0.0000
              0.0000       -590.1482         -0.0000
-             0.0000          0.0000       -590.1482
+            -0.0000          0.0000       -590.1482
 
  
      Total NMR chemical shifts in ppm: ---------------------------------------
      (adopting the Simpson convention for anisotropy and asymmetry)-----------
  
      Atom  1  Ce  pos: (  0.000000  0.000000  0.000000)  Total sigma:       -1583.77
-         -1583.7654          0.0000          0.0000
-             0.0000      -1583.7654          0.0000
-            -0.0000         -0.0000      -1583.7654
+         -1583.7654         -0.0000          0.0000
+            -0.0000      -1583.7654         -0.0000
+             0.0000         -0.0000      -1583.7654
 
      Ce      1    anisotropy:     -0.00    eta:    0.0000
-     Ce      1    sigma_11=  -1583.77    axis=( -0.158107  0.004761 -0.987410)
-     Ce      1    sigma_22=  -1583.77    axis=(  0.624609  0.774980 -0.096278)
-     Ce      1    sigma_33=  -1583.77    axis=( -0.764765  0.631968  0.125504)
+     Ce      1    sigma_11=  -1583.77    axis=( -0.562751  0.245711  0.789264)
+     Ce      1    sigma_22=  -1583.77    axis=( -0.752855  0.241935 -0.612109)
+     Ce      1    sigma_33=  -1583.77    axis=( -0.341353 -0.938666  0.048835)
  
      Atom  2  O   pos: (  0.250000  0.250000  0.250000)  Total sigma:        -946.34
           -946.3400         -0.0000          0.0000
              0.0000       -946.3400         -0.0000
-             0.0000          0.0000       -946.3400
+             0.0000         -0.0000       -946.3400
 
      O       2    anisotropy:      0.00    eta:    0.0000
-     O       2    sigma_11=   -946.34    axis=( -0.197520 -0.980299  0.000000)
-     O       2    sigma_22=   -946.34    axis=(  0.605532 -0.122008 -0.786413)
-     O       2    sigma_33=   -946.34    axis=( -0.770920  0.155332 -0.617701)
+     O       2    sigma_11=   -946.34    axis=(  0.618059 -0.343516 -0.707107)
+     O       2    sigma_22=   -946.34    axis=(  0.485805  0.874067  0.000000)
+     O       2    sigma_33=   -946.34    axis=(  0.618059 -0.343516  0.707107)
  
      Atom  3  O   pos: (  0.750000  0.750000  0.750000)  Total sigma:        -946.34
           -946.3400         -0.0000         -0.0000
-            -0.0000       -946.3400         -0.0000
-            -0.0000         -0.0000       -946.3400
+             0.0000       -946.3400         -0.0000
+            -0.0000          0.0000       -946.3400
 
      O       3    anisotropy:      0.00    eta:    0.0000
-     O       3    sigma_11=   -946.34    axis=(  0.481552 -0.397936  0.780868)
-     O       3    sigma_22=   -946.34    axis=( -0.354323 -0.903313 -0.241828)
-     O       3    sigma_33=   -946.34    axis=(  0.801600 -0.160227 -0.575990)
+     O       3    sigma_11=   -946.34    axis=(  0.698585 -0.101165 -0.708339)
+     O       3    sigma_22=   -946.34    axis=(  0.714806  0.054260  0.697214)
+     O       3    sigma_33=   -946.34    axis=( -0.032099 -0.993389  0.110218)
  
      Initialization:
-     gipaw_setup  :      0.07s CPU      0.07s WALL (       1 calls)
+     gipaw_setup  :      0.14s CPU      0.14s WALL (       1 calls)
  
      Linear response
-     greenf       :     46.53s CPU     48.70s WALL (     168 calls)
-     cgsolve      :     46.44s CPU     48.61s WALL (     168 calls)
-     ch_psi       :     45.87s CPU     48.01s WALL (    7485 calls)
-     h_psiq       :     43.94s CPU     46.00s WALL (    7485 calls)
+     greenf       :     44.93s CPU     47.52s WALL (     168 calls)
+     cgsolve      :     44.84s CPU     47.43s WALL (     168 calls)
+     ch_psi       :     44.28s CPU     46.83s WALL (    7485 calls)
+     h_psiq       :     42.41s CPU     44.86s WALL (    7485 calls)
  
      Apply operators
-     h_psi        :     53.96s CPU     56.57s WALL (   27285 calls)
-     apply_vel    :      0.18s CPU      0.20s WALL (     168 calls)
+     h_psi        :     52.06s CPU     55.26s WALL (   27285 calls)
+     apply_vel    :      0.17s CPU      0.19s WALL (     168 calls)
  
      Induced current
-     j_para       :      3.52s CPU      3.68s WALL (      96 calls)
+     j_para       :      3.39s CPU      3.63s WALL (      96 calls)
      biot_savart  :      0.01s CPU      0.01s WALL (       1 calls)
  
      Other routines
  
      General routines
-     calbec       :      2.21s CPU      2.33s WALL (   62716 calls)
+     calbec       :      2.11s CPU      2.25s WALL (   62716 calls)
      fft          :      0.01s CPU      0.02s WALL (      30 calls)
-     fftw         :     51.61s CPU     54.10s WALL (  235594 calls)
+     fftw         :     49.76s CPU     52.81s WALL (  235594 calls)
      davcio       :      0.00s CPU      0.01s WALL (     128 calls)
  
      Parallel routines
-     fft_scatter  :      8.67s CPU      9.14s WALL (  235624 calls)
+     fft_scatter  :      8.70s CPU      9.27s WALL (  235624 calls)
  
      Plugins
  
  
-     GIPAW        :   1m 3.15s CPU   1m 6.26s WALL
+     GIPAW        :   1m 1.01s CPU   1m 4.93s WALL
 
  
-   This run was terminated on:  15:51:38   9May2024            
+   This run was terminated on:  12:19:50  29Jan2025            
 
 =------------------------------------------------------------------------------=
    JOB DONE.
