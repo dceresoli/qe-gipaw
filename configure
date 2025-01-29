@@ -631,7 +631,6 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 with_qe_source
-enable_band_parallel
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1252,12 +1251,6 @@ if test -n "$ac_init_help"; then
    esac
   cat <<\_ACEOF
 
-Optional Features:
-  --disable-option-checking  ignore unrecognized --enable/--with options
-  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
-  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --enable-band-parallel  enable band parallelization (EXPERIMENTAL!)
-
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
@@ -1706,14 +1699,11 @@ fi
 abspath=`readlink -f ${qe_source} 2>/dev/null` && qe_source=$abspath
 
 # Option: enable band parallelization
-# Check whether --enable-band-parallel was given.
-if test "${enable_band_parallel+set}" = set; then :
-  enableval=$enable_band_parallel; BAND_PARALLEL="$enableval"
-else
-  BAND_PARALLEL="no"
-
-fi
-
+#AC_ARG_ENABLE(band-parallel,
+#   [AC_HELP_STRING([--enable-band-parallel],[enable band parallelization (EXPERIMENTAL!)])],
+#   BAND_PARALLEL="$enableval",
+#   BAND_PARALLEL="no"
+#)
 
 # Look for make.sys
 as_ac_File=`$as_echo "ac_cv_file_${qe_source}/make.inc" | $as_tr_sh`
