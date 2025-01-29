@@ -189,6 +189,7 @@ PROGRAM gipaw_main
   call gipaw_closefil
   call print_clock_gipaw
   call environment_end(code)
+  call gipaw_deallocate
   call stop_code( .true. )
   
   STOP

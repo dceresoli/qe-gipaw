@@ -215,6 +215,8 @@ SUBROUTINE gipaw_allocate
   USE gipaw_results
   USE ions_base,     ONLY : ntyp => nsp
   USE paw_gipaw,     ONLY : paw_recon
+  USE ldaU,          ONLY : lda_plus_u, wfcU, nwfcU
+  USE noncollin_module, ONLY : npol
   USE pwcom
     
   implicit none
@@ -228,9 +230,41 @@ SUBROUTINE gipaw_allocate
   ! GIPAW projectors
   if (.not. allocated(paw_recon)) allocate(paw_recon(ntyp))
 
+  ! LDA+U
+  if (lda_plus_u) allocate(wfcU(npwx*npol,nwfcU))
+
   call allocate_gipaw_results
 
 END SUBROUTINE gipaw_allocate
+
+  
+
+!-----------------------------------------------------------------------
+SUBROUTINE gipaw_deallocate
+  !-----------------------------------------------------------------------
+  !
+  ! ... deallocate memory for GIPAW
+  !
+  USE gipaw_module
+  USE gipaw_results
+  USE ions_base,     ONLY : ntyp => nsp
+  USE paw_gipaw,     ONLY : paw_recon
+  USE ldaU,          ONLY : lda_plus_u, wfcU, nwfcU
+  USE noncollin_module, ONLY : npol
+  USE pwcom
+    
+  implicit none
+  
+  ! wavefunction and eigenvalues at k+q  
+  deallocate(evq, etq)
+
+  ! GIPAW projectors
+  if (allocated(paw_recon)) deallocate(paw_recon)
+
+  ! LDA+U
+  if (lda_plus_u) deallocate(wfcU)
+
+END SUBROUTINE gipaw_deallocate
   
 
 

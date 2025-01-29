@@ -34,9 +34,9 @@ esac
 
 # process options
 dflags_gipaw=''
-if test $BAND_PARALLEL = yes ; then 
-  dflags_gipaw="${dflags_gipaw} -D__BANDS"
-fi
+#if test $BAND_PARALLEL = yes ; then 
+#  dflags_gipaw="${dflags_gipaw} -D__BANDS"
+#fi
 
 # export settings to generated files
 AC_SUBST(qe_source)
