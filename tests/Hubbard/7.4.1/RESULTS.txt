@@ -1,0 +1,8 @@
+CeO2-scf-U0.out:!    total energy              =    -161.17860115 Ry
+CeO2-scf-U5.out:!    total energy              =    -161.01341645 Ry
+CeO2-nmr-U0.out:     Atom  1  Ce  pos: (  0.000000  0.000000  0.000000)  Total sigma:       -1583.77
+CeO2-nmr-U0.out:     Atom  2  O   pos: (  0.250000  0.250000  0.250000)  Total sigma:        -946.34
+CeO2-nmr-U0.out:     Atom  3  O   pos: (  0.750000  0.750000  0.750000)  Total sigma:        -946.34
+CeO2-nmr-U5.out:     Atom  1  Ce  pos: (  0.000000  0.000000  0.000000)  Total sigma:         484.92
+CeO2-nmr-U5.out:     Atom  2  O   pos: (  0.250000  0.250000  0.250000)  Total sigma:        -674.31
+CeO2-nmr-U5.out:     Atom  3  O   pos: (  0.750000  0.750000  0.750000)  Total sigma:        -674.31
