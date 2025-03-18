@@ -2,8 +2,8 @@
  
 [calculation]
 calc_code              QE-GIPAW
-calc_code_version      7.4
-calc_code_version_git  9b2ae1a46cae045cc04ef02c1072f2e1e74873b2
+calc_code_version      7.4.1
+calc_code_version_git  4c7640a982d6834e7ed61cb360211192f8295ad3
 calc_name              
 calc_prefix            quartz
 calc_xcfunctional      PBE
