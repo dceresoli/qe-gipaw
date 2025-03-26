@@ -388,7 +388,6 @@ SUBROUTINE suscept_crystal
   !--------------------------------------------------------------------
   ! now get the current and induced field
   !--------------------------------------------------------------------
-  chi_bare_pGv(:,:) = chi_bare_pGv(:,:) / omega
   j_bare_s(:,:,:,:) = j_bare_s(:,:,:,:) * alpha / ( 2.d0 * q_gipaw * tpiba * omega )
 
   ! interpolate induced current
@@ -421,9 +420,11 @@ SUBROUTINE suscept_crystal
   !--------------------------------------------------------------------
   if (job == 'nmr') then
     ! compute bare chemical shift and print all results
+    chi_bare_pGv(:,:) = chi_bare_pGv(:,:) / omega
     call compute_sigma_bare(B_ind, chi_bare_pGv, sigma_bare, sigma_shape)
     call print_chemical_shifts(sigma_shape, sigma_bare, sigma_diamagnetic, sigma_paramagnetic, &
                                sigma_paramagnetic_us, sigma_paramagnetic_aug, sigma_tot)
+    chi_bare_pGv(:,:) = chi_bare_pGv(:,:) * omega
     if (ionode) then
        call output_magres_begin('nmr')
        call output_magres_nmr(chi_bare_pGv, chi_bare_vGv, sigma_tot)
