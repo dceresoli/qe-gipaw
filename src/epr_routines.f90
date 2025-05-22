@@ -690,13 +690,13 @@ SUBROUTINE print_g_tensor(delta_g_rmc, delta_g_rmc_gipaw, delta_g_so, &
   !!call symtensor(1, delta_g_tot)
   write(stdout,'(5X,''Delta_g total (SOO a la Paratec): ---------------------------------------'')')
   write(stdout,'(3(5X,3(F12.2,2X)/))') delta_g_tot(:,:)
-  res_epr_deltag = delta_g_tot
+  res_epr_deltag_paratec = delta_g_tot
   write (stdout,*) 
 
   !!call symtensor(1, delta_g_tot2) 
   write(stdout,'(5X,''Delta_g total (SOO as in Eq.(7)): ---------------------------------------'')')
   write(stdout,'(3(5X,3(F12.2,2X)/))') delta_g_tot2(:,:)
-  res_epr_deltag_paratec = delta_g_tot2
+  res_epr_deltag = delta_g_tot2
   write (stdout,*) 
 
 END SUBROUTINE print_g_tensor
