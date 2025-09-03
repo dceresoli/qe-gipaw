@@ -617,6 +617,7 @@ PACKAGE_URL=''
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+version
 dflags_gipaw
 qe_source
 target_alias
@@ -1743,7 +1744,7 @@ abspath=`readlink -f ${qe_source} 2>/dev/null` && qe_source=$abspath
 
 # Option: enable band parallelization
 #AC_ARG_ENABLE(band-parallel,
-#   [AC_HELP_STRING([--enable-band-parallel],[enable band parallelization (EXPERIMENTAL!)])],
+#   [AS_HELP_STRING([--enable-band-parallel],[enable band parallelization (EXPERIMENTAL!)])],
 #   BAND_PARALLEL="$enableval",
 #   BAND_PARALLEL="no"
 #)
@@ -1822,7 +1823,8 @@ dflags_gipaw=''
 # export settings to generated files
 
 
-ac_config_files="$ac_config_files makedeps.sh src/Makefile src/Makefile-gpu"
+
+ac_config_files="$ac_config_files makedeps.sh src/Makefile src/Makefile-gpu tests/version"
 
 ac_config_commands="$ac_config_commands default"
 
@@ -2533,6 +2535,7 @@ do
     "makedeps.sh") CONFIG_FILES="$CONFIG_FILES makedeps.sh" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "src/Makefile-gpu") CONFIG_FILES="$CONFIG_FILES src/Makefile-gpu" ;;
+    "tests/version") CONFIG_FILES="$CONFIG_FILES tests/version" ;;
     "default") CONFIG_COMMANDS="$CONFIG_COMMANDS default" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

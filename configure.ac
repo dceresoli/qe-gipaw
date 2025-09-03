@@ -41,7 +41,8 @@ dflags_gipaw=''
 # export settings to generated files
 AC_SUBST(qe_source)
 AC_SUBST(dflags_gipaw)
-AC_CONFIG_FILES([makedeps.sh src/Makefile src/Makefile-gpu])
+AC_SUBST(version)
+AC_CONFIG_FILES([makedeps.sh src/Makefile src/Makefile-gpu tests/version])
 AC_CONFIG_COMMANDS([default],[chmod +x makedeps.sh],[])
 AC_OUTPUT
 

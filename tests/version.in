@@ -1,0 +1,2 @@
+VERSION=@version@
+QEDIR="@qe_source@"

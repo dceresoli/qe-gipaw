@@ -8,3 +8,8 @@ makedeps.sh
 src/Makefile
 src/Makefile-gpu
 src/make.depend
+tests/version
+autom4te.cache
+configure.ac~
+/configure~
+
