@@ -1,0 +1,95 @@
+========================================================================
+QE version: 7.5, found in /home/ceresoli/Codes/qe-7.5
+========================================================================
+
+testing EFG/NC...
+testing EFG/US...
+testing EFG/PAW...
+mkdir: cannot create directory ‘7.5’: File exists
+1,3c1,3
+< quartz-scf.out_1cpu:!    total energy              =    -384.38869812 Ry
+< quartz-scf.out_4cpu:!    total energy              =    -384.38869812 Ry
+< quartz-scf.out_4cpu_2pool:!    total energy              =    -384.38869812 Ry
+---
+> quartz-scf.out_1cpu:!    total energy              =    -384.38870798 Ry
+> quartz-scf.out_4cpu:!    total energy              =    -384.38870798 Ry
+> quartz-scf.out_4cpu_2pool:!    total energy              =    -384.38870798 Ry
+6c6
+< quartz-efg.out_1cpu:     Si      3  Q=         1.0000 1e-30 m^2  Cq=         0.1771 MHz  eta= 0.70043
+---
+> quartz-efg.out_1cpu:     Si      3  Q=         1.0000 1e-30 m^2  Cq=         0.1771 MHz  eta= 0.70044
+8c8
+< quartz-efg.out_1cpu:     O       5  Q=         2.5500 1e-30 m^2  Cq=         5.3318 MHz  eta= 0.20074
+---
+> quartz-efg.out_1cpu:     O       5  Q=         2.5500 1e-30 m^2  Cq=         5.3319 MHz  eta= 0.20074
+11c11
+< quartz-efg.out_1cpu:     O       8  Q=         2.5500 1e-30 m^2  Cq=         5.3318 MHz  eta= 0.20074
+---
+> quartz-efg.out_1cpu:     O       8  Q=         2.5500 1e-30 m^2  Cq=         5.3319 MHz  eta= 0.20074
+
+testing NMR/NC...
+testing NMR/US...
+testing NMR/PAW...
+1,3c1,3
+< quartz-scf.out_1cpu:!    total energy              =    -384.38869812 Ry
+< quartz-scf.out_4cpu:!    total energy              =    -384.38869812 Ry
+< quartz-scf.out_4cpu_2pool:!    total energy              =    -384.38869812 Ry
+---
+> quartz-scf.out_1cpu:!    total energy              =    -384.38870798 Ry
+> quartz-scf.out_4cpu:!    total energy              =    -384.38870798 Ry
+> quartz-scf.out_4cpu_2pool:!    total energy              =    -384.38870798 Ry
+8c8
+< quartz-nmr.out_1cpu:     Atom  5  O   pos: ( -0.120900  0.716899  1.205013)  Total sigma:         217.85
+---
+> quartz-nmr.out_1cpu:     Atom  5  O   pos: ( -0.120900  0.716899  1.205013)  Total sigma:         217.86
+11c11
+< quartz-nmr.out_1cpu:     Atom  8  O   pos: ( -0.120900 -0.716899  0.994987)  Total sigma:         217.85
+---
+> quartz-nmr.out_1cpu:     Atom  8  O   pos: ( -0.120900 -0.716899  0.994987)  Total sigma:         217.86
+13,14c13,14
+< quartz-nmr.out_4cpu:     Atom  1  Si  pos: (  0.470100 -0.814241  0.733333)  Total sigma:         437.37
+< quartz-nmr.out_4cpu:     Atom  2  Si  pos: (  0.470100  0.814241  1.466667)  Total sigma:         437.37
+---
+> quartz-nmr.out_4cpu:     Atom  1  Si  pos: (  0.470100 -0.814241  0.733333)  Total sigma:         437.38
+> quartz-nmr.out_4cpu:     Atom  2  Si  pos: (  0.470100  0.814241  1.466667)  Total sigma:         437.38
+18c18
+< quartz-nmr.out_4cpu:     Atom  6  O   pos: ( -0.560400 -0.463152  1.938347)  Total sigma:         217.85
+---
+> quartz-nmr.out_4cpu:     Atom  6  O   pos: ( -0.560400 -0.463152  1.938347)  Total sigma:         217.86
+21c21
+< quartz-nmr.out_4cpu:     Atom  9  O   pos: ( -0.560400  0.463152  0.261653)  Total sigma:         217.85
+---
+> quartz-nmr.out_4cpu:     Atom  9  O   pos: ( -0.560400  0.463152  0.261653)  Total sigma:         217.86
+
+testing Hubbard...
+3c3
+< CeO2-nmr-U0.out:     Atom  1  Ce  pos: (  0.000000  0.000000  0.000000)  Total sigma:       -1583.77
+---
+> CeO2-nmr-U0.out:     Atom  1  Ce  pos: (  0.000000  0.000000  0.000000)  Total sigma:       -1583.76
+
+testing EPR...
+3,5c3,5
+<       240.94        -0.01        -0.04
+<        -0.04      4327.23        -0.03
+<        -0.04        -0.06     98138.08
+---
+>       240.96        -0.01        -0.04
+>        -0.04      4327.39        -0.03
+>        -0.04        -0.06     98139.92
+8,10c8,10
+<       247.21        -0.01        -0.04
+<        -0.04      4394.48        -0.03
+<        -0.04        -0.06     99220.50
+---
+>       247.23        -0.01        -0.04
+>        -0.04      4394.64        -0.03
+>        -0.04        -0.06     99222.34
+18c18
+<     2.100457 => [-0. -0.  1.]
+---
+>     2.100459 => [-0. -0.  1.]
+23c23
+<     2.101540 => [-0. -0.  1.]
+---
+>     2.101542 => [-0. -0.  1.]
+

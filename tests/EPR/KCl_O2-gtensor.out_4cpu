@@ -1,5 +1,5 @@
 
-     Program GIPAW v.7.4.1 starts on 18Mar2025 at 11: 3:44 
+     Program GIPAW v.7.5 starts on  3Sep2025 at 14:12: 3 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -14,10 +14,10 @@
 
      MPI processes distributed on     1 nodes
      R & G space division:  proc/nbgrp/npool/nimage =       4
-     4085 MiB available memory on the printing compute node when the environment starts
+     31190 MiB available memory on the printing compute node when the environment starts
  
  
-     ***** This is GIPAW git revision 4c7640a982d6834e7ed61cb360211192f8295ad3 *****
+     ***** This is GIPAW git revision 4ac496752585ac1b7ad3aede35a4ff298fd048ab *****
      ***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****
      ***** in publications or presentations arising from this work.            *****
  
@@ -150,7 +150,7 @@
 
      Computing the magnetic susceptibility     isolve=1    ethr=  0.1000E-13
      Starting from scratch
-     k-point #    1 of     2      pool #  1    cpu time:       0.3
+     k-point #    1 of     2      pool #  1    cpu time:       0.9
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations = 35.0
@@ -193,7 +193,7 @@
      cgsolve_all iterations  39    anorm=    0.67E-07
      compute_u_kq: q = (   -0.0272,    0.0000,    0.0000)
      Rotating WFCS
-     ethr =  1.00E-14,  avg # of iterations = 50.8
+     ethr =  1.00E-14,  avg # of iterations = 50.1
      eigenvalues at k:
  -23.2595 -14.8501 -13.7831 -13.7076 -13.6614 -13.6439 -13.6430 -13.6205
  -13.6050  -5.9752  -5.5518  -4.5520  -2.7367  -2.6495  -2.6229  -2.6103
@@ -213,7 +213,7 @@
      cgsolve_all iterations  39    anorm=    0.67E-07
      compute_u_kq: q = (    0.0000,    0.0272,    0.0000)
      Rotating WFCS
-     ethr =  1.00E-14,  avg # of iterations = 52.5
+     ethr =  1.00E-14,  avg # of iterations = 52.6
      eigenvalues at k:
  -23.2595 -14.8501 -13.7831 -13.7076 -13.6614 -13.6439 -13.6430 -13.6205
  -13.6050  -5.9752  -5.5518  -4.5520  -2.7367  -2.6495  -2.6229  -2.6103
@@ -292,7 +292,7 @@
      cgsolve_all iterations  45    anorm=    0.73E-07
      cgsolve_all iterations  35    anorm=    0.73E-07
  
-     k-point #    2 of     2      pool #  1    cpu time:      79.9
+     k-point #    2 of     2      pool #  1    cpu time:     148.9
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations = 26.5
@@ -335,7 +335,7 @@
      cgsolve_all iterations  36    anorm=    0.69E-07
      compute_u_kq: q = (   -0.0272,    0.0000,    0.0000)
      Rotating WFCS
-     ethr =  1.00E-14,  avg # of iterations = 44.9
+     ethr =  1.00E-14,  avg # of iterations = 44.6
      eigenvalues at k:
  -22.5952 -13.9574 -13.7835 -13.7079 -13.6617 -13.6441 -13.6433 -13.6207
  -13.6054  -5.6000  -4.2757  -4.0702  -2.7367  -2.6490  -2.6099  -2.6078
@@ -355,7 +355,7 @@
      cgsolve_all iterations  36    anorm=    0.69E-07
      compute_u_kq: q = (    0.0000,    0.0272,    0.0000)
      Rotating WFCS
-     ethr =  1.00E-14,  avg # of iterations = 47.2
+     ethr =  1.00E-14,  avg # of iterations = 47.3
      eigenvalues at k:
  -22.5952 -13.9574 -13.7835 -13.7079 -13.6617 -13.6441 -13.6433 -13.6207
  -13.6054  -5.6000  -4.2757  -4.0702  -2.7367  -2.6490  -2.6099  -2.6078
@@ -452,32 +452,32 @@
              0.0000          0.0000        -70.3507
 
      chi_bare pGv (HH) in paratec units:
-       -58.024144      0.001746      0.003526
-         0.017267    -58.483475      0.013583
-        -0.000382      0.007033    -30.196648
+       -58.024125      0.001746      0.003524
+         0.017266    -58.483443      0.013584
+        -0.000383      0.007035    -30.196620
 
-       -58.024144     -0.000000     -0.000000
-         0.000000    -58.483475      0.000000
-        -0.000000      0.000000    -30.196648
+       -58.024125     -0.000000     -0.000000
+         0.000000    -58.483443     -0.000000
+        -0.000000     -0.000000    -30.196620
 
      chi_bare vGv (VV) in paratec units:
-       -49.872465      0.004079      0.004399
-         0.011874    -52.349697      0.009840
-         0.001428      0.009686    -21.696221
+       -49.872450      0.004078      0.004397
+         0.011873    -52.349678      0.009842
+         0.001426      0.009688    -21.696199
 
-       -49.872465     -0.000000      0.000000
-         0.000000    -52.349697      0.000000
-         0.000000     -0.000000    -21.696221
+       -49.872450     -0.000000      0.000000
+        -0.000000    -52.349678     -0.000000
+         0.000000     -0.000000    -21.696199
 
      chi_bare pGv (HH) in 10^{-6} cm^3/mol:
-          -275.7362         -0.0000         -0.0000
-             0.0000       -277.9190          0.0000
-            -0.0000          0.0000       -143.4973
+          -275.7361         -0.0000         -0.0000
+             0.0000       -277.9188         -0.0000
+            -0.0000         -0.0000       -143.4972
 
      chi_bare vGv (VV) in 10^{-6} cm^3/mol:
-          -236.9987         -0.0000          0.0000
-             0.0000       -248.7707          0.0000
-             0.0000         -0.0000       -103.1025
+          -236.9986         -0.0000          0.0000
+            -0.0000       -248.7706         -0.0000
+             0.0000         -0.0000       -103.1024
 
 
      (RHO,ZETA) => (RHO_UP,RHO_DOWN)
@@ -488,82 +488,82 @@
      Relativistic mass correction gipaw:      -45.40
  
      Delta_g SO - bare term:
-            86.92          0.00          0.00
+            86.92          0.00         -0.00
              0.00       1780.77          0.00
-             0.00          0.00      26668.93
+             0.00         -0.00      26668.93
 
  
      Delta_g SO - diamagnetic term:
-             9.64          0.00          0.00
-             0.00         16.28         -0.00
-             0.00         -0.00         16.05
+             9.65          0.00          0.00
+             0.00         16.30         -0.00
+             0.00         -0.00         16.07
 
  
      Delta_g SO - paragnetic term:
            442.51         -0.01         -0.04
-            -0.04       2947.70         -0.03
-            -0.04         -0.06      73848.29
+            -0.04       2947.84         -0.03
+            -0.04         -0.06      73850.11
 
  
      Delta_g SOO - a la Paratec:
             19.96          0.00         -0.00
-             0.00        -99.43         -0.00
-             0.00         -0.00      -2077.10
+             0.00        -99.43          0.00
+             0.00          0.00      -2077.10
 
  
      Delta_g SOO - Eq.(7):
-            26.23          0.00          0.00
-             0.00        -32.19         -0.00
-             0.00          0.00       -994.68
+            26.23          0.00         -0.00
+            -0.00        -32.19          0.00
+            -0.00          0.00       -994.68
 
  
      Delta_g total (SOO a la Paratec): ---------------------------------------
-           240.94         -0.01         -0.04
-            -0.04       4327.23         -0.03
-            -0.04         -0.06      98138.08
+           240.96         -0.01         -0.04
+            -0.04       4327.39         -0.03
+            -0.04         -0.06      98139.92
 
  
      Delta_g total (SOO as in Eq.(7)): ---------------------------------------
-           247.21         -0.01         -0.04
-            -0.04       4394.48         -0.03
-            -0.04         -0.06      99220.50
+           247.23         -0.01         -0.04
+            -0.04       4394.64         -0.03
+            -0.04         -0.06      99222.34
 
  
      Initialization:
-     gipaw_setup  :      0.09s CPU      0.09s WALL (       1 calls)
+     gipaw_setup  :      0.14s CPU      0.17s WALL (       1 calls)
  
      Linear response
-     greenf       :     86.67s CPU     89.86s WALL (      42 calls)
-     cgsolve      :     86.27s CPU     89.46s WALL (      42 calls)
-     ch_psi       :     84.17s CPU     87.32s WALL (    1517 calls)
-     h_psiq       :     76.18s CPU     79.22s WALL (    1517 calls)
+     greenf       :    148.75s CPU    155.90s WALL (      42 calls)
+     cgsolve      :    147.99s CPU    155.13s WALL (      42 calls)
+     ch_psi       :    144.69s CPU    151.69s WALL (    1517 calls)
+     h_psiq       :    131.79s CPU    138.41s WALL (    1517 calls)
  
      Apply operators
-     h_psi        :    117.86s CPU    122.63s WALL (   26868 calls)
-     apply_vel    :      0.67s CPU      0.74s WALL (      42 calls)
+     h_psi        :    212.02s CPU    222.09s WALL (   26841 calls)
+     apply_vel    :      1.07s CPU      1.19s WALL (      42 calls)
  
      Induced current
-     j_para       :      6.43s CPU      6.72s WALL (      24 calls)
-     biot_savart  :      0.02s CPU      0.04s WALL (       1 calls)
+     j_para       :     12.12s CPU     12.65s WALL (      24 calls)
+     biot_savart  :      0.06s CPU      0.07s WALL (       1 calls)
  
      Other routines
  
      General routines
-     calbec       :     20.88s CPU     21.51s WALL (   55407 calls)
-     fft          :      0.06s CPU      0.09s WALL (      66 calls)
-     fftw         :     97.86s CPU    101.93s WALL (  170252 calls)
-     davcio       :      0.02s CPU      0.02s WALL (      32 calls)
+     calbec       :     39.72s CPU     41.24s WALL (   55353 calls)
+     fft          :      0.18s CPU      0.30s WALL (      66 calls)
+     fftw         :    177.36s CPU    186.02s WALL (  170198 calls)
+     davcio       :      0.01s CPU      0.03s WALL (      32 calls)
  
      Parallel routines
-     fft_scatter  :     14.73s CPU     15.43s WALL (  170318 calls)
+     fft_scatter  :     30.98s CPU     32.84s WALL (  170264 calls)
  
      Plugins
  
  
-     GIPAW        :   2m31.35s CPU   2m37.33s WALL
+     GIPAW        :   4m35.17s CPU   4m48.16s WALL
 
  
-   This run was terminated on:  11: 6:21  18Mar2025            
+   This run was terminated on:  14:16:51   3Sep2025            
 
 =------------------------------------------------------------------------------=
    JOB DONE.
