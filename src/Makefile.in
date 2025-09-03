@@ -34,7 +34,6 @@ QEMODS = $(QE_SOURCE)/Modules/libqemod.a \
          $(QE_SOURCE)/MBD/libmbd.a \
          $(QE_SOURCE)/KS_Solvers/Davidson/libdavid.a \
          $(QE_SOURCE)/KS_Solvers/CG/libcg.a \
-         $(QE_SOURCE)/KS_Solvers/PPCG/libppcg.a \
          $(QE_SOURCE)/KS_Solvers/libks_solvers.a \
          $(QE_SOURCE)/FFTXlib/src/libqefft.a \
          $(QE_SOURCE)/LAXlib/libqela.a \

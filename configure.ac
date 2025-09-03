@@ -1,9 +1,9 @@
 # Autoconf template for qe-gipaw
-AC_INIT(qe-gipaw, 7.4.1, dceresoli@gmail.com, qe-gipaw)
+AC_INIT([qe-gipaw],[7.5],[dceresoli@gmail.com],[qe-gipaw])
 
 # Option: Quantum-Espresso source directory (QE_SOURCE)
 AC_ARG_WITH(qe-source,
-   [AC_HELP_STRING([--with-qe-source=DIR],[Quantum-Espresso source directory (QE_SOURCE)])],
+   [AS_HELP_STRING([--with-qe-source=DIR],[Quantum-Espresso source directory (QE_SOURCE)])],
    [qe_source=$withval],
    [qe_source=$QE_SOURCE])
 
@@ -12,7 +12,7 @@ abspath=`readlink -f ${qe_source} 2>/dev/null` && qe_source=$abspath
 
 # Option: enable band parallelization
 #AC_ARG_ENABLE(band-parallel,
-#   [AC_HELP_STRING([--enable-band-parallel],[enable band parallelization (EXPERIMENTAL!)])],
+#   [AS_HELP_STRING([--enable-band-parallel],[enable band parallelization (EXPERIMENTAL!)])],
 #   BAND_PARALLEL="$enableval",
 #   BAND_PARALLEL="no"
 #)
@@ -28,7 +28,7 @@ AC_MSG_CHECKING([Quantum-Espresso version])
 version=`grep version_number ${qe_source}/include/qe_version.h | cut -d\' -f2`
 AC_MSG_RESULT([$version])
 case $version in
-  7.4.1 ) ;;
+  7.5 ) ;;
   *) AC_MSG_ERROR([Cannot compile against this version of Quantum-Espresso]) ;;
 esac
 
@@ -41,7 +41,9 @@ dflags_gipaw=''
 # export settings to generated files
 AC_SUBST(qe_source)
 AC_SUBST(dflags_gipaw)
-AC_OUTPUT([makedeps.sh src/Makefile src/Makefile-gpu], [chmod +x makedeps.sh])
+AC_CONFIG_FILES([makedeps.sh src/Makefile src/Makefile-gpu])
+AC_CONFIG_COMMANDS([default],[chmod +x makedeps.sh],[])
+AC_OUTPUT
 
 # default commands
 ./makedeps.sh
