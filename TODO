@@ -26,6 +26,7 @@ Things TODO in GIPAW
   - "on-the-fly" pseudopotentials (?)
   - J-couplings
   - relaxation time in solids (?)
+  - adding support for GPU acceleration (?)
 
 
 DONE

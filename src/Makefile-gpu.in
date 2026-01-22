@@ -1,12 +1,13 @@
 # Makefile for ce-gipaw
 
 QE_SOURCE=@qe_source@
-include $(QE_SOURCE)/make.sys
+include $(QE_SOURCE)/make.inc
 DFLAGS += @dflags_gipaw@
 
+ERROR_MESSAGE = "Currently, GIPAW does not have support for QE+GPU"
+
 # location of needed modules
-MODFLAGS = $(MOD_FLAG)$(QE_SOURCE)/iotk/src $(MOD_FLAG)$(QE_SOURCE)/Modules \
-           $(MOD_FLAG)$(QE_SOURCE)/PW/src $(MOD_FLAG).
+MODFLAGS = $(QE_SOURCE)/
 
 GIPAW_OBJS = gipaw_module.o gipaw_main.o paw_gipaw.o stop_code.o gipaw_setup.o \
 	     gipaw_routines.o gipaw_routines_bands.o greenfunction.o orthoatwfc1.o \
@@ -16,20 +17,15 @@ GIPAW_OBJS = gipaw_module.o gipaw_main.o paw_gipaw.o stop_code.o gipaw_setup.o \
 	     velocity.o nmr_routines.o epr_routines.o efg.o hyperfine.o core_relax.o \
 	     util.o atomic.o
 
-LIBOBJS = $(QE_SOURCE)/flib/ptools.a $(QE_SOURCE)/flib/flib.a $(QE_SOURCE)/clib/clib.a \
- 	  $(QE_SOURCE)/iotk/src/libiotk.a
-ifeq ($(wildcard $(QE_SOURCE)/Environ),)
-  QEMODS = $(QE_SOURCE)/GPU/Modules/libqemodgpu.a
-else
-  QEMODS = $(QE_SOURCE)/Environ/src/libenviron.a $(QE_SOURCE)/GPU/Modules/libqemodgpu.a
-endif
-PWOBJS  = $(QE_SOURCE)/GPU/PW/libpwgpu.a
+LIBOBJS = $(QE_SOURCE)/
+QEMODS  = $(QE_SOURCE)/
+PWOBJS  = $(QE_SOURCE)/
 
 all: gipaw-gpu.x
 
-gipaw-gpu.x: $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS) 
-	$(LD) $(LDFLAGS) -o $@ $(GIPAW_OBJS) $(PWOBJS) $(QEMODS) $(LIBOBJS) $(QELIBS)
-	(cd ../bin; ln -sf ../src/gipaw-gpu.x .)
+gipaw-gpu.x:
+	@echo $(ERROR_MESSAGE)
+	@exit 1
 
 clean:
 	-/bin/rm -f gipaw-gpu.x *.o *.F90 *__genmod.f90 *.d *.mod *.i *.L
@@ -40,4 +36,3 @@ distclean: clean
 include make.depend
 
 # DO NOT DELETE
-
