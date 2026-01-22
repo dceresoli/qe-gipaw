@@ -32,8 +32,6 @@ LIBOBJS = $(QE_SOURCE)/UtilXlib/libutil.a
 
 QEMODS = $(QE_SOURCE)/Modules/libqemod.a \
          $(QE_SOURCE)/MBD/libmbd.a \
-         $(QE_SOURCE)/KS_Solvers/Davidson/libdavid.a \
-         $(QE_SOURCE)/KS_Solvers/CG/libcg.a \
          $(QE_SOURCE)/KS_Solvers/libks_solvers.a \
          $(QE_SOURCE)/FFTXlib/src/libqefft.a \
          $(QE_SOURCE)/LAXlib/libqela.a \
@@ -45,6 +43,17 @@ QEMODS = $(QE_SOURCE)/Modules/libqemod.a \
 
 
 PWOBJS = $(QE_SOURCE)/PW/src/libpw.a
+
+# CUDA Fortran versions of routines
+PWLIBS += \
+  h_psi_gpu.o \
+  vhpsi_gpu.o \
+  rotate_wfc_gpu.o \
+  hs_1psi_gpu.o \
+  hs_psi_gpu.o \
+  s_1psi_gpu.o \
+  utils_gpu.o \
+  oscdft_functions_gpu.o
 
 all: version make_lr_modules gipaw.x
 

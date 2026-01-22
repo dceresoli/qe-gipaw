@@ -279,7 +279,15 @@ SUBROUTINE gipaw_summary
   USE ldaU,          ONLY : lda_plus_U
   USE cellmd,        ONLY : cell_factor
   USE gvecw,         ONLY : ecutwfc
+  USE environment,   ONLY : print_cuda_info
+  USE control_flags, ONLY : use_gpu
+#if defined (__ENVIRON)
+  USE plugin_flags,        ONLY : use_environ
+  USE environ_base_module, ONLY : print_environ_summary
+#endif
+
   implicit none
+  logical, external :: check_gpu_support
 
   if (.not. spline_ps) then
       write(stdout,*)
@@ -304,7 +312,16 @@ SUBROUTINE gipaw_summary
 
   write(stdout,*)
 
+  ! plugins
   call plugin_summary
+#if defined (__ENVIRON)
+  IF (use_environ) CALL print_environ_summary()
+#endif
+
+  ! CUDA
+  use_gpu = check_gpu_support()
+  call print_cuda_info(check_use_gpu=.true.)
+  write(stdout,*)
 
   flush(stdout)
 
