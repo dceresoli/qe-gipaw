@@ -360,7 +360,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
           work(j) = ae_orb(j,n1,nt) * delta_v(j,na) * ae_orb(j,n1,nt)
         end do
         call simpson(rgrid(nt)%mesh, work, rgrid(nt)%rab, coeff)
-        write(stdout,'(5X,A,I3,2X,I1''S splitting:'',F12.6)') atm(ityp(na)), na, n1, coeff
+        write(stdout,'(5X,A,I3,2X,I1,''S splitting:'',F12.6)') atm(ityp(na)), na, n1, coeff
       enddo
     endif
 
