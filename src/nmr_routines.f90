@@ -593,8 +593,8 @@ SUBROUTINE print_chemical_shifts(sigma_shape, sigma_bare, sigma_diamagnetic, sig
   endif
 
   write(stdout,*)
-  write(stdout,'(5X,''Total NMR chemical shifts in ppm: ---------------------------------------'')')
-  write(stdout,'(5X,''(adopting the Simpson convention for anisotropy and asymmetry)-----------'')')
+  write(stdout,'(5X,''Total NMR chemical shifts in ppm: -------------------------------------------------'')')
+  write(stdout,'(5X,''(adopting the Simpson convention for anisotropy and asymmetry on a shielding scale)'')')
   write(stdout,*)
   sigma_tot = sigma_bare + sigma_diamagnetic + sigma_paramagnetic
   if (okvan) sigma_tot = sigma_tot + sigma_paramagnetic_us + sigma_paramagnetic_aug
@@ -612,16 +612,15 @@ SUBROUTINE print_chemical_shifts(sigma_shape, sigma_bare, sigma_diamagnetic, sig
 
     call principal_axis_simpson(sigma_tot(:,:,na), v, axis)
     aniso = v(3) - tr_sigma
-    if (abs(aniso) > 1d-6) then
-      eta = (v(2) - v(1))/aniso
+    if (abs(aniso) > 1d-7) then
+      eta = (v(1) - v(2))/aniso
     else
       eta = 0.d0
     endif
-    aniso = aniso * 1.5d0
     write(stdout,1000) atm(ityp(na)), na, 'anisotropy:', aniso*1.0d6, 'eta:', eta
-    write(stdout,1001) atm(ityp(na)), na, 'sigma_11=', v(1)*1.0d6, 'axis=(', axis(1:3,1), ')'
-    write(stdout,1001) atm(ityp(na)), na, 'sigma_22=', v(2)*1.0d6, 'axis=(', axis(1:3,2), ')'
-    write(stdout,1001) atm(ityp(na)), na, 'sigma_33=', v(3)*1.0d6, 'axis=(', axis(1:3,3), ')'
+    write(stdout,1001) atm(ityp(na)), na, 'sigma_xx=', v(2)*1.0d6, 'axis=(', axis(1:3,2), ')'
+    write(stdout,1001) atm(ityp(na)), na, 'sigma_yy=', v(1)*1.0d6, 'axis=(', axis(1:3,1), ')'
+    write(stdout,1001) atm(ityp(na)), na, 'sigma_zz=', v(3)*1.0d6, 'axis=(', axis(1:3,3), ')'
     write(stdout,*)
   enddo
 
