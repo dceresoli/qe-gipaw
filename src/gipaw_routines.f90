@@ -431,17 +431,17 @@ SUBROUTINE gipaw_memory_report
      complex_size*nbnd*npol*DBLE(npwx)/Mb, npwx*npol,nbnd
   write(stdout,'(8x,"KS wavefunctions at k+q   ",f10.2," Mb",5x,"(",i8,",",i5,")")') &
      complex_size*nbnd*npol*DBLE(npwx)/Mb, npwx*npol,nbnd
-  write(stdout,'(8x,"First-order wavefunctions ",f10.2," Mb",5x,"(",i8,",",i5,",",i3")")') &
+  write(stdout,'(8x,"First-order wavefunctions ",f10.2," Mb",5x,"(",i8,",",i5,",",i3,")")') &
      complex_size*nbnd*npol*DBLE(npwx)*10/Mb, npwx*npol,nbnd,10
   if (okvan) &
-  write(stdout,'(8x,"First-order wavefunct (US)",f10.2," Mb",5x,"(",i8,",",i5,",",i3")")') &
+  write(stdout,'(8x,"First-order wavefunct (US)",f10.2," Mb",5x,"(",i8,",",i5,",",i3,")")') &
      complex_size*nbnd*npol*DBLE(npwx)*6/Mb, npwx*npol,nbnd,6
 
   write(stdout,'(8x,"Charge/spin density       ",f10.2," Mb",5x,"(",i8,",",i5,")")') &
      real_size*dble(dffts%nnr)*nspin/Mb, dffts%nnr, nspin
-  write(stdout,'(8x,"Induced current           ",f10.2," Mb",5x,"(",i8,",",i5,",",i1,",",i1")")') &
+  write(stdout,'(8x,"Induced current           ",f10.2," Mb",5x,"(",i8,",",i5,",",i1,",",i1,")")') &
      real_size*dble(dffts%nnr)*9*nspin/Mb, dffts%nnr,3,3,nspin
-  write(stdout,'(8x,"Induced magnetic field    ",f10.2," Mb",5x,"(",i8,",",i5,",",i1,",",i1")")') &
+  write(stdout,'(8x,"Induced magnetic field    ",f10.2," Mb",5x,"(",i8,",",i5,",",i1,",",i1,")")') &
      real_size*dble(dffts%nnr)*9*nspin/Mb, dffts%nnr,3,3,nspin
   
   write(stdout,'(8x,"NL pseudopotentials       ",f10.2," Mb",5x,"(",i8,",",i5,")")') &
