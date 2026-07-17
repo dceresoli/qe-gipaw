@@ -113,16 +113,18 @@ MODULE xml_routines
   !-----------------------------------------------------------------------
   SUBROUTINE xml_output_parallelinfo
   !-----------------------------------------------------------------------
+#if defined(_OPENMP)
+    USE omp_lib
+#endif
     USE mp_world,         ONLY : nproc
     USE mp_pools,         ONLY : npool
     USE mp_bands,         ONLY : ntask_groups, nbgrp
     USE laxlib_processors_grid, ONLY : nproc_ortho
     implicit none
     integer :: nthreads=1
-#if defined(__OMP) 
-    integer, external :: omp_get_max
-    nthreads = omp_get_max()
-#endif      
+#if defined(_OPENMP)
+    nthreads = omp_get_max_threads()
+#endif
 
     CHECK_IONODE
     _NE(parallel_info)
