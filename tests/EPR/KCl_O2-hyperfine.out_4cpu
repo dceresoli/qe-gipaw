@@ -1,5 +1,5 @@
 
-     Program GIPAW v.7.5 starts on  3Sep2025 at 14:16:51 
+     Program GIPAW v.7.5 starts on 23Sep2026 at 11:26:13 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -14,10 +14,10 @@
 
      MPI processes distributed on     1 nodes
      R & G space division:  proc/nbgrp/npool/nimage =       4
-     30502 MiB available memory on the printing compute node when the environment starts
+     6245 MiB available memory on the printing compute node when the environment starts
  
  
-     ***** This is GIPAW git revision 4ac496752585ac1b7ad3aede35a4ff298fd048ab *****
+     ***** This is GIPAW git revision 0313cec889656b2606afc94b9045c855ae01b4ed *****
      ***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****
      ***** in publications or presentations arising from this work.            *****
  
@@ -121,8 +121,8 @@
      alpha_pv=     24.6436 eV
  
      Number of occupied bands for each k-point:
-     k-point:     1    nbnd_occ=  35
-     k-point:     2    nbnd_occ=  35
+     k-point:     1    nbnd_occ=  35    spin=1
+     k-point:     2    nbnd_occ=  35    spin=2
  
  
      Message from routine gipaw_summary:
@@ -139,7 +139,282 @@
  
      select_spin: s_maj=1 s_min=2 rho_diff=    1.000000
  
+ 
+      the computed rT is     0.001012:
+      the number of points inside rT is    405:
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      4:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      4:
+      the l kappa quantum number is      0:
+      the value of lambda is      4:
+      the value of kappa is      4:
+      the first spin density is    10.751377:
+      the average spin density is    10.257431:
+      using the average spin density
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      4:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      5:
+      the l kappa quantum number is      0:
+      the value of lambda is      4:
+      the value of kappa is      5:
+      the first spin density is    10.660636:
+      the average spin density is    10.170846:
+      using the average spin density
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      5:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      4:
+      the l kappa quantum number is      0:
+      the value of lambda is      5:
+      the value of kappa is      4:
+      the first spin density is    10.660636:
+      the average spin density is    10.170846:
+      using the average spin density
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      5:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      5:
+      the l kappa quantum number is      0:
+      the value of lambda is      5:
+      the value of kappa is      5:
+      the first spin density is    10.570622:
+      the average spin density is    10.084953:
+      using the average spin density
+ 
+ 
+      the computed rT is     0.000905:
+      the number of points inside rT is    227:
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      1:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      1:
+      the l kappa quantum number is      0:
+      the value of lambda is      1:
+      the value of kappa is      1:
+      the first spin density is    56.227891:
+      the average spin density is    54.600259:
+      using the average spin density
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      1:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      2:
+      the l kappa quantum number is      0:
+      the value of lambda is      1:
+      the value of kappa is      2:
+      the first spin density is   -51.429073:
+      the average spin density is   -49.937411:
+      using the average spin density
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      2:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      1:
+      the l kappa quantum number is      0:
+      the value of lambda is      2:
+      the value of kappa is      1:
+      the first spin density is   -51.429073:
+      the average spin density is   -49.937411:
+      using the average spin density
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      2:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      2:
+      the l kappa quantum number is      0:
+      the value of lambda is      2:
+      the value of kappa is      2:
+      the first spin density is    46.852201:
+      the average spin density is    45.485149:
+      using the average spin density
+ 
+ 
+      the computed rT is     0.000426:
+      the number of points inside rT is    232:
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      1:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      1:
+      the l kappa quantum number is      0:
+      the value of lambda is      1:
+      the value of kappa is      1:
+      the first spin density is    13.956430:
+      the average spin density is    13.876176:
+      using the average spin density
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      1:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      2:
+      the l kappa quantum number is      0:
+      the value of lambda is      1:
+      the value of kappa is      2:
+      the first spin density is    14.247892:
+      the average spin density is    14.165535:
+      using the average spin density
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      2:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      1:
+      the l kappa quantum number is      0:
+      the value of lambda is      2:
+      the value of kappa is      1:
+      the first spin density is    14.247892:
+      the average spin density is    14.165535:
+      using the average spin density
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      2:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      2:
+      the l kappa quantum number is      0:
+      the value of lambda is      2:
+      the value of kappa is      2:
+      the first spin density is    14.527709:
+      the average spin density is    14.443192:
+      using the average spin density
+ 
      select_spin: s_maj=1 s_min=2 rho_diff=    1.000000
+ 
+      the atom type is      1:
+      the number of beta functions is     13:
+      the atom is      8:
+      the bec product is       0.000001162139:
+      the density is      40.684073556076:
+      the GIPAW is       0.000012618590:
+ 
+      the atom type is      1:
+      the number of beta functions is     13:
+      the atom is      9:
+      the bec product is       0.000001199775:
+      the density is      40.684073556076:
+      the GIPAW is       0.000012636599:
+ 
+      the atom type is      1:
+      the number of beta functions is     13:
+      the atom is     10:
+      the bec product is      -0.000084418860:
+      the density is      40.684073556076:
+      the GIPAW is      -0.000901377789:
+ 
+      the atom type is      1:
+      the number of beta functions is     13:
+      the atom is     11:
+      the bec product is      -0.000084340375:
+      the density is      40.684073556076:
+      the GIPAW is      -0.000900416784:
+ 
+      the atom type is      1:
+      the number of beta functions is     13:
+      the atom is     12:
+      the bec product is       0.001558817694:
+      the density is      40.684073556076:
+      the GIPAW is       0.016495179474:
+ 
+      the atom type is      1:
+      the number of beta functions is     13:
+      the atom is     13:
+      the bec product is       0.001558890709:
+      the density is      40.684073556076:
+      the GIPAW is       0.016496123631:
+ 
+      the atom type is      1:
+      the number of beta functions is     13:
+      the atom is     14:
+      the bec product is       0.001558915675:
+      the density is      40.684073556076:
+      the GIPAW is       0.016496067326:
+ 
+      the atom type is      1:
+      the number of beta functions is     13:
+      the atom is     15:
+      the bec product is       0.001558870703:
+      the density is      40.684073556076:
+      the GIPAW is       0.016495954943:
+ 
+      the atom type is      2:
+      the number of beta functions is     13:
+      the atom is      1:
+      the bec product is      -0.000002646643:
+      the density is       0.210586384627:
+      the GIPAW is       0.000182220720:
+ 
+      the atom type is      2:
+      the number of beta functions is     13:
+      the atom is      2:
+      the bec product is      -0.000002713707:
+      the density is       0.210586384627:
+      the GIPAW is       0.000180653176:
+ 
+      the atom type is      2:
+      the number of beta functions is     13:
+      the atom is      3:
+      the bec product is      -0.000002702998:
+      the density is       0.210586384627:
+      the GIPAW is       0.000180381318:
+ 
+      the atom type is      2:
+      the number of beta functions is     13:
+      the atom is      4:
+      the bec product is      -0.000002559091:
+      the density is       0.210586384627:
+      the GIPAW is       0.000181583454:
+ 
+      the atom type is      2:
+      the number of beta functions is     13:
+      the atom is      5:
+      the bec product is      -0.000001137346:
+      the density is       0.210586384627:
+      the GIPAW is      -0.000358384451:
+ 
+      the atom type is      2:
+      the number of beta functions is     13:
+      the atom is      6:
+      the bec product is       0.000000530103:
+      the density is       0.210586384627:
+      the GIPAW is      -0.000146242941:
+ 
+      the atom type is      2:
+      the number of beta functions is     13:
+      the atom is      7:
+      the bec product is      -0.000002033179:
+      the density is       0.210586384627:
+      the GIPAW is      -0.000236100336:
+ 
+      the atom type is      3:
+      the number of beta functions is      8:
+      the atom is     16:
+      the bec product is       0.007379187810:
+      the density is      56.650435065600:
+      the GIPAW is       0.106144535900:
+ 
+      the atom type is      3:
+      the number of beta functions is      8:
+      the atom is     17:
+      the bec product is       0.007379125702:
+      the density is      56.650435065600:
+      the GIPAW is       0.106143677737:
  
      Warning: core-relaxation is an experimental feature
      core-relax: calculating AE orbitals
@@ -768,45 +1043,45 @@
      Warning: core-relaxation is an experimental feature
      ----- spin-densities in bohrradius^-3 -----
                bare            GIPAW           core-relax      total
-     Cl      1       -0.000281        0.000188        0.000076       -0.000017
-     Cl      2       -0.000281        0.000186        0.000076       -0.000019
-     Cl      3       -0.000281        0.000186        0.000076       -0.000019
-     Cl      4       -0.000281        0.000187        0.000076       -0.000018
-     Cl      5       -0.000283       -0.000369        0.000115       -0.000537
-     Cl      6       -0.000283       -0.000151        0.000158       -0.000275
-     Cl      7       -0.000283       -0.000243        0.000113       -0.000413
-     K       8       -0.000283        0.000013        0.000013       -0.000256
-     K       9       -0.000283        0.000013        0.000013       -0.000256
-     K      10       -0.000283       -0.000945        0.000690       -0.000538
-     K      11       -0.000283       -0.000944        0.000690       -0.000537
-     K      12       -0.000281        0.017289       -0.008304        0.008705
-     K      13       -0.000281        0.017290       -0.008304        0.008706
-     K      14       -0.000281        0.017290       -0.008304        0.008706
-     K      15       -0.000281        0.017290       -0.008304        0.008706
-     O      16        0.002686        0.106764       -0.083792        0.025658
-     O      17        0.002686        0.106763       -0.083792        0.025657
+     Cl      1       -0.000281        0.000182        0.000076       -0.000023
+     Cl      2       -0.000281        0.000181        0.000076       -0.000024
+     Cl      3       -0.000281        0.000180        0.000076       -0.000025
+     Cl      4       -0.000281        0.000182        0.000076       -0.000023
+     Cl      5       -0.000283       -0.000358        0.000115       -0.000526
+     Cl      6       -0.000283       -0.000146        0.000158       -0.000271
+     Cl      7       -0.000283       -0.000236        0.000113       -0.000406
+     K       8       -0.000283        0.000013        0.000013       -0.000257
+     K       9       -0.000283        0.000013        0.000013       -0.000257
+     K      10       -0.000283       -0.000901        0.000690       -0.000494
+     K      11       -0.000283       -0.000900        0.000690       -0.000493
+     K      12       -0.000281        0.016495       -0.008304        0.007911
+     K      13       -0.000281        0.016496       -0.008304        0.007912
+     K      14       -0.000281        0.016496       -0.008304        0.007912
+     K      15       -0.000281        0.016496       -0.008304        0.007912
+     O      16        0.002686        0.106145       -0.083792        0.025039
+     O      17        0.002686        0.106144       -0.083792        0.025038
      ----- Fermi contact in MHz -----
                bare            GIPAW           core-relax      total
-     Cl      1       -0.224974        0.150191        0.060880       -0.013904
-     Cl      2       -0.224974        0.148899        0.060880       -0.015196
-     Cl      3       -0.224974        0.148675        0.060880       -0.015420
-     Cl      4       -0.224974        0.149665        0.060880       -0.014429
-     Cl      5       -0.226324       -0.295348        0.091873       -0.429799
-     Cl      6       -0.226203       -0.120521        0.126740       -0.219984
-     Cl      7       -0.226191       -0.194570        0.090497       -0.330265
-     K       8       -0.226076        0.010584        0.010354       -0.205138
-     K       9       -0.226076        0.010599        0.010354       -0.205123
-     K      10       -0.226137       -0.756047        0.551897       -0.430287
-     K      11       -0.226137       -0.755241        0.551897       -0.429481
-     K      12       -0.224536       13.835653       -6.644892        6.966224
-     K      13       -0.224536       13.836445       -6.644892        6.967016
-     K      14       -0.224536       13.836398       -6.644892        6.966969
-     K      15       -0.224536       13.836304       -6.644892        6.966875
-     O      16       -1.628306      -64.718147       50.792954      -15.553499
-     O      17       -1.628306      -64.717624       50.792954      -15.552976
+     Cl      1       -0.224974        0.145820        0.060880       -0.018275
+     Cl      2       -0.224974        0.144565        0.060880       -0.019529
+     Cl      3       -0.224974        0.144348        0.060880       -0.019747
+     Cl      4       -0.224974        0.145310        0.060880       -0.018785
+     Cl      5       -0.226324       -0.286793        0.091873       -0.421244
+     Cl      6       -0.226203       -0.117029        0.126740       -0.216492
+     Cl      7       -0.226191       -0.188936        0.090497       -0.324631
+     K       8       -0.226076        0.010098        0.010354       -0.205625
+     K       9       -0.226076        0.010112        0.010354       -0.205610
+     K      10       -0.226137       -0.721316        0.551897       -0.395556
+     K      11       -0.226137       -0.720547        0.551897       -0.394787
+     K      12       -0.224536       13.200060       -6.644892        6.330631
+     K      13       -0.224536       13.200815       -6.644892        6.331386
+     K      14       -0.224536       13.200770       -6.644892        6.331341
+     K      15       -0.224536       13.200680       -6.644892        6.331251
+     O      16       -1.628306      -64.342677       50.792954      -15.178029
+     O      17       -1.628306      -64.342157       50.792954      -15.177509
  
      Initialization:
-     gipaw_setup  :      0.13s CPU      0.14s WALL (       1 calls)
+     gipaw_setup  :      0.09s CPU      0.10s WALL (       1 calls)
  
      Linear response
  
@@ -815,26 +1090,26 @@
      Induced current
  
      Other routines
-     hyperfine    :      8.84s CPU      8.93s WALL (       1 calls)
-     core_relax   :      8.62s CPU      8.70s WALL (       1 calls)
+     hyperfine    :      5.41s CPU      5.48s WALL (       1 calls)
+     core_relax   :      5.25s CPU      5.30s WALL (       1 calls)
  
      General routines
-     calbec       :      0.31s CPU      0.32s WALL (      38 calls)
-     fft          :      0.28s CPU      0.29s WALL (      54 calls)
+     calbec       :      0.20s CPU      0.21s WALL (      38 calls)
+     fft          :      0.13s CPU      0.13s WALL (      54 calls)
      ffts         :      0.00s CPU      0.00s WALL (       2 calls)
-     fftw         :      0.07s CPU      0.08s WALL (      84 calls)
-     davcio       :      0.03s CPU      0.04s WALL (      42 calls)
+     fftw         :      0.04s CPU      0.05s WALL (      84 calls)
+     davcio       :      0.02s CPU      0.03s WALL (      42 calls)
  
      Parallel routines
-     fft_scatter  :      0.24s CPU      0.24s WALL (     140 calls)
+     fft_scatter  :      0.10s CPU      0.10s WALL (     140 calls)
  
      Plugins
  
  
-     GIPAW        :      9.62s CPU      9.77s WALL
+     GIPAW        :      5.73s CPU      5.84s WALL
 
  
-   This run was terminated on:  14:17: 1   3Sep2025            
+   This run was terminated on:  11:26:19  23Sep2026            
 
 =------------------------------------------------------------------------------=
    JOB DONE.

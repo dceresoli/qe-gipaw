@@ -1,5 +1,5 @@
 
-     Program GIPAW v.7.5 starts on  3Sep2025 at 12:34:30 
+     Program GIPAW v.7.5 starts on 23Sep2026 at 11: 4:32 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -15,10 +15,10 @@
      MPI processes distributed on     1 nodes
      K-points division:     npool     =       2
      R & G space division:  proc/nbgrp/npool/nimage =       2
-     31543 MiB available memory on the printing compute node when the environment starts
+     5230 MiB available memory on the printing compute node when the environment starts
  
  
-     ***** This is GIPAW git revision 4ac496752585ac1b7ad3aede35a4ff298fd048ab *****
+     ***** This is GIPAW git revision 0313cec889656b2606afc94b9045c855ae01b4ed *****
      ***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****
      ***** in publications or presentations arising from this work.            *****
  
@@ -103,11 +103,11 @@ read_pp_mesh; mismatch in mesh size, discarding the one in header
      alpha_pv=     38.3340 eV
  
      Number of occupied bands for each k-point:
-     k-point:     1    nbnd_occ=  24
-     k-point:     2    nbnd_occ=  24
-     k-point:     3    nbnd_occ=  24
-     k-point:     4    nbnd_occ=  24
-     k-point:     5    nbnd_occ=  24
+     k-point:     1    nbnd_occ=  24    spin=1
+     k-point:     2    nbnd_occ=  24    spin=1
+     k-point:     3    nbnd_occ=  24    spin=1
+     k-point:     4    nbnd_occ=  24    spin=1
+     k-point:     5    nbnd_occ=  24    spin=1
  
  
      Message from routine gipaw_summary:
@@ -353,7 +353,7 @@ read_pp_mesh; mismatch in mesh size, discarding the one in header
      O       9  Q=         2.5500 1e-30 m^2  Cq=         5.3295 MHz  eta= 0.20172
  
      Initialization:
-     gipaw_setup  :      0.26s CPU      0.28s WALL (       1 calls)
+     gipaw_setup  :      0.17s CPU      0.17s WALL (       1 calls)
  
      Linear response
  
@@ -362,25 +362,25 @@ read_pp_mesh; mismatch in mesh size, discarding the one in header
      Induced current
  
      Other routines
-     efg          :      0.08s CPU      0.09s WALL (       1 calls)
+     efg          :      0.04s CPU      0.05s WALL (       1 calls)
  
      General routines
-     calbec       :      0.01s CPU      0.01s WALL (       5 calls)
-     fft          :      0.01s CPU      0.03s WALL (      15 calls)
+     calbec       :      0.00s CPU      0.00s WALL (       5 calls)
+     fft          :      0.02s CPU      0.02s WALL (      15 calls)
      ffts         :      0.00s CPU      0.00s WALL (       2 calls)
-     fftw         :      0.03s CPU      0.03s WALL (     120 calls)
+     fftw         :      0.02s CPU      0.02s WALL (     120 calls)
      davcio       :      0.00s CPU      0.00s WALL (      15 calls)
  
      Parallel routines
-     fft_scatter  :      0.01s CPU      0.01s WALL (     137 calls)
+     fft_scatter  :      0.02s CPU      0.02s WALL (     137 calls)
  
      Plugins
  
  
-     GIPAW        :      1.22s CPU      1.49s WALL
+     GIPAW        :      0.73s CPU      0.81s WALL
 
  
-   This run was terminated on:  12:34:32   3Sep2025            
+   This run was terminated on:  11: 4:32  23Sep2026            
 
 =------------------------------------------------------------------------------=
    JOB DONE.
