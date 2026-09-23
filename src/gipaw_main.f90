@@ -155,6 +155,7 @@ PROGRAM gipaw_main
      call suscept_crystal
 
   case ( 'knight' )
+     if (nspin /= 2) call errore('gipaw_main', 'Knight-shift is only for spin-polarized', 1)
      call knight_shift
      
   case ( 'f-sum' )

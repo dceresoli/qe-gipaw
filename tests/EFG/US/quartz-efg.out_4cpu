@@ -1,5 +1,5 @@
 
-     Program GIPAW v.7.5 starts on  3Sep2025 at 12:33:21 
+     Program GIPAW v.7.5 starts on 23Sep2026 at 11: 3:51 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -14,10 +14,10 @@
 
      MPI processes distributed on     1 nodes
      R & G space division:  proc/nbgrp/npool/nimage =       4
-     31532 MiB available memory on the printing compute node when the environment starts
+     5232 MiB available memory on the printing compute node when the environment starts
  
  
-     ***** This is GIPAW git revision 4ac496752585ac1b7ad3aede35a4ff298fd048ab *****
+     ***** This is GIPAW git revision 0313cec889656b2606afc94b9045c855ae01b4ed *****
      ***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****
      ***** in publications or presentations arising from this work.            *****
  
@@ -104,16 +104,16 @@
      alpha_pv=     41.5463 eV
  
      Number of occupied bands for each k-point:
-     k-point:     1    nbnd_occ=  24
-     k-point:     2    nbnd_occ=  24
-     k-point:     3    nbnd_occ=  24
-     k-point:     4    nbnd_occ=  24
-     k-point:     5    nbnd_occ=  24
-     k-point:     6    nbnd_occ=  24
-     k-point:     7    nbnd_occ=  24
-     k-point:     8    nbnd_occ=  24
-     k-point:     9    nbnd_occ=  24
-     k-point:    10    nbnd_occ=  24
+     k-point:     1    nbnd_occ=  24    spin=1
+     k-point:     2    nbnd_occ=  24    spin=1
+     k-point:     3    nbnd_occ=  24    spin=1
+     k-point:     4    nbnd_occ=  24    spin=1
+     k-point:     5    nbnd_occ=  24    spin=1
+     k-point:     6    nbnd_occ=  24    spin=1
+     k-point:     7    nbnd_occ=  24    spin=1
+     k-point:     8    nbnd_occ=  24    spin=1
+     k-point:     9    nbnd_occ=  24    spin=1
+     k-point:    10    nbnd_occ=  24    spin=1
  
  
      Message from routine gipaw_summary:
@@ -359,7 +359,7 @@
      O       9  Q=         2.5500 1e-30 m^2  Cq=         3.7240 MHz  eta= 0.24269
  
      Initialization:
-     gipaw_setup  :      0.09s CPU      0.10s WALL (       1 calls)
+     gipaw_setup  :      0.05s CPU      0.06s WALL (       1 calls)
  
      Linear response
  
@@ -368,25 +368,25 @@
      Induced current
  
      Other routines
-     efg          :      0.03s CPU      0.04s WALL (       1 calls)
+     efg          :      0.02s CPU      0.02s WALL (       1 calls)
  
      General routines
      calbec       :      0.00s CPU      0.00s WALL (      10 calls)
-     fft          :      0.18s CPU      0.28s WALL (      15 calls)
+     fft          :      0.02s CPU      0.02s WALL (      15 calls)
      ffts         :      0.00s CPU      0.00s WALL (       2 calls)
-     fftw         :      0.02s CPU      0.02s WALL (     240 calls)
+     fftw         :      0.01s CPU      0.01s WALL (     240 calls)
      davcio       :      0.00s CPU      0.00s WALL (      30 calls)
  
      Parallel routines
-     fft_scatter  :      0.18s CPU      0.20s WALL (     257 calls)
+     fft_scatter  :      0.01s CPU      0.01s WALL (     257 calls)
  
      Plugins
  
  
-     GIPAW        :      0.69s CPU      0.95s WALL
+     GIPAW        :      0.18s CPU      0.19s WALL
 
  
-   This run was terminated on:  12:33:22   3Sep2025            
+   This run was terminated on:  11: 3:51  23Sep2026            
 
 =------------------------------------------------------------------------------=
    JOB DONE.

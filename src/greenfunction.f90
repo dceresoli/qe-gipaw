@@ -21,7 +21,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
                                           allocate_bec_type, deallocate_bec_type
   USE wavefunctions,        ONLY : evc
   USE noncollin_module,            ONLY : npol
-  USE pwcom,                       ONLY : ef
+  USE pwcom,                       ONLY : ef, ef_up, ef_dw
   USE wvfct,                       ONLY : nbnd, et, npwx, g2kin
   USE gvect,                       ONLY : g
   USE uspp,                        ONLY : nkb, vkb
@@ -32,7 +32,8 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   USE io_files,                    ONLY : iunhub, nwordwfcU
   USE buffers,                     ONLY : get_buffer
   USE cell_base,                   ONLY : tpiba
-  USE klist,                       ONLY : lgauss, xk, degauss, ngauss, igk_k, ngk
+  USE klist,                       ONLY : lgauss, xk, degauss, ngauss, igk_k, ngk, two_fermi_energies
+  USE lsda_mod,                    ONLY : current_spin, isk
   USE gipaw_module
 #ifdef __BANDS
   USE mp_bands,                    ONLY : intra_bgrp_comm
@@ -55,6 +56,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   complex(dp), external :: zdotc
   real(dp), external :: wgauss, w0gauss
   real(dp) :: wg1, w0g, wgp, wwg, deltae, theta
+  real(dp) :: ef_spin
   external ch_psi_all, cg_psi
   integer :: npw
  
@@ -65,6 +67,8 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   ! allocate memory
   allocate (work(npwx), ps(nbnd,nbnd), h_diag(npwx,nbnd), eprec(nbnd))
   call allocate_bec_type(nkb, nbnd, becp)
+
+  current_spin = isk(ik)
 
   ! check if |q| is zero
   q_is_zero = .false.
@@ -86,19 +90,30 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
                  (1.d0,0.d0), evq(1,1), npwx, psi(1,ibnd_start), npwx, (0.d0,0.d0), &
                  ps(1,ibnd_start), nbnd)
 #else
-     CALL zgemm('C', 'N', nbnd, nbnd_occ (ik), npw, &
+     CALL zgemm('C', 'N', nbnd, nbnd_occ (ik, current_spin), npw, &
                 (1.d0,0.d0), evq(1,1), npwx, psi(1,1), npwx, (0.d0,0.d0), &
                 ps(1,1), nbnd)
 #endif   
-     do ibnd = 1, nbnd_occ(ik)
-        wg1 = wgauss ((ef-et(ibnd,ik)) / degauss, ngauss)
-        w0g = w0gauss((ef-et(ibnd,ik)) / degauss, ngauss) / degauss
+
+     if (two_fermi_energies) then
+        if (current_spin == 1) then
+           ef_spin = ef_up
+        else
+           ef_spin = ef_dw
+        end if
+     else
+        ef_spin = ef
+     endif
+
+     do ibnd = 1, nbnd_occ(ik, current_spin)
+        wg1 = wgauss ((ef_spin-et(ibnd,ik)) / degauss, ngauss)
+        w0g = w0gauss((ef_spin-et(ibnd,ik)) / degauss, ngauss) / degauss
         do jbnd = 1, nbnd
-           wgp = wgauss ( (ef - etq(jbnd,ik)) / degauss, ngauss)
+           wgp = wgauss ( (ef_spin - etq(jbnd,ik)) / degauss, ngauss)
            deltae = etq(jbnd,ik) - et(ibnd,ik)
            theta = wgauss (deltae / degauss, 0)
            wwg = wg1 * (1.d0 - theta) + wgp * theta
-           if (jbnd <= nbnd_occ(ik)) then
+           if (jbnd <= nbnd_occ(ik, current_spin)) then
               if (abs (deltae) > 1d-5) then
                  wwg = wwg + alpha_pv * theta * (wgp - wg1) / deltae
               else
@@ -114,11 +129,11 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   else
      ! insulators
 #ifdef __BANDS
-     CALL zgemm('C', 'N', nbnd_occ (ik), ibnd_end-ibnd_start+1, npw, &
+     CALL zgemm('C', 'N', nbnd_occ (ik, current_spin), ibnd_end-ibnd_start+1, npw, &
                 (1.d0,0.d0), evq(1,1), npwx, psi(1,ibnd_start), npwx, (0.d0,0.d0), &
                 ps(1,ibnd_start), nbnd)
 #else
-     CALL zgemm('C', 'N', nbnd_occ (ik), nbnd_occ (ik), npw, &
+     CALL zgemm('C', 'N', nbnd_occ (ik, current_spin), nbnd_occ (ik, current_spin), npw, &
                 (1.d0,0.d0), evq(1,1), npwx, psi(1,1), npwx, (0.d0,0.d0), &
                 ps(1,1), nbnd)
 #endif   
@@ -137,14 +152,14 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   ! g_psi is used as work space to store S|evq>
   ! |psi> = -(|psi> - S|evq><evq|psi>)
 #ifdef __BANDS
-  CALL calbec_bands (npwx, npw, nkb, vkb, evq, becp%k, nbnd_occ(ik), ibnd_start, ibnd_end)
-  CALL s_psi_bands (npwx, npw, nbnd_occ(ik), evq, g_psi, ibnd_start, ibnd_end)
+  CALL calbec_bands (npwx, npw, nkb, vkb, evq, becp%k, nbnd_occ(ik, current_spin), ibnd_start, ibnd_end)
+  CALL s_psi_bands (npwx, npw, nbnd_occ(ik, current_spin), evq, g_psi, ibnd_start, ibnd_end)
 #else
   CALL calbec (npw, vkb, evq, becp)
   if (lgauss) then 
      CALL s_psi (npwx, npw, nbnd, evq, g_psi)
   else
-     CALL s_psi (npwx, npw, nbnd_occ(ik), evq, g_psi)
+     CALL s_psi (npwx, npw, nbnd_occ(ik, current_spin), evq, g_psi)
   endif
 #endif
 
@@ -160,7 +175,7 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
           (1.d0,0.d0), g_psi(1,1), npwx, ps(1,ibnd_start), nbnd, (-1.d0,0.d0), &
           psi(1,ibnd_start), npwx )
 #else
-     CALL zgemm( 'N', 'N', npw, nbnd_occ(ik), nbnd, &
+     CALL zgemm( 'N', 'N', npw, nbnd_occ(ik, current_spin), nbnd, &
           (1.d0,0.d0), g_psi(1,1), npwx, ps(1,1), nbnd, (-1.d0,0.d0), &
           psi(1,1), npwx )
 #endif
@@ -168,11 +183,11 @@ SUBROUTINE greenfunction(ik, psi, g_psi, q)
   else
      ! insulators
 #ifdef __BANDS
-     CALL zgemm( 'N', 'N', npw, ibnd_end-ibnd_start+1, nbnd_occ(ik), &
+     CALL zgemm( 'N', 'N', npw, ibnd_end-ibnd_start+1, nbnd_occ(ik, current_spin), &
           (1.d0,0.d0), g_psi(1,1), npwx, ps(1,ibnd_start), nbnd, (-1.d0,0.d0), &
           psi(1,ibnd_start), npwx )
 #else
-     CALL zgemm( 'N', 'N', npw, nbnd_occ(ik), nbnd_occ(ik), &
+     CALL zgemm( 'N', 'N', npw, nbnd_occ(ik, current_spin), nbnd_occ(ik, current_spin), &
           (1.d0,0.d0), g_psi(1,1), npwx, ps(1,1), nbnd, (-1.d0,0.d0), &
           psi(1,1), npwx )
 #endif
@@ -249,7 +264,7 @@ endif
   conv_root = .true.
   call cgsolve_all (ch_psi_all, cg_psi, et(1,ik), psi, g_psi, &
        h_diag, npwx, npw, thresh, ik, lter, conv_root, anorm, &
-       nbnd_occ(ik), npol )
+       nbnd_occ(ik, current_spin), npol )
 
 #if defined(__MPI) && defined(__BANDS)
   ! replicate wfc

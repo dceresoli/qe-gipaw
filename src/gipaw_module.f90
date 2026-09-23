@@ -36,7 +36,7 @@ MODULE gipaw_module
   REAL(DP), PARAMETER :: ry2ha = 0.5_DP
  
   ! number of occupied bands at each k-point
-  INTEGER :: nbnd_occ(npk)
+  INTEGER :: nbnd_occ(npk,2)
   
   ! alpha shift of the projector on the valence wfcs
   REAL(DP) :: alpha_pv
@@ -74,6 +74,11 @@ MODULE gipaw_module
   ! core-relax method to calculate change of XC
   INTEGER :: core_relax_method = 1
  
+  ! core-relax max value for the radius to compute the spherical average of this density distribution 
+  ! around the atomic position (Ary Ferreira, 10.1021/acs.jpcc.6b08418)
+  REAL(DP) :: core_relax_r_max = 5.0
+  LOGICAL :: use_rt_avg = .true.
+
   ! format for a rank-2 tensor
   CHARACTER(*), PARAMETER :: tens_fmt = '(3(5X,3(F14.4,2X)/))'
   

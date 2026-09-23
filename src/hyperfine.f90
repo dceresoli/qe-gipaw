@@ -367,24 +367,25 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   !  
   USE kinds,                 ONLY : dp
   USE parameters,            ONLY : ntypx
-  USE atom,                  ONLY : rgrid
+  USE atom,                  ONLY : rgrid, msh
   USE gvect,                 ONLY : g, ngm
   USE klist,                 ONLY : nks, xk, igk_k, ngk
   USE cell_base,             ONLY : tpiba2
   USE ions_base,             ONLY : nat, ityp, ntyp => nsp, atm
   USE wvfct,                 ONLY : g2kin
   USE gvecw,                 ONLY : gcutw
-  USE wavefunctions,  ONLY : evc
+  USE wavefunctions,         ONLY : evc
   USE paw_gipaw,             ONLY : paw_recon, paw_nkb, paw_vkb, paw_becp
   USE becmod,                ONLY : calbec
   USE constants,             ONLY : pi, fpi
   USE mp_pools,              ONLY : inter_pool_comm
   USE mp,                    ONLY : mp_sum
   USE buffers,               ONLY : get_buffer
-  USE io_files,              ONLY : nwordwfc, iunwfc
+  USE io_files,              ONLY : nwordwfc, iunwfc, wfc_dir
   USE lsda_mod,              ONLY : current_spin, isk
   USE wvfct,                 ONLY : current_k, wg
-  USE gipaw_module,          ONLY : nbnd_occ, alpha, hfi_via_reconstruction_only
+  USE gipaw_module,          ONLY : nbnd_occ, alpha, hfi_via_reconstruction_only, use_rt_avg
+  USE io_global,             ONLY : stdout
 
   !-- parameters ---------------------------------------------------------
   IMPLICIT NONE
@@ -405,6 +406,12 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   complex(dp) :: bec_product
   integer, external :: atomic_number
   integer :: npw
+
+  ! contributed by Ary Ferreira
+  real(dp), allocatable :: caug(:)
+  integer :: nrt, inrt, nmbaug, laug
+  real(dp) :: mav, mavac, becp_debug(nat), at_hfi_debug(nat)
+  character(len=150) :: tmpstr, prefix
  
   allocate( at_hfi(paw_nkb,paw_nkb,ntyp) )
   allocate( at_hfi_zora(paw_nkb,paw_nkb,ntyp) )
@@ -425,7 +432,12 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
      if ( abs ( rgrid(nt)%r(1) ) < 1d-8 ) r_first = 2
      r_thomson = atomic_number(atm(nt)) * alpha**2
      
-
+     ! contributed by Ary Ferreira
+     nrt = COUNT ( rgrid(nt)%r(1:msh(nt)) <= r_thomson )
+     write(stdout,*)
+     write(stdout,'(5X,'' the computed rT is '',F12.6,'':'')') r_thomson
+     write(stdout,'(5X,'' the number of points inside rT is '',I6,'':'')') nrt
+     write(stdout,*)
 
      DO j = 1, hfi_extrapolation_npoints
         x_extrapolate(j) = j / REAL ( hfi_extrapolation_npoints + 1, dp ) &
@@ -462,8 +474,37 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
               enddo
            END IF
            
-           ! density at the origin
-           at_hfi(il1,il2,nt) = work(r_first)
+           ! contributed by Ary Ferreira
+           write(stdout,*)
+           write(stdout,'(5X,'' the first point is '',I6,'':'')') r_first
+           mavac = 0.0_dp
+           do inrt = r_first, nrt
+               mavac = mavac + work(inrt)
+           enddo
+           mav = mavac / nrt
+           write(stdout,'(5X,'' the n lambda quantum number is '',I6,'':'')') paw_recon(nt)%psphi(il1)%label%n
+           write(stdout,'(5X,'' the l lambda quantum number is '',I6,'':'')') paw_recon(nt)%psphi(il1)%label%l
+           write(stdout,'(5X,'' the n kappa quantum number is '',I6,'':'')') paw_recon(nt)%psphi(il2)%label%n
+           write(stdout,'(5X,'' the l kappa quantum number is '',I6,'':'')') paw_recon(nt)%psphi(il2)%label%l
+           write(stdout,'(5X,'' the value of lambda is '',I6,'':'')') il1
+           write(stdout,'(5X,'' the value of kappa is '',I6,'':'')') il2
+           write(stdout,'(5X,'' the first spin density is '',F12.6,'':'')') work(r_first)
+           write(stdout,'(5X,'' the average spin density is '',F12.6,'':'')') mav
+           if (use_rt_avg) then
+               write(stdout,'(5X,'' using the average spin density'')')
+           else
+               write(stdout,'(5X,'' using the first spin density'')')
+           end if
+           write(stdout,*)
+
+           ! density at the "origin"
+           if (use_rt_avg) then
+               ! average density over the Thomson's sphere
+               at_hfi(il1,il2,nt) = mav
+           else
+               ! density at the "origin"
+               at_hfi(il1,il2,nt) = work(r_first)
+           end if
            
 #ifdef ZORA
            ! For ZORA (pseudos in scalar-relativistic approximation) we need to extrapolate:
@@ -500,6 +541,9 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
   !  calculate the reconstruction part
   fc_gipaw = 0.d0
   fc_gipaw_zora = 0.d0
+  becp_debug = 0.d0
+  at_hfi_debug = 0.d0
+
   call select_spin(s_min, s_maj)  
   
   do ik = 1, nks
@@ -519,7 +563,7 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
      call init_gipaw_2 ( npw, igk_k(1,ik), xk(1,ik), paw_vkb )
      call calbec ( npw, paw_vkb, evc, paw_becp )
      
-     do ibnd = 1, nbnd_occ(ik)
+     do ibnd = 1, nbnd_occ(ik, current_spin)
         ijkb0 = 0
         do nt = 1, ntyp
            do na = 1, nat
@@ -542,7 +586,9 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
                        if (l2 /= 0) cycle
                        
                        bec_product = paw_becp(jkb,ibnd) * conjg(paw_becp(ikb,ibnd))
-                       
+                       becp_debug(na) = becp_debug(na) + s_weight * bec_product * wg(ibnd,ik)
+                       at_hfi_debug(na) = at_hfi_debug(na) + s_weight * at_hfi(nbs1,nbs2,nt) * wg(ibnd,ik)
+
                        fc_gipaw(na) = fc_gipaw(na) + s_weight * at_hfi(nbs1,nbs2,nt) &
                             * bec_product * wg(ibnd,ik)
 #ifdef ZORA                       
@@ -564,6 +610,23 @@ SUBROUTINE hfi_fc_gipaw_correction(fc_gipaw, fc_gipaw_zora)
 
   call mp_sum( fc_gipaw, inter_pool_comm )
   call mp_sum( fc_gipaw_zora, inter_pool_comm )
+
+  ! contributed by Ary Ferreira
+  call mp_sum( becp_debug, inter_pool_comm )
+  call mp_sum( at_hfi_debug, inter_pool_comm )
+  do nt = 1, ntyp
+    do na = 1, nat
+      if ( ityp(na) == nt ) then
+        write(stdout,'(5X,'' the atom type is '',I6,'':'')') nt
+        write(stdout,'(5X,'' the number of beta functions is '',I6,'':'')') paw_recon(nt)%paw_nh
+        write(stdout,'(5X,'' the atom is '',I6,'':'')') na
+        write(stdout,'(5X,'' the bec product is '',F20.12,'':'')') becp_debug(na)
+        write(stdout,'(5X,'' the density is '',F20.12,'':'')') at_hfi_debug(na)
+        write(stdout,'(5X,'' the GIPAW is '',F20.12,'':'')') fc_gipaw(na)
+        write(stdout,*)
+      end if
+    end do
+  end do
   
   deallocate( at_hfi )
   deallocate( at_hfi_zora )

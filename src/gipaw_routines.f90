@@ -31,7 +31,7 @@ SUBROUTINE gipaw_readin()
                         spline_ps, isolve, q_efg, max_seconds, r_rand, &
                         hfi_output_unit, hfi_nuclear_g_factor, &
                         core_relax_method, diagonalization, verbosity, &
-                        hfi_via_reconstruction_only
+                        hfi_via_reconstruction_only, core_relax_r_max, use_rt_avg
 
   if (.not. ionode .or. my_image_id > 0) goto 400
     
@@ -63,6 +63,8 @@ SUBROUTINE gipaw_readin()
   isolve = -1
   diagonalization = 'david'
   core_relax_method = 1
+  core_relax_r_max = 5.0
+  use_rt_avg = .true.
   hfi_via_reconstruction_only = .false.
 
   hfi_output_unit = 'MHz'
@@ -188,6 +190,8 @@ SUBROUTINE gipaw_bcast_input
   call mp_bcast(nmr_macroscopic_shape, root, world_comm)
   call mp_bcast(spline_ps, root, world_comm)
   call mp_bcast(isolve, root, world_comm)
+  call mp_bcast(core_relax_r_max, root, world_comm)
+  call mp_bcast(use_rt_avg, root, world_comm)
   call mp_bcast(core_relax_method, root, world_comm)
   call mp_bcast(hfi_via_reconstruction_only, root, world_comm)
   call mp_bcast(hfi_output_unit, root, world_comm)
@@ -319,7 +323,8 @@ SUBROUTINE gipaw_openfil
   !
   USE gipaw_module
   USE wvfct,            ONLY : nbnd, npwx
-  USE io_files,         ONLY : iunwfc, nwordwfc
+  USE io_files,         ONLY : iunwfc, nwordwfc, iunhub, nwordwfcU
+  USE ldaU,             ONLY : lda_plus_u, wfcU, nwfcU
   USE noncollin_module, ONLY : npol
   USE buffers,          ONLY : open_buffer
   USE control_flags,    ONLY : io_level    
@@ -335,6 +340,13 @@ SUBROUTINE gipaw_openfil
   nwordwfc = nbnd*npwx*npol
   CALL open_buffer( iunwfc, 'wfc', nwordwfc, io_level, exst )
 
+  ! ... Needed for LDA+U
+  ! ... iunhub contains the (orthogonalized) atomic wfcs * S
+  
+  nwordwfcU = npwx*nwfcU*npol
+  IF ( lda_plus_u ) &
+     CALL open_buffer( iunhub, 'hub', nwordwfcU, io_level, exst )
+
 END SUBROUTINE gipaw_openfil
 
 
@@ -342,12 +354,16 @@ END SUBROUTINE gipaw_openfil
 SUBROUTINE gipaw_closefil
   !-----------------------------------------------------------------------
   !
-  ! ... Close files opened by GIPAW, if any
+  ! ... Close files opened by GIPAW
   !
-  return
+  USE ldaU,             ONLY : lda_plus_U  
+  USE io_files,         ONLY : iunhub, iunwfc
+  USE buffers,          ONLY : close_buffer
+
+  call close_buffer( iunwfc, 'keep' )
+  if ( lda_plus_u ) call close_buffer ( iunhub, status = 'keep' )
 
 END SUBROUTINE gipaw_closefil
-
 
 
 !-----------------------------------------------------------------------
@@ -383,6 +399,7 @@ SUBROUTINE print_clock_gipaw
   call print_clock ('efg')
   call print_clock ('hyperfine')
   call print_clock ('core_relax')
+  call print_clock ('knight_shift')
   write(stdout,*)
   write(stdout,*) '    General routines'
   call print_clock ('calbec')

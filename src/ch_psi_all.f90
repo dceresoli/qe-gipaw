@@ -24,6 +24,7 @@ subroutine ch_psi_all (n, h, ah, e, ik, m)
   USE gipaw_module, ONLY : nbnd_occ, alpha_pv, evq
   USE mp_pools,     ONLY : intra_pool_comm
   USE mp,           ONLY : mp_sum
+  USE lsda_mod,     ONLY : current_spin, isk
 #ifdef __BANDS
   USE mp_bands,     ONLY : intra_bgrp_comm
 #endif
@@ -87,13 +88,14 @@ subroutine ch_psi_all (n, h, ah, e, ik, m)
   !   Here we compute the projector in the valence band
   !
   ikq = ik
+  current_spin = isk(ik)
   ps (:,:) = (0.d0, 0.d0)
 #ifdef __BANDS
-  call zgemm ('C', 'N', nbnd_occ (ikq) , ibnd_end-ibnd_start+1, n, (1.d0, 0.d0) , evq, &
+  call zgemm ('C', 'N', nbnd_occ (ikq, current_spin) , ibnd_end-ibnd_start+1, n, (1.d0, 0.d0) , evq, &
        npwx, spsi(1,ibnd_start), npwx, (0.d0, 0.d0) , ps(1,ibnd_start), nbnd)
   ps (:,ibnd_start:ibnd_end) = ps(:,ibnd_start:ibnd_end) * alpha_pv
 #else
-  call zgemm ('C', 'N', nbnd_occ (ikq) , m, n, (1.d0, 0.d0) , evq, &
+  call zgemm ('C', 'N', nbnd_occ (ikq, current_spin) , m, n, (1.d0, 0.d0) , evq, &
        npwx, spsi, npwx, (0.d0, 0.d0) , ps, nbnd)
   ps (:,:) = ps(:,:) * alpha_pv
 #endif
@@ -108,11 +110,11 @@ subroutine ch_psi_all (n, h, ah, e, ik, m)
 
   hpsi (:,:) = (0.d0, 0.d0)
 #ifdef __BANDS
-  call zgemm ('N', 'N', n, ibnd_end-ibnd_start+1, nbnd_occ (ikq) , (1.d0, 0.d0) , evq, &
+  call zgemm ('N', 'N', n, ibnd_end-ibnd_start+1, nbnd_occ (ikq, current_spin) , (1.d0, 0.d0) , evq, &
        npwx, ps(1,ibnd_start), nbnd, (1.d0, 0.d0) , hpsi(1,ibnd_start), npwx)
   spsi(:,ibnd_start:ibnd_end) = hpsi(:,ibnd_start:ibnd_end)
 #else
-  call zgemm ('N', 'N', n, m, nbnd_occ (ikq) , (1.d0, 0.d0) , evq, &
+  call zgemm ('N', 'N', n, m, nbnd_occ (ikq, current_spin) , (1.d0, 0.d0) , evq, &
        npwx, ps, nbnd, (1.d0, 0.d0) , hpsi, npwx)
   spsi(:,:) = hpsi(:,:)
 #endif

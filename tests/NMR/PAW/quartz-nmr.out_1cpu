@@ -1,5 +1,5 @@
 
-     Program GIPAW v.7.5 starts on  3Sep2025 at 12:52:18 
+     Program GIPAW v.7.5 starts on 23Sep2026 at 11:12:52 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -13,10 +13,10 @@
      Parallel version (MPI), running on     1 processors
 
      MPI processes distributed on     1 nodes
-     31025 MiB available memory on the printing compute node when the environment starts
+     5860 MiB available memory on the printing compute node when the environment starts
  
  
-     ***** This is GIPAW git revision 4ac496752585ac1b7ad3aede35a4ff298fd048ab *****
+     ***** This is GIPAW git revision 0313cec889656b2606afc94b9045c855ae01b4ed *****
      ***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****
      ***** in publications or presentations arising from this work.            *****
  
@@ -101,16 +101,16 @@ read_pp_mesh; mismatch in mesh size, discarding the one in header
      alpha_pv=     38.3340 eV
  
      Number of occupied bands for each k-point:
-     k-point:     1    nbnd_occ=  24
-     k-point:     2    nbnd_occ=  24
-     k-point:     3    nbnd_occ=  24
-     k-point:     4    nbnd_occ=  24
-     k-point:     5    nbnd_occ=  24
-     k-point:     6    nbnd_occ=  24
-     k-point:     7    nbnd_occ=  24
-     k-point:     8    nbnd_occ=  24
-     k-point:     9    nbnd_occ=  24
-     k-point:    10    nbnd_occ=  24
+     k-point:     1    nbnd_occ=  24    spin=1
+     k-point:     2    nbnd_occ=  24    spin=1
+     k-point:     3    nbnd_occ=  24    spin=1
+     k-point:     4    nbnd_occ=  24    spin=1
+     k-point:     5    nbnd_occ=  24    spin=1
+     k-point:     6    nbnd_occ=  24    spin=1
+     k-point:     7    nbnd_occ=  24    spin=1
+     k-point:     8    nbnd_occ=  24    spin=1
+     k-point:     9    nbnd_occ=  24    spin=1
+     k-point:    10    nbnd_occ=  24    spin=1
  
  
      Message from routine gipaw_summary:
@@ -138,7 +138,7 @@ read_pp_mesh; mismatch in mesh size, discarding the one in header
  
      Computing the magnetic susceptibility     isolve=1    ethr=  0.1000E-13
      Starting from scratch
-     k-point #    1 of    10      pool #  1    cpu time:       1.8
+     k-point #    1 of    10      pool #  1    cpu time:       1.1
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  7.0
@@ -244,7 +244,7 @@ PARA_AUG  3      -0.0572584        -0.1535521        -2.3001062
      cgsolve_all iterations  23    anorm=    0.69E-07
      cgsolve_all iterations  23    anorm=    0.68E-07
  
-     k-point #    2 of    10      pool #  1    cpu time:      46.2
+     k-point #    2 of    10      pool #  1    cpu time:      28.6
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  7.0
@@ -350,7 +350,7 @@ PARA_AUG  3      -0.0730331        -0.0859241        -1.1194859
      cgsolve_all iterations  23    anorm=    0.67E-07
      cgsolve_all iterations  22    anorm=    0.71E-07
  
-     k-point #    3 of    10      pool #  1    cpu time:      88.0
+     k-point #    3 of    10      pool #  1    cpu time:      54.7
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  7.0
@@ -456,7 +456,7 @@ PARA_AUG  3      -0.2726592        -0.1188257        -2.2128606
      cgsolve_all iterations  23    anorm=    0.67E-07
      cgsolve_all iterations  23    anorm=    0.65E-07
  
-     k-point #    4 of    10      pool #  1    cpu time:     132.2
+     k-point #    4 of    10      pool #  1    cpu time:      82.2
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  7.0
@@ -562,7 +562,7 @@ PARA_AUG  3      -0.3355991        -0.1528126        -2.0089211
      cgsolve_all iterations  22    anorm=    0.61E-07
      cgsolve_all iterations  22    anorm=    0.66E-07
  
-     k-point #    5 of    10      pool #  1    cpu time:     175.1
+     k-point #    5 of    10      pool #  1    cpu time:     108.6
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  7.0
@@ -668,7 +668,7 @@ PARA_AUG  3      -0.0286514         0.0357880        -1.1656237
      cgsolve_all iterations  23    anorm=    0.59E-07
      cgsolve_all iterations  24    anorm=    0.72E-07
  
-     k-point #    6 of    10      pool #  1    cpu time:     219.6
+     k-point #    6 of    10      pool #  1    cpu time:     136.7
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  7.0
@@ -774,7 +774,7 @@ PARA_AUG  3      -0.0210376         0.0113096        -1.2331854
      cgsolve_all iterations  23    anorm=    0.62E-07
      cgsolve_all iterations  22    anorm=    0.72E-07
  
-     k-point #    7 of    10      pool #  1    cpu time:     264.9
+     k-point #    7 of    10      pool #  1    cpu time:     164.8
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  6.9
@@ -880,7 +880,7 @@ PARA_AUG  3      -0.1079054         0.0734185        -1.1143515
      cgsolve_all iterations  22    anorm=    0.67E-07
      cgsolve_all iterations  23    anorm=    0.63E-07
  
-     k-point #    8 of    10      pool #  1    cpu time:     308.7
+     k-point #    8 of    10      pool #  1    cpu time:     191.9
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  7.0
@@ -986,7 +986,7 @@ PARA_AUG  3      -0.0764868         0.0011166        -0.5382711
      cgsolve_all iterations  21    anorm=    0.67E-07
      cgsolve_all iterations  21    anorm=    0.64E-07
  
-     k-point #    9 of    10      pool #  1    cpu time:     336.6
+     k-point #    9 of    10      pool #  1    cpu time:     218.0
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  7.0
@@ -1092,7 +1092,7 @@ PARA_AUG  3      -0.0156153        -0.2150145        -2.2267491
      cgsolve_all iterations  23    anorm=    0.68E-07
      cgsolve_all iterations  23    anorm=    0.66E-07
  
-     k-point #   10 of    10      pool #  1    cpu time:     364.0
+     k-point #   10 of    10      pool #  1    cpu time:     245.4
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  6.9
@@ -1499,134 +1499,134 @@ PARA_AUG  3       0.0016829         0.0152986        -1.1702225
             -0.5287         -2.4136       -123.7153
 
  
-     Total NMR chemical shifts in ppm: ---------------------------------------
-     (adopting the Simpson convention for anisotropy and asymmetry)-----------
+     Total NMR chemical shifts in ppm: -------------------------------------------------
+     (adopting the Simpson convention for anisotropy and asymmetry on a shielding scale)
  
      Atom  1  Si  pos: (  0.470100 -0.814241  0.733333)  Total sigma:         437.35
            438.5481          0.3425          6.8361
              0.2279        438.0212          3.8437
            -11.6892         -6.7672        435.4779
 
-     Si      1    anisotropy:     -5.29    eta:   -0.6839
-     Si      1    sigma_11=    437.91    axis=( -0.494639  0.868628 -0.028593)
-     Si      1    sigma_22=    440.32    axis=( -0.757292 -0.414629  0.504571)
-     Si      1    sigma_33=    433.82    axis=(  0.426429  0.271234  0.862897)
+     Si      1    anisotropy:     -3.53    eta:    0.6839
+     Si      1    sigma_xx=    440.32    axis=( -0.757292 -0.414629  0.504571)
+     Si      1    sigma_yy=    437.91    axis=( -0.494639  0.868628 -0.028593)
+     Si      1    sigma_zz=    433.82    axis=(  0.426429  0.271234  0.862897)
  
      Atom  2  Si  pos: (  0.470100  0.814241  1.466667)  Total sigma:         437.35
            438.5481         -0.3425         -6.8361
             -0.2279        438.0212          3.8437
             11.6892         -6.7672        435.4779
 
-     Si      2    anisotropy:     -5.29    eta:   -0.6839
-     Si      2    sigma_11=    437.91    axis=( -0.494639 -0.868628  0.028593)
-     Si      2    sigma_22=    440.32    axis=(  0.757292 -0.414629  0.504571)
-     Si      2    sigma_33=    433.82    axis=( -0.426429  0.271234  0.862897)
+     Si      2    anisotropy:     -3.53    eta:    0.6839
+     Si      2    sigma_xx=    440.32    axis=(  0.757292 -0.414629  0.504571)
+     Si      2    sigma_yy=    437.91    axis=( -0.494639 -0.868628  0.028593)
+     Si      2    sigma_zz=    433.82    axis=( -0.426429  0.271234  0.862897)
  
      Atom  3  Si  pos: ( -0.940200  0.000000  0.000000)  Total sigma:         437.50
            437.9532          0.0000         -0.0000
             -0.0000        438.9309         -7.8268
             -0.0000         13.5642        435.6176
 
-     Si      3    anisotropy:     -5.31    eta:   -0.7442
-     Si      3    sigma_11=    437.95    axis=(  1.000000  0.000000  0.000000)
-     Si      3    sigma_22=    440.59    axis=( -0.000000  0.866049  0.499959)
-     Si      3    sigma_33=    433.96    axis=( -0.000000  0.499959 -0.866049)
+     Si      3    anisotropy:     -3.54    eta:    0.7442
+     Si      3    sigma_xx=    440.59    axis=( -0.000000  0.866049  0.499959)
+     Si      3    sigma_yy=    437.95    axis=(  1.000000  0.000000  0.000000)
+     Si      3    sigma_zz=    433.96    axis=( -0.000000  0.499959 -0.866049)
  
      Atom  4  O   pos: (  0.681300 -0.253747  0.471680)  Total sigma:         217.87
            206.1057         22.9165        -20.3199
             22.1133        227.8920        -28.7191
            -21.4574        -28.1834        219.6192
 
-     O       4    anisotropy:     74.87    eta:   -0.0919
-     O       4    sigma_11=    195.21    axis=( -0.187845  0.715341  0.673054)
-     O       4    sigma_22=    190.62    axis=(  0.875300 -0.188968  0.445131)
-     O       4    sigma_33=    267.78    axis=( -0.445606 -0.672740  0.590641)
+     O       4    anisotropy:     49.91    eta:    0.0919
+     O       4    sigma_xx=    190.62    axis=(  0.875300 -0.188968  0.445131)
+     O       4    sigma_yy=    195.21    axis=( -0.187845  0.715341  0.673054)
+     O       4    sigma_zz=    267.78    axis=( -0.445606 -0.672740  0.590641)
  
      Atom  5  O   pos: ( -0.120900  0.716899  1.205013)  Total sigma:         217.86
            242.6656         -1.0328         34.8653
             -1.9278        191.6348         -3.7945
             34.4108         -4.9308        219.2669
 
-     O       5    anisotropy:     74.78    eta:   -0.1227
-     O       5    sigma_11=    195.99    axis=( -0.523725 -0.507673  0.684090)
-     O       5    sigma_22=    189.87    axis=( -0.262714  0.860141  0.437194)
-     O       5    sigma_33=    267.71    axis=(  0.810366 -0.049249  0.583850)
+     O       5    anisotropy:     49.86    eta:    0.1227
+     O       5    sigma_xx=    189.87    axis=( -0.262714  0.860141  0.437194)
+     O       5    sigma_yy=    195.99    axis=( -0.523725 -0.507673  0.684090)
+     O       5    sigma_zz=    267.71    axis=(  0.810366 -0.049249  0.583850)
  
      Atom  6  O   pos: ( -0.560400 -0.463152  1.938347)  Total sigma:         217.83
            203.6772        -20.7264        -14.4931
            -21.5275        230.2874         31.5895
            -13.3291         32.0285        219.5329
 
-     O       6    anisotropy:     73.95    eta:   -0.1158
-     O       6    sigma_11=    196.04    axis=(  0.714377 -0.185881  0.674621)
-     O       6    sigma_22=    190.33    axis=( -0.594810 -0.669132  0.445493)
-     O       6    sigma_33=    267.13    axis=( -0.368602  0.719521  0.588576)
+     O       6    anisotropy:     49.30    eta:    0.1158
+     O       6    sigma_xx=    190.33    axis=( -0.594810 -0.669132  0.445493)
+     O       6    sigma_yy=    196.04    axis=(  0.714377 -0.185881  0.674621)
+     O       6    sigma_zz=    267.13    axis=( -0.368602  0.719521  0.588576)
  
      Atom  7  O   pos: (  0.681300  0.253747 -0.471680)  Total sigma:         217.87
            206.1057        -22.9165         20.3199
            -22.1133        227.8920        -28.7191
             21.4574        -28.1834        219.6192
 
-     O       7    anisotropy:     74.87    eta:   -0.0919
-     O       7    sigma_11=    195.21    axis=(  0.187845  0.715341  0.673054)
-     O       7    sigma_22=    190.62    axis=(  0.875300  0.188968 -0.445131)
-     O       7    sigma_33=    267.78    axis=(  0.445606 -0.672740  0.590641)
+     O       7    anisotropy:     49.91    eta:    0.0919
+     O       7    sigma_xx=    190.62    axis=(  0.875300  0.188968 -0.445131)
+     O       7    sigma_yy=    195.21    axis=(  0.187845  0.715341  0.673054)
+     O       7    sigma_zz=    267.78    axis=(  0.445606 -0.672740  0.590641)
  
      Atom  8  O   pos: ( -0.120900 -0.716899  0.994987)  Total sigma:         217.86
            242.6656          1.0328        -34.8653
              1.9278        191.6348         -3.7945
            -34.4108         -4.9308        219.2669
 
-     O       8    anisotropy:     74.78    eta:   -0.1227
-     O       8    sigma_11=    195.99    axis=(  0.523725 -0.507673  0.684090)
-     O       8    sigma_22=    189.87    axis=( -0.262714 -0.860141 -0.437194)
-     O       8    sigma_33=    267.71    axis=( -0.810366 -0.049249  0.583850)
+     O       8    anisotropy:     49.86    eta:    0.1227
+     O       8    sigma_xx=    189.87    axis=( -0.262714 -0.860141 -0.437194)
+     O       8    sigma_yy=    195.99    axis=(  0.523725 -0.507673  0.684090)
+     O       8    sigma_zz=    267.71    axis=( -0.810366 -0.049249  0.583850)
  
      Atom  9  O   pos: ( -0.560400  0.463152  0.261653)  Total sigma:         217.83
            203.6772         20.7264         14.4931
             21.5275        230.2874         31.5895
             13.3291         32.0285        219.5329
 
-     O       9    anisotropy:     73.95    eta:   -0.1158
-     O       9    sigma_11=    196.04    axis=( -0.714377 -0.185881  0.674621)
-     O       9    sigma_22=    190.33    axis=( -0.594810  0.669132 -0.445493)
-     O       9    sigma_33=    267.13    axis=(  0.368602  0.719521  0.588576)
+     O       9    anisotropy:     49.30    eta:    0.1158
+     O       9    sigma_xx=    190.33    axis=( -0.594810  0.669132 -0.445493)
+     O       9    sigma_yy=    196.04    axis=( -0.714377 -0.185881  0.674621)
+     O       9    sigma_zz=    267.13    axis=(  0.368602  0.719521  0.588576)
  
      Initialization:
-     gipaw_setup  :      0.50s CPU      0.53s WALL (       1 calls)
+     gipaw_setup  :      0.32s CPU      0.34s WALL (       1 calls)
  
      Linear response
-     greenf       :    197.69s CPU    198.40s WALL (     240 calls)
-     cgsolve      :    196.04s CPU    196.76s WALL (     240 calls)
-     ch_psi       :    193.93s CPU    194.63s WALL (    5374 calls)
-     h_psiq       :    172.85s CPU    173.51s WALL (    5374 calls)
+     greenf       :    138.53s CPU    139.07s WALL (     240 calls)
+     cgsolve      :    137.38s CPU    137.92s WALL (     240 calls)
+     ch_psi       :    135.85s CPU    136.39s WALL (    5374 calls)
+     h_psiq       :    120.82s CPU    121.31s WALL (    5374 calls)
  
      Apply operators
-     h_psi        :    242.61s CPU    243.89s WALL (   55923 calls)
-     apply_vel    :      4.36s CPU      4.39s WALL (     210 calls)
+     h_psi        :    168.95s CPU    169.92s WALL (   55923 calls)
+     apply_vel    :      3.09s CPU      3.10s WALL (     210 calls)
  
      Induced current
-     j_para       :     45.44s CPU     45.60s WALL (     270 calls)
+     j_para       :     31.24s CPU     31.39s WALL (     270 calls)
      biot_savart  :      0.01s CPU      0.01s WALL (       1 calls)
  
      Other routines
  
      General routines
-     calbec       :     53.77s CPU     54.10s WALL (  119110 calls)
-     fft          :      0.03s CPU      0.03s WALL (      42 calls)
+     calbec       :     37.51s CPU     37.77s WALL (  119110 calls)
+     fft          :      0.02s CPU      0.03s WALL (      42 calls)
      ffts         :      0.00s CPU      0.00s WALL (      10 calls)
-     fftw         :    224.64s CPU    225.71s WALL (  443250 calls)
-     davcio       :      0.03s CPU      0.03s WALL (     160 calls)
+     fftw         :    156.10s CPU    156.94s WALL (  443250 calls)
+     davcio       :      0.02s CPU      0.02s WALL (     160 calls)
  
      Parallel routines
  
      Plugins
  
  
-     GIPAW        :   6m28.98s CPU   6m31.58s WALL
+     GIPAW        :   4m31.12s CPU   4m33.05s WALL
 
  
-   This run was terminated on:  12:58:50   3Sep2025            
+   This run was terminated on:  11:17:25  23Sep2026            
 
 =------------------------------------------------------------------------------=
    JOB DONE.

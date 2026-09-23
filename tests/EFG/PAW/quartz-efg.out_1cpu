@@ -1,5 +1,5 @@
 
-     Program GIPAW v.7.5 starts on  3Sep2025 at 12:33:59 
+     Program GIPAW v.7.5 starts on 23Sep2026 at 11: 4:13 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -13,10 +13,10 @@
      Parallel version (MPI), running on     1 processors
 
      MPI processes distributed on     1 nodes
-     31555 MiB available memory on the printing compute node when the environment starts
+     5246 MiB available memory on the printing compute node when the environment starts
  
  
-     ***** This is GIPAW git revision 4ac496752585ac1b7ad3aede35a4ff298fd048ab *****
+     ***** This is GIPAW git revision 0313cec889656b2606afc94b9045c855ae01b4ed *****
      ***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****
      ***** in publications or presentations arising from this work.            *****
  
@@ -99,16 +99,16 @@ read_pp_mesh; mismatch in mesh size, discarding the one in header
      alpha_pv=     38.3340 eV
  
      Number of occupied bands for each k-point:
-     k-point:     1    nbnd_occ=  24
-     k-point:     2    nbnd_occ=  24
-     k-point:     3    nbnd_occ=  24
-     k-point:     4    nbnd_occ=  24
-     k-point:     5    nbnd_occ=  24
-     k-point:     6    nbnd_occ=  24
-     k-point:     7    nbnd_occ=  24
-     k-point:     8    nbnd_occ=  24
-     k-point:     9    nbnd_occ=  24
-     k-point:    10    nbnd_occ=  24
+     k-point:     1    nbnd_occ=  24    spin=1
+     k-point:     2    nbnd_occ=  24    spin=1
+     k-point:     3    nbnd_occ=  24    spin=1
+     k-point:     4    nbnd_occ=  24    spin=1
+     k-point:     5    nbnd_occ=  24    spin=1
+     k-point:     6    nbnd_occ=  24    spin=1
+     k-point:     7    nbnd_occ=  24    spin=1
+     k-point:     8    nbnd_occ=  24    spin=1
+     k-point:     9    nbnd_occ=  24    spin=1
+     k-point:    10    nbnd_occ=  24    spin=1
  
  
      Message from routine gipaw_summary:
@@ -354,7 +354,7 @@ read_pp_mesh; mismatch in mesh size, discarding the one in header
      O       9  Q=         2.5500 1e-30 m^2  Cq=         5.3295 MHz  eta= 0.20172
  
      Initialization:
-     gipaw_setup  :      0.53s CPU      0.56s WALL (       1 calls)
+     gipaw_setup  :      0.31s CPU      0.33s WALL (       1 calls)
  
      Linear response
  
@@ -363,24 +363,24 @@ read_pp_mesh; mismatch in mesh size, discarding the one in header
      Induced current
  
      Other routines
-     efg          :      0.23s CPU      0.25s WALL (       1 calls)
+     efg          :      0.14s CPU      0.15s WALL (       1 calls)
  
      General routines
-     calbec       :      0.01s CPU      0.02s WALL (      10 calls)
-     fft          :      0.02s CPU      0.02s WALL (      15 calls)
+     calbec       :      0.01s CPU      0.01s WALL (      10 calls)
+     fft          :      0.01s CPU      0.01s WALL (      15 calls)
      ffts         :      0.00s CPU      0.00s WALL (       2 calls)
-     fftw         :      0.13s CPU      0.14s WALL (     240 calls)
-     davcio       :      0.00s CPU      0.01s WALL (      30 calls)
+     fftw         :      0.08s CPU      0.08s WALL (     240 calls)
+     davcio       :      0.00s CPU      0.00s WALL (      30 calls)
  
      Parallel routines
  
      Plugins
  
  
-     GIPAW        :      1.98s CPU      2.21s WALL
+     GIPAW        :      1.16s CPU      1.28s WALL
 
  
-   This run was terminated on:  12:34: 1   3Sep2025            
+   This run was terminated on:  11: 4:14  23Sep2026            
 
 =------------------------------------------------------------------------------=
    JOB DONE.

@@ -20,6 +20,7 @@ SUBROUTINE rmc(s_weight, delta_g_rmc, delta_g_rmc_gipaw)
   USE kinds,                  ONLY : dp
   USE ions_base,              ONLY : nat, ityp, ntyp => nsp
   USE wvfct,                  ONLY : nbnd, wg, g2kin, current_k
+  USE lsda_mod,               ONLY : current_spin, isk
   USE klist,                  ONLY : ngk
   USE wavefunctions,   ONLY : evc
   USE becmod,                 ONLY : calbec  
@@ -38,7 +39,8 @@ SUBROUTINE rmc(s_weight, delta_g_rmc, delta_g_rmc_gipaw)
   integer :: npw
 
   ! bare term
-  do ibnd = 1, nbnd_occ(current_k)
+  current_spin = isk(current_k)
+  do ibnd = 1, nbnd_occ(current_k,current_spin)
      npw = ngk(current_k)
      delta_g_rmc = delta_g_rmc - s_weight * wg(ibnd,current_k) * &
                    sum(g2kin(1:npw)*conjg(evc(1:npw,ibnd))*evc(1:npw,ibnd))
