@@ -1,5 +1,5 @@
 
-     Program GIPAW v.7.5 starts on 23Sep2026 at 11: 3:48 
+     Program GIPAW v.7.5 starts on 23Sep2026 at 12:11: 9 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -13,10 +13,10 @@
      Parallel version (MPI), running on     1 processors
 
      MPI processes distributed on     1 nodes
-     5279 MiB available memory on the printing compute node when the environment starts
+     5993 MiB available memory on the printing compute node when the environment starts
  
  
-     ***** This is GIPAW git revision 0313cec889656b2606afc94b9045c855ae01b4ed *****
+     ***** This is GIPAW git revision 86fab6ad6d2c70acbb459e494b57b522007db78f *****
      ***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****
      ***** in publications or presentations arising from this work.            *****
  
@@ -355,7 +355,7 @@
      O       9  Q=         2.5500 1e-30 m^2  Cq=         3.7240 MHz  eta= 0.24269
  
      Initialization:
-     gipaw_setup  :      0.17s CPU      0.17s WALL (       1 calls)
+     gipaw_setup  :      0.18s CPU      0.18s WALL (       1 calls)
  
      Linear response
  
@@ -370,7 +370,7 @@
      calbec       :      0.00s CPU      0.00s WALL (      10 calls)
      fft          :      0.01s CPU      0.01s WALL (      15 calls)
      ffts         :      0.00s CPU      0.00s WALL (       2 calls)
-     fftw         :      0.02s CPU      0.03s WALL (     240 calls)
+     fftw         :      0.03s CPU      0.03s WALL (     240 calls)
      davcio       :      0.00s CPU      0.00s WALL (      30 calls)
  
      Parallel routines
@@ -378,10 +378,10 @@
      Plugins
  
  
-     GIPAW        :      0.37s CPU      0.40s WALL
+     GIPAW        :      0.38s CPU      0.41s WALL
 
  
-   This run was terminated on:  11: 3:49  23Sep2026            
+   This run was terminated on:  12:11:10  23Sep2026            
 
 =------------------------------------------------------------------------------=
    JOB DONE.

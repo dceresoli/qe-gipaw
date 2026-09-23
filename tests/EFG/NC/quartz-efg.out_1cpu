@@ -1,5 +1,5 @@
 
-     Program GIPAW v.7.5 starts on 23Sep2026 at 11: 3:35 
+     Program GIPAW v.7.5 starts on 23Sep2026 at 12:10:55 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -13,10 +13,10 @@
      Parallel version (MPI), running on     1 processors
 
      MPI processes distributed on     1 nodes
-     5239 MiB available memory on the printing compute node when the environment starts
+     6001 MiB available memory on the printing compute node when the environment starts
  
  
-     ***** This is GIPAW git revision 0313cec889656b2606afc94b9045c855ae01b4ed *****
+     ***** This is GIPAW git revision 86fab6ad6d2c70acbb459e494b57b522007db78f *****
      ***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****
      ***** in publications or presentations arising from this work.            *****
  
@@ -355,7 +355,7 @@
      O       9  Q=         2.5500 1e-30 m^2  Cq=         5.2944 MHz  eta= 0.20413
  
      Initialization:
-     gipaw_setup  :      0.16s CPU      0.16s WALL (       1 calls)
+     gipaw_setup  :      0.15s CPU      0.17s WALL (       1 calls)
  
      Linear response
  
@@ -364,14 +364,14 @@
      Induced current
  
      Other routines
-     efg          :      0.18s CPU      0.20s WALL (       1 calls)
+     efg          :      0.19s CPU      0.20s WALL (       1 calls)
  
      General routines
-     calbec       :      0.01s CPU      0.01s WALL (      10 calls)
+     calbec       :      0.01s CPU      0.02s WALL (      10 calls)
      fft          :      0.01s CPU      0.01s WALL (      11 calls)
      ffts         :      0.00s CPU      0.00s WALL (       1 calls)
-     fftw         :      0.11s CPU      0.12s WALL (     240 calls)
-     davcio       :      0.01s CPU      0.01s WALL (      30 calls)
+     fftw         :      0.12s CPU      0.12s WALL (     240 calls)
+     davcio       :      0.00s CPU      0.01s WALL (      30 calls)
  
      Parallel routines
  
@@ -381,7 +381,7 @@
      GIPAW        :      0.48s CPU      0.52s WALL
 
  
-   This run was terminated on:  11: 3:35  23Sep2026            
+   This run was terminated on:  12:10:56  23Sep2026            
 
 =------------------------------------------------------------------------------=
    JOB DONE.

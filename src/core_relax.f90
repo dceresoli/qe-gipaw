@@ -20,6 +20,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   USE parameters,            ONLY : ntypx
   USE ions_base,             ONLY : ntyp => nsp, atm, nat, tau, ityp
   USE atom,                  ONLY : rgrid
+  USE gipaw_module,          ONLY : alpha, core_relax_r_max, use_rt_avg
   USE radial_grids,          ONLY : ndmx
   USE scf,                   ONLY : rho
   USE gvect,                 ONLY : g, ngm
@@ -34,7 +35,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   USE becmod,                ONLY : calbec
   USE wavefunctions,         ONLY : evc
   USE io_global,             ONLY : stdout
-  USE io_files,              ONLY : nwordwfc, iunwfc
+  USE io_files,              ONLY : nwordwfc, iunwfc, wfc_dir
   USE mp_pools,              ONLY : intra_pool_comm, inter_pool_comm
   USE mp,                    ONLY : mp_sum
   USE paw_gipaw,             ONLY : paw_recon, paw_vkb, paw_becp
@@ -47,8 +48,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   real(dp), intent(out) :: fc_core(nat)
 
   ! -- constants ---------------------------------------------------------
-  !real(dp), parameter :: r_max = 2.5d0      ! max core radius
-  real(dp), parameter :: r_max = 5.0d0      ! max core radius
+  !!real(dp), parameter :: r_max = 5.0d0      ! max core radius
   integer, parameter :: n_max = 10          ! max number of s orbitals
 
   !-- local variables ----------------------------------------------------
@@ -57,6 +57,12 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   real(dp), allocatable :: vpot(:)
   integer :: nt, nn, zz, nstop
   integer, external :: atomic_number
+
+  ! contributed by Ary Ferreira
+  real(dp) :: r_max ! max core radius
+  character(len=150) :: sna, sr_max, prefix
+  integer :: nrt, inrt, nr_max
+  real(dp) :: mav, mavac, cav, r_thomson
 
   integer :: s_maj, s_min, na, ispin, j
   complex(dp), allocatable :: aux(:), rho_g(:)
@@ -70,6 +76,8 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   complex(dp) :: bec_product
 
   real(dp), allocatable :: delta_v(:,:), work(:)
+  real(dp), allocatable :: work_c(:), work_b(:), work_g(:)
+  real(dp) :: norm_c, norm_b, norm_g
   integer :: n1, n2, ncore, r_first
   real(dp) :: b(2), coeff, norm, contrib
   integer :: mode, nin, mesh
@@ -114,6 +122,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
           !!if (zz >= 20) mode = 1  ! scalar-relativistic
           eigenvalue(nn,nt) = -(dble(zz)/dble(nn))**2.0
           nin = 0
+          !__ARY here this subroutine is called only for s (the 7-th argument == 0)
           call lschps(mode, 2.d0*zz, 1d-12, rgrid(nt), nin, nn, 0, &
                       eigenvalue(nn,nt), vpot, ae_orb(1,nn,nt), nstop)
           if (nstop /= 0 .and. nstop /= 50) then
@@ -145,6 +154,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
   do nt = 1, ntyp
 
     do il1 = 1, paw_recon(nt)%paw_nbeta
+      !__ARY the index of PAW core radius on mesh
       nrc = paw_recon(nt)%psphi(il1)%label%nrc
       l1 = paw_recon(nt)%psphi(il1)%label%l
       if (l1 /= 0) cycle
@@ -153,6 +163,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
         l2 = paw_recon(nt)%psphi(il2)%label%l
         if (l2 /= 0) cycle
 
+        !__ARY up to the index of PAW core radius on mesh
         do j = 1, nrc
           rho_recon(j,il1,il2,nt) = &
                    ( paw_recon(nt)%aephi(il1)%psi(j) &
@@ -183,6 +194,26 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
     nt = ityp(na)
     if (paw_recon(nt)%gipaw_ncore_orbital == 0) cycle
     if (iverbosity > 1) write(stdout,'(5X,''core-relax: projecting around atom '',I3)') na
+
+    ! contributed by Ary Ferreira
+    ! setting the max core radius
+    r_max = core_relax_r_max
+    mesh = rgrid(nt)%mesh
+    nr_max = COUNT ( rgrid(nt)%r(1:mesh) <= r_max )
+    write(stdout,*)
+    write(stdout,'(5X,''core-relax: max core radius (r_max) =  '',F12.4)') r_max
+    write(stdout,'(5X,''core-relax: number of points inside (nr_max) =  '',I4)') nr_max
+    write(stdout,*)
+
+    !! DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
+    write(sna, '(I2)') na
+    write(sr_max, '(F12.4)') r_max
+    prefix = trim(wfc_dir)//trim(adjustl(sna))//'-'//trim(adjustl(sr_max))
+    !open(unit=70+na, file=trim(prefix)//'-sph_rho_bare.dat')
+    !open(unit=80+na, file=trim(prefix)//'-sph_rho_gipaw.dat')
+    !open(unit=90+na, file=trim(prefix)//'-sph_rho_core.dat')
+    !open(unit=100+na, file=trim(prefix)//'-delta_v.dat')
+    !! DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
 
     !====================================================================
     ! project the density around each atom
@@ -224,6 +255,8 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
                     l1 = paw_recon(nt)%paw_nhtol(ih)
                     m1 = paw_recon(nt)%paw_nhtom(ih)
                     lm1 = m1 + l1**2
+                    !__ARY the index of PAW core radius on mesh
+                    !__ARY each channel can have a different one
                     nrc = paw_recon(nt)%psphi(nbs1)%label%nrc
                     if (l1 /= 0) cycle
  
@@ -237,6 +270,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
 
                        bec_product = paw_becp(jkb,ibnd) * conjg(paw_becp(ikb,ibnd))
 
+                       !__ARY up to the index of PAW core radius on mesh
                        sph_rho_gipaw(1:nrc,current_spin) = &
                             sph_rho_gipaw(1:nrc,current_spin) + &
                             rho_recon(1:nrc,nbs1,nbs2,nt) * &
@@ -258,6 +292,7 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
 
     mesh = rgrid(nt)%mesh
 
+    !__ARY each point r of the contribution of the core orbitals in Eq.(19) of PRB 76, 035124
     sph_rho_core = 0.d0
     do n1 = 1, paw_recon(nt)%gipaw_ncore_orbital
       if (paw_recon(nt)%gipaw_core_orbital_l(n1) /= 0) cycle
@@ -266,17 +301,26 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
       enddo
     enddo
 
-    allocate(work(mesh))
+    allocate(work(mesh), work_c(mesh), work_b(mesh), work_g(mesh))
     do j = 1, mesh
+      !__ARY each point r of the radial grid in Eq.(19) of PRB 76, 035124
       work(j) = sph_rho_bare(j,1)+sph_rho_bare(j,2)+sph_rho_gipaw(j,1)+sph_rho_gipaw(j,2)+sph_rho_core(j)
+      !__ARY this is the radial density, which will be integrated
       work(j) = work(j) * fpi * rgrid(nt)%r(j)**2.0
+      work_c(j) = sph_rho_core(j)
+      work_c(j) = work_c(j) * fpi * rgrid(nt)%r(j)**2.0
+      work_b(j) = sph_rho_bare(j,1)+sph_rho_bare(j,2)
+      work_b(j) = work_b(j) * fpi * rgrid(nt)%r(j)**2.0
+      work_g(j) = sph_rho_gipaw(j,1)+sph_rho_gipaw(j,2)
+      work_g(j) = work_g(j) * fpi * rgrid(nt)%r(j)**2.0
 
       if (rgrid(nt)%r(j) > r_max) cycle
 
       ! calculate density and magnetization
+      !__ARY current point r of the radial grid in Eq.(19) of PRB 76, 035124 (each spin component)
       b(1:2) = sph_rho_bare(j,1:2) + sph_rho_gipaw(j,1:2) + sph_rho_core(j)
       !b(1:2) = b(1:2) * rgrid(nt)%r(j)**2 * fpi
-      arho = abs(b(1)+b(2))
+      arho = abs(b(1)+b(2)) !__ARY Eq.(19) of PRB 76, 035124
       zeta = (b(s_maj)-b(s_min))/arho
 
       ! compute the perturbing potential, three possibilities
@@ -320,8 +364,15 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
     endif
 
     call simpson(rgrid(nt)%mesh, work, rgrid(nt)%rab, norm)
-    deallocate(work)
-    if (iverbosity > 1) write(stdout,'(5X,''core-relax: integrated charge = '',F10.4)') norm
+    call simpson(rgrid(nt)%mesh, work_c, rgrid(nt)%rab, norm_c)
+    call simpson(rgrid(nt)%mesh, work_b, rgrid(nt)%rab, norm_b)
+    call simpson(rgrid(nt)%mesh, work_g, rgrid(nt)%rab, norm_g)
+    deallocate(work, work_c, work_b, work_g)
+
+    write(stdout,'(5X,''core-relax: integrated charge (core) = '',F10.4)') norm_c
+    write(stdout,'(5X,''core-relax: integrated charge (bare) = '',F10.4)') norm_b
+    write(stdout,'(5X,''core-relax: integrated charge (GIPAW) = '',F10.4)') norm_g
+    write(stdout,'(5X,''core-relax: integrated charge (total) = '',F10.4)') norm
 
   !====================================================================
   ! end of the loop over atoms
@@ -345,6 +396,15 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
         exit
       endif
     enddo
+
+     ! contribiuted by Ary Ferreira
+     r_thomson = atomic_number(atm(nt)) * alpha**2
+     mesh = rgrid(nt)%mesh
+     nrt = COUNT ( rgrid(nt)%r(1:mesh) <= r_thomson )
+     write(stdout,*)
+     write(stdout,'(5X,'' the computed rT is '',F12.6,'':'')') r_thomson
+     write(stdout,'(5X,'' the number of points inside rT is '',I6,'':'')') nrt
+     write(stdout,*)
 
     ! count number of s core orbitals
     ncore = 0
@@ -382,7 +442,37 @@ SUBROUTINE hfi_fc_core_relax(method, fc_core)
                   coeff / (eigenvalue(n1,nt) - eigenvalue(n2,nt)) / &
                   rgrid(nt)%r(r_first)**2 / fpi
 
-        fc_core(na) = fc_core(na) + contrib
+           ! contributed by Ary Ferreira
+           write(stdout,*)
+           write(stdout,'(5X,'' the first point is '',I6,'':'')') r_first
+           mavac = 0.0_dp
+           do inrt = r_first, nrt
+               cav = 2.d0 * 4.d0 * ae_orb(inrt,n1,nt) * ae_orb(inrt,n2,nt) * &
+                         coeff / (eigenvalue(n1,nt) - eigenvalue(n2,nt)) / &
+                         rgrid(nt)%r(inrt)**2 / fpi
+               mavac = mavac + cav
+           enddo
+           mav = mavac / nrt
+           write(stdout,'(5X,'' the value of the integral in eq. (15) = '',F16.8)') coeff
+           write(stdout,'(5X,'' the value of lambda is '',I6,'':'')') n1
+           write(stdout,'(5X,'' the value of kapa is '',I6,'':'')') n2
+           write(stdout,'(5X,'' the first spin density is '',F12.6,'':'')') contrib
+           write(stdout,'(5X,'' the average spin density is '',F12.6,'':'')') mav
+           if (use_rt_avg) then
+               write(stdout,'(5X,'' using the average spin density'')')
+           else
+               write(stdout,'(5X,'' using the first spin density'')')
+           end if
+           write(stdout,*)
+
+        if (use_rt_avg) then
+           ! average density over the Thomson's sphere
+           fc_core(na) = fc_core(na) + mav
+        else
+           ! density at the "origin"
+           fc_core(na) = fc_core(na) + contrib
+        end if
+
         if (iverbosity > 0) &
             write(stdout,'(5X,A,I3,2X,I1,''S -> '',I1,''S :'',F12.6)') &
                  atm(ityp(na)), na, n1, n2, contrib
