@@ -22,6 +22,7 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
   USE gipaw_module,           ONLY : nbnd_occ
   USE fft_base,               ONLY : dffts
   USE fft_interfaces,         ONLY : invfft
+  USE lsda_mod,               ONLY : current_spin, isk
 #ifdef __BANDS
   USE mp,                          ONLY : mp_sum 
   USE mp_bands,                    ONLY : inter_bgrp_comm
@@ -65,9 +66,10 @@ SUBROUTINE j_para(fact, psi_n, psi_m, ik, q, j)
 #ifdef __BANDS
     do ibnd = ibnd_start, ibnd_end
 #else
-    do ibnd = 1, nbnd_occ(ik)
+    do ibnd = 1, nbnd_occ(ik, current_spin)
 #endif
       npw = ngk(ik)
+      current_spin = isk(ik)
 
       ! apply p_k on the left
       do ig = 1, npw

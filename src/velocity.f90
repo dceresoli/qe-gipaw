@@ -27,6 +27,7 @@ SUBROUTINE apply_p(psi, p_psi, ik, ipol, q)
   USE gipaw_module,         ONLY : nbnd_occ
   USE gvect,                ONLY : g
   USE cell_base,            ONLY : tpiba
+  USE lsda_mod,             ONLY : current_spin, isk
 #ifdef __BANDS
   USE mp_bands,             ONLY : inter_bgrp_comm
   USE mp,                   ONLY : mp_sum
@@ -46,7 +47,8 @@ SUBROUTINE apply_p(psi, p_psi, ik, ipol, q)
   INTEGER :: ig, ibnd
   INTEGER :: npw
 
-  do ibnd = 1, nbnd_occ(ik)
+  current_spin = isk(ik)
+  do ibnd = 1, nbnd_occ(ik,current_spin)
     npw = ngk(ik)
     do ig = 1, npw
       gk = xk(ipol,ik) + g(ipol,igk_k(ig,ik)) + q(ipol)
@@ -117,7 +119,7 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
   ! initialization
   npw = ngk(ik)
   current_k = ik
-  if (lsda) current_spin = isk(ik)
+  current_spin = isk(ik)
 
   ! allocate temporary arrays, save old NL-potential
   allocate(aux(npwx,nbnd), vkb_save(npwx,nkb))
@@ -139,11 +141,11 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
 
       ! compute <\beta(k \pm dk)| and project on |psi>
       call init_us_2_no_phase(npw, igk_k(1,ik), dxk, vkb, .false.)  ! TODO: .true. if on GPU
-      call allocate_bec_type(nkb, nbnd_occ(ik), becp)
+      call allocate_bec_type(nkb, nbnd_occ(ik,current_spin), becp)
 #ifdef __BANDS
-      call calbec_bands (npwx, npw, nkb, vkb, psi, becp%k, nbnd_occ(ik), ibnd_start, ibnd_end)
+      call calbec_bands (npwx, npw, nkb, vkb, psi, becp%k, nbnd_occ(ik,current_spin), ibnd_start, ibnd_end)
 #else
-      call calbec (npw, vkb, psi, becp, nbnd_occ(ik))
+      call calbec (npw, vkb, psi, becp, nbnd_occ(ik,current_spin))
 #endif
 
       ! |q|!=0 => compute |\beta(k \pm dk + q)>
@@ -156,17 +158,17 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
       if (what == 'V' .or. what == 'v') then
           ! apply |\beta(k \pm dk+q)>D<\beta(k \pm dk)| to |psi>
 #ifdef __BANDS
-          call add_vuspsi_bands(npwx, npw, nbnd_occ(ik), aux, ibnd_start, ibnd_end)
+          call add_vuspsi_bands(npwx, npw, nbnd_occ(ik,current_spin), aux, ibnd_start, ibnd_end)
           !! specialized Hubbard term missing
           aux2(:,ibnd_start:ibnd_end) = aux2(:,ibnd_start:ibnd_end) + dble(isign) * ryd_to_hartree * &
                                         aux(:,ibnd_start:ibnd_end)/(2.d0*dk*tpiba)
 #else
-          call add_vuspsi(npwx, npw, nbnd_occ(ik), aux)
+          call add_vuspsi(npwx, npw, nbnd_occ(ik,current_spin), aux)
           call deallocate_bec_type(becp)
 
           if (lda_plus_U) then
              call orthoatwfc1(ik)
-             call vhpsi(npwx, npw, nbnd_occ(ik), psi, aux)
+             call vhpsi(npwx, npw, nbnd_occ(ik,current_spin), psi, aux)
           endif
           vel_psi = vel_psi + dble(isign) * ryd_to_hartree * aux/(2.d0*dk*tpiba)
 #endif
@@ -174,10 +176,10 @@ SUBROUTINE apply_vel_NL(what, psi, vel_psi, ik, ipol, q)
       elseif (what == 'S' .or. what == 's') then
           ! apply |\beta(k \pm dk+q)>S<\beta(k \pm dk)| to |psi>
 #ifdef __BANDS
-          call s_psi_bands(npwx, npw, nbnd_occ(ik), psi, aux, ibnd_start, ibnd_end)
+          call s_psi_bands(npwx, npw, nbnd_occ(ik,current_spin), psi, aux, ibnd_start, ibnd_end)
           aux2(:,ibnd_start:ibnd_end) = aux2(:,ibnd_start:ibnd_end) + dble(isign) * aux(:,ibnd_start:ibnd_end)/(2.d0*dk*tpiba)
 #else
-          call s_psi(npwx, npw, nbnd_occ(ik), psi, aux)
+          call s_psi(npwx, npw, nbnd_occ(ik,current_spin), psi, aux)
           call deallocate_bec_type(becp)
           vel_psi = vel_psi + dble(isign) * aux/(2.d0*dk*tpiba)
 #endif
@@ -213,6 +215,7 @@ SUBROUTINE apply_vel(psi, vel_psi, ik, ipol, q)
   USE wvfct,                ONLY : nbnd, npwx, et 
   USE uspp,                 ONLY : okvan
   USE gipaw_module,         ONLY : nbnd_occ
+  USE lsda_mod,             ONLY : current_spin, isk
 #ifdef __BANDS
   USE gipaw_module,         ONLY : ibnd_start, ibnd_end
 #endif
@@ -232,12 +235,13 @@ SUBROUTINE apply_vel(psi, vel_psi, ik, ipol, q)
   call start_clock('apply_vel')
   vel_psi = (0.d0,0.d0)
 
+  current_spin = isk(ik)
   if (okvan) then
       call apply_vel_NL('S', psi, vel_psi, ik, ipol, q)
 #ifdef __BANDS
       do ibnd = ibnd_start, ibnd_end
 #else
-      do ibnd = 1, nbnd_occ(ik)
+      do ibnd = 1, nbnd_occ(ik,current_spin)
 #endif
           vel_psi(1:npwx,ibnd) = -et(ibnd,ik) * ryd_to_hartree * vel_psi(1:npwx,ibnd)
       enddo

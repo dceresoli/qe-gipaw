@@ -506,7 +506,7 @@ CONTAINS
 #ifdef __BANDS
         do ibnd = ibnd_start, ibnd_end
 #else
-        do ibnd = 1, nbnd_occ(ik)
+        do ibnd = 1, nbnd_occ(ik, current_spin)
 #endif
           ! count number of electrons
           if (ipol == 1 .and. jpol == 1) then
@@ -622,7 +622,7 @@ CONTAINS
     do ipol = 1, 3
       ps = (0.d0,0.d0)
       aux(:,:) = svel_evc(:,:,ipol)
-      CALL ZGEMM('C', 'N', nbnd_occ(ik), nbnd_occ(ik), npw, &
+      CALL ZGEMM('C', 'N', nbnd_occ(ik, current_spin), nbnd_occ(ik, current_spin), npw, &
                 (1.d0,0.d0), evq(1,1), npwx, aux(1,1), npwx, (0.d0,0.d0), &
                 ps(1,1), nbnd)
 #ifdef __MPI
@@ -633,7 +633,7 @@ CONTAINS
 #  endif
 #endif
       aux = (0.d0,0.d0)
-      CALL ZGEMM('N', 'N', npw, nbnd_occ(ik), nbnd_occ(ik), &
+      CALL ZGEMM('N', 'N', npw, nbnd_occ(ik, current_spin), nbnd_occ(ik, current_spin), &
                 (1.d0,0.d0), evq(1,1), npwx, ps(1,1), nbnd, (0.d0,0.d0), &
                 aux(1,1), npwx)
       u_svel_evc(:,:,ipol) = -aux(:,:)
@@ -670,7 +670,7 @@ CONTAINS
 #ifdef __BANDS
         do ibnd = ibnd_start, ibnd_end
 #else
-        do ibnd = 1, nbnd_occ(ik)
+        do ibnd = 1, nbnd_occ(ik, current_spin)
 #endif
           braket = real(zdotc(npw, ul(1,ibnd,comp_ia), 1, &
                                    ur(1,ibnd,comp_ib), 1), dp)

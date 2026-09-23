@@ -398,7 +398,7 @@ SUBROUTINE efg_correction(efg_corr_tens)
      call init_gipaw_2 ( npw, igk_k(1,ik), xk(1,ik), paw_vkb )
      call calbec ( npw, paw_vkb, evc, paw_becp )
      
-     do ibnd = 1, nbnd_occ(ik)
+     do ibnd = 1, nbnd_occ(ik,current_spin)
         ijkb0 = 0
         do nt = 1, ntyp
            do na = 1, nat

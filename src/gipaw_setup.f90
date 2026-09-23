@@ -15,7 +15,7 @@ SUBROUTINE gipaw_setup
   USE kinds,         ONLY : dp
   USE io_global,     ONLY : stdout
   USE wvfct,         ONLY : nbnd, et, wg
-  USE lsda_mod,      ONLY : nspin
+  USE lsda_mod,      ONLY : nspin, current_spin, isk
   USE scf,           ONLY : v, vrs, vltot, kedtau, rho
   USE cellmd,        ONLY : cell_factor
   USE fft_base,      ONLY : dfftp
@@ -28,7 +28,7 @@ SUBROUTINE gipaw_setup
   USE mp_pools,      ONLY : inter_pool_comm 
   USE mp,            ONLY : mp_max, mp_min 
   USE dfunct,        ONLY : newd
-  USE pwcom,         ONLY : ef
+  USE pwcom,         ONLY : ef, ef_up, ef_dw
   USE constants,     ONLY : rytoev
   USE cell_base,     ONLY : alat, at, bg, omega
   USE mp_bands,      ONLY : intra_bgrp_comm
@@ -82,7 +82,7 @@ SUBROUTINE gipaw_setup
      call errore('gipaw_setup','GIPAW + two Fermi energies not implemented', 1)
 
   ! computes the number of occupied bands for each k point
-  nbnd_occ (:) = 0
+  nbnd_occ(:,:) = 0
   if (lgauss) then
      write(stdout,*)
      write(stdout,'(5X,''smearing ngauss='',I4,2X,''degauss='',F8.4,'' Ry'')') &
@@ -102,21 +102,33 @@ SUBROUTINE gipaw_setup
         fac = 1.d0 / sqrt(small)
         xmax = 2.d0 * log(0.5d0*(fac + sqrt(fac*fac-4.d0)))
      endif
-     target = ef + xmax * degauss
+
      do ik = 1, nks
+        current_spin = isk(ik)
+        if (two_fermi_energies) then
+           if (current_spin == 1) then
+              target = ef_up + xmax * degauss
+           else
+              target = ef_dw + xmax * degauss
+           endif
+        else
+           target = ef + xmax * degauss
+        endif
+
         do ibnd = 1, nbnd
 !DEBUG           if (ionode) write(70,*) et(ibnd,ik), wg(ibnd,ik)/wk(ik)
-           if (et(ibnd,ik) < target) nbnd_occ(ik) = ibnd
+           if (et(ibnd,ik) < target) nbnd_occ(ik, current_spin) = ibnd
         enddo
-        if (nbnd_occ (ik) == nbnd) &
+        if (nbnd_occ (ik, current_spin) == nbnd) &
            write(stdout,'(5X,''Possibly too few bands at k-point:'',I6)') ik
      enddo
   else 
     ! general case
      do ik = 1, nks
+       current_spin = isk(ik)
        do ibnd = 1, nbnd
          if (wk(ik) > 0.d0) then
-           if (wg(ibnd,ik)/wk(ik) > 1d-4 ) nbnd_occ(ik) = ibnd
+           if (wg(ibnd,ik)/wk(ik) > 1d-4 ) nbnd_occ(ik, current_spin) = ibnd
           endif
        end do
      end do
@@ -142,7 +154,8 @@ SUBROUTINE gipaw_setup
      ! insulator
      emax = et(1,1)
      do ik = 1, nks
-        do ibnd = 1, nbnd_occ(ik)
+        current_spin = isk(ik)
+        do ibnd = 1, nbnd_occ(ik, current_spin)
            emax = max(emax, et(ibnd,ik))
         enddo
      enddo
@@ -161,7 +174,8 @@ SUBROUTINE gipaw_setup
      write(stdout,*)
      write(stdout,'(5X,''Number of occupied bands for each k-point:'')')
      do ik = 1, nks
-        write(stdout,'(5X,''k-point:'',I6,4X,''nbnd_occ='',I4)') ik, nbnd_occ(ik)
+        current_spin = isk(ik)
+        write(stdout,'(5X,''k-point:'',I6,4X,''nbnd_occ='',I4,4X,''spin='',I1)') ik, nbnd_occ(ik, current_spin), current_spin
      enddo
      write(stdout,*)
   endif
