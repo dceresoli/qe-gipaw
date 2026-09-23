@@ -1,5 +1,5 @@
 
-     Program GIPAW v.7.5 starts on 23Sep2026 at 11: 8:13 
+     Program GIPAW v.7.5 starts on 23Sep2026 at 12:15:34 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -14,10 +14,10 @@
 
      MPI processes distributed on     1 nodes
      R & G space division:  proc/nbgrp/npool/nimage =       4
-     5210 MiB available memory on the printing compute node when the environment starts
+     5909 MiB available memory on the printing compute node when the environment starts
  
  
-     ***** This is GIPAW git revision 0313cec889656b2606afc94b9045c855ae01b4ed *****
+     ***** This is GIPAW git revision 86fab6ad6d2c70acbb459e494b57b522007db78f *****
      ***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****
      ***** in publications or presentations arising from this work.            *****
  
@@ -242,7 +242,7 @@
      cgsolve_all iterations  27    anorm=    0.65E-07
      cgsolve_all iterations  27    anorm=    0.65E-07
  
-     k-point #    2 of    10      pool #  1    cpu time:       6.4
+     k-point #    2 of    10      pool #  1    cpu time:       6.1
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  4.0
@@ -342,7 +342,7 @@
      cgsolve_all iterations  26    anorm=    0.67E-07
      cgsolve_all iterations  26    anorm=    0.73E-07
  
-     k-point #    3 of    10      pool #  1    cpu time:      12.3
+     k-point #    3 of    10      pool #  1    cpu time:      11.9
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  4.0
@@ -442,7 +442,7 @@
      cgsolve_all iterations  27    anorm=    0.76E-07
      cgsolve_all iterations  27    anorm=    0.74E-07
  
-     k-point #    4 of    10      pool #  1    cpu time:      18.2
+     k-point #    4 of    10      pool #  1    cpu time:      17.8
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  5.0
@@ -542,7 +542,7 @@
      cgsolve_all iterations  26    anorm=    0.72E-07
      cgsolve_all iterations  25    anorm=    0.72E-07
  
-     k-point #    5 of    10      pool #  1    cpu time:      24.0
+     k-point #    5 of    10      pool #  1    cpu time:      23.6
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  4.0
@@ -642,7 +642,7 @@
      cgsolve_all iterations  27    anorm=    0.69E-07
      cgsolve_all iterations  28    anorm=    0.73E-07
  
-     k-point #    6 of    10      pool #  1    cpu time:      30.1
+     k-point #    6 of    10      pool #  1    cpu time:      29.7
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  4.0
@@ -742,7 +742,7 @@
      cgsolve_all iterations  26    anorm=    0.69E-07
      cgsolve_all iterations  26    anorm=    0.66E-07
  
-     k-point #    7 of    10      pool #  1    cpu time:      36.1
+     k-point #    7 of    10      pool #  1    cpu time:      35.6
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  4.0
@@ -842,7 +842,7 @@
      cgsolve_all iterations  26    anorm=    0.70E-07
      cgsolve_all iterations  27    anorm=    0.68E-07
  
-     k-point #    8 of    10      pool #  1    cpu time:      42.1
+     k-point #    8 of    10      pool #  1    cpu time:      41.6
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  4.0
@@ -942,7 +942,7 @@
      cgsolve_all iterations  25    anorm=    0.64E-07
      cgsolve_all iterations  25    anorm=    0.65E-07
  
-     k-point #    9 of    10      pool #  1    cpu time:      47.8
+     k-point #    9 of    10      pool #  1    cpu time:      47.3
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  4.0
@@ -1042,7 +1042,7 @@
      cgsolve_all iterations  27    anorm=    0.73E-07
      cgsolve_all iterations  27    anorm=    0.68E-07
  
-     k-point #   10 of    10      pool #  1    cpu time:      53.9
+     k-point #   10 of    10      pool #  1    cpu time:      53.4
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations =  4.0
@@ -1446,37 +1446,37 @@
      gipaw_setup  :      0.05s CPU      0.05s WALL (       1 calls)
  
      Linear response
-     greenf       :     42.04s CPU     45.27s WALL (     210 calls)
-     cgsolve      :     41.89s CPU     45.11s WALL (     210 calls)
-     ch_psi       :     41.05s CPU     44.20s WALL (    5581 calls)
-     h_psiq       :     38.31s CPU     41.26s WALL (    5581 calls)
+     greenf       :     41.67s CPU     45.08s WALL (     210 calls)
+     cgsolve      :     41.52s CPU     44.93s WALL (     210 calls)
+     ch_psi       :     40.79s CPU     44.14s WALL (    5581 calls)
+     h_psiq       :     38.17s CPU     41.30s WALL (    5581 calls)
  
      Apply operators
-     h_psi        :     43.01s CPU     46.35s WALL (    6501 calls)
-     apply_vel    :      0.23s CPU      0.25s WALL (     210 calls)
+     h_psi        :     42.82s CPU     46.37s WALL (    6501 calls)
+     apply_vel    :      0.24s CPU      0.25s WALL (     210 calls)
  
      Induced current
-     j_para       :      5.12s CPU      5.51s WALL (     120 calls)
+     j_para       :      5.16s CPU      5.50s WALL (     120 calls)
      biot_savart  :      0.01s CPU      0.01s WALL (       1 calls)
  
      Other routines
  
      General routines
-     calbec       :      1.92s CPU      2.07s WALL (   18633 calls)
+     calbec       :      1.75s CPU      1.89s WALL (   18633 calls)
      fft          :      0.01s CPU      0.01s WALL (      29 calls)
-     fftw         :     43.58s CPU     46.93s WALL (  341240 calls)
+     fftw         :     43.55s CPU     47.05s WALL (  341240 calls)
      davcio       :      0.01s CPU      0.01s WALL (     160 calls)
  
      Parallel routines
-     fft_scatter  :      8.56s CPU      9.25s WALL (  341269 calls)
+     fft_scatter  :      8.58s CPU      9.31s WALL (  341269 calls)
  
      Plugins
  
  
-     GIPAW        :     55.46s CPU   1m 0.06s WALL
+     GIPAW        :     55.04s CPU     59.54s WALL
 
  
-   This run was terminated on:  11: 9:13  23Sep2026            
+   This run was terminated on:  12:16:34  23Sep2026            
 
 =------------------------------------------------------------------------------=
    JOB DONE.

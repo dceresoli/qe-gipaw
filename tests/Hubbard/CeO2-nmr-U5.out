@@ -1,5 +1,5 @@
 
-     Program GIPAW v.7.5 starts on 23Sep2026 at 11:22: 2 
+     Program GIPAW v.7.5 starts on 23Sep2026 at 12:29:35 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -14,10 +14,10 @@
 
      MPI processes distributed on     1 nodes
      R & G space division:  proc/nbgrp/npool/nimage =       4
-     5416 MiB available memory on the printing compute node when the environment starts
+     6387 MiB available memory on the printing compute node when the environment starts
  
  
-     ***** This is GIPAW git revision 0313cec889656b2606afc94b9045c855ae01b4ed *****
+     ***** This is GIPAW git revision 86fab6ad6d2c70acbb459e494b57b522007db78f *****
      ***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****
      ***** in publications or presentations arising from this work.            *****
  
@@ -277,7 +277,7 @@
      cgsolve_all iterations  42    anorm=    0.68E-07
      cgsolve_all iterations  35    anorm=    0.51E-07
  
-     k-point #    2 of     8      pool #  1    cpu time:       8.8
+     k-point #    2 of     8      pool #  1    cpu time:       8.4
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations = 16.7
@@ -363,7 +363,7 @@
      cgsolve_all iterations  50    anorm=    0.70E-07
      cgsolve_all iterations  49    anorm=    0.68E-07
  
-     k-point #    3 of     8      pool #  1    cpu time:      18.6
+     k-point #    3 of     8      pool #  1    cpu time:      17.7
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations = 14.2
@@ -449,7 +449,7 @@
      cgsolve_all iterations  45    anorm=    0.61E-07
      cgsolve_all iterations  42    anorm=    0.65E-07
  
-     k-point #    4 of     8      pool #  1    cpu time:      27.8
+     k-point #    4 of     8      pool #  1    cpu time:      26.6
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations = 15.8
@@ -535,7 +535,7 @@
      cgsolve_all iterations  52    anorm=    0.75E-07
      cgsolve_all iterations  49    anorm=    0.69E-07
  
-     k-point #    5 of     8      pool #  1    cpu time:      36.4
+     k-point #    5 of     8      pool #  1    cpu time:      35.1
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations = 16.6
@@ -621,7 +621,7 @@
      cgsolve_all iterations  51    anorm=    0.70E-07
      cgsolve_all iterations  53    anorm=    0.73E-07
  
-     k-point #    6 of     8      pool #  1    cpu time:      46.4
+     k-point #    6 of     8      pool #  1    cpu time:      44.9
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations = 16.0
@@ -707,7 +707,7 @@
      cgsolve_all iterations  44    anorm=    0.66E-07
      cgsolve_all iterations  38    anorm=    0.61E-07
  
-     k-point #    7 of     8      pool #  1    cpu time:      54.8
+     k-point #    7 of     8      pool #  1    cpu time:      53.1
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations = 14.2
@@ -793,7 +793,7 @@
      cgsolve_all iterations  32    anorm=    0.54E-07
      cgsolve_all iterations  33    anorm=    0.53E-07
  
-     k-point #    8 of     8      pool #  1    cpu time:      61.7
+     k-point #    8 of     8      pool #  1    cpu time:      59.7
      compute_u_kq: q = (    0.0000,    0.0000,    0.0000)
      Rotating WFCS
      ethr =  1.00E-14,  avg # of iterations = 15.3
@@ -1024,40 +1024,40 @@
      O       3    sigma_zz=   -674.31    axis=( -0.884107  0.209527  0.417677)
  
      Initialization:
-     gipaw_setup  :      0.15s CPU      0.16s WALL (       1 calls)
+     gipaw_setup  :      0.15s CPU      0.15s WALL (       1 calls)
  
      Linear response
-     greenf       :     47.09s CPU     50.14s WALL (     168 calls)
-     cgsolve      :     47.00s CPU     50.04s WALL (     168 calls)
-     ch_psi       :     46.33s CPU     49.34s WALL (    7148 calls)
-     h_psiq       :     44.39s CPU     47.27s WALL (    7148 calls)
+     greenf       :     45.38s CPU     48.43s WALL (     168 calls)
+     cgsolve      :     45.29s CPU     48.34s WALL (     168 calls)
+     ch_psi       :     44.74s CPU     47.75s WALL (    7148 calls)
+     h_psiq       :     42.92s CPU     45.81s WALL (    7148 calls)
  
      Apply operators
-     h_psi        :     55.68s CPU     59.44s WALL (   27183 calls)
-     apply_vel    :      0.49s CPU      0.54s WALL (     168 calls)
+     h_psi        :     53.81s CPU     57.61s WALL (   27183 calls)
+     apply_vel    :      0.50s CPU      0.52s WALL (     168 calls)
  
      Induced current
-     j_para       :      3.63s CPU      3.93s WALL (      96 calls)
+     j_para       :      3.59s CPU      3.82s WALL (      96 calls)
      biot_savart  :      0.01s CPU      0.01s WALL (       1 calls)
  
      Other routines
  
      General routines
-     calbec       :      3.21s CPU      3.46s WALL (   90080 calls)
+     calbec       :      3.00s CPU      3.24s WALL (   90080 calls)
      fft          :      0.02s CPU      0.02s WALL (      30 calls)
-     fftw         :     52.20s CPU     55.73s WALL (  228108 calls)
-     davcio       :      0.01s CPU      0.01s WALL (     128 calls)
+     fftw         :     50.67s CPU     54.19s WALL (  228108 calls)
+     davcio       :      0.00s CPU      0.01s WALL (     128 calls)
  
      Parallel routines
-     fft_scatter  :      9.54s CPU     10.24s WALL (  228138 calls)
+     fft_scatter  :      9.14s CPU      9.82s WALL (  228138 calls)
  
      Plugins
  
  
-     GIPAW        :   1m 5.72s CPU   1m10.34s WALL
+     GIPAW        :   1m 3.44s CPU   1m 8.00s WALL
 
  
-   This run was terminated on:  11:23:13  23Sep2026            
+   This run was terminated on:  12:30:43  23Sep2026            
 
 =------------------------------------------------------------------------------=
    JOB DONE.
