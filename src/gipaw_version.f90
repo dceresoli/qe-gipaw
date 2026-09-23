@@ -15,6 +15,6 @@ MODULE gipaw_version
   !
   SAVE
   !
-  CHARACTER (LEN=40) :: gipaw_git_revision = "0313cec889656b2606afc94b9045c855ae01b4ed"
+  CHARACTER (LEN=40) :: gipaw_git_revision = "e12079650f272c8017a516255230dc9efc833594"
   !
 END MODULE gipaw_version
