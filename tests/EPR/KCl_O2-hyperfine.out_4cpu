@@ -1,5 +1,5 @@
 
-     Program GIPAW v.7.5 starts on 23Sep2026 at 11:26:13 
+     Program GIPAW v.7.5 starts on 23Sep2026 at 12:33:37 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -14,10 +14,10 @@
 
      MPI processes distributed on     1 nodes
      R & G space division:  proc/nbgrp/npool/nimage =       4
-     6245 MiB available memory on the printing compute node when the environment starts
+     6377 MiB available memory on the printing compute node when the environment starts
  
  
-     ***** This is GIPAW git revision 0313cec889656b2606afc94b9045c855ae01b4ed *****
+     ***** This is GIPAW git revision 86fab6ad6d2c70acbb459e494b57b522007db78f *****
      ***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****
      ***** in publications or presentations arising from this work.            *****
  
@@ -439,233 +439,1797 @@
  
      select_spin: s_maj=1 s_min=2 rho_diff=    1.000000
  
-     core-relax: max core radius (r_max) =        5.0000
+     core-relax: max core radius (r_max) =        0.0000
      core-relax: projecting around atom   1
-     core-relax: integrated charge =    12.1357
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =   916
+ 
+     core-relax: integrated charge (core) =     4.0000
+     core-relax: integrated charge (bare) =     8.1419
+     core-relax: integrated charge (GIPAW) =    -0.0062
+     core-relax: integrated charge (total) =    12.1357
      core-relax: projecting around atom   2
-     core-relax: integrated charge =    12.1357
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =   916
+ 
+     core-relax: integrated charge (core) =     4.0000
+     core-relax: integrated charge (bare) =     8.1419
+     core-relax: integrated charge (GIPAW) =    -0.0062
+     core-relax: integrated charge (total) =    12.1357
      core-relax: projecting around atom   3
-     core-relax: integrated charge =    12.1357
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =   916
+ 
+     core-relax: integrated charge (core) =     4.0000
+     core-relax: integrated charge (bare) =     8.1419
+     core-relax: integrated charge (GIPAW) =    -0.0062
+     core-relax: integrated charge (total) =    12.1357
      core-relax: projecting around atom   4
-     core-relax: integrated charge =    12.1357
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =   916
+ 
+     core-relax: integrated charge (core) =     4.0000
+     core-relax: integrated charge (bare) =     8.1419
+     core-relax: integrated charge (GIPAW) =    -0.0062
+     core-relax: integrated charge (total) =    12.1357
      core-relax: projecting around atom   5
-     core-relax: integrated charge =    12.1613
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =   916
+ 
+     core-relax: integrated charge (core) =     4.0000
+     core-relax: integrated charge (bare) =     8.1675
+     core-relax: integrated charge (GIPAW) =    -0.0062
+     core-relax: integrated charge (total) =    12.1613
      core-relax: projecting around atom   6
-     core-relax: integrated charge =    12.1121
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =   916
+ 
+     core-relax: integrated charge (core) =     4.0000
+     core-relax: integrated charge (bare) =     8.1183
+     core-relax: integrated charge (GIPAW) =    -0.0062
+     core-relax: integrated charge (total) =    12.1121
      core-relax: projecting around atom   7
-     core-relax: integrated charge =    12.1291
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =   916
+ 
+     core-relax: integrated charge (core) =     4.0000
+     core-relax: integrated charge (bare) =     8.1353
+     core-relax: integrated charge (GIPAW) =    -0.0062
+     core-relax: integrated charge (total) =    12.1291
      core-relax: projecting around atom   8
-     core-relax: integrated charge =    12.3843
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =  1256
+ 
+     core-relax: integrated charge (core) =     6.0000
+     core-relax: integrated charge (bare) =     6.3815
+     core-relax: integrated charge (GIPAW) =     0.0028
+     core-relax: integrated charge (total) =    12.3843
      core-relax: projecting around atom   9
-     core-relax: integrated charge =    12.3843
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =  1256
+ 
+     core-relax: integrated charge (core) =     6.0000
+     core-relax: integrated charge (bare) =     6.3815
+     core-relax: integrated charge (GIPAW) =     0.0028
+     core-relax: integrated charge (total) =    12.3843
      core-relax: projecting around atom  10
-     core-relax: integrated charge =    12.1089
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =  1256
+ 
+     core-relax: integrated charge (core) =     6.0000
+     core-relax: integrated charge (bare) =     6.1061
+     core-relax: integrated charge (GIPAW) =     0.0028
+     core-relax: integrated charge (total) =    12.1089
      core-relax: projecting around atom  11
-     core-relax: integrated charge =    12.1089
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =  1256
+ 
+     core-relax: integrated charge (core) =     6.0000
+     core-relax: integrated charge (bare) =     6.1061
+     core-relax: integrated charge (GIPAW) =     0.0028
+     core-relax: integrated charge (total) =    12.1089
      core-relax: projecting around atom  12
-     core-relax: integrated charge =    13.4928
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =  1256
+ 
+     core-relax: integrated charge (core) =     6.0000
+     core-relax: integrated charge (bare) =     7.4900
+     core-relax: integrated charge (GIPAW) =     0.0028
+     core-relax: integrated charge (total) =    13.4928
      core-relax: projecting around atom  13
-     core-relax: integrated charge =    13.4928
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =  1256
+ 
+     core-relax: integrated charge (core) =     6.0000
+     core-relax: integrated charge (bare) =     7.4900
+     core-relax: integrated charge (GIPAW) =     0.0028
+     core-relax: integrated charge (total) =    13.4928
      core-relax: projecting around atom  14
-     core-relax: integrated charge =    13.4928
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =  1256
+ 
+     core-relax: integrated charge (core) =     6.0000
+     core-relax: integrated charge (bare) =     7.4900
+     core-relax: integrated charge (GIPAW) =     0.0028
+     core-relax: integrated charge (total) =    13.4928
      core-relax: projecting around atom  15
-     core-relax: integrated charge =    13.4928
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =  1256
+ 
+     core-relax: integrated charge (core) =     6.0000
+     core-relax: integrated charge (bare) =     7.4900
+     core-relax: integrated charge (GIPAW) =     0.0028
+     core-relax: integrated charge (total) =    13.4928
      core-relax: projecting around atom  16
-     core-relax: integrated charge =    15.1812
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =  1169
+ 
+     core-relax: integrated charge (core) =     2.0000
+     core-relax: integrated charge (bare) =    13.1877
+     core-relax: integrated charge (GIPAW) =    -0.0064
+     core-relax: integrated charge (total) =    15.1812
      core-relax: projecting around atom  17
-     core-relax: integrated charge =    15.1812
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =  1169
+ 
+     core-relax: integrated charge (core) =     2.0000
+     core-relax: integrated charge (bare) =    13.1877
+     core-relax: integrated charge (GIPAW) =    -0.0064
+     core-relax: integrated charge (total) =    15.1812
+ 
+      the computed rT is     0.000905:
+      the number of points inside rT is    227:
+ 
      Cl      1  1S splitting:   -0.000000
      Cl      1  2S splitting:    0.000004
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000002
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      1  1S -> 2S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      1  1S -> 3S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      4:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      Cl      1  1S -> 4S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      5:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      Cl      1  1S -> 5S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      6:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      Cl      1  1S -> 6S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      7:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      Cl      1  1S -> 7S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000392
+      the value of lambda is      2:
+      the value of kapa is      3:
+      the first spin density is     0.000070:
+      the average spin density is     0.000069:
+      using the average spin density
+ 
      Cl      1  2S -> 3S :    0.000070
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000102
+      the value of lambda is      2:
+      the value of kapa is      4:
+      the first spin density is     0.000005:
+      the average spin density is     0.000005:
+      using the average spin density
+ 
      Cl      1  2S -> 4S :    0.000005
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000048
+      the value of lambda is      2:
+      the value of kapa is      5:
+      the first spin density is     0.000001:
+      the average spin density is     0.000001:
+      using the average spin density
+ 
      Cl      1  2S -> 5S :    0.000001
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000027
+      the value of lambda is      2:
+      the value of kapa is      6:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      1  2S -> 6S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000015
+      the value of lambda is      2:
+      the value of kapa is      7:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      1  2S -> 7S :    0.000000
+ 
+      the computed rT is     0.000905:
+      the number of points inside rT is    227:
+ 
      Cl      2  1S splitting:   -0.000000
      Cl      2  2S splitting:    0.000004
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000002
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      2  1S -> 2S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      2  1S -> 3S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      4:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      Cl      2  1S -> 4S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      5:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      Cl      2  1S -> 5S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      6:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      Cl      2  1S -> 6S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      7:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      Cl      2  1S -> 7S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000392
+      the value of lambda is      2:
+      the value of kapa is      3:
+      the first spin density is     0.000070:
+      the average spin density is     0.000069:
+      using the average spin density
+ 
      Cl      2  2S -> 3S :    0.000070
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000102
+      the value of lambda is      2:
+      the value of kapa is      4:
+      the first spin density is     0.000005:
+      the average spin density is     0.000005:
+      using the average spin density
+ 
      Cl      2  2S -> 4S :    0.000005
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000048
+      the value of lambda is      2:
+      the value of kapa is      5:
+      the first spin density is     0.000001:
+      the average spin density is     0.000001:
+      using the average spin density
+ 
      Cl      2  2S -> 5S :    0.000001
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000027
+      the value of lambda is      2:
+      the value of kapa is      6:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      2  2S -> 6S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000015
+      the value of lambda is      2:
+      the value of kapa is      7:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      2  2S -> 7S :    0.000000
+ 
+      the computed rT is     0.000905:
+      the number of points inside rT is    227:
+ 
      Cl      3  1S splitting:   -0.000000
      Cl      3  2S splitting:    0.000004
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000002
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      3  1S -> 2S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      3  1S -> 3S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      4:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      Cl      3  1S -> 4S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      5:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      Cl      3  1S -> 5S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      6:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      Cl      3  1S -> 6S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      7:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      Cl      3  1S -> 7S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000392
+      the value of lambda is      2:
+      the value of kapa is      3:
+      the first spin density is     0.000070:
+      the average spin density is     0.000069:
+      using the average spin density
+ 
      Cl      3  2S -> 3S :    0.000070
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000102
+      the value of lambda is      2:
+      the value of kapa is      4:
+      the first spin density is     0.000005:
+      the average spin density is     0.000005:
+      using the average spin density
+ 
      Cl      3  2S -> 4S :    0.000005
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000048
+      the value of lambda is      2:
+      the value of kapa is      5:
+      the first spin density is     0.000001:
+      the average spin density is     0.000001:
+      using the average spin density
+ 
      Cl      3  2S -> 5S :    0.000001
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000027
+      the value of lambda is      2:
+      the value of kapa is      6:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      3  2S -> 6S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000015
+      the value of lambda is      2:
+      the value of kapa is      7:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      3  2S -> 7S :    0.000000
+ 
+      the computed rT is     0.000905:
+      the number of points inside rT is    227:
+ 
      Cl      4  1S splitting:   -0.000000
      Cl      4  2S splitting:    0.000004
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000002
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      4  1S -> 2S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      4  1S -> 3S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      4:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      Cl      4  1S -> 4S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      5:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      Cl      4  1S -> 5S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      6:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      Cl      4  1S -> 6S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      7:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      Cl      4  1S -> 7S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000392
+      the value of lambda is      2:
+      the value of kapa is      3:
+      the first spin density is     0.000070:
+      the average spin density is     0.000069:
+      using the average spin density
+ 
      Cl      4  2S -> 3S :    0.000070
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000102
+      the value of lambda is      2:
+      the value of kapa is      4:
+      the first spin density is     0.000005:
+      the average spin density is     0.000005:
+      using the average spin density
+ 
      Cl      4  2S -> 4S :    0.000005
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000048
+      the value of lambda is      2:
+      the value of kapa is      5:
+      the first spin density is     0.000001:
+      the average spin density is     0.000001:
+      using the average spin density
+ 
      Cl      4  2S -> 5S :    0.000001
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000027
+      the value of lambda is      2:
+      the value of kapa is      6:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      4  2S -> 6S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000015
+      the value of lambda is      2:
+      the value of kapa is      7:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      4  2S -> 7S :    0.000000
+ 
+      the computed rT is     0.000905:
+      the number of points inside rT is    227:
+ 
      Cl      5  1S splitting:   -0.000000
      Cl      5  2S splitting:    0.000007
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000012
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is     0.000002:
+      the average spin density is     0.000002:
+      using the average spin density
+ 
      Cl      5  1S -> 2S :    0.000002
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000003
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      5  1S -> 3S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000001
+      the value of lambda is      1:
+      the value of kapa is      4:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      5  1S -> 4S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      5:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      5  1S -> 5S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      6:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      5  1S -> 6S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      7:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      5  1S -> 7S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000583
+      the value of lambda is      2:
+      the value of kapa is      3:
+      the first spin density is     0.000104:
+      the average spin density is     0.000103:
+      using the average spin density
+ 
      Cl      5  2S -> 3S :    0.000104
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000151
+      the value of lambda is      2:
+      the value of kapa is      4:
+      the first spin density is     0.000007:
+      the average spin density is     0.000007:
+      using the average spin density
+ 
      Cl      5  2S -> 4S :    0.000007
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000071
+      the value of lambda is      2:
+      the value of kapa is      5:
+      the first spin density is     0.000002:
+      the average spin density is     0.000001:
+      using the average spin density
+ 
      Cl      5  2S -> 5S :    0.000002
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000040
+      the value of lambda is      2:
+      the value of kapa is      6:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      5  2S -> 6S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000023
+      the value of lambda is      2:
+      the value of kapa is      7:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      5  2S -> 7S :    0.000000
+ 
+      the computed rT is     0.000905:
+      the number of points inside rT is    227:
+ 
      Cl      6  1S splitting:   -0.000000
      Cl      6  2S splitting:    0.000010
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000017
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is     0.000003:
+      the average spin density is     0.000003:
+      using the average spin density
+ 
      Cl      6  1S -> 2S :    0.000003
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000004
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      6  1S -> 3S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000001
+      the value of lambda is      1:
+      the value of kapa is      4:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      6  1S -> 4S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      5:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      6  1S -> 5S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      6:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      6  1S -> 6S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      7:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      6  1S -> 7S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000803
+      the value of lambda is      2:
+      the value of kapa is      3:
+      the first spin density is     0.000143:
+      the average spin density is     0.000142:
+      using the average spin density
+ 
      Cl      6  2S -> 3S :    0.000143
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000209
+      the value of lambda is      2:
+      the value of kapa is      4:
+      the first spin density is     0.000009:
+      the average spin density is     0.000009:
+      using the average spin density
+ 
      Cl      6  2S -> 4S :    0.000009
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000099
+      the value of lambda is      2:
+      the value of kapa is      5:
+      the first spin density is     0.000002:
+      the average spin density is     0.000002:
+      using the average spin density
+ 
      Cl      6  2S -> 5S :    0.000002
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000055
+      the value of lambda is      2:
+      the value of kapa is      6:
+      the first spin density is     0.000001:
+      the average spin density is     0.000001:
+      using the average spin density
+ 
      Cl      6  2S -> 6S :    0.000001
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000032
+      the value of lambda is      2:
+      the value of kapa is      7:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      6  2S -> 7S :    0.000000
+ 
+      the computed rT is     0.000905:
+      the number of points inside rT is    227:
+ 
      Cl      7  1S splitting:   -0.000000
      Cl      7  2S splitting:    0.000007
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000012
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is     0.000002:
+      the average spin density is     0.000002:
+      using the average spin density
+ 
      Cl      7  1S -> 2S :    0.000002
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000002
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      7  1S -> 3S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000001
+      the value of lambda is      1:
+      the value of kapa is      4:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      7  1S -> 4S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      5:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      7  1S -> 5S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      6:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      7  1S -> 6S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      7:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      7  1S -> 7S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000574
+      the value of lambda is      2:
+      the value of kapa is      3:
+      the first spin density is     0.000102:
+      the average spin density is     0.000101:
+      using the average spin density
+ 
      Cl      7  2S -> 3S :    0.000102
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000151
+      the value of lambda is      2:
+      the value of kapa is      4:
+      the first spin density is     0.000007:
+      the average spin density is     0.000007:
+      using the average spin density
+ 
      Cl      7  2S -> 4S :    0.000007
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000071
+      the value of lambda is      2:
+      the value of kapa is      5:
+      the first spin density is     0.000002:
+      the average spin density is     0.000001:
+      using the average spin density
+ 
      Cl      7  2S -> 5S :    0.000002
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000040
+      the value of lambda is      2:
+      the value of kapa is      6:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      7  2S -> 6S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000023
+      the value of lambda is      2:
+      the value of kapa is      7:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      Cl      7  2S -> 7S :    0.000000
+ 
+      the computed rT is     0.001012:
+      the number of points inside rT is    405:
+ 
      K       8  1S splitting:   -0.000000
      K       8  2S splitting:   -0.000000
      K       8  3S splitting:    0.000001
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K       8  1S -> 2S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K       8  1S -> 3S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      4:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K       8  1S -> 4S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      5:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K       8  1S -> 5S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000002
+      the value of lambda is      2:
+      the value of kapa is      3:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      K       8  2S -> 3S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      2:
+      the value of kapa is      4:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      K       8  2S -> 4S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      2:
+      the value of kapa is      5:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      K       8  2S -> 5S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000074
+      the value of lambda is      3:
+      the value of kapa is      4:
+      the first spin density is     0.000011:
+      the average spin density is     0.000011:
+      using the average spin density
+ 
      K       8  3S -> 4S :    0.000011
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000025
+      the value of lambda is      3:
+      the value of kapa is      5:
+      the first spin density is     0.000001:
+      the average spin density is     0.000001:
+      using the average spin density
+ 
      K       8  3S -> 5S :    0.000001
+ 
+      the computed rT is     0.001012:
+      the number of points inside rT is    405:
+ 
      K       9  1S splitting:   -0.000000
      K       9  2S splitting:   -0.000000
      K       9  3S splitting:    0.000001
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K       9  1S -> 2S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K       9  1S -> 3S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      4:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K       9  1S -> 4S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      5:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K       9  1S -> 5S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000002
+      the value of lambda is      2:
+      the value of kapa is      3:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      K       9  2S -> 3S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      2:
+      the value of kapa is      4:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      K       9  2S -> 4S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      2:
+      the value of kapa is      5:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      K       9  2S -> 5S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000074
+      the value of lambda is      3:
+      the value of kapa is      4:
+      the first spin density is     0.000011:
+      the average spin density is     0.000011:
+      using the average spin density
+ 
      K       9  3S -> 4S :    0.000011
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000025
+      the value of lambda is      3:
+      the value of kapa is      5:
+      the first spin density is     0.000001:
+      the average spin density is     0.000001:
+      using the average spin density
+ 
      K       9  3S -> 5S :    0.000001
+ 
+      the computed rT is     0.001012:
+      the number of points inside rT is    405:
+ 
      K      10  1S splitting:   -0.000000
      K      10  2S splitting:    0.000001
      K      10  3S splitting:    0.000052
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      K      10  1S -> 2S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      K      10  1S -> 3S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      4:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      K      10  1S -> 4S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      5:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      K      10  1S -> 5S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000154
+      the value of lambda is      2:
+      the value of kapa is      3:
+      the first spin density is     0.000031:
+      the average spin density is     0.000031:
+      using the average spin density
+ 
      K      10  2S -> 3S :    0.000031
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000023
+      the value of lambda is      2:
+      the value of kapa is      4:
+      the first spin density is     0.000001:
+      the average spin density is     0.000001:
+      using the average spin density
+ 
      K      10  2S -> 4S :    0.000001
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000008
+      the value of lambda is      2:
+      the value of kapa is      5:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      K      10  2S -> 5S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00003866
+      the value of lambda is      3:
+      the value of kapa is      4:
+      the first spin density is     0.000586:
+      the average spin density is     0.000581:
+      using the average spin density
+ 
      K      10  3S -> 4S :    0.000586
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00001395
+      the value of lambda is      3:
+      the value of kapa is      5:
+      the first spin density is     0.000071:
+      the average spin density is     0.000071:
+      using the average spin density
+ 
      K      10  3S -> 5S :    0.000071
+ 
+      the computed rT is     0.001012:
+      the number of points inside rT is    405:
+ 
      K      11  1S splitting:   -0.000000
      K      11  2S splitting:    0.000001
      K      11  3S splitting:    0.000052
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      K      11  1S -> 2S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      K      11  1S -> 3S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      4:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      K      11  1S -> 4S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000000
+      the value of lambda is      1:
+      the value of kapa is      5:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      K      11  1S -> 5S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000154
+      the value of lambda is      2:
+      the value of kapa is      3:
+      the first spin density is     0.000031:
+      the average spin density is     0.000031:
+      using the average spin density
+ 
      K      11  2S -> 3S :    0.000031
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000023
+      the value of lambda is      2:
+      the value of kapa is      4:
+      the first spin density is     0.000001:
+      the average spin density is     0.000001:
+      using the average spin density
+ 
      K      11  2S -> 4S :    0.000001
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00000008
+      the value of lambda is      2:
+      the value of kapa is      5:
+      the first spin density is     0.000000:
+      the average spin density is     0.000000:
+      using the average spin density
+ 
      K      11  2S -> 5S :    0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00003866
+      the value of lambda is      3:
+      the value of kapa is      4:
+      the first spin density is     0.000586:
+      the average spin density is     0.000581:
+      using the average spin density
+ 
      K      11  3S -> 4S :    0.000586
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =      -0.00001395
+      the value of lambda is      3:
+      the value of kapa is      5:
+      the first spin density is     0.000071:
+      the average spin density is     0.000071:
+      using the average spin density
+ 
      K      11  3S -> 5S :    0.000071
+ 
+      the computed rT is     0.001012:
+      the number of points inside rT is    405:
+ 
      K      12  1S splitting:   -0.000000
      K      12  2S splitting:   -0.000005
      K      12  3S splitting:   -0.000346
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000008
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is    -0.000002:
+      the average spin density is    -0.000002:
+      using the average spin density
+ 
      K      12  1S -> 2S :   -0.000002
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000002
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K      12  1S -> 3S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      4:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K      12  1S -> 4S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      5:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K      12  1S -> 5S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000832
+      the value of lambda is      2:
+      the value of kapa is      3:
+      the first spin density is    -0.000167:
+      the average spin density is    -0.000166:
+      using the average spin density
+ 
      K      12  2S -> 3S :   -0.000167
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000121
+      the value of lambda is      2:
+      the value of kapa is      4:
+      the first spin density is    -0.000005:
+      the average spin density is    -0.000005:
+      using the average spin density
+ 
      K      12  2S -> 4S :   -0.000005
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000043
+      the value of lambda is      2:
+      the value of kapa is      5:
+      the first spin density is    -0.000001:
+      the average spin density is    -0.000001:
+      using the average spin density
+ 
      K      12  2S -> 5S :   -0.000001
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00048266
+      the value of lambda is      3:
+      the value of kapa is      4:
+      the first spin density is    -0.007316:
+      the average spin density is    -0.007257:
+      using the average spin density
+ 
      K      12  3S -> 4S :   -0.007316
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00015877
+      the value of lambda is      3:
+      the value of kapa is      5:
+      the first spin density is    -0.000813:
+      the average spin density is    -0.000806:
+      using the average spin density
+ 
      K      12  3S -> 5S :   -0.000813
+ 
+      the computed rT is     0.001012:
+      the number of points inside rT is    405:
+ 
      K      13  1S splitting:   -0.000000
      K      13  2S splitting:   -0.000005
      K      13  3S splitting:   -0.000346
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000008
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is    -0.000002:
+      the average spin density is    -0.000002:
+      using the average spin density
+ 
      K      13  1S -> 2S :   -0.000002
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000002
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K      13  1S -> 3S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      4:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K      13  1S -> 4S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      5:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K      13  1S -> 5S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000832
+      the value of lambda is      2:
+      the value of kapa is      3:
+      the first spin density is    -0.000167:
+      the average spin density is    -0.000166:
+      using the average spin density
+ 
      K      13  2S -> 3S :   -0.000167
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000121
+      the value of lambda is      2:
+      the value of kapa is      4:
+      the first spin density is    -0.000005:
+      the average spin density is    -0.000005:
+      using the average spin density
+ 
      K      13  2S -> 4S :   -0.000005
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000043
+      the value of lambda is      2:
+      the value of kapa is      5:
+      the first spin density is    -0.000001:
+      the average spin density is    -0.000001:
+      using the average spin density
+ 
      K      13  2S -> 5S :   -0.000001
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00048266
+      the value of lambda is      3:
+      the value of kapa is      4:
+      the first spin density is    -0.007316:
+      the average spin density is    -0.007257:
+      using the average spin density
+ 
      K      13  3S -> 4S :   -0.007316
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00015877
+      the value of lambda is      3:
+      the value of kapa is      5:
+      the first spin density is    -0.000813:
+      the average spin density is    -0.000806:
+      using the average spin density
+ 
      K      13  3S -> 5S :   -0.000813
+ 
+      the computed rT is     0.001012:
+      the number of points inside rT is    405:
+ 
      K      14  1S splitting:   -0.000000
      K      14  2S splitting:   -0.000005
      K      14  3S splitting:   -0.000346
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000008
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is    -0.000002:
+      the average spin density is    -0.000002:
+      using the average spin density
+ 
      K      14  1S -> 2S :   -0.000002
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000002
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K      14  1S -> 3S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      4:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K      14  1S -> 4S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      5:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K      14  1S -> 5S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000832
+      the value of lambda is      2:
+      the value of kapa is      3:
+      the first spin density is    -0.000167:
+      the average spin density is    -0.000166:
+      using the average spin density
+ 
      K      14  2S -> 3S :   -0.000167
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000121
+      the value of lambda is      2:
+      the value of kapa is      4:
+      the first spin density is    -0.000005:
+      the average spin density is    -0.000005:
+      using the average spin density
+ 
      K      14  2S -> 4S :   -0.000005
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000043
+      the value of lambda is      2:
+      the value of kapa is      5:
+      the first spin density is    -0.000001:
+      the average spin density is    -0.000001:
+      using the average spin density
+ 
      K      14  2S -> 5S :   -0.000001
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00048266
+      the value of lambda is      3:
+      the value of kapa is      4:
+      the first spin density is    -0.007316:
+      the average spin density is    -0.007257:
+      using the average spin density
+ 
      K      14  3S -> 4S :   -0.007316
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00015877
+      the value of lambda is      3:
+      the value of kapa is      5:
+      the first spin density is    -0.000813:
+      the average spin density is    -0.000806:
+      using the average spin density
+ 
      K      14  3S -> 5S :   -0.000813
+ 
+      the computed rT is     0.001012:
+      the number of points inside rT is    405:
+ 
      K      15  1S splitting:   -0.000000
      K      15  2S splitting:   -0.000005
      K      15  3S splitting:   -0.000346
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000008
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is    -0.000002:
+      the average spin density is    -0.000002:
+      using the average spin density
+ 
      K      15  1S -> 2S :   -0.000002
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000002
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K      15  1S -> 3S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      4:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K      15  1S -> 4S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000000
+      the value of lambda is      1:
+      the value of kapa is      5:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
      K      15  1S -> 5S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000832
+      the value of lambda is      2:
+      the value of kapa is      3:
+      the first spin density is    -0.000167:
+      the average spin density is    -0.000166:
+      using the average spin density
+ 
      K      15  2S -> 3S :   -0.000167
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000121
+      the value of lambda is      2:
+      the value of kapa is      4:
+      the first spin density is    -0.000005:
+      the average spin density is    -0.000005:
+      using the average spin density
+ 
      K      15  2S -> 4S :   -0.000005
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000043
+      the value of lambda is      2:
+      the value of kapa is      5:
+      the first spin density is    -0.000001:
+      the average spin density is    -0.000001:
+      using the average spin density
+ 
      K      15  2S -> 5S :   -0.000001
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00048266
+      the value of lambda is      3:
+      the value of kapa is      4:
+      the first spin density is    -0.007316:
+      the average spin density is    -0.007257:
+      using the average spin density
+ 
      K      15  3S -> 4S :   -0.007316
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00015877
+      the value of lambda is      3:
+      the value of kapa is      5:
+      the first spin density is    -0.000813:
+      the average spin density is    -0.000806:
+      using the average spin density
+ 
      K      15  3S -> 5S :   -0.000813
+ 
+      the computed rT is     0.000426:
+      the number of points inside rT is    232:
+ 
      O      16  1S splitting:   -0.011892
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.01068838
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is    -0.082244:
+      the average spin density is    -0.082117:
+      using the average spin density
+ 
      O      16  1S -> 2S :   -0.082244
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00148061
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is    -0.001548:
+      the average spin density is    -0.001545:
+      using the average spin density
+ 
      O      16  1S -> 3S :   -0.001548
+ 
+      the computed rT is     0.000426:
+      the number of points inside rT is    232:
+ 
      O      17  1S splitting:   -0.011892
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.01068838
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is    -0.082244:
+      the average spin density is    -0.082117:
+      using the average spin density
+ 
      O      17  1S -> 2S :   -0.082244
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00148061
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is    -0.001548:
+      the average spin density is    -0.001545:
+      using the average spin density
+ 
      O      17  1S -> 3S :   -0.001548
  
  
@@ -1044,41 +2608,41 @@
      ----- spin-densities in bohrradius^-3 -----
                bare            GIPAW           core-relax      total
      Cl      1       -0.000281        0.000182        0.000076       -0.000023
-     Cl      2       -0.000281        0.000181        0.000076       -0.000024
+     Cl      2       -0.000281        0.000181        0.000076       -0.000025
      Cl      3       -0.000281        0.000180        0.000076       -0.000025
-     Cl      4       -0.000281        0.000182        0.000076       -0.000023
-     Cl      5       -0.000283       -0.000358        0.000115       -0.000526
-     Cl      6       -0.000283       -0.000146        0.000158       -0.000271
-     Cl      7       -0.000283       -0.000236        0.000113       -0.000406
+     Cl      4       -0.000281        0.000182        0.000076       -0.000024
+     Cl      5       -0.000283       -0.000358        0.000114       -0.000527
+     Cl      6       -0.000283       -0.000146        0.000157       -0.000272
+     Cl      7       -0.000283       -0.000236        0.000112       -0.000406
      K       8       -0.000283        0.000013        0.000013       -0.000257
      K       9       -0.000283        0.000013        0.000013       -0.000257
-     K      10       -0.000283       -0.000901        0.000690       -0.000494
-     K      11       -0.000283       -0.000900        0.000690       -0.000493
-     K      12       -0.000281        0.016495       -0.008304        0.007911
-     K      13       -0.000281        0.016496       -0.008304        0.007912
-     K      14       -0.000281        0.016496       -0.008304        0.007912
-     K      15       -0.000281        0.016496       -0.008304        0.007912
-     O      16        0.002686        0.106145       -0.083792        0.025039
-     O      17        0.002686        0.106144       -0.083792        0.025038
+     K      10       -0.000283       -0.000901        0.000684       -0.000500
+     K      11       -0.000283       -0.000900        0.000684       -0.000499
+     K      12       -0.000281        0.016495       -0.008237        0.007978
+     K      13       -0.000281        0.016496       -0.008237        0.007979
+     K      14       -0.000281        0.016496       -0.008237        0.007979
+     K      15       -0.000281        0.016496       -0.008237        0.007978
+     O      16        0.002686        0.106145       -0.083662        0.025168
+     O      17        0.002686        0.106144       -0.083662        0.025167
      ----- Fermi contact in MHz -----
                bare            GIPAW           core-relax      total
-     Cl      1       -0.224974        0.145820        0.060880       -0.018275
-     Cl      2       -0.224974        0.144565        0.060880       -0.019529
-     Cl      3       -0.224974        0.144348        0.060880       -0.019747
-     Cl      4       -0.224974        0.145310        0.060880       -0.018785
-     Cl      5       -0.226324       -0.286793        0.091873       -0.421244
-     Cl      6       -0.226203       -0.117029        0.126740       -0.216492
-     Cl      7       -0.226191       -0.188936        0.090497       -0.324631
-     K       8       -0.226076        0.010098        0.010354       -0.205625
-     K       9       -0.226076        0.010112        0.010354       -0.205610
-     K      10       -0.226137       -0.721316        0.551897       -0.395556
-     K      11       -0.226137       -0.720547        0.551897       -0.394787
-     K      12       -0.224536       13.200060       -6.644892        6.330631
-     K      13       -0.224536       13.200815       -6.644892        6.331386
-     K      14       -0.224536       13.200770       -6.644892        6.331341
-     K      15       -0.224536       13.200680       -6.644892        6.331251
-     O      16       -1.628306      -64.342677       50.792954      -15.178029
-     O      17       -1.628306      -64.342157       50.792954      -15.177509
+     Cl      1       -0.224974        0.145820        0.060447       -0.018708
+     Cl      2       -0.224974        0.144565        0.060447       -0.019962
+     Cl      3       -0.224974        0.144348        0.060447       -0.020180
+     Cl      4       -0.224974        0.145310        0.060447       -0.019218
+     Cl      5       -0.226324       -0.286793        0.091220       -0.421897
+     Cl      6       -0.226203       -0.117029        0.125838       -0.217394
+     Cl      7       -0.226191       -0.188936        0.089853       -0.325274
+     K       8       -0.226076        0.010098        0.010270       -0.205708
+     K       9       -0.226076        0.010112        0.010270       -0.205693
+     K      10       -0.226137       -0.721316        0.547460       -0.399993
+     K      11       -0.226137       -0.720547        0.547460       -0.399224
+     K      12       -0.224536       13.200060       -6.591470        6.384053
+     K      13       -0.224536       13.200815       -6.591470        6.384809
+     K      14       -0.224536       13.200770       -6.591470        6.384764
+     K      15       -0.224536       13.200680       -6.591470        6.384674
+     O      16       -1.628306      -64.342677       50.714481      -15.256502
+     O      17       -1.628306      -64.342157       50.714481      -15.255982
  
      Initialization:
      gipaw_setup  :      0.09s CPU      0.10s WALL (       1 calls)
@@ -1090,26 +2654,26 @@
      Induced current
  
      Other routines
-     hyperfine    :      5.41s CPU      5.48s WALL (       1 calls)
-     core_relax   :      5.25s CPU      5.30s WALL (       1 calls)
+     hyperfine    :      5.40s CPU      5.50s WALL (       1 calls)
+     core_relax   :      5.25s CPU      5.34s WALL (       1 calls)
  
      General routines
-     calbec       :      0.20s CPU      0.21s WALL (      38 calls)
-     fft          :      0.13s CPU      0.13s WALL (      54 calls)
+     calbec       :      0.19s CPU      0.20s WALL (      38 calls)
+     fft          :      0.07s CPU      0.08s WALL (      54 calls)
      ffts         :      0.00s CPU      0.00s WALL (       2 calls)
-     fftw         :      0.04s CPU      0.05s WALL (      84 calls)
+     fftw         :      0.05s CPU      0.05s WALL (      84 calls)
      davcio       :      0.02s CPU      0.03s WALL (      42 calls)
  
      Parallel routines
-     fft_scatter  :      0.10s CPU      0.10s WALL (     140 calls)
+     fft_scatter  :      0.05s CPU      0.05s WALL (     140 calls)
  
      Plugins
  
  
-     GIPAW        :      5.73s CPU      5.84s WALL
+     GIPAW        :      5.73s CPU      5.87s WALL
 
  
-   This run was terminated on:  11:26:19  23Sep2026            
+   This run was terminated on:  12:33:43  23Sep2026            
 
 =------------------------------------------------------------------------------=
    JOB DONE.
