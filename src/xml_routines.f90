@@ -280,9 +280,12 @@ MODULE xml_routines
     implicit none
     integer, intent(in) :: na
     character(*) :: rank, dims, units
+    character*200 :: tau_str
 
     call XML_AddAttribute(xmlf, "name", trim(atm(ityp(na))))
-    call XML_AddAttribute(xmlf, "tau", tau(:,na))
+    !!!call XML_AddAttribute(xmlf, "tau", tau(:,na))
+    write(tau_str,'(3(F12.8,2X))') tau(:,na)
+    call XML_AddAttribute(xmlf, "tau", trim(tau_str))
     call XML_AddAttribute(xmlf, "index", na)
     call XML_AddAttribute(xmlf, "rank", rank)
     call XML_AddAttribute(xmlf, "dims", dims)

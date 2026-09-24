@@ -225,9 +225,12 @@ MODULE xml_routines
     implicit none
     integer, intent(in) :: na
     character(*) :: rank, dims, units
+    character*200 :: tau_str
 
     _ATTR(name, trim(atm(ityp(na))))
-    _ATTR(tau, tau(:,na))
+    !!!_ATTR(tau, tau(:,na))
+    write(tau_str,'(3(F12.8,2X))') tau(:,na)
+    _ATTR(tau, trim(tau_str))
     _ATTR(index, na)
     _ATTR(rank, rank)
     _ATTR(dims, dims)
