@@ -24,6 +24,8 @@ SUBROUTINE hyperfine
   USE ions_base,              ONLY : nat, atm, ityp
   use constants,              ONLY : bohr_radius_si
   USE mp,                     ONLY : mp_sum
+  USE klist,                  ONLY : two_fermi_energies
+  USE pwcom,                  ONLY : ef_up, ef_dw
   USE gipaw_module,           ONLY : hfi_nuclear_g_factor, hfi_output_unit, &
                                      iverbosity, core_relax_method
   USE gipaw_results,          ONLY : res_hfi_dip, res_hfi_fc
@@ -47,8 +49,9 @@ SUBROUTINE hyperfine
   integer :: s_min, s_maj
   integer :: na, alpha, beta
   real(dp) :: output_factor, fact
-  real(dp):: v(3), axis(3,3)
-
+  real(dp) :: v(3), axis(3,3)
+  real(dp) :: Bext, knight
+  
   call start_clock('hyperfine')
 
   ! get rho up/down
@@ -222,6 +225,23 @@ SUBROUTINE hyperfine
 
   write(stdout,*)
 
+  ! if two_fermi_energies, this is possibly a finite field Knigh shift calculation
+  if (two_fermi_energies) then
+      write(stdout,'(5X,''=================================================================='')')
+      write(stdout,'(5X,''Finite field isotropic Knight shifts in ppm:'')')
+      Bext = (ef_up - ef_dw) * 13.605693 * (17275.985d0/2.d0)     ! convert to Tesla
+      write(stdout,'(5X,''estimated Bext in Tesla:'',F12.6)') Bext
+      do na = 1, nat
+          hfi_fc_tot(na) = hfi_fc_bare(na) + hfi_fc_gipaw(na) + hfi_fc_core(na)
+          knight = (hfi_fc_tot(na) * (-104.98231d0)/2.d0) / Bext * 1d6
+          write(stdout,1003) atm(ityp(na)), na, knight
+      enddo
+      write(stdout,'(5X,''(be sure these numbers are converged w.r.t. k points and smearing)'')')
+      write(stdout,'(5X,''=================================================================='')')
+      write(stdout,*)
+   endif
+1003 FORMAT(5X,A,I3,2X,F14.6,2X)
+  
   call stop_clock('hyperfine')
  
 END SUBROUTINE hyperfine
