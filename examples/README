@@ -4,6 +4,7 @@ benzene-NCPP:  benzene NMR shielding using norm-conserving pseudopotentials
 benzene-USPP:  benzene NMR shielding using ultrasoft pseudopotentials
 quartz:        NMR shdielding and EFG of quartz
 H2O+:          EPR g-tensor and hyperfine couplings of H2O^+ radical
+AlB2_knight:   AlB2 isotropic Knight shift with the finite field method
 
 The quartz example shows a limitation of the GIPAW formalism: symmetry
 operations that do not map cartesian axes are not allowed. If you have
@@ -13,3 +14,5 @@ like in the quartz examples. The keyword 'CELL_PARAMETERS cubic' prevent
 the code to detect 60 degrees rotations, which are incompatible with
 GIPAW.
 
+For the Knight shift it is of paramout importance to check the convergence
+of the results w.r.t. k-points and smearing!!

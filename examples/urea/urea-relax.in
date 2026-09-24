@@ -12,7 +12,6 @@
     nat = 16
     ntyp = 4
     ecutwfc = 90
-    spline_ps = .true.
     vdw_corr = 'grimme-d2'
 /
 &electrons
