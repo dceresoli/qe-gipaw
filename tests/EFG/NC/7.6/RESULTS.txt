@@ -1,0 +1,30 @@
+quartz-scf.out_1cpu:!    total energy              =    -216.30522592 Ry
+quartz-scf.out_4cpu:!    total energy              =    -216.30522592 Ry
+quartz-scf.out_4cpu_2pool:!    total energy              =    -216.30522592 Ry
+quartz-efg.out_1cpu:     Si      1  Q=         1.0000 1e-30 m^2  Cq=         0.1913 MHz  eta= 0.68466
+quartz-efg.out_1cpu:     Si      2  Q=         1.0000 1e-30 m^2  Cq=         0.1913 MHz  eta= 0.68466
+quartz-efg.out_1cpu:     Si      3  Q=         1.0000 1e-30 m^2  Cq=         0.1916 MHz  eta= 0.68332
+quartz-efg.out_1cpu:     O       4  Q=         2.5500 1e-30 m^2  Cq=         5.2946 MHz  eta= 0.20446
+quartz-efg.out_1cpu:     O       5  Q=         2.5500 1e-30 m^2  Cq=         5.2942 MHz  eta= 0.20445
+quartz-efg.out_1cpu:     O       6  Q=         2.5500 1e-30 m^2  Cq=         5.2944 MHz  eta= 0.20413
+quartz-efg.out_1cpu:     O       7  Q=         2.5500 1e-30 m^2  Cq=         5.2946 MHz  eta= 0.20446
+quartz-efg.out_1cpu:     O       8  Q=         2.5500 1e-30 m^2  Cq=         5.2942 MHz  eta= 0.20445
+quartz-efg.out_1cpu:     O       9  Q=         2.5500 1e-30 m^2  Cq=         5.2944 MHz  eta= 0.20413
+quartz-efg.out_4cpu:     Si      1  Q=         1.0000 1e-30 m^2  Cq=         0.1913 MHz  eta= 0.68465
+quartz-efg.out_4cpu:     Si      2  Q=         1.0000 1e-30 m^2  Cq=         0.1913 MHz  eta= 0.68465
+quartz-efg.out_4cpu:     Si      3  Q=         1.0000 1e-30 m^2  Cq=         0.1916 MHz  eta= 0.68332
+quartz-efg.out_4cpu:     O       4  Q=         2.5500 1e-30 m^2  Cq=         5.2946 MHz  eta= 0.20446
+quartz-efg.out_4cpu:     O       5  Q=         2.5500 1e-30 m^2  Cq=         5.2942 MHz  eta= 0.20445
+quartz-efg.out_4cpu:     O       6  Q=         2.5500 1e-30 m^2  Cq=         5.2944 MHz  eta= 0.20413
+quartz-efg.out_4cpu:     O       7  Q=         2.5500 1e-30 m^2  Cq=         5.2946 MHz  eta= 0.20446
+quartz-efg.out_4cpu:     O       8  Q=         2.5500 1e-30 m^2  Cq=         5.2942 MHz  eta= 0.20445
+quartz-efg.out_4cpu:     O       9  Q=         2.5500 1e-30 m^2  Cq=         5.2944 MHz  eta= 0.20413
+quartz-efg.out_4cpu_2pool:     Si      1  Q=         1.0000 1e-30 m^2  Cq=         0.1913 MHz  eta= 0.68465
+quartz-efg.out_4cpu_2pool:     Si      2  Q=         1.0000 1e-30 m^2  Cq=         0.1913 MHz  eta= 0.68465
+quartz-efg.out_4cpu_2pool:     Si      3  Q=         1.0000 1e-30 m^2  Cq=         0.1916 MHz  eta= 0.68333
+quartz-efg.out_4cpu_2pool:     O       4  Q=         2.5500 1e-30 m^2  Cq=         5.2946 MHz  eta= 0.20446
+quartz-efg.out_4cpu_2pool:     O       5  Q=         2.5500 1e-30 m^2  Cq=         5.2942 MHz  eta= 0.20445
+quartz-efg.out_4cpu_2pool:     O       6  Q=         2.5500 1e-30 m^2  Cq=         5.2944 MHz  eta= 0.20413
+quartz-efg.out_4cpu_2pool:     O       7  Q=         2.5500 1e-30 m^2  Cq=         5.2946 MHz  eta= 0.20446
+quartz-efg.out_4cpu_2pool:     O       8  Q=         2.5500 1e-30 m^2  Cq=         5.2942 MHz  eta= 0.20445
+quartz-efg.out_4cpu_2pool:     O       9  Q=         2.5500 1e-30 m^2  Cq=         5.2944 MHz  eta= 0.20413

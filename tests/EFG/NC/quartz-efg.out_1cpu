@@ -1,5 +1,5 @@
 
-     Program GIPAW v.7.5 starts on 23Sep2026 at 12:10:55 
+     Program GIPAW v.7.6 starts on 23Sep2026 at 15:54:37 
 
      This program is part of the open-source Quantum ESPRESSO suite
      for quantum simulation of materials; please cite
@@ -13,10 +13,10 @@
      Parallel version (MPI), running on     1 processors
 
      MPI processes distributed on     1 nodes
-     6001 MiB available memory on the printing compute node when the environment starts
+     7316 MiB available memory on the printing compute node when the environment starts
  
  
-     ***** This is GIPAW git revision 86fab6ad6d2c70acbb459e494b57b522007db78f *****
+     ***** This is GIPAW git revision 3562150651c189a678b6bc8c9873bb62809189af *****
      ***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****
      ***** in publications or presentations arising from this work.            *****
  
@@ -309,12 +309,12 @@
  
  
      NQR/NMR SPECTROSCOPIC PARAMETERS:
-     Si      1    Vxx=   -0.0128    axis=(  0.260966  0.151494  0.953387)
+     Si      1    Vxx=   -0.0128    axis=(  0.260966  0.151493  0.953387)
      Si      1    Vyy=   -0.0686    axis=(  0.825448  0.477057 -0.301750)
      Si      1    Vzz=    0.0814    axis=( -0.500533  0.865717 -0.000555)
      Si      1  Q=         1.0000 1e-30 m^2  Cq=         0.1913 MHz  eta= 0.68466
  
-     Si      2    Vxx=   -0.0128    axis=( -0.260966  0.151494  0.953387)
+     Si      2    Vxx=   -0.0128    axis=( -0.260966  0.151493  0.953387)
      Si      2    Vyy=   -0.0686    axis=( -0.825448  0.477057 -0.301750)
      Si      2    Vzz=    0.0814    axis=( -0.500533 -0.865717  0.000555)
      Si      2  Q=         1.0000 1e-30 m^2  Cq=         0.1913 MHz  eta= 0.68466
@@ -355,7 +355,7 @@
      O       9  Q=         2.5500 1e-30 m^2  Cq=         5.2944 MHz  eta= 0.20413
  
      Initialization:
-     gipaw_setup  :      0.15s CPU      0.17s WALL (       1 calls)
+     gipaw_setup  :      0.16s CPU      0.16s WALL (       1 calls)
  
      Linear response
  
@@ -364,10 +364,10 @@
      Induced current
  
      Other routines
-     efg          :      0.19s CPU      0.20s WALL (       1 calls)
+     efg          :      0.19s CPU      0.19s WALL (       1 calls)
  
      General routines
-     calbec       :      0.01s CPU      0.02s WALL (      10 calls)
+     calbec       :      0.01s CPU      0.01s WALL (      10 calls)
      fft          :      0.01s CPU      0.01s WALL (      11 calls)
      ffts         :      0.00s CPU      0.00s WALL (       1 calls)
      fftw         :      0.12s CPU      0.12s WALL (     240 calls)
@@ -378,10 +378,10 @@
      Plugins
  
  
-     GIPAW        :      0.48s CPU      0.52s WALL
+     GIPAW        :      0.48s CPU      0.50s WALL
 
  
-   This run was terminated on:  12:10:56  23Sep2026            
+   This run was terminated on:  15:54:37  23Sep2026            
 
 =------------------------------------------------------------------------------=
    JOB DONE.
