@@ -1,0 +1,40 @@
+Isotropic Knight shift using the finite field method of:
+A. R. Ferreira, K. Reuter, and C. Scheurer, J. Phys. Chem C 2016, 120, 25530−25540
+DOI: https://dx.doi.org/10.1021/acs.jpcc.6b08418
+
+$ grep -A5 "Finite field" hyperfine*.out
+hyperfine-0.002.out:     Finite field isotropic Knight shifts in ppm:
+hyperfine-0.002.out-     estimated Bext in Tesla:   76.407142
+hyperfine-0.002.out-     Al      1    -1609.517933
+hyperfine-0.002.out-     B       2      -59.486057
+hyperfine-0.002.out-     B       3      -59.485313
+hyperfine-0.002.out-     (be sure these numbers are converged w.r.t. k points and smearing)
+--
+hyperfine-0.004.out:     Finite field isotropic Knight shifts in ppm:
+hyperfine-0.004.out-     estimated Bext in Tesla:  152.803395
+hyperfine-0.004.out-     Al      1    -1609.367410
+hyperfine-0.004.out-     B       2      -59.497121
+hyperfine-0.004.out-     B       3      -59.496575
+hyperfine-0.004.out-     (be sure these numbers are converged w.r.t. k points and smearing)
+--
+hyperfine-0.006.out:     Finite field isotropic Knight shifts in ppm:
+hyperfine-0.006.out-     estimated Bext in Tesla:  229.177747
+hyperfine-0.006.out-     Al      1    -1609.155217
+hyperfine-0.006.out-     B       2      -59.507207
+hyperfine-0.006.out-     B       3      -59.507077
+hyperfine-0.006.out-     (be sure these numbers are converged w.r.t. k points and smearing)
+--
+hyperfine-0.008.out:     Finite field isotropic Knight shifts in ppm:
+hyperfine-0.008.out-     estimated Bext in Tesla:  305.519633
+hyperfine-0.008.out-     Al      1    -1608.859063
+hyperfine-0.008.out-     B       2      -59.521075
+hyperfine-0.008.out-     B       3      -59.521029
+hyperfine-0.008.out-     (be sure these numbers are converged w.r.t. k points and smearing)
+--
+hyperfine-0.010.out:     Finite field isotropic Knight shifts in ppm:
+hyperfine-0.010.out-     estimated Bext in Tesla:  381.818826
+hyperfine-0.010.out-     Al      1    -1608.468248
+hyperfine-0.010.out-     B       2      -59.539485
+hyperfine-0.010.out-     B       3      -59.539394
+hyperfine-0.010.out-     (be sure these numbers are converged w.r.t. k points and smearing)
+

@@ -1,0 +1,40 @@
+&control
+    prefix = 'alb2'
+    calculation = 'scf'
+    restart_mode = 'from_scratch'
+    outdir = './scratch/'
+    pseudo_dir = './pseudo/'
+    tstress = .true.
+    tprnfor = .true.
+    verbosity = 'high'
+/
+&system
+    ibrav = 4
+    a = 3.00698607
+    c = 3.27442364
+    nat = 3
+    ntyp = 2
+    ecutwfc = 70
+    nspin = 2
+    occupations = 'smearing'
+    degauss = 0.008
+    tot_magnetization = 0.010
+/
+&electrons
+    diagonalization = 'david'
+    diago_thr_init = 1e-4
+    mixing_beta = 0.2
+    conv_thr =  1e-9
+/
+ATOMIC_SPECIES
+Al   0.0    Al.pbe-tm-gipaw-dc.UPF
+B    0.0    B.pbe-tm-new-gipaw-dc.UPF
+
+K_POINTS automatic
+32 32 32  0 0 0
+
+ATOMIC_POSITIONS crystal
+Al 0.000000  0.000000  0.000000
+B  0.333333  0.666667  0.500000
+B  0.666667  0.333333  0.500000
+

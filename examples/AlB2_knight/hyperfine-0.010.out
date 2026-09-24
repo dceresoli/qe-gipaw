@@ -1,0 +1,808 @@
+
+     Program GIPAW v.7.6 starts on 24Sep2026 at 14:54:49 
+
+     This program is part of the open-source Quantum ESPRESSO suite
+     for quantum simulation of materials; please cite
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 21 395502 (2009);
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 29 465901 (2017);
+         "P. Giannozzi et al., J. Chem. Phys. 152 154105 (2020);
+          URL http://www.quantum-espresso.org", 
+     in publications or presentations arising from this work. More details at
+     http://www.quantum-espresso.org/quote
+
+     Parallel version (MPI), running on    16 processors
+
+     MPI processes distributed on     1 nodes
+     K-points division:     npool     =      16
+     8250 MiB available memory on the printing compute node when the environment starts
+ 
+ 
+     ***** This is GIPAW git revision 4ae3c458560c6d3f7eebf2aec748d36248d3a3dd *****
+     ***** you can cite: N. Varini et al., Comp. Phys. Comm. 184, 1827 (2013)  *****
+     ***** in publications or presentations arising from this work.            *****
+ 
+     Parallelizing q-star over 1 images
+     Waiting for input...
+     Reading input from standard input
+ 
+     ------------------- Input file: --------------------
+&inputgipaw
+    job = 'hyperfine'
+    prefix = 'alb2'
+    tmp_dir = './scratch/'
+    restart_mode = 'from_scratch'
+    verbosity = 'high'
+    hfi_output_unit = 'MHz'
+    hfi_nuclear_g_factor(1) = 1         ! Al
+    hfi_nuclear_g_factor(2) = 1         ! B
+/
+ 
+
+     Reading xml data from directory:
+
+     ./scratch/alb2.save/
+     WARNING: atomic wfc #  3 for atom typeAl has zero norm
+     WARNING: atomic wfc #  4 for atom typeAl has zero norm
+     WARNING: atomic wfc #  4 for atom typeB has zero norm
+
+     IMPORTANT: XC functional enforced from input :
+     Exchange-correlation= PBE
+                           (   1   4   3   4   0   0   0)
+     Any further DFT definition will be discarded
+     Please, verify this is what you really want
+
+ 
+     G-vector sticks info
+     --------------------
+     sticks:   dense  smooth     PW     G-vecs:    dense   smooth      PW
+     Sum         625     625    199                13665    13665    2317
+ 
+     Using Slab Decomposition
+ 
+     Reading collected, re-writing distributed wavefunctions
+     Subspace diagonalization in iterative solution of the eigenvalue problem:
+     a serial algorithm will be used
+
+     GIPAW projectors -----------------------------------------------
+     atom=Al     l=0  rc=    2.0000  rs=    1.3333
+     atom=Al     l=1  rc=    2.0000  rs=    1.3333
+     atom=Al     l=0  rc=    2.0000  rs=    1.3333
+     atom=Al     l=1  rc=    2.0000  rs=    1.3333
+     atom=Al     l=2  rc=    2.0000  rs=    1.3333
+     projs nearly linearly dependent: l=0  n1,n2= 1, 2  s=  0.99761080
+     projs nearly linearly dependent: l=1  n1,n2= 1, 2  s=  0.99948100
+ 
+     atom=B      l=0  rc=    1.4000  rs=    0.9333
+     atom=B      l=0  rc=    1.4000  rs=    0.9333
+     atom=B      l=1  rc=    1.4000  rs=    0.9333
+     atom=B      l=1  rc=    1.4000  rs=    0.9333
+     projs nearly linearly dependent: l=0  n1,n2= 1, 2  s=  0.99927374
+     projs nearly linearly dependent: l=1  n1,n2= 1, 2  s=  0.99941998
+     -----------------------------------------------------------------
+ 
+     GIPAW integrals: -------------------------------------------
+     Atom  i/j   nmr_para   nmr_dia   epr_rmc  epr_para   epr_dia
+     Al    1 1   0.14E+04  0.37E+00  0.10E+02  0.37E+05  0.10E+02
+     Al    2 2   0.16E+02  0.45E+00  0.97E+01  0.38E+03  0.12E+02
+     Al    3 1   0.14E+04  0.34E+00  0.10E+02  0.37E+05  0.10E+02
+     Al    3 3   0.14E+04  0.31E+00  0.10E+02  0.37E+05  0.98E+01
+     Al    4 2   0.16E+02  0.43E+00  0.95E+01  0.37E+03  0.11E+02
+     Al    4 4   0.15E+02  0.41E+00  0.93E+01  0.36E+03  0.11E+02
+     Al    5 5   0.90E-01  0.14E-01  0.13E+00  0.28E+01  0.26E+00
+     B     1 1   0.82E+03  0.63E+00  0.92E+01  0.83E+04  0.68E+01
+     B     2 1   0.82E+03  0.62E+00  0.93E+01  0.84E+04  0.67E+01
+     B     2 2   0.83E+03  0.60E+00  0.93E+01  0.85E+04  0.66E+01
+     B     3 3   0.97E+00  0.38E-01  0.23E+00  0.19E+02  0.45E+00
+     B     4 3   0.11E+01  0.45E-01  0.27E+00  0.21E+02  0.53E+00
+     B     4 4   0.11E+01  0.53E-01  0.31E+00  0.22E+02  0.62E+00
+     ------------------------------------------------------------
+ 
+ 
+     smearing ngauss=   0  degauss=  0.0080 Ry
+     alpha_pv=     16.2641 eV
+ 
+     Number of occupied bands for each k-point:
+     k-point:     1    nbnd_occ=   5    spin=1
+     k-point:     2    nbnd_occ=   5    spin=1
+     k-point:     3    nbnd_occ=   5    spin=1
+     k-point:     4    nbnd_occ=   5    spin=1
+     k-point:     5    nbnd_occ=   4    spin=1
+     k-point:     6    nbnd_occ=   4    spin=1
+     k-point:     7    nbnd_occ=   4    spin=1
+     k-point:     8    nbnd_occ=   4    spin=1
+     k-point:     9    nbnd_occ=   4    spin=1
+     k-point:    10    nbnd_occ=   4    spin=1
+     k-point:    11    nbnd_occ=   4    spin=1
+     k-point:    12    nbnd_occ=   4    spin=1
+     k-point:    13    nbnd_occ=   4    spin=1
+     k-point:    14    nbnd_occ=   4    spin=1
+     k-point:    15    nbnd_occ=   4    spin=1
+     k-point:    16    nbnd_occ=   4    spin=1
+     k-point:    17    nbnd_occ=   4    spin=1
+     k-point:    18    nbnd_occ=   5    spin=1
+     k-point:    19    nbnd_occ=   5    spin=1
+     k-point:    20    nbnd_occ=   5    spin=1
+     k-point:    21    nbnd_occ=   5    spin=1
+     k-point:    22    nbnd_occ=   4    spin=1
+     k-point:    23    nbnd_occ=   4    spin=1
+     k-point:    24    nbnd_occ=   4    spin=1
+     k-point:    25    nbnd_occ=   4    spin=1
+     k-point:    26    nbnd_occ=   4    spin=1
+     k-point:    27    nbnd_occ=   4    spin=1
+     k-point:    28    nbnd_occ=   4    spin=1
+     k-point:    29    nbnd_occ=   4    spin=1
+     k-point:    30    nbnd_occ=   4    spin=1
+     k-point:    31    nbnd_occ=   4    spin=1
+     k-point:    32    nbnd_occ=   4    spin=1
+     k-point:    33    nbnd_occ=   4    spin=1
+     k-point:    34    nbnd_occ=   4    spin=1
+     k-point:    35    nbnd_occ=   5    spin=1
+     k-point:    36    nbnd_occ=   5    spin=1
+     k-point:    37    nbnd_occ=   5    spin=1
+     k-point:    38    nbnd_occ=   5    spin=1
+     k-point:    39    nbnd_occ=   4    spin=1
+     k-point:    40    nbnd_occ=   4    spin=1
+     k-point:    41    nbnd_occ=   4    spin=1
+     k-point:    42    nbnd_occ=   4    spin=1
+     k-point:    43    nbnd_occ=   4    spin=1
+     k-point:    44    nbnd_occ=   4    spin=1
+     k-point:    45    nbnd_occ=   4    spin=1
+     k-point:    46    nbnd_occ=   4    spin=1
+     k-point:    47    nbnd_occ=   4    spin=1
+     k-point:    48    nbnd_occ=   4    spin=1
+     k-point:    49    nbnd_occ=   4    spin=1
+     k-point:    50    nbnd_occ=   4    spin=1
+     k-point:    51    nbnd_occ=   4    spin=1
+     k-point:    52    nbnd_occ=   5    spin=1
+     k-point:    53    nbnd_occ=   5    spin=1
+     k-point:    54    nbnd_occ=   5    spin=1
+     k-point:    55    nbnd_occ=   4    spin=1
+     k-point:    56    nbnd_occ=   4    spin=1
+     k-point:    57    nbnd_occ=   4    spin=1
+     k-point:    58    nbnd_occ=   4    spin=1
+     k-point:    59    nbnd_occ=   4    spin=1
+     k-point:    60    nbnd_occ=   4    spin=1
+     k-point:    61    nbnd_occ=   4    spin=1
+     k-point:    62    nbnd_occ=   4    spin=1
+     k-point:    63    nbnd_occ=   4    spin=1
+     k-point:    64    nbnd_occ=   4    spin=1
+     k-point:    65    nbnd_occ=   4    spin=1
+     k-point:    66    nbnd_occ=   4    spin=1
+     k-point:    67    nbnd_occ=   4    spin=1
+     k-point:    68    nbnd_occ=   4    spin=1
+     k-point:    69    nbnd_occ=   5    spin=1
+     k-point:    70    nbnd_occ=   5    spin=1
+     k-point:    71    nbnd_occ=   5    spin=1
+     k-point:    72    nbnd_occ=   4    spin=1
+     k-point:    73    nbnd_occ=   4    spin=1
+     k-point:    74    nbnd_occ=   4    spin=1
+     k-point:    75    nbnd_occ=   4    spin=1
+     k-point:    76    nbnd_occ=   4    spin=1
+     k-point:    77    nbnd_occ=   4    spin=1
+     k-point:    78    nbnd_occ=   4    spin=1
+     k-point:    79    nbnd_occ=   4    spin=1
+     k-point:    80    nbnd_occ=   4    spin=1
+     k-point:    81    nbnd_occ=   4    spin=1
+     k-point:    82    nbnd_occ=   4    spin=1
+     k-point:    83    nbnd_occ=   4    spin=1
+     k-point:    84    nbnd_occ=   4    spin=1
+     k-point:    85    nbnd_occ=   4    spin=1
+     k-point:    86    nbnd_occ=   5    spin=1
+     k-point:    87    nbnd_occ=   5    spin=1
+     k-point:    88    nbnd_occ=   5    spin=1
+     k-point:    89    nbnd_occ=   4    spin=1
+     k-point:    90    nbnd_occ=   4    spin=1
+     k-point:    91    nbnd_occ=   4    spin=1
+     k-point:    92    nbnd_occ=   4    spin=1
+     k-point:    93    nbnd_occ=   4    spin=1
+     k-point:    94    nbnd_occ=   4    spin=1
+     k-point:    95    nbnd_occ=   4    spin=1
+     k-point:    96    nbnd_occ=   4    spin=1
+     k-point:    97    nbnd_occ=   4    spin=1
+     k-point:    98    nbnd_occ=   4    spin=1
+     k-point:    99    nbnd_occ=   4    spin=1
+     k-point:   100    nbnd_occ=   4    spin=1
+     k-point:   101    nbnd_occ=   4    spin=1
+     k-point:   102    nbnd_occ=   4    spin=1
+     k-point:   103    nbnd_occ=   5    spin=1
+     k-point:   104    nbnd_occ=   5    spin=1
+     k-point:   105    nbnd_occ=   5    spin=1
+     k-point:   106    nbnd_occ=   4    spin=1
+     k-point:   107    nbnd_occ=   4    spin=1
+     k-point:   108    nbnd_occ=   4    spin=1
+     k-point:   109    nbnd_occ=   4    spin=1
+     k-point:   110    nbnd_occ=   4    spin=1
+     k-point:   111    nbnd_occ=   4    spin=1
+     k-point:   112    nbnd_occ=   4    spin=1
+     k-point:   113    nbnd_occ=   4    spin=1
+     k-point:   114    nbnd_occ=   4    spin=1
+     k-point:   115    nbnd_occ=   4    spin=1
+     k-point:   116    nbnd_occ=   4    spin=1
+     k-point:   117    nbnd_occ=   4    spin=1
+     k-point:   118    nbnd_occ=   4    spin=1
+     k-point:   119    nbnd_occ=   4    spin=1
+     k-point:   120    nbnd_occ=   5    spin=1
+     k-point:   121    nbnd_occ=   5    spin=1
+     k-point:   122    nbnd_occ=   4    spin=1
+     k-point:   123    nbnd_occ=   4    spin=1
+     k-point:   124    nbnd_occ=   4    spin=1
+     k-point:   125    nbnd_occ=   4    spin=1
+     k-point:   126    nbnd_occ=   4    spin=1
+     k-point:   127    nbnd_occ=   4    spin=1
+     k-point:   128    nbnd_occ=   4    spin=1
+     k-point:   129    nbnd_occ=   4    spin=1
+     k-point:   130    nbnd_occ=   4    spin=1
+     k-point:   131    nbnd_occ=   4    spin=1
+     k-point:   132    nbnd_occ=   4    spin=1
+     k-point:   133    nbnd_occ=   4    spin=1
+     k-point:   134    nbnd_occ=   4    spin=1
+     k-point:   135    nbnd_occ=   4    spin=1
+     k-point:   136    nbnd_occ=   4    spin=1
+     k-point:   137    nbnd_occ=   5    spin=1
+     k-point:   138    nbnd_occ=   5    spin=1
+     k-point:   139    nbnd_occ=   4    spin=1
+     k-point:   140    nbnd_occ=   4    spin=1
+     k-point:   141    nbnd_occ=   4    spin=1
+     k-point:   142    nbnd_occ=   4    spin=1
+     k-point:   143    nbnd_occ=   4    spin=1
+     k-point:   144    nbnd_occ=   4    spin=1
+     k-point:   145    nbnd_occ=   4    spin=1
+     k-point:   146    nbnd_occ=   4    spin=1
+     k-point:   147    nbnd_occ=   4    spin=1
+     k-point:   148    nbnd_occ=   4    spin=1
+     k-point:   149    nbnd_occ=   4    spin=1
+     k-point:   150    nbnd_occ=   4    spin=1
+     k-point:   151    nbnd_occ=   5    spin=1
+     k-point:   152    nbnd_occ=   5    spin=1
+     k-point:   153    nbnd_occ=   5    spin=1
+     k-point:   154    nbnd_occ=   4    spin=1
+     k-point:   155    nbnd_occ=   4    spin=1
+     k-point:   156    nbnd_occ=   4    spin=1
+     k-point:   157    nbnd_occ=   4    spin=1
+     k-point:   158    nbnd_occ=   4    spin=1
+     k-point:   159    nbnd_occ=   4    spin=1
+     k-point:   160    nbnd_occ=   4    spin=1
+     k-point:   161    nbnd_occ=   4    spin=1
+     k-point:   162    nbnd_occ=   4    spin=1
+     k-point:   163    nbnd_occ=   4    spin=1
+     k-point:   164    nbnd_occ=   4    spin=1
+     k-point:   165    nbnd_occ=   5    spin=1
+     k-point:   166    nbnd_occ=   5    spin=1
+     k-point:   167    nbnd_occ=   5    spin=1
+     k-point:   168    nbnd_occ=   5    spin=1
+     k-point:   169    nbnd_occ=   5    spin=1
+     k-point:   170    nbnd_occ=   5    spin=1
+     k-point:   171    nbnd_occ=   4    spin=1
+     k-point:   172    nbnd_occ=   4    spin=1
+     k-point:   173    nbnd_occ=   4    spin=1
+     k-point:   174    nbnd_occ=   4    spin=1
+     k-point:   175    nbnd_occ=   4    spin=1
+     k-point:   176    nbnd_occ=   4    spin=1
+     k-point:   177    nbnd_occ=   4    spin=1
+     k-point:   178    nbnd_occ=   4    spin=1
+     k-point:   179    nbnd_occ=   4    spin=1
+     k-point:   180    nbnd_occ=   5    spin=1
+     k-point:   181    nbnd_occ=   5    spin=1
+     k-point:   182    nbnd_occ=   5    spin=1
+     k-point:   183    nbnd_occ=   5    spin=1
+     k-point:   184    nbnd_occ=   5    spin=1
+     k-point:   185    nbnd_occ=   5    spin=1
+     k-point:   186    nbnd_occ=   5    spin=1
+     k-point:   187    nbnd_occ=   5    spin=1
+     k-point:   188    nbnd_occ=   4    spin=1
+     k-point:   189    nbnd_occ=   4    spin=1
+     k-point:   190    nbnd_occ=   4    spin=1
+     k-point:   191    nbnd_occ=   4    spin=1
+     k-point:   192    nbnd_occ=   4    spin=1
+     k-point:   193    nbnd_occ=   4    spin=1
+     k-point:   194    nbnd_occ=   4    spin=1
+     k-point:   195    nbnd_occ=   5    spin=1
+     k-point:   196    nbnd_occ=   5    spin=1
+     k-point:   197    nbnd_occ=   5    spin=1
+     k-point:   198    nbnd_occ=   5    spin=1
+     k-point:   199    nbnd_occ=   5    spin=1
+     k-point:   200    nbnd_occ=   5    spin=1
+     k-point:   201    nbnd_occ=   5    spin=1
+     k-point:   202    nbnd_occ=   5    spin=1
+     k-point:   203    nbnd_occ=   5    spin=1
+     k-point:   204    nbnd_occ=   5    spin=1
+     k-point:   205    nbnd_occ=   4    spin=1
+     k-point:   206    nbnd_occ=   4    spin=1
+     k-point:   207    nbnd_occ=   4    spin=1
+     k-point:   208    nbnd_occ=   4    spin=1
+     k-point:   209    nbnd_occ=   4    spin=1
+     k-point:   210    nbnd_occ=   4    spin=1
+     k-point:   211    nbnd_occ=   5    spin=1
+     k-point:   212    nbnd_occ=   5    spin=1
+     k-point:   213    nbnd_occ=   5    spin=1
+     k-point:   214    nbnd_occ=   5    spin=1
+     k-point:   215    nbnd_occ=   5    spin=1
+     k-point:   216    nbnd_occ=   5    spin=1
+     k-point:   217    nbnd_occ=   5    spin=1
+ 
+ 
+     Message from routine gipaw_summary:
+     spline_ps is .false., expect some extrapolation errors
+ 
+     q-space interpolation up to    84.00 Rydberg
+ 
+     GIPAW job: hyperfine                                                                       
+ 
+
+     (RHO,ZETA) => (RHO_UP,RHO_DOWN)
+
+     select_spin: s_maj=1 s_min=2 rho_diff=    0.010000
+ 
+     select_spin: s_maj=1 s_min=2 rho_diff=    0.010000
+ 
+ 
+      the computed rT is     0.000692:
+      the number of points inside rT is    329:
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      1:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      1:
+      the l kappa quantum number is      0:
+      the value of lambda is      1:
+      the value of kappa is      1:
+      the first spin density is    17.470694:
+      the average spin density is    17.140177:
+      using the average spin density
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      1:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      3:
+      the l kappa quantum number is      0:
+      the value of lambda is      1:
+      the value of kappa is      3:
+      the first spin density is    17.505050:
+      the average spin density is    17.173823:
+      using the average spin density
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      3:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      1:
+      the l kappa quantum number is      0:
+      the value of lambda is      3:
+      the value of kappa is      1:
+      the first spin density is    17.505050:
+      the average spin density is    17.173823:
+      using the average spin density
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      3:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      3:
+      the l kappa quantum number is      0:
+      the value of lambda is      3:
+      the value of kappa is      3:
+      the first spin density is    17.538883:
+      the average spin density is    17.206943:
+      using the average spin density
+ 
+ 
+      the computed rT is     0.000266:
+      the number of points inside rT is    138:
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      1:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      1:
+      the l kappa quantum number is      0:
+      the value of lambda is      1:
+      the value of kappa is      1:
+      the first spin density is     9.823855:
+      the average spin density is     9.809760:
+      using the average spin density
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      1:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      2:
+      the l kappa quantum number is      0:
+      the value of lambda is      1:
+      the value of kappa is      2:
+      the first spin density is     9.887405:
+      the average spin density is     9.873209:
+      using the average spin density
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      2:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      1:
+      the l kappa quantum number is      0:
+      the value of lambda is      2:
+      the value of kappa is      1:
+      the first spin density is     9.887405:
+      the average spin density is     9.873209:
+      using the average spin density
+ 
+ 
+      the first point is      1:
+      the n lambda quantum number is      2:
+      the l lambda quantum number is      0:
+      the n kappa quantum number is      2:
+      the l kappa quantum number is      0:
+      the value of lambda is      2:
+      the value of kappa is      2:
+      the first spin density is     9.950799:
+      the average spin density is     9.936501:
+      using the average spin density
+ 
+     select_spin: s_maj=1 s_min=2 rho_diff=    0.010000
+ 
+      the atom type is      1:
+      the number of beta functions is     13:
+      the atom is      1:
+      the bec product is       0.000760977381:
+      the density is       0.686947669367:
+      the GIPAW is       0.013064283411:
+ 
+      the atom type is      2:
+      the number of beta functions is      8:
+      the atom is      2:
+      the bec product is       0.000059733969:
+      the density is       0.394926805130:
+      the GIPAW is       0.000592580239:
+ 
+      the atom type is      2:
+      the number of beta functions is      8:
+      the atom is      3:
+      the bec product is       0.000059733912:
+      the density is       0.394926805130:
+      the GIPAW is       0.000592579580:
+ 
+     Warning: core-relaxation is an experimental feature
+     core-relax: calculating AE orbitals
+     core-relax: method = 1
+     Al        1S   eig=   -111.0025 Ry   norm=      1.0000
+     Al        2S   eig=     -8.1798 Ry   norm=      1.0000
+     Al        3S   eig=     -0.8114 Ry   norm=      1.0000
+     Al        4S   eig=     -0.1398 Ry   norm=      1.0000
+     Al        5S   eig=     -0.0398 Ry   norm=      1.0000
+     Al        6S   eig=     -0.0201 Ry   norm=      1.0000
+     Al        7S   eig=     -0.0121 Ry   norm=      1.0010
+ 
+     B         1S   eig=    -13.2662 Ry   norm=      1.0000
+     B         2S   eig=     -0.6934 Ry   norm=      1.0000
+     B         3S   eig=     -0.0147 Ry   norm=      1.0000
+ 
+     select_spin: s_maj=1 s_min=2 rho_diff=    0.010000
+ 
+     core-relax: max core radius (r_max) =        0.0000
+     core-relax: projecting around atom   1
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =  1218
+ 
+     core-relax: integrated charge (core) =     4.0000
+     core-relax: integrated charge (bare) =    30.1466
+     core-relax: integrated charge (GIPAW) =     0.0047
+     core-relax: integrated charge (total) =    34.1513
+     core-relax: projecting around atom   2
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =  1122
+ 
+     core-relax: integrated charge (core) =     2.0000
+     core-relax: integrated charge (bare) =    25.5728
+     core-relax: integrated charge (GIPAW) =    -0.0099
+     core-relax: integrated charge (total) =    27.5629
+     core-relax: projecting around atom   3
+ 
+     core-relax: max core radius (r_max) =        5.0000
+     core-relax: number of points inside (nr_max) =  1122
+ 
+     core-relax: integrated charge (core) =     2.0000
+     core-relax: integrated charge (bare) =    25.5728
+     core-relax: integrated charge (GIPAW) =    -0.0099
+     core-relax: integrated charge (total) =    27.5629
+ 
+      the computed rT is     0.000692:
+      the number of points inside rT is    329:
+ 
+     Al      1  1S splitting:   -0.000027
+     Al      1  2S splitting:   -0.000110
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000658
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is    -0.000087:
+      the average spin density is    -0.000086:
+      using the average spin density
+ 
+     Al      1  1S -> 2S :   -0.000087
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000163
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is    -0.000005:
+      the average spin density is    -0.000005:
+      using the average spin density
+ 
+     Al      1  1S -> 3S :   -0.000005
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000060
+      the value of lambda is      1:
+      the value of kapa is      4:
+      the first spin density is    -0.000001:
+      the average spin density is    -0.000001:
+      using the average spin density
+ 
+     Al      1  1S -> 4S :   -0.000001
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000023
+      the value of lambda is      1:
+      the value of kapa is      5:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
+     Al      1  1S -> 5S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000014
+      the value of lambda is      1:
+      the value of kapa is      6:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
+     Al      1  1S -> 6S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000009
+      the value of lambda is      1:
+      the value of kapa is      7:
+      the first spin density is    -0.000000:
+      the average spin density is    -0.000000:
+      using the average spin density
+ 
+     Al      1  1S -> 7S :   -0.000000
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00008519
+      the value of lambda is      2:
+      the value of kapa is      3:
+      the first spin density is    -0.001081:
+      the average spin density is    -0.001077:
+      using the average spin density
+ 
+     Al      1  2S -> 3S :   -0.001081
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00002911
+      the value of lambda is      2:
+      the value of kapa is      4:
+      the first spin density is    -0.000126:
+      the average spin density is    -0.000125:
+      using the average spin density
+ 
+     Al      1  2S -> 4S :   -0.000126
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00001088
+      the value of lambda is      2:
+      the value of kapa is      5:
+      the first spin density is    -0.000018:
+      the average spin density is    -0.000018:
+      using the average spin density
+ 
+     Al      1  2S -> 5S :   -0.000018
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000645
+      the value of lambda is      2:
+      the value of kapa is      6:
+      the first spin density is    -0.000006:
+      the average spin density is    -0.000006:
+      using the average spin density
+ 
+     Al      1  2S -> 6S :   -0.000006
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000451
+      the value of lambda is      2:
+      the value of kapa is      7:
+      the first spin density is    -0.000003:
+      the average spin density is    -0.000003:
+      using the average spin density
+ 
+     Al      1  2S -> 7S :   -0.000003
+ 
+      the computed rT is     0.000266:
+      the number of points inside rT is    138:
+ 
+     B       2  1S splitting:   -0.000070
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00002154
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is    -0.000103:
+      the average spin density is    -0.000103:
+      using the average spin density
+ 
+     B       2  1S -> 2S :   -0.000103
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000434
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is    -0.000004:
+      the average spin density is    -0.000004:
+      using the average spin density
+ 
+     B       2  1S -> 3S :   -0.000004
+ 
+      the computed rT is     0.000266:
+      the number of points inside rT is    138:
+ 
+     B       3  1S splitting:   -0.000070
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00002154
+      the value of lambda is      1:
+      the value of kapa is      2:
+      the first spin density is    -0.000103:
+      the average spin density is    -0.000103:
+      using the average spin density
+ 
+     B       3  1S -> 2S :   -0.000103
+ 
+      the first point is      1:
+      the value of the integral in eq. (15) =       0.00000434
+      the value of lambda is      1:
+      the value of kapa is      3:
+      the first spin density is    -0.000004:
+      the average spin density is    -0.000004:
+      using the average spin density
+ 
+     B       3  1S -> 3S :   -0.000004
+ 
+ 
+     NUCLEAR G-TENSORS FROM INPUT:
+     Al      1      1.000000
+     B       2      1.000000
+     B       3      1.000000
+ 
+     NUCLEAR HYPERFINE COUPLINGS IN MHz       :
+ 
+     DIPOLAR COUPLINGS:
+     ----- bare term -----
+     Al      1        0.016011        0.000000        0.000000
+     Al      1        0.000000        0.016011        0.000000
+     Al      1        0.000000        0.000000       -0.032023
+ 
+     B       2       -0.054439        0.000000        0.000000
+     B       2        0.000000       -0.054439        0.000000
+     B       2        0.000000        0.000000        0.108878
+ 
+     B       3       -0.054439        0.000000       -0.000000
+     B       3        0.000000       -0.054439        0.000000
+     B       3       -0.000000        0.000000        0.108878
+ 
+     ----- GIPAW term -----
+     Al      1       -0.038301       -0.032064       -0.016149
+     Al      1       -0.032064        0.043468        0.108681
+     Al      1       -0.016149        0.108681       -0.005166
+ 
+     B       2       -0.014202        0.000241        0.003730
+     B       2        0.000241       -0.009831        0.008929
+     B       2        0.003730        0.008929        0.024033
+ 
+     B       3       -0.014202        0.000241        0.003730
+     B       3        0.000241       -0.009831        0.008929
+     B       3        0.003730        0.008929        0.024033
+ 
+     ----- total dipolar -----
+     Al      1       -0.022290       -0.032064       -0.016149
+     Al      1       -0.032064        0.059479        0.108681
+     Al      1       -0.016149        0.108681       -0.037189
+ 
+     B       2       -0.068641        0.000241        0.003730
+     B       2        0.000241       -0.064270        0.008929
+     B       2        0.003730        0.008929        0.132911
+ 
+     B       3       -0.068641        0.000241        0.003730
+     B       3        0.000241       -0.064270        0.008929
+     B       3        0.003730        0.008929        0.132911
+ 
+     ----- total dipolar (symmetrized) -----
+     Al      1        0.018594        0.000000        0.000000
+     Al      1        0.000000        0.018594       -0.000000
+     Al      1        0.000000       -0.000000       -0.037189
+ 
+     B       2       -0.066456       -0.000000        0.000000
+     B       2       -0.000000       -0.066456        0.000000
+     B       2        0.000000       -0.000000        0.132911
+ 
+     B       3       -0.066456       -0.000000        0.000000
+     B       3       -0.000000       -0.066456        0.000000
+     B       3        0.000000       -0.000000        0.132911
+ 
+ 
+     PRINCIPAL AXIS OF THE DIPOLAR COUPLINGS:
+     Al      1    Axx=    0.0186    axis=(  0.000000  1.000000  0.000000)
+     Al      1    Ayy=    0.0186    axis=(  1.000000  0.000000  0.000000)
+     Al      1    Azz=   -0.0372    axis=(  0.000000  0.000000  1.000000)
+ 
+     B       2    Axx=   -0.0665    axis=(  0.000828 -1.000000  0.000000)
+     B       2    Ayy=   -0.0665    axis=( -1.000000 -0.000828  0.000000)
+     B       2    Azz=    0.1329    axis=(  0.000000  0.000000  1.000000)
+ 
+     B       3    Axx=   -0.0665    axis=(  0.003302 -0.999995  0.000000)
+     B       3    Ayy=   -0.0665    axis=( -0.999995 -0.003302  0.000000)
+     B       3    Azz=    0.1329    axis=(  0.000000  0.000000  1.000000)
+ 
+ 
+     ISOTROPIC (FERMI-CONTACT) COUPLINGS WITHOUT ZORA:
+     USING CORE-RELAXATION METHOD: PRB 76, 035124 (2007)
+     Warning: core-relaxation is an experimental feature
+     ----- spin-densities in bohrradius^-3 -----
+               bare            GIPAW           core-relax      total
+     Al      1       -0.000043        0.013064       -0.001322        0.011700
+     B       2       -0.000052        0.000593       -0.000107        0.000433
+     B       3       -0.000052        0.000593       -0.000107        0.000433
+     ----- Fermi contact in MHz -----
+               bare            GIPAW           core-relax      total
+     Al      1       -0.034066       10.454528       -1.057731        9.362731
+     B       2       -0.041951        0.474205       -0.085680        0.346573
+     B       3       -0.041951        0.474204       -0.085680        0.346573
+ 
+     ==================================================================
+     Finite field isotropic Knight shifts in ppm:
+     estimated Bext in Tesla:  381.818826
+     Al      1    -1608.468248
+     B       2      -59.539485
+     B       3      -59.539394
+     (be sure these numbers are converged w.r.t. k points and smearing)
+     ==================================================================
+ 
+     Initialization:
+     gipaw_setup  :      0.42s CPU      0.45s WALL (       1 calls)
+ 
+     Linear response
+ 
+     Apply operators
+ 
+     Induced current
+ 
+     Other routines
+     hyperfine    :      2.24s CPU      2.45s WALL (       1 calls)
+     core_relax   :      1.25s CPU      1.38s WALL (       1 calls)
+ 
+     General routines
+     calbec       :      0.14s CPU      0.15s WALL (    1085 calls)
+     fft          :      0.01s CPU      0.01s WALL (      25 calls)
+     ffts         :      0.00s CPU      0.00s WALL (       2 calls)
+     fftw         :      0.53s CPU      0.56s WALL (    1953 calls)
+     davcio       :      0.05s CPU      0.09s WALL (    1519 calls)
+ 
+     Parallel routines
+ 
+     Plugins
+ 
+ 
+     GIPAW        :      3.44s CPU      3.95s WALL
+
+ 
+   This run was terminated on:  14:54:53  24Sep2026            
+
+=------------------------------------------------------------------------------=
+   JOB DONE.
+=------------------------------------------------------------------------------=

@@ -1,0 +1,10 @@
+&inputgipaw
+    job = 'hyperfine'
+    prefix = 'alb2'
+    tmp_dir = './scratch/'
+    restart_mode = 'from_scratch'
+    verbosity = 'high'
+    hfi_output_unit = 'MHz'
+    hfi_nuclear_g_factor(1) = 1         ! Al
+    hfi_nuclear_g_factor(2) = 1         ! B
+/
