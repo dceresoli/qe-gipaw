@@ -334,7 +334,7 @@ SUBROUTINE suscept_crystal
     write(stdout, '(5X,''f-sum rule (2nd term):'')')
     write(stdout, tens_fmt) f_sum_occ
   endif
-  write(stdout, '(5X,''f-sum rule (should be '',F10.4''):'')') f_sum_nelec
+  write(stdout, '(5X,''f-sum rule (should be '',F10.4,''):'')') f_sum_nelec
   write(stdout, tens_fmt) f_sum + f_sum_occ
   if (job == 'f-sum') return
 
